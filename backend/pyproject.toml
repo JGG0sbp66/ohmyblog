@@ -1,0 +1,16 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "colorlog>=6.9.0",              # 彩色日志
+    "dynaconf>=3.2.11",             # 配置管理
+    "fastapi-offline>=1.7.4",       # Swagger 离线支持
+    "fastapi[standard]>=0.116.1",   # FastAPI 标准支持
+    "psycopg[binary]>=3.2.9",       # PostgreSQL 驱动
+    "singleton-decorator>=1.0.0",   # 单例模式装饰器
+    "sqlalchemy>=2.0.43",           # SQLAlchemy
+    "tenacity>=9.1.2",              # 重试机制
+]

@@ -1,0 +1,15 @@
+[database]
+# 数据库连接配置
+host = "@format {env[DB_HOST]}"
+port = "@format {env[DB_PORT]}"
+user = "@format {env[DB_USER]}"
+password = "@format {env[DB_PASSWORD]}"
+db = "@format {env[DB_NAME]}"
+
+# 连接池配置
+echo = false            # 是否打印 SQL 日志
+pool_size = 20         # 连接池大小
+max_overflow = 10      # 超出连接池大小外最多创建的连接数
+pool_timeout = 30      # 池中没有线程可用时, 最长等待时间
+pool_recycle = 1800    # 连接最长生命周期(秒),超过就回收
+pool_pre_ping = true   # 每次从池中取连接前, 先 ping 一下确认是否有效
