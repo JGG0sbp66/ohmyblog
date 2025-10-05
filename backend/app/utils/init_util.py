@@ -52,7 +52,13 @@ class InitUtils:
         """
         db_url = f"postgresql+psycopg_async://{settings.database.user}:{settings.database.password}@{settings.database.host}:{settings.database.port}/{settings.database.db}"
         self.db_instance = AsyncDatabase(db_url, self.loggers['utils'])
-        self.loggers['utils'].info(f"数据库连接初始化完成, 数据库地址: {db_url}")
+        # 启动时进行连接检测
+        try:
+            await self.db_instance.test_connection_with_retry()
+            self.loggers['utils'].info(f"数据库连接初始化完成, 数据库地址: {db_url}")
+        except Exception as e:
+            self.loggers['utils'].error(f"数据库连接在重试后仍失败: {e}")
+            raise
 
 # 创建全局工具实例
 init_utils = InitUtils()

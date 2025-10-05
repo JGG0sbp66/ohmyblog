@@ -4,6 +4,9 @@ import logging
 import sys
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession, AsyncEngine
+from sqlalchemy import text
+from sqlalchemy.exc import OperationalError, DBAPIError
+from tenacity import AsyncRetrying, stop_after_attempt, wait_exponential_jitter, retry_if_exception_type
 from app.core.config import settings
 
 
@@ -54,6 +57,55 @@ class AsyncDatabase:
             autocommit=False           # 关闭自动提交
         )
     
+    async def test_connection_with_retry(self):
+        """在启动阶段测试数据库连接, 并在失败时进行重试"""
+        if not self.engine:
+            raise RuntimeError("数据库引擎尚未初始化")
+
+        # 若未启用重试, 直接测试一次
+        if not getattr(settings.database, 'retry_enabled', True):
+            async with self.engine.connect() as conn:
+                await conn.execute(text("SELECT 1"))
+            self.utils_logger.info("[DB] 启动连接检测成功 (未启用重试)")
+            return
+
+        max_attempts = int(getattr(settings.database, 'retry_max_attempts', 6))
+        initial_wait = float(getattr(settings.database, 'retry_initial_wait', 1))
+        max_wait = float(getattr(settings.database, 'retry_max_wait', 20))
+        attempt_timeout = float(getattr(settings.database, 'attempt_timeout', 10))
+
+        attempt_index = 0
+        self.utils_logger.info(
+            f"[DB] 开始连接检测: 最大尝试 {max_attempts} 次, 初始等待 {initial_wait}s, 最大等待 {max_wait}s"
+        )
+
+        async for attempt in AsyncRetrying(
+            stop=stop_after_attempt(max_attempts),
+            wait=wait_exponential_jitter(initial=initial_wait, max=max_wait),
+            retry=retry_if_exception_type((OperationalError, DBAPIError, OSError, TimeoutError)),
+            reraise=True,
+        ):
+            with attempt:
+                attempt_index += 1
+                try:
+                    async def _probe():
+                        async with self.engine.connect() as conn:
+                            await conn.execute(text("SELECT 1"))
+
+                    await asyncio.wait_for(_probe(), timeout=attempt_timeout)
+                    self.utils_logger.info(f"[DB] 连接检测成功 (第 {attempt_index} 次) <- 用时正常")
+                    return
+                except asyncio.TimeoutError as e:
+                    self.utils_logger.warning(
+                        f"[DB] 连接检测超时 (第 {attempt_index} 次, 超过 {attempt_timeout}s): {e}"
+                    )
+                    raise
+                except (OperationalError, DBAPIError, OSError, TimeoutError) as e:
+                    self.utils_logger.warning(
+                        f"[DB] 连接检测失败 (第 {attempt_index} 次): {e.__class__.__name__}: {e}"
+                    )
+                    raise
+    
     @asynccontextmanager
     async def get_db(self) -> AsyncGenerator[AsyncSession, None]:
         """
@@ -76,10 +128,3 @@ class AsyncDatabase:
                 await self.engine.dispose()
         except Exception as e:
             self.utils_logger.error(f"关闭数据库连接时出错: {e}")
-
-
-
-# TODO 连接不上数据库需要考虑重试机制，然后重试多次后还是不行就得设置一定后时间后断开
-
-
-
