@@ -1,4 +1,6 @@
 from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
 from app.utils.db_util import AsyncDatabase
 from app.core.config import settings
 from app.utils.logger_util import init_logger
@@ -64,7 +66,7 @@ class InitUtils:
 init_utils = InitUtils()
 
 @asynccontextmanager
-async def lifespan():
+async def lifespan(_: FastAPI):
     # 启动时初始化
     await init_utils.initialize()
     yield
