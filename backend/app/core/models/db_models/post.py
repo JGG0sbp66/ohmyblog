@@ -41,10 +41,14 @@ from sqlalchemy import (
     Index,
     text,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 from .mixins import UUIDPrimaryKeyMixin, TimestampMixin
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # 仅用于类型检查，运行时不触发循环导入
+    from .comment import Comment
 
 POST_STATUS_CHOICES = ("draft", "published", "archived", "private")
 
@@ -93,6 +97,10 @@ class Post(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     )
     published_at: Mapped[dt.datetime | None] = mapped_column(
         nullable=True, comment="文章发布时间"
+    )
+    # 一篇文章的评论集合
+    comments: Mapped[list["Comment"]] = relationship(
+        "Comment", back_populates="post", cascade="all, delete-orphan"
     )
 
     __table_args__ = (
