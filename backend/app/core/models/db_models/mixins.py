@@ -1,9 +1,4 @@
-"""通用字段 Mixins, 例如 ID、时间戳等。
-
-修复: 为 UUID 主键明确声明 PostgreSQL UUID 类型并加上 server_default=gen_random_uuid()，
-否则 create_all 生成的表不会自动填充 UUID，插入会出现 FlushError: NULL identity key。
-需要确保数据库启用了扩展: CREATE EXTENSION IF NOT EXISTS pgcrypto; （或你的环境已提供 gen_random_uuid）。
-"""
+"""通用字段 Mixins, 例如 ID、时间戳等。"""
 from __future__ import annotations
 
 import uuid
