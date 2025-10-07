@@ -5,7 +5,7 @@ from app.utils.db_util import AsyncDatabase
 from app.core.config import settings
 from app.utils.logger_util import get_logger
 from singleton_decorator import singleton
-from app.utils.i18n_util import _, t
+from app.utils.i18n_util import _
 
 
 @singleton
@@ -47,9 +47,9 @@ class InitUtils:
         # 启动时进行连接检测
         try:
             await self.db_instance.test_connection_with_retry()
-            self.utils_logger.info(t("数据库连接初始化完成, 数据库地址: {db_url}", db_url=db_url))
+            self.utils_logger.info(_("数据库连接初始化完成, 数据库地址: {db_url}", db_url=db_url))
         except Exception as e:
-            self.utils_logger.error(t("数据库连接在重试后仍失败: {error}", error=e))
+            self.utils_logger.error(_("数据库连接在重试后仍失败: {error}", error=e))
             raise
 
 # 创建全局工具实例

@@ -7,7 +7,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError, DBAPIError
 from tenacity import AsyncRetrying, stop_after_attempt, wait_exponential_jitter, retry_if_exception_type
 from app.core.config import settings
-from app.utils.i18n_util import _, t
+from app.utils.i18n_util import _
 from app.utils.logger_util import get_logger
 
 # 在 Windows 上设置兼容的事件循环策略
@@ -76,7 +76,7 @@ class AsyncDatabase:
 
         attempt_index = 0
         self.utils_logger.info(
-            t("[DB] 开始连接检测: 最大尝试 {max_attempts} 次, 初始等待 {initial_wait}s, 最大等待 {max_wait}s",
+            _("[DB] 开始连接检测: 最大尝试 {max_attempts} 次, 初始等待 {initial_wait}s, 最大等待 {max_wait}s",
               max_attempts=max_attempts, initial_wait=initial_wait, max_wait=max_wait)
         )
 
@@ -94,17 +94,17 @@ class AsyncDatabase:
                             await conn.execute(text("SELECT 1"))
 
                     await asyncio.wait_for(_probe(), timeout=attempt_timeout)
-                    self.utils_logger.info(t("[DB] 连接检测成功 (第 {attempt_index} 次) <- 用时正常", attempt_index=attempt_index))
+                    self.utils_logger.info(_("[DB] 连接检测成功 (第 {attempt_index} 次) <- 用时正常", attempt_index=attempt_index))
                     return
                 except asyncio.TimeoutError as e:
                     self.utils_logger.warning(
-                        t("[DB] 连接检测超时 (第 {attempt_index} 次, 超过 {attempt_timeout}s): {error}",
+                        _("[DB] 连接检测超时 (第 {attempt_index} 次, 超过 {attempt_timeout}s): {error}",
                           attempt_index=attempt_index, attempt_timeout=attempt_timeout, error=e)
                     )
                     raise
                 except (OperationalError, DBAPIError, OSError, TimeoutError) as e:
                     self.utils_logger.warning(
-                        t("[DB] 连接检测失败 (第 {attempt_index} 次): {error_class}: {error}",
+                        _("[DB] 连接检测失败 (第 {attempt_index} 次): {error_class}: {error}",
                           attempt_index=attempt_index, error_class=e.__class__.__name__, error=e)
                     )
                     raise
@@ -130,4 +130,4 @@ class AsyncDatabase:
             if self.engine:
                 await self.engine.dispose()
         except Exception as e:
-            self.utils_logger.error(t("关闭数据库连接时出错: {error}", error=e))
+            self.utils_logger.error(_("关闭数据库连接时出错: {error}", error=e))
