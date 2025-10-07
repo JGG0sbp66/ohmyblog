@@ -37,8 +37,7 @@ import datetime as dt
 from sqlalchemy import String, Text, CheckConstraint, text, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .base import Base
-from .mixins import UUIDPrimaryKeyMixin, TimestampMixin
+from .common import Base, UUIDPrimaryKeyMixin, TimestampMixin
 
 # 角色和状态允许的取值（应用层可复用）
 ROLE_CHOICES = ("admin", "editor", "user")

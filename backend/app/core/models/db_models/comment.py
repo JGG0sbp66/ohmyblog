@@ -43,8 +43,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .base import Base
-from .mixins import UUIDPrimaryKeyMixin, TimestampMixin
+from .common import Base, UUIDPrimaryKeyMixin, TimestampMixin
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # 仅类型检查时导入，避免循环导入
