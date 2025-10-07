@@ -23,5 +23,6 @@ attempt_timeout = 6         # 单次检测最大耗时 (秒)
 
 [i18n]
 # 国际化配置
+domain = "messages"                   # 翻译域, 对应 .mo 文件名
 default_locale = "zh_CN"                # 默认语言环境
 supported_locales = ['zh_CN', 'en_US']  # 支持的语言环境列表
