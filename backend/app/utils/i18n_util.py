@@ -27,6 +27,7 @@ class I18nManager:
     def __init__(self):
         self.lang_dir = Path(__file__).resolve().parent / "i18n"
         self.domain = settings.i18n.domain
+        # TODO: 优先从数据库配置读取
         self.lang = settings.i18n.default_locale
         self.current_locale: ContextVar[str] = ContextVar("current_locale", default=self.lang)
         self.translations_cache: Dict[str, gettext.NullTranslations] = {}
