@@ -1,0 +1,90 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: ohmyblog 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-07 19:29+0800\n"
+"PO-Revision-Date: 2025-10-07 00:00+0000\n"
+"Last-Translator: \n"
+"Language: en_US\n"
+"Language-Team: English\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/core/middleware/i18n_middleware.py:109
+#, fuzzy
+msgid "国际化中间件已添加"
+msgstr "Internationalization middleware added"
+
+#: app/core/middleware/i18n_middleware.py:110
+#, python-brace-format
+msgid "默认语言: {locale}"
+msgstr "Default locale: {locale}"
+
+#: app/core/middleware/i18n_middleware.py:112
+#, python-brace-format
+msgid "国际化中间件初始化失败: {error}"
+msgstr "Failed to initialize i18n middleware: {error}"
+
+#: app/utils/db_util.py:63
+msgid "数据库引擎未初始化"
+msgstr "The locales database engine is not initialized"
+
+#: app/utils/db_util.py:69
+msgid "[DB] 启动连接检测成功 (未启用重试)"
+msgstr "[DB] Connection probe success (retry disabled)"
+
+#: app/utils/db_util.py:79
+#, python-brace-format
+msgid "[DB] 开始连接检测: 最大尝试 {max_attempts} 次, 初始等待 {initial_wait}s, 最大等待 {max_wait}s"
+msgstr ""
+"[DB] Starting connection probe: max {max_attempts} attempts, initial wait"
+" {initial_wait}s, max wait {max_wait}s"
+
+#: app/utils/db_util.py:97
+#, python-brace-format
+msgid "[DB] 连接检测成功 (第 {attempt_index} 次) <- 用时正常"
+msgstr "[DB] Connection probe success (attempt {attempt_index}) <- latency normal"
+
+#: app/utils/db_util.py:101
+#, python-brace-format
+msgid "[DB] 连接检测超时 (第 {attempt_index} 次, 超过 {attempt_timeout}s): {error}"
+msgstr ""
+"[DB] Connection probe timeout (attempt {attempt_index}, > "
+"{attempt_timeout}s): {error}"
+
+#: app/utils/db_util.py:107
+#, fuzzy, python-brace-format
+msgid "[DB] 连接检测失败 (第 {attempt_index} 次): {error_class}: {error}"
+msgstr ""
+"[DB] Connection probe failed (attempt {attempt_index}): {error_type}: "
+"{error}"
+
+#: app/utils/db_util.py:133
+#, python-brace-format
+msgid "关闭数据库连接时出错: {error}"
+msgstr "Error when closing database connection: {error}"
+
+#: app/utils/init_util.py:38 test/i18ntest.py:3
+msgid "数据库连接已关闭"
+msgstr "Database connection closed"
+
+#: app/utils/init_util.py:50
+#, python-brace-format
+msgid "数据库连接初始化完成, 数据库地址: {db_url}"
+msgstr "Database connection initialized, URL: {db_url}"
+
+#: app/utils/init_util.py:52
+#, python-brace-format
+msgid "数据库连接在重试后仍失败: {error}"
+msgstr "Database connection still failed after retries: {error}"
+
+#~ msgid "Logger 初始化完成, 共 {count} 个日志器: {names}"
+#~ msgstr "Loggers initialized, total {count} logger(s): {names}"
+
+#~ msgid "翻译目录: {directory}"
+#~ msgstr "Translations directory: {directory}"
+

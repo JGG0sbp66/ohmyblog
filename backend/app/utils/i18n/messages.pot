@@ -1,0 +1,80 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-10-07 19:29+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/core/middleware/i18n_middleware.py:109
+msgid "国际化中间件已添加"
+msgstr ""
+
+#: app/core/middleware/i18n_middleware.py:110
+#, python-brace-format
+msgid "默认语言: {locale}"
+msgstr ""
+
+#: app/core/middleware/i18n_middleware.py:112
+#, python-brace-format
+msgid "国际化中间件初始化失败: {error}"
+msgstr ""
+
+#: app/utils/db_util.py:63
+msgid "数据库引擎未初始化"
+msgstr ""
+
+#: app/utils/db_util.py:69
+msgid "[DB] 启动连接检测成功 (未启用重试)"
+msgstr ""
+
+#: app/utils/db_util.py:79
+#, python-brace-format
+msgid "[DB] 开始连接检测: 最大尝试 {max_attempts} 次, 初始等待 {initial_wait}s, 最大等待 {max_wait}s"
+msgstr ""
+
+#: app/utils/db_util.py:97
+#, python-brace-format
+msgid "[DB] 连接检测成功 (第 {attempt_index} 次) <- 用时正常"
+msgstr ""
+
+#: app/utils/db_util.py:101
+#, python-brace-format
+msgid "[DB] 连接检测超时 (第 {attempt_index} 次, 超过 {attempt_timeout}s): {error}"
+msgstr ""
+
+#: app/utils/db_util.py:107
+#, python-brace-format
+msgid "[DB] 连接检测失败 (第 {attempt_index} 次): {error_class}: {error}"
+msgstr ""
+
+#: app/utils/db_util.py:133
+#, python-brace-format
+msgid "关闭数据库连接时出错: {error}"
+msgstr ""
+
+#: app/utils/init_util.py:38 test/i18ntest.py:3
+msgid "数据库连接已关闭"
+msgstr ""
+
+#: app/utils/init_util.py:50
+#, python-brace-format
+msgid "数据库连接初始化完成, 数据库地址: {db_url}"
+msgstr ""
+
+#: app/utils/init_util.py:52
+#, python-brace-format
+msgid "数据库连接在重试后仍失败: {error}"
+msgstr ""
+
