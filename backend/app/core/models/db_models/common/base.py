@@ -1,7 +1,5 @@
-"""SQLAlchemy 基础声明与公共约定。
-
-- 提供统一命名约定，避免 Alembic 迁移无谓 diff。
-- 提供 Base 基类，未来所有模型继承。
+"""
+SQLAlchemy 基础声明与公共约定。
 """
 from __future__ import annotations
 
@@ -19,10 +17,11 @@ NAMING_CONVENTION = {
 
 metadata = MetaData(naming_convention=NAMING_CONVENTION)
 
+
 class Base(DeclarativeBase):
     metadata = metadata
 
     # 如果未显式定义 __tablename__ 则默认使用类名小写
     @declared_attr.directive
-    def __tablename__(cls) -> str:
+    def __tablename__(cls) -> str:  # type: ignore[misc]
         return cls.__name__.lower()
