@@ -7,16 +7,21 @@ password = "@format {env[DB_PASSWORD]}"
 db = "@format {env[DB_NAME]}"
 
 # 连接池配置
-echo = false           # 是否打印 SQL 日志
-pool_size = 20         # 连接池大小
-max_overflow = 10      # 超出连接池大小外最多创建的连接数
-pool_timeout = 30      # 池中没有线程可用时, 最长等待时间
-pool_recycle = 1800    # 连接最长生命周期(秒),超过就回收
-pool_pre_ping = true   # 每次从池中取连接前, 先 ping 一下确认是否有效
+echo = false                # 是否打印 SQL 日志
+pool_size = 20              # 连接池大小
+max_overflow = 10           # 超出连接池大小外最多创建的连接数
+pool_timeout = 30           # 池中没有线程可用时, 最长等待时间
+pool_recycle = 1800         # 连接最长生命周期(秒),超过就回收
+pool_pre_ping = true        # 每次从池中取连接前, 先 ping 一下确认是否有效
 
 # 启动时数据库连接重试配置
-retry_enabled = true          # 是否启用启动期重试
-retry_max_attempts = 3        # 最大重试次数 (总尝试=此次数)
-retry_initial_wait = 3        # 第一次失败后等待秒数(指数退避初始值)
-retry_max_wait = 20            # 最大等待秒数上限
-attempt_timeout = 6           # 单次检测最大耗时 (秒)
+retry_enabled = true        # 是否启用启动期重试
+retry_max_attempts = 3      # 最大重试次数 (总尝试=此次数)
+retry_initial_wait = 3      # 第一次失败后等待秒数(指数退避初始值)
+retry_max_wait = 20         # 最大等待秒数上限
+attempt_timeout = 6         # 单次检测最大耗时 (秒)
+
+[i18n]
+# 国际化配置
+default_locale = "zh_CN"                # 默认语言环境
+supported_locales = ['zh_CN', 'en_US']  # 支持的语言环境列表
