@@ -3,10 +3,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.utils.db_util import AsyncDatabase
 from app.core.config import settings
-from app.utils.logger_util import init_logger
-import logging
-from typing import Dict
+from app.utils.logger_util import get_logger
 from singleton_decorator import singleton
+from app.utils.i18n_util import _, t
 
 
 @singleton
@@ -19,8 +18,8 @@ class InitUtils:
         """
         self.isInitialized = False
         self.db_instance: AsyncDatabase | None = None
-        self.loggers: Dict[str, logging.Logger] = {}
-    
+        self.utils_logger = get_logger("utils", is_console=True)
+
     async def initialize(self):
         """
         异步初始化所有工具
@@ -28,7 +27,6 @@ class InitUtils:
         if self.isInitialized:
             return
         self.isInitialized = True
-        await self.init_loggers()
         await self.init_database()
     
     async def dispose(self):
@@ -37,29 +35,21 @@ class InitUtils:
         """
         if self.db_instance:
             await self.db_instance.dispose()
-            self.loggers['utils'].info("数据库连接已关闭")
+            self.utils_logger.info(_("数据库连接已关闭"))
         self.isInitialized = False
-
-    async def init_loggers(self):
-        """
-        初始化所有 logger
-        """
-        self.loggers['utils'] = init_logger('utils', 'utils.log', logging.INFO, is_console=True)
-        logger_names = list(self.loggers.keys())
-        self.loggers['utils'].info(f"Logger 初始化完成, 共 {len(logger_names)} 个日志器: {logger_names}")
 
     async def init_database(self):
         """
         初始化数据库连接
         """
         db_url = f"postgresql+psycopg_async://{settings.database.user}:{settings.database.password}@{settings.database.host}:{settings.database.port}/{settings.database.db}"
-        self.db_instance = AsyncDatabase(db_url, self.loggers['utils'])
+        self.db_instance = AsyncDatabase(db_url)
         # 启动时进行连接检测
         try:
             await self.db_instance.test_connection_with_retry()
-            self.loggers['utils'].info(f"数据库连接初始化完成, 数据库地址: {db_url}")
+            self.utils_logger.info(t("数据库连接初始化完成, 数据库地址: {db_url}", db_url=db_url))
         except Exception as e:
-            self.loggers['utils'].error(f"数据库连接在重试后仍失败: {e}")
+            self.utils_logger.error(t("数据库连接在重试后仍失败: {error}", error=e))
             raise
 
 # 创建全局工具实例
