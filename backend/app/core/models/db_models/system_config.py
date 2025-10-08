@@ -74,6 +74,3 @@ class SystemConfig(UUIDPrimaryKeyMixin, TimestampMixin, Base):
         ),
         {"comment": "系统配置表，存储所有动态配置项"},
     )
-
-    def __repr__(self) -> str:  # pragma: no cover
-        return f"<SystemConfig key={self.config_key} type={self.config_type} public={self.is_public}>"
