@@ -19,8 +19,10 @@ from pathlib import Path
 from typing import Dict
 from contextvars import ContextVar
 from app.core.config import settings
+from singleton_decorator import singleton
 
 
+@singleton
 class I18nManager:
     """国际化管理器"""
 
