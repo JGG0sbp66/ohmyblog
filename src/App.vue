@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <P>hello github</P>
+  <div class="bg-blue-600">hello tailwindcss</div>
 </template>
 
 <style scoped></style>
