@@ -1,11 +1,26 @@
 <script lang="ts" setup>
-import ToggleColor from '@/components/base/toggleColor.vue';
+import { ref } from 'vue';
+import ToggleColor from '@/components/theme/toggleColor.vue';
+import ToggleTheme from '@/components/theme/toggleTheme.vue';
 import Loading from '@/components/base/loading.vue';
 import Button from '@/components/button/button.vue';
+
+const isloading = ref(false);
+const text = ref('下一步');
+
+const testLoading = () => {
+  isloading.value = true;
+  text.value = '加载中';
+  setTimeout(() => {
+    isloading.value = false;
+    text.value = '下一步';
+  }, 2000);
+};
 </script>
 
 <template>
-    <div class="ml-10 mt-10 h-10 w-32"><Button :isloading="true"><Loading :colorClass="'text-white'" /></Button></div>
+    <div class="ml-10 mt-10 h-10 w-32"><Button @click="testLoading" :isloading="isloading" :text="text"><Loading :colorClass="'text-white'" /></Button></div>
     <Loading class="ml-10 mt-10" :size-class="'w-10 h-10'"/>
     <ToggleColor />
+    <ToggleTheme class="mt-10 ml-10"/>
 </template>
