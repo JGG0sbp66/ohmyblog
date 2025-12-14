@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+/* 映射层 将主题映射给 Tailwind */
+@theme {
+    /* 按钮颜色 */
+    --color-primary: var(--theme-primary);
+    --color-primary-hover: var(--theme-primary-hover);
+    --color-primary-active: var(--theme-primary-active);
+
+    /* --- 背景色 --- */
+    --color-bg-page: var(--theme-bg-page);
+
+    /* --- 文本色 --- */
+    --color-text-main: var(--theme-text-main);
+    --color-text-on-primary: var(--theme-text-on-primary);
+
+}
+
+/* 逻辑层 展示主题颜色 */
+:root {
+    /* 定义默认值 */
+    --app-hue: 250; 
+
+    --user-primary-light: var(--color-blue-600);
+    --user-primary-hover-light: var(--color-blue-700);
+    --user-primary-active-light: var(--color-blue-500);
+
+    --user-primary-dark: var(--color-blue-700);
+    --user-primary-hover-dark: var(--color-blue-600);
+    --user-primary-active-dark: var(--color-blue-800);
+
+    /* 按钮颜色 */
+    --theme-primary: var(--user-primary-light);
+    --theme-primary-hover: var(--user-primary-hover-light);
+    --theme-primary-active: var(--user-primary-active-light);
+
+    /* --- 背景色 --- */
+    --theme-bg-page: oklch(.95 .01 var(--app-hue));
+
+    /* --- 文本色 --- */
+    --theme-text-main: var(--color-slate-900);
+    --theme-text-on-primary: white;
+
+    /* 将浏览器样式变为浅色 */
+    color-scheme: light;
+
+    /* 预加载其他主题颜色变量，防止被 Tailwind 移除 */
+    --preload-green: var(--color-green-500) var(--color-green-600) var(--color-green-700) var(--color-green-800);
+    --preload-red: var(--color-red-500) var(--color-red-600) var(--color-red-700) var(--color-red-800);
+
+}
+
+/* 深色模式 开启手动切换 */
+@variant dark (&:where(.dark, .dark *));
+
+.dark {
+    /* 按钮颜色 */
+    --theme-primary: var(--user-primary-dark);
+    --theme-primary-hover: var(--user-primary-hover-dark);
+    --theme-primary-active: var(--user-primary-active-dark);
+
+    /* --- 背景色 --- */
+    --theme-bg-page: oklch(.16 .014 var(--app-hue));
+
+    /* --- 文本色 --- */
+    --theme-text-main: var(--color-slate-100);
+    --theme-text-on-primary: white;
+
+    color-scheme: dark;
+}
+
+/* 全局应用背景色和文字颜色 */
+body {
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-main);
+    transition: background-color 0.3s, color 0.3s;
+}

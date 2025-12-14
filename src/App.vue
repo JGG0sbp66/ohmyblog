@@ -1,7 +1,9 @@
-<script setup lang="ts"></script>
+<script lang="ts" setup>
+import { initTheme } from './components/theme/useTheme';
+
+initTheme();
+</script>
 
 <template>
-  <P>hello github</P>
+  <router-view />
 </template>
-
-<style scoped></style>
