@@ -18,10 +18,19 @@
 
 /* 逻辑层 展示主题颜色 */
 :root {
+    /* 定义默认值 */
+    --user-primary-light: var(--color-blue-600);
+    --user-primary-hover-light: var(--color-blue-700);
+    --user-primary-active-light: var(--color-blue-500);
+
+    --user-primary-dark: var(--color-blue-500);
+    --user-primary-hover-dark: var(--color-blue-400);
+    --user-primary-active-dark: var(--color-blue-600);
+
     /* 按钮颜色 */
-    --theme-primary: var(--color-blue-600);
-    --theme-primary-hover: var(--color-blue-700);
-    --theme-primary-active: var(--color-blue-500);
+    --theme-primary: var(--user-primary-light);
+    --theme-primary-hover: var(--user-primary-hover-light);
+    --theme-primary-active: var(--user-primary-active-light);
 
     /* --- 背景色 --- */
     --theme-bg-page: var(--color-slate-50);
@@ -40,9 +49,9 @@
 
 .dark {
     /* 按钮颜色 */
-    --theme-primary: var(--color-blue-500);
-    --theme-primary-hover: var(--color-blue-400);
-    --theme-primary-active: var(--color-blue-600);
+    --theme-primary: var(--user-primary-dark);
+    --theme-primary-hover: var(--user-primary-hover-dark);
+    --theme-primary-active: var(--user-primary-active-dark);
 
     /* --- 背景色 --- */
     --theme-bg-page: var(--color-slate-950);
