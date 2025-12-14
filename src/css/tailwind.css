@@ -44,6 +44,10 @@
     /* 将浏览器样式变为浅色 */
     color-scheme: light;
 
+    /* 预加载其他主题颜色变量，防止被 Tailwind 移除 */
+    --preload-green: var(--color-green-500) var(--color-green-600) var(--color-green-700) var(--color-green-800);
+    --preload-red: var(--color-red-500) var(--color-red-600) var(--color-red-700) var(--color-red-800);
+
 }
 
 /* 深色模式 开启手动切换 */
