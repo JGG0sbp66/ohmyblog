@@ -19,6 +19,8 @@
 /* 逻辑层 展示主题颜色 */
 :root {
     /* 定义默认值 */
+    --app-hue: 250; 
+
     --user-primary-light: var(--color-blue-600);
     --user-primary-hover-light: var(--color-blue-700);
     --user-primary-active-light: var(--color-blue-500);
@@ -33,7 +35,7 @@
     --theme-primary-active: var(--user-primary-active-light);
 
     /* --- 背景色 --- */
-    --theme-bg-page: var(--color-slate-50);
+    --theme-bg-page: oklch(.95 .01 var(--app-hue));
 
     /* --- 文本色 --- */
     --theme-text-main: var(--color-slate-900);
@@ -54,11 +56,18 @@
     --theme-primary-active: var(--user-primary-active-dark);
 
     /* --- 背景色 --- */
-    --theme-bg-page: var(--color-slate-950);
+    --theme-bg-page: oklch(.16 .014 var(--app-hue));
 
     /* --- 文本色 --- */
     --theme-text-main: var(--color-slate-100);
     --theme-text-on-primary: white;
 
     color-scheme: dark;
+}
+
+/* 全局应用背景色和文字颜色 */
+body {
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-main);
+    transition: background-color 0.3s, color 0.3s;
 }
