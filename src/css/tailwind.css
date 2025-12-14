@@ -25,9 +25,9 @@
     --user-primary-hover-light: var(--color-blue-700);
     --user-primary-active-light: var(--color-blue-500);
 
-    --user-primary-dark: var(--color-blue-500);
-    --user-primary-hover-dark: var(--color-blue-400);
-    --user-primary-active-dark: var(--color-blue-600);
+    --user-primary-dark: var(--color-blue-700);
+    --user-primary-hover-dark: var(--color-blue-600);
+    --user-primary-active-dark: var(--color-blue-800);
 
     /* 按钮颜色 */
     --theme-primary: var(--user-primary-light);
