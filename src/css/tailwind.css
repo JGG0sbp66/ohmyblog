@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* 定义主题变量 默认蓝色 */
+@theme {
+    /* 业务功能按钮颜色 */
+    --color-primary: var(--color-blue-600);
+    --color-primary-hover: var(--color-blue-700);
+    --color-primary-active: var(--color-blue-500);
+
+}
