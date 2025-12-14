@@ -3,6 +3,8 @@ import { ref } from 'vue';
 // 定义类型
 interface ThemeColor {
     name: string;
+    // 定义色相角度
+    hue: number;
     // 浅色模式的值
     light: { base: string; hover: string; active: string };
     // 深色模式的值
@@ -10,22 +12,26 @@ interface ThemeColor {
 }
 
 export const themeOptions: ThemeColor[] = [
-    { 
-        name: '蓝色', 
-        light: { base: 'blue-600', hover: 'blue-700', active: 'blue-500' },
-        dark:  { base: 'blue-500', hover: 'blue-400', active: 'blue-600' }
-    },
-    { 
-        name: '绿色', 
-        light: { base: 'green-600', hover: 'green-700', active: 'green-500' },
-        dark:  { base: 'green-500', hover: 'green-400', active: 'green-600' }
-    },
-    { 
-        name: '红色', 
-        light: { base: 'red-600', hover: 'red-700', active: 'red-500' },
-        dark:  { base: 'red-500', hover: 'red-400', active: 'red-600' }
-    },
+  { 
+    name: '蓝色',
+    hue: 250,
+    light: { base: 'blue-600', hover: 'blue-700', active: 'blue-500' },
+    dark:  { base: 'blue-700', hover: 'blue-600', active: 'blue-800' }
+  },
+  { 
+    name: '绿色',
+    hue: 142,
+    light: { base: 'green-600', hover: 'green-700', active: 'green-500' },
+    dark:  { base: 'green-700', hover: 'green-600', active: 'green-800' }
+  },
+  { 
+    name: '红色',
+    hue: 25,
+    light: { base: 'red-600', hover: 'red-700', active: 'red-500' },
+    dark:  { base: 'red-700', hover: 'red-600', active: 'red-800' }
+  },
 ];
+
 
 // 当前选中的深浅模式状态
 export const isDark = ref(false);
