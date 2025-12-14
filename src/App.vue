@@ -1,7 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
-  <div class="bg-blue-600">hello tailwindcss</div>
+  <router-view />
 </template>
-
-<style scoped></style>
