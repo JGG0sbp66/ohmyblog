@@ -1,10 +1,55 @@
 @import "tailwindcss";
 
-/* 定义主题变量 默认蓝色 */
+/* 映射层 将主题映射给 Tailwind */
 @theme {
-    /* 业务功能按钮颜色 */
-    --color-primary: var(--color-blue-600);
-    --color-primary-hover: var(--color-blue-700);
-    --color-primary-active: var(--color-blue-500);
+    /* 按钮颜色 */
+    --color-primary: var(--theme-primary);
+    --color-primary-hover: var(--theme-primary-hover);
+    --color-primary-active: var(--theme-primary-active);
 
+    /* --- 背景色 --- */
+    --color-bg-page: var(--theme-bg-page);
+
+    /* --- 文本色 --- */
+    --color-text-main: var(--theme-text-main);
+    --color-text-on-primary: var(--theme-text-on-primary);
+
+}
+
+/* 逻辑层 展示主题颜色 */
+:root {
+    /* 按钮颜色 */
+    --theme-primary: var(--color-blue-600);
+    --theme-primary-hover: var(--color-blue-700);
+    --theme-primary-active: var(--color-blue-500);
+
+    /* --- 背景色 --- */
+    --theme-bg-page: var(--color-slate-50);
+
+    /* --- 文本色 --- */
+    --theme-text-main: var(--color-slate-900);
+    --theme-text-on-primary: white;
+
+    /* 将浏览器样式变为浅色 */
+    color-scheme: light;
+
+}
+
+/* 深色模式 开启手动切换 */
+@variant dark (&:where(.dark, .dark *));
+
+.dark {
+    /* 按钮颜色 */
+    --theme-primary: var(--color-blue-500);
+    --theme-primary-hover: var(--color-blue-400);
+    --theme-primary-active: var(--color-blue-600);
+
+    /* --- 背景色 --- */
+    --theme-bg-page: var(--color-slate-950);
+
+    /* --- 文本色 --- */
+    --theme-text-main: var(--color-slate-100);
+    --theme-text-on-primary: white;
+
+    color-scheme: dark;
 }
