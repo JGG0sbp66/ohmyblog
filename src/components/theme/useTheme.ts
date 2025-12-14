@@ -57,6 +57,9 @@ export function changeBrandColor(themeName: string) {
 
     const rootStyle = document.documentElement.style;
 
+    // 0. 设置色相
+    rootStyle.setProperty('--app-hue', theme.hue.toString());
+
     // 1. 填入浅色插槽 (Light Slot)
     rootStyle.setProperty('--user-primary-light', `var(--color-${theme.light.base})`);
     rootStyle.setProperty('--user-primary-hover-light', `var(--color-${theme.light.hover})`);
