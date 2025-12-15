@@ -8,7 +8,7 @@ import { themeOptions, changeBrandColor, isDark } from './useTheme';
             v-for="item in themeOptions" 
             :key="item.name" 
             @click="changeBrandColor(item.name)"
-            class="w-8 h-8 rounded-full border border-gray-200 shadow-sm"
+            class="w-8 h-8 rounded-full shadow-sm"
             :style="{ backgroundColor: isDark ? item.dark.base : item.light.base }"
             :title="item.name"
         >
