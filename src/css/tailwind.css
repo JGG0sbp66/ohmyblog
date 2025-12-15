@@ -9,6 +9,8 @@
 
     /* --- 背景色 --- */
     --color-bg-page: var(--theme-bg-page);
+    --color-bg-secondary: var(--theme-bg-secondary);
+    --color-bg-card: var(--theme-bg-card);
 
     /* --- 文本色 --- */
     --color-text-main: var(--theme-text-main);
@@ -36,6 +38,8 @@
 
     /* --- 背景色 --- */
     --theme-bg-page: oklch(.95 .01 var(--app-hue));
+    --theme-bg-secondary: oklch(.95 .025 var(--app-hue));
+    --theme-bg-card: white;
 
     /* --- 文本色 --- */
     --theme-text-main: var(--color-slate-900);
@@ -57,6 +61,8 @@
 
     /* --- 背景色 --- */
     --theme-bg-page: oklch(.16 .014 var(--app-hue));
+    --theme-bg-secondary: oklch(.3 .035 var(--app-hue));
+    --theme-bg-card: oklch(.23 .015 var(--app-hue));
 
     /* --- 文本色 --- */
     --theme-text-main: var(--color-slate-100);
