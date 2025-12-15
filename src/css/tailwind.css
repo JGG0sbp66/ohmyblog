@@ -15,6 +15,7 @@
     /* --- 文本色 --- */
     --color-text-main: var(--theme-text-main);
     --color-text-on-primary: var(--theme-text-on-primary);
+    --color-text-icon: var(--theme-text-icon);
 
 }
 
@@ -44,6 +45,7 @@
     /* --- 文本色 --- */
     --theme-text-main: var(--color-slate-900);
     --theme-text-on-primary: white;
+    --theme-text-icon: oklch(.7 .14 var(--app-hue));
 
     /* 将浏览器样式变为浅色 */
     color-scheme: light;
@@ -67,6 +69,7 @@
     /* --- 文本色 --- */
     --theme-text-main: var(--color-slate-100);
     --theme-text-on-primary: white;
+    --theme-text-icon: oklch(.75 .14 var(--app-hue));
 
     color-scheme: dark;
 }
