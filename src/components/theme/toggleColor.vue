@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { themeOptions, changeBrandColor } from './useTheme';
+import { themeOptions, changeBrandColor, isDark } from './useTheme';
 </script>
 
 <template>
@@ -9,7 +9,7 @@ import { themeOptions, changeBrandColor } from './useTheme';
             :key="item.name" 
             @click="changeBrandColor(item.name)"
             class="w-8 h-8 rounded-full border border-gray-200 shadow-sm"
-            :style="{ backgroundColor: `var(--color-${item.light.base})` }"
+            :style="{ backgroundColor: isDark ? item.dark.base : item.light.base }"
             :title="item.name"
         >
         </button>
