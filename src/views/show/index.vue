@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import ToggleColor from '@/components/theme/toggleColor.vue';
-import ToggleTheme from '@/components/theme/toggleTheme.vue';
-import Loading from '@/components/base/loading.vue';
-import Button from '@/components/button/button.vue';
+import ToggleColor from '@/components/theme/ToggleColor.vue';
+import ToggleTheme from '@/components/theme/ToggleTheme.vue';
+import Loading from '@/components/base/Loading.vue';
+import ButtonPrimary from '@/components/base/button/ButtonPrimary.vue';
 
 const isloading = ref(false);
 const text = ref('下一步');
@@ -19,7 +19,7 @@ const testLoading = () => {
 </script>
 
 <template>
-    <div class="ml-10 mt-10 h-10 w-32"><Button @click="testLoading" :isloading="isloading" :text="text"><Loading :colorClass="'text-white'" /></Button></div>
+    <div class="ml-10 mt-10 h-10 w-32"><ButtonPrimary @click="testLoading" :isloading="isloading" :text="text"><Loading :colorClass="'text-white'" /></ButtonPrimary></div>
     <Loading class="ml-10 mt-10" :size-class="'w-10 h-10'"/>
     <ToggleColor />
     <ToggleTheme class="mt-10 ml-10"/>
