@@ -4,7 +4,7 @@ const props = withDefaults(defineProps<{
     colorClass?: string;
 }>(), {
     sizeClass: 'w-4 h-4',
-    colorClass: 'text-primary'
+    colorClass: 'text-white'
 });
 </script>
 
