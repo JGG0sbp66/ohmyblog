@@ -20,13 +20,10 @@ const isLoading = computed(() => {
 </script>
 
 <template>
-    <button
-        :disabled="props.isLoading"
-        :class="[
-            'w-full h-full font-bold text-white rounded-lg transition-all duration-200 flex items-center justify-center',
-            isLoading,
-        ]"
-    >
+    <button :disabled="props.isLoading" :class="[
+        'w-full h-full font-bold text-white rounded-lg transition-all duration-200 flex items-center justify-center',
+        isLoading,
+    ]">
         <span v-if="props.isLoading" class="mr-2">
             <slot></slot>
         </span>
