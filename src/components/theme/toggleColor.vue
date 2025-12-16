@@ -23,8 +23,7 @@ const positionClass = `absolute top-full z-50`
 <template>
     <div class="relative" ref="containerRef">
         <div class="w-11 h-11">
-            <!-- TODO: 点击后，hover样式持续显示 -->
-            <ButtonSecondary :hasSlot="true" @click="toggleShow">
+            <ButtonSecondary :hasSlot="true" :isActive="isShow" @click="toggleShow">
                 <ColorPicker />
             </ButtonSecondary>
         </div>
