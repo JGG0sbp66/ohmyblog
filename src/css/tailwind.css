@@ -20,69 +20,55 @@
 
 /* --- 主题定义层 --- */
 
-/* 1. 基础变量与默认值 (蓝色) */
+/* 1. 基础变量与默认值 */
 :root {
-    /* 核心变量：色相 (0-360) */
+    /* 
+       默认 Hue (兜底用，JS 加载后会覆盖它) 
+       250 = 蓝色
+    */
     --app-hue: 250;
 
     /* 
        统一的主色调生成逻辑 (使用 OKLCH)
-       L = 亮度 (Lightness), C = 彩度 (Chroma), H = 色相 (Hue)
-       我们固定亮度与彩度，只改变色相
+       无需再为每个颜色写单独的 class
     */
     /* Light Mode 下的主色 */
-    --theme-primary:        oklch(0.60 0.18 var(--app-hue));
-    --theme-primary-hover:  oklch(0.55 0.18 var(--app-hue)); /* 略深 */
-    --theme-primary-active: oklch(0.50 0.18 var(--app-hue)); /* 更深 */
+    --theme-primary: oklch(0.60 0.18 var(--app-hue));
+    --theme-primary-hover: oklch(0.55 0.18 var(--app-hue));
+    --theme-primary-active: oklch(0.50 0.18 var(--app-hue));
 
-    /* --- 背景色 (保持原有逻辑) --- */
-    --theme-bg-page:      oklch(0.97 0.01 var(--app-hue));
+    /* --- 背景色 --- */
+    --theme-bg-page: oklch(0.97 0.01 var(--app-hue));
     --theme-bg-secondary: oklch(0.95 0.03 var(--app-hue));
-    --theme-bg-card:      white;
+    --theme-bg-card: white;
 
     /* --- 文本色 --- */
-    --theme-text-main:       oklch(0.20 0.03 var(--app-hue)); /* 深色带一点点主色倾向 */
+    --theme-text-main: oklch(0.20 0.03 var(--app-hue));
     --theme-text-on-primary: white;
-    --theme-text-icon:       oklch(0.65 0.15 var(--app-hue));
+    --theme-text-icon: oklch(0.65 0.15 var(--app-hue));
 
     /* 浏览器系统样式 */
     color-scheme: light;
 }
 
-/* 2. 主题覆盖 (只需要改 Hue !) */
-
-:root[data-theme="绿色"] {
-    --app-hue: 142;
-}
-
-:root[data-theme="红色"] {
-    --app-hue: 25;
-}
-
-/* 你甚至可以轻易增加更多，比如紫色 */
-:root[data-theme="紫色"] {
-    --app-hue: 290;
-}
-
-
-/* 3. 深色模式逻辑 */
+/* 2. 深色模式逻辑 */
 @variant dark (&:where(.dark, .dark *));
 
 .dark {
-    /* Dark Mode 下的主色 (通常比亮模式稍微亮一点点，或者保持一致) */
-    --theme-primary:        oklch(0.65 0.18 var(--app-hue));
-    --theme-primary-hover:  oklch(0.70 0.18 var(--app-hue));
+    /* Dark Mode 下的主色 */
+    --theme-primary: oklch(0.65 0.18 var(--app-hue));
+    --theme-primary-hover: oklch(0.70 0.18 var(--app-hue));
     --theme-primary-active: oklch(0.60 0.18 var(--app-hue));
 
     /* --- 背景色 --- */
-    --theme-bg-page:      oklch(0.16 0.014 var(--app-hue));
+    --theme-bg-page: oklch(0.16 0.014 var(--app-hue));
     --theme-bg-secondary: oklch(0.25 0.030 var(--app-hue));
-    --theme-bg-card:      oklch(0.20 0.020 var(--app-hue));
+    --theme-bg-card: oklch(0.20 0.020 var(--app-hue));
 
     /* --- 文本色 --- */
-    --theme-text-main:       oklch(0.95 0.01 var(--app-hue));
+    --theme-text-main: oklch(0.95 0.01 var(--app-hue));
     --theme-text-on-primary: white;
-    --theme-text-icon:       oklch(0.75 0.14 var(--app-hue));
+    --theme-text-icon: oklch(0.75 0.14 var(--app-hue));
 
     color-scheme: dark;
 }
