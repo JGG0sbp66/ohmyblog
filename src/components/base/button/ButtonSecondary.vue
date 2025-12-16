@@ -4,49 +4,54 @@ import { computed } from 'vue';
 const props = withDefaults(
     defineProps<{
         hasSlot?: boolean;
+        isActive?: boolean;
         text?: string;
     }>(),
-    {
-        text: "",
-        hasSlot: false,
-    },
+    { hasSlot: false, isActive: false, text: '' },
 );
 
-const ismr = computed(() => {
-    if (props.text === "" && props.hasSlot) {
-        return "";
-    }
-    return "mr-2";
-});
+/* 基础按钮样式类 - 使用 Tailwind CSS 工具类 */
+const btnBaseClass = `
+  /* 布局相关 */
+  flex items-center justify-center  /* 弹性盒子，内容居中 */
+  w-full h-full                    /* 占满父容器宽度和高度 */
+  
+  /* 外观样式 */
+  rounded-lg                       /* 大圆角 */
+  transition-all duration-200 ease-in-out  /* 所有属性200ms缓动过渡 */
+  relative overflow-hidden         /* 相对定位，隐藏溢出内容 */
+  bg-transparent                   /* 透明背景 */
+  
+  /* ::before 伪元素 - 用于创建悬停效果层 */
+  before:content-['']              /* 必须设置content才能显示伪元素 */
+  before:absolute                  /* 绝对定位覆盖按钮 */
+  before:top-0 before:left-0       /* 从左上角开始 */
+  before:w-full before:h-full      /* 占满整个按钮 */
+  before:rounded-lg                /* 与按钮相同的圆角 */
+  before:transition-all before:duration-200 before:ease-in-out  /* 伪元素过渡效果 */
+  before:bg-bg-secondary           /* 使用主题中的次要背景色 */
+  before:opacity-0 before:scale-85 /* 初始状态：完全透明且缩小为85% */
+  
+  /* 悬停状态效果 */
+  hover:before:opacity-100         /* 悬停时伪元素完全不透明 */
+  hover:before:scale-100           /* 悬停时伪元素恢复正常大小 */
+  
+  /* 交互反馈 */
+  hover:text-text-icon             /* 悬停时使用主题中的图标文字颜色 */
+  active:scale-95                  /* 点击时轻微缩小，提供点击反馈 */
+`;
+
+const contentClass = "relative z-10";
+
+const hasMr = computed(() => (props.text === "" && props.hasSlot ? "" : "mr-2"));
+const isActiveClass = computed(() => (props.isActive ? 'before:opacity-100 before:scale-100 text-text-icon' : ''))
 </script>
 
 <template>
-    <button class="btn hover:text-text-icon active:scale-95">
-        <span v-if="props.hasSlot" :class="ismr">
+    <button :class="[btnBaseClass, isActiveClass]">
+        <span v-if="props.hasSlot" :class="[hasMr, contentClass]">
             <slot></slot>
         </span>
-        <span>{{ props.text }}</span>
+        <span :class="[contentClass, 'text-text-main']">{{ props.text }}</span>
     </button>
 </template>
-
-<style scoped>
-@reference '@/css/tailwind.css';
-
-.btn {
-    @apply flex items-center justify-center w-full h-full rounded-lg transition-all duration-200 ease-in-out relative overflow-hidden bg-transparent;
-}
-
-.btn::before {
-    @apply content-[''] absolute top-0 left-0 w-full h-full rounded-lg transition-all duration-200 ease-in-out bg-bg-secondary opacity-0;
-    transform: scale(0.75);
-}
-
-.btn:hover::before {
-    @apply opacity-100;
-    transform: scale(1);
-}
-
-.btn>* {
-    @apply relative z-10;
-}
-</style>

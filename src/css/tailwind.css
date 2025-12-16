@@ -16,67 +16,66 @@
     --color-text-main: var(--theme-text-main);
     --color-text-on-primary: var(--theme-text-on-primary);
     --color-text-icon: var(--theme-text-icon);
-
 }
 
-/* 逻辑层 展示主题颜色 */
+/* --- 主题定义层 --- */
+
+/* 1. 基础变量与默认值 */
 :root {
-    /* 定义默认值 */
-    --app-hue: 250; 
+    /* 
+       默认 Hue (兜底用，JS 加载后会覆盖它) 
+       250 = 蓝色
+    */
+    --app-hue: 250;
 
-    --user-primary-light: var(--color-blue-600);
-    --user-primary-hover-light: var(--color-blue-700);
-    --user-primary-active-light: var(--color-blue-500);
-
-    --user-primary-dark: var(--color-blue-700);
-    --user-primary-hover-dark: var(--color-blue-600);
-    --user-primary-active-dark: var(--color-blue-800);
-
-    /* 按钮颜色 */
-    --theme-primary: var(--user-primary-light);
-    --theme-primary-hover: var(--user-primary-hover-light);
-    --theme-primary-active: var(--user-primary-active-light);
+    /* 
+       统一的主色调生成逻辑 (使用 OKLCH)
+       无需再为每个颜色写单独的 class
+    */
+    /* Light Mode 下的主色 */
+    --theme-primary: oklch(0.60 0.18 var(--app-hue));
+    --theme-primary-hover: oklch(0.55 0.18 var(--app-hue));
+    --theme-primary-active: oklch(0.50 0.18 var(--app-hue));
 
     /* --- 背景色 --- */
-    --theme-bg-page: oklch(.95 .01 var(--app-hue));
-    --theme-bg-secondary: oklch(.95 .025 var(--app-hue));
+    --theme-bg-page: oklch(0.97 0.01 var(--app-hue));
+    --theme-bg-secondary: oklch(0.95 0.03 var(--app-hue));
     --theme-bg-card: white;
 
     /* --- 文本色 --- */
-    --theme-text-main: var(--color-slate-900);
+    --theme-text-main: oklch(0.20 0.03 var(--app-hue));
     --theme-text-on-primary: white;
-    --theme-text-icon: oklch(.7 .14 var(--app-hue));
+    --theme-text-icon: oklch(0.65 0.15 var(--app-hue));
 
-    /* 将浏览器样式变为浅色 */
+    /* 浏览器系统样式 */
     color-scheme: light;
-
 }
 
-/* 深色模式 开启手动切换 */
+/* 2. 深色模式逻辑 */
 @variant dark (&:where(.dark, .dark *));
 
 .dark {
-    /* 按钮颜色 */
-    --theme-primary: var(--user-primary-dark);
-    --theme-primary-hover: var(--user-primary-hover-dark);
-    --theme-primary-active: var(--user-primary-active-dark);
+    /* Dark Mode 下的主色 */
+    --theme-primary: oklch(0.65 0.18 var(--app-hue));
+    --theme-primary-hover: oklch(0.70 0.18 var(--app-hue));
+    --theme-primary-active: oklch(0.60 0.18 var(--app-hue));
 
     /* --- 背景色 --- */
-    --theme-bg-page: oklch(.16 .014 var(--app-hue));
-    --theme-bg-secondary: oklch(.3 .035 var(--app-hue));
-    --theme-bg-card: oklch(.23 .015 var(--app-hue));
+    --theme-bg-page: oklch(0.16 0.014 var(--app-hue));
+    --theme-bg-secondary: oklch(0.25 0.030 var(--app-hue));
+    --theme-bg-card: oklch(0.20 0.020 var(--app-hue));
 
     /* --- 文本色 --- */
-    --theme-text-main: var(--color-slate-100);
+    --theme-text-main: oklch(0.95 0.01 var(--app-hue));
     --theme-text-on-primary: white;
-    --theme-text-icon: oklch(.75 .14 var(--app-hue));
+    --theme-text-icon: oklch(0.75 0.14 var(--app-hue));
 
     color-scheme: dark;
 }
 
-/* 全局应用背景色和文字颜色 */
+/* 全局过渡效果 */
 body {
     background-color: var(--theme-bg-page);
     color: var(--theme-text-main);
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
