@@ -19,19 +19,43 @@
 
 }
 
-/* 逻辑层 展示主题颜色 */
-:root {
-    /* 定义默认值 */
-    --app-hue: 250; 
+/* --- 主题定义层 --- */
 
+/* 1. 默认 (蓝色) */
+:root {
+    --app-hue: 250;
     --user-primary-light: var(--color-blue-600);
     --user-primary-hover-light: var(--color-blue-700);
     --user-primary-active-light: var(--color-blue-500);
-
     --user-primary-dark: var(--color-blue-700);
     --user-primary-hover-dark: var(--color-blue-600);
     --user-primary-active-dark: var(--color-blue-800);
+}
 
+/* 2. 绿色主题覆盖 */
+:root[data-theme="绿色"] {
+    --app-hue: 142;
+    --user-primary-light: var(--color-green-600);
+    --user-primary-hover-light: var(--color-green-700);
+    --user-primary-active-light: var(--color-green-500);
+    --user-primary-dark: var(--color-green-700);
+    --user-primary-hover-dark: var(--color-green-600);
+    --user-primary-active-dark: var(--color-green-800);
+}
+
+/* 3. 红色主题覆盖 */
+:root[data-theme="红色"] {
+    --app-hue: 25;
+    --user-primary-light: var(--color-red-600);
+    --user-primary-hover-light: var(--color-red-700);
+    --user-primary-active-light: var(--color-red-500);
+    --user-primary-dark: var(--color-red-700);
+    --user-primary-hover-dark: var(--color-red-600);
+    --user-primary-active-dark: var(--color-red-800);
+}
+
+/* 逻辑层 展示主题颜色 */
+:root {
     /* 按钮颜色 */
     --theme-primary: var(--user-primary-light);
     --theme-primary-hover: var(--user-primary-hover-light);
@@ -49,7 +73,6 @@
 
     /* 将浏览器样式变为浅色 */
     color-scheme: light;
-
 }
 
 /* 深色模式 开启手动切换 */
