@@ -52,6 +52,6 @@ const isActiveClass = computed(() => (props.isActive ? 'before:opacity-100 befor
         <span v-if="props.hasSlot" :class="[hasMr, contentClass]">
             <slot></slot>
         </span>
-        <span :class="contentClass">{{ props.text }}</span>
+        <span :class="[contentClass, 'text-text-main']">{{ props.text }}</span>
     </button>
 </template>
