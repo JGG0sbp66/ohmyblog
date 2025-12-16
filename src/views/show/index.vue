@@ -41,7 +41,6 @@ const toggleLanguage = () => {
     {{ t('show.language') }}: {{ locale }}
   </button>
 
-  <Loading class="ml-10 mt-10" :size-class="'w-10 h-10'" :colorClass="'text-primary'" />
   <ToggleTheme class="mt-10 ml-10" />
   <div class="bg-bg-card h-18 flex items-center justify-center">
     <ToggleColor />
