@@ -38,8 +38,8 @@ const positionClass = `absolute top-full z-50`
             <div v-if="isShow" :class="['bg-bg-card', positionClass, 'mt-6', 'p-4', 'rounded-lg', 'shadow-lg']">
                 <div class="flex gap-2">
                     <button v-for="item in themeOptions" :key="item.name" @click="changeBrandColor(item.name)"
-                        class="w-8 h-8 rounded-full shadow-sm"
-                        :style="{ backgroundColor: isDark ? item.dark.base : item.light.base }" :title="item.name">
+                        :class="['w-8 h-8 rounded-full shadow-sm', item.previewColor]"
+                        :title="item.name">
                     </button>
                 </div>
             </div>
