@@ -71,24 +71,52 @@ const positionClass = `absolute top-full z-50`
 </template>
 
 <style scoped>
-/* TODO: 修改样式为竖线，并添加选中的时候放大效果，另外现在边框是一团黑线，后续修改为淡淡的阴影 */
-/* 自定义 range input 的滑块样式 (WebKit) */
-input[type=range]::-webkit-slider-thumb {
+/* 轨道样式 */
+input[type="range"] {
     -webkit-appearance: none;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 2px solid currentColor; /* 稍微带点边框 */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    margin-top: -4px; /* 对齐轨道 */
-}
-
-/* 简单的轨道样式重置，虽然上面的 inline style 已经覆盖了背景 */
-input[type=range]::-webkit-slider-runnable-track {
+    appearance: none;
     width: 100%;
     height: 12px;
-    cursor: pointer;
     border-radius: 999px;
+    background: linear-gradient(to right, #4f46e5, #818cf8);
+    outline: none;
+}
+
+/* WebKit 滑块（竖线样式） */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 6px;      /* 竖线宽度 */
+    height: 24px;    /* 竖线高度 */
+    border-radius: 2px;
+    background: #ffffff;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 滑块悬停/选中状态 */
+input[type="range"]::-webkit-slider-thumb:hover,
+input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(1.2);              /* 放大效果 */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+    height: 28px;                       /* 稍微变长 */
+}
+
+/* Firefox 兼容 */
+input[type="range"]::-moz-range-thumb {
+    width: 6px;
+    height: 24px;
+    border-radius: 2px;
+    background: #ffffff;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
 }
 </style>
