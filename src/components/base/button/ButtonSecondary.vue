@@ -29,7 +29,7 @@ const btnBaseClass = `
   before:rounded-lg                /* 与按钮相同的圆角 */
   before:transition-all before:duration-200 before:ease-in-out  /* 伪元素过渡效果 */
   before:bg-bg-secondary           /* 使用主题中的次要背景色 */
-  before:opacity-0 before:scale-75 /* 初始状态：完全透明且缩小为75% */
+  before:opacity-0 before:scale-85 /* 初始状态：完全透明且缩小为85% */
   
   /* 悬停状态效果 */
   hover:before:opacity-100         /* 悬停时伪元素完全不透明 */
