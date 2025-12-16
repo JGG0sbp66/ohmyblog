@@ -16,90 +16,80 @@
     --color-text-main: var(--theme-text-main);
     --color-text-on-primary: var(--theme-text-on-primary);
     --color-text-icon: var(--theme-text-icon);
-
 }
 
 /* --- 主题定义层 --- */
 
-/* 1. 默认 (蓝色) */
+/* 1. 基础变量与默认值 (蓝色) */
 :root {
+    /* 核心变量：色相 (0-360) */
     --app-hue: 250;
-    --user-primary-light: var(--color-blue-600);
-    --user-primary-hover-light: var(--color-blue-700);
-    --user-primary-active-light: var(--color-blue-500);
-    --user-primary-dark: var(--color-blue-700);
-    --user-primary-hover-dark: var(--color-blue-600);
-    --user-primary-active-dark: var(--color-blue-800);
-}
 
-/* 2. 绿色主题覆盖 */
-:root[data-theme="绿色"] {
-    --app-hue: 142;
-    --user-primary-light: var(--color-green-600);
-    --user-primary-hover-light: var(--color-green-700);
-    --user-primary-active-light: var(--color-green-500);
-    --user-primary-dark: var(--color-green-700);
-    --user-primary-hover-dark: var(--color-green-600);
-    --user-primary-active-dark: var(--color-green-800);
-}
+    /* 
+       统一的主色调生成逻辑 (使用 OKLCH)
+       L = 亮度 (Lightness), C = 彩度 (Chroma), H = 色相 (Hue)
+       我们固定亮度与彩度，只改变色相
+    */
+    /* Light Mode 下的主色 */
+    --theme-primary:        oklch(0.60 0.18 var(--app-hue));
+    --theme-primary-hover:  oklch(0.55 0.18 var(--app-hue)); /* 略深 */
+    --theme-primary-active: oklch(0.50 0.18 var(--app-hue)); /* 更深 */
 
-/* 3. 红色主题覆盖 */
-:root[data-theme="红色"] {
-    --app-hue: 25;
-    --user-primary-light: var(--color-red-600);
-    --user-primary-hover-light: var(--color-red-700);
-    --user-primary-active-light: var(--color-red-500);
-    --user-primary-dark: var(--color-red-700);
-    --user-primary-hover-dark: var(--color-red-600);
-    --user-primary-active-dark: var(--color-red-800);
-}
-
-/* 逻辑层 展示主题颜色 */
-:root {
-    /* 按钮颜色 */
-    --theme-primary: var(--user-primary-light);
-    --theme-primary-hover: var(--user-primary-hover-light);
-    --theme-primary-active: var(--user-primary-active-light);
-
-    /* --- 背景色 --- */
-    --theme-bg-page: oklch(.95 .01 var(--app-hue));
-    --theme-bg-secondary: oklch(.95 .025 var(--app-hue));
-    --theme-bg-card: white;
+    /* --- 背景色 (保持原有逻辑) --- */
+    --theme-bg-page:      oklch(0.97 0.01 var(--app-hue));
+    --theme-bg-secondary: oklch(0.95 0.03 var(--app-hue));
+    --theme-bg-card:      white;
 
     /* --- 文本色 --- */
-    --theme-text-main: var(--color-slate-900);
+    --theme-text-main:       oklch(0.20 0.03 var(--app-hue)); /* 深色带一点点主色倾向 */
     --theme-text-on-primary: white;
-    --theme-text-icon: oklch(.7 .14 var(--app-hue));
+    --theme-text-icon:       oklch(0.65 0.15 var(--app-hue));
 
-    /* 将浏览器样式变为浅色 */
+    /* 浏览器系统样式 */
     color-scheme: light;
 }
 
-/* 深色模式 开启手动切换 */
+/* 2. 主题覆盖 (只需要改 Hue !) */
+
+:root[data-theme="绿色"] {
+    --app-hue: 142;
+}
+
+:root[data-theme="红色"] {
+    --app-hue: 25;
+}
+
+/* 你甚至可以轻易增加更多，比如紫色 */
+:root[data-theme="紫色"] {
+    --app-hue: 290;
+}
+
+
+/* 3. 深色模式逻辑 */
 @variant dark (&:where(.dark, .dark *));
 
 .dark {
-    /* 按钮颜色 */
-    --theme-primary: var(--user-primary-dark);
-    --theme-primary-hover: var(--user-primary-hover-dark);
-    --theme-primary-active: var(--user-primary-active-dark);
+    /* Dark Mode 下的主色 (通常比亮模式稍微亮一点点，或者保持一致) */
+    --theme-primary:        oklch(0.65 0.18 var(--app-hue));
+    --theme-primary-hover:  oklch(0.70 0.18 var(--app-hue));
+    --theme-primary-active: oklch(0.60 0.18 var(--app-hue));
 
     /* --- 背景色 --- */
-    --theme-bg-page: oklch(.16 .014 var(--app-hue));
-    --theme-bg-secondary: oklch(.3 .035 var(--app-hue));
-    --theme-bg-card: oklch(.23 .015 var(--app-hue));
+    --theme-bg-page:      oklch(0.16 0.014 var(--app-hue));
+    --theme-bg-secondary: oklch(0.25 0.030 var(--app-hue));
+    --theme-bg-card:      oklch(0.20 0.020 var(--app-hue));
 
     /* --- 文本色 --- */
-    --theme-text-main: var(--color-slate-100);
+    --theme-text-main:       oklch(0.95 0.01 var(--app-hue));
     --theme-text-on-primary: white;
-    --theme-text-icon: oklch(.75 .14 var(--app-hue));
+    --theme-text-icon:       oklch(0.75 0.14 var(--app-hue));
 
     color-scheme: dark;
 }
 
-/* 全局应用背景色和文字颜色 */
+/* 全局过渡效果 */
 body {
     background-color: var(--theme-bg-page);
     color: var(--theme-text-main);
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
