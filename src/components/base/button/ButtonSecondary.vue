@@ -4,9 +4,10 @@ import { computed } from 'vue';
 const props = withDefaults(
     defineProps<{
         hasSlot?: boolean;
+        isActive?: boolean;
         text?: string;
     }>(),
-    { text: "", hasSlot: false },
+    { hasSlot: false, isActive: false, text: '' },
 );
 
 /* 基础按钮样式类 - 使用 Tailwind CSS 工具类 */
@@ -43,10 +44,11 @@ const btnBaseClass = `
 const contentClass = "relative z-10";
 
 const hasMr = computed(() => (props.text === "" && props.hasSlot ? "" : "mr-2"));
+const isActiveClass = computed(() => (props.isActive ? 'before:opacity-100 before:scale-100 text-text-icon' : ''))
 </script>
 
 <template>
-    <button :class="btnBaseClass">
+    <button :class="[btnBaseClass, isActiveClass]">
         <span v-if="props.hasSlot" :class="[hasMr, contentClass]">
             <slot></slot>
         </span>
