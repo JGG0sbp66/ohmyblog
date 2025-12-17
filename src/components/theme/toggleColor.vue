@@ -38,7 +38,7 @@ const positionClass = `absolute top-full z-50`
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <!-- 动态指示条，跟随当前 hue 变化 -->
-                        <div class="w-1 h-4 rounded-sm transition-all duration-200"
+                        <div class="w-1 h-4 rounded-sm"
                             :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }">
                         </div>
                         <!-- TODO: 后续同步i18n -->
