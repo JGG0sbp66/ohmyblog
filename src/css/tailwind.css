@@ -2,6 +2,9 @@
 
 /* 映射层 将主题映射给 Tailwind */
 @theme {
+    /* --- 全局字体设置 --- */
+    --font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "sans-serif";
+
     /* 按钮颜色 */
     --color-primary: var(--theme-primary);
     --color-primary-hover: var(--theme-primary-hover);
