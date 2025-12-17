@@ -74,7 +74,7 @@ input[type="range"] {
     appearance: none;
     width: 100%;
     height: 12px;
-    border-radius: 999px;
+    border-radius: 4px;
     background: linear-gradient(to right, #4f46e5, #818cf8);
     outline: none;
 }
