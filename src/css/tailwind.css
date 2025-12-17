@@ -89,7 +89,8 @@
     *,
     ::after,
     ::before {
-        transition-property: background-color, border-color, color, fill, stroke;
+        /* 保留主题切换的“视觉过渡”，但去掉文字 color 的过渡，避免黑白闪烁 */
+        transition-property: background-color, border-color, fill, stroke;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         transition-duration: 200ms;
     }

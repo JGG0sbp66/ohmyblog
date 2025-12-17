@@ -4,6 +4,7 @@ import { watch } from 'vue';
 // 当前选中的深浅模式状态
 export const isDark = useDark({
   storageKey: 'colorMode',
+  // 允许主题切换过渡（具体过渡范围由全局 CSS 控制）
   disableTransition: false,
 });
 
