@@ -77,8 +77,25 @@
 }
 
 /* 全局过渡效果 */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor); /* 默认边框色处理，防止过渡时闪烁 */
+    }
+
+    *,
+    ::after,
+    ::before {
+        transition-property: background-color, border-color, color, fill, stroke;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 200ms;
+    }
+}
+
 body {
     background-color: var(--theme-bg-page);
     color: var(--theme-text-main);
-    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
