@@ -5,6 +5,7 @@
     "": {
       "name": "ohmyblog-frontend",
       "dependencies": {
+        "@remixicon/vue": "^4.7.0",
         "@tailwindcss/vite": "^4.1.18",
         "@vueuse/core": "^14.1.0",
         "pinia": "^3.0.4",
@@ -156,6 +157,8 @@
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "https://registry.npmmirror.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
     "@polka/url": ["@polka/url@1.0.0-next.29", "https://registry.npmmirror.com/@polka/url/-/url-1.0.0-next.29.tgz", {}, "sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww=="],
+
+    "@remixicon/vue": ["@remixicon/vue@4.7.0", "https://registry.npmmirror.com/@remixicon/vue/-/vue-4.7.0.tgz", { "peerDependencies": { "vue": ">= 3" } }, "sha512-kwl1BIEnNoZ5IZ4NJZPOQmA2PfxKlOmogWcJBStuDynoyYpsYSvU22ZkerpdofgjsLS/FiLKhJ/ddpP8U8znVw=="],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-beta.53", "https://registry.npmmirror.com/@rolldown/pluginutils/-/pluginutils-1.0.0-beta.53.tgz", {}, "sha512-vENRlFU4YbrwVqNDZ7fLvy+JR1CRkyr01jhSiDpE1u6py3OMzQfztQU2jxykW3ALNxO4kSlqIDeYyD0Y9RcQeQ=="],
 
