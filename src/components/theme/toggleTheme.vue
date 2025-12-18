@@ -6,5 +6,9 @@ import ThemePicker from '../icon/ThemePicker.vue';
 
 <template>
     <!-- TODO: 后续新增system主题支持 -->
-    <ButtonSecondary :hasSlot="true" @click="toggleDarkMode()"><ThemePicker :theme="isDark ? 'dark' : 'light'"/></ButtonSecondary>
+    <div class="w-11 h-11">
+        <ButtonSecondary :hasSlot="true" @click="toggleDarkMode()">
+            <ThemePicker :theme="isDark ? 'dark' : 'light'" />
+        </ButtonSecondary>
+    </div>
 </template>
