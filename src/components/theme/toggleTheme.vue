@@ -5,9 +5,6 @@ import ThemePicker from '../icon/ThemePicker.vue';
 </script>
 
 <template>
-    <!-- 后面再优化svg切换 -->
-    <ButtonSecondary :hasSlot="true" @click="toggleDarkMode"><ThemePicker :theme="'system'"/></ButtonSecondary>
-    <button @click="toggleDarkMode()" class="p-2 border rounded">
-        {{ isDark ? '🌙 关灯' : '🌞 开灯' }}
-    </button>
+    <!-- TODO: 后续新增system主题支持 -->
+    <ButtonSecondary :hasSlot="true" @click="toggleDarkMode()"><ThemePicker :theme="isDark ? 'dark' : 'light'"/></ButtonSecondary>
 </template>
