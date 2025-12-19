@@ -1,0 +1,12 @@
+{
+  "components": {
+    "theme": {
+      "ToggleColor": {
+        "paletteTitle": "主题颜色"
+      }
+    }
+  },
+  "test": {
+    "text": "测试文字"
+  }
+}
