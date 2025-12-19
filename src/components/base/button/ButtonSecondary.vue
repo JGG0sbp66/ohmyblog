@@ -38,7 +38,7 @@ const btnBaseClass = `
   
   /* 交互反馈 */
   hover:text-text-icon             /* 悬停时使用主题中的图标文字颜色 */
-  active:scale-95                  /* 点击时轻微缩小，提供点击反馈 */
+  active:scale-85                  /* 点击时轻微缩小，提供点击反馈 */
 `;
 
 const contentClass = "relative z-10";
