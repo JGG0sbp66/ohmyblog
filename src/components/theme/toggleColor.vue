@@ -41,8 +41,7 @@ const positionClass = `absolute top-full z-50`
                         <div class="w-1 h-4 rounded-sm"
                             :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }">
                         </div>
-                        <!-- TODO: 后续同步i18n -->
-                        <span class="text-text-main font-bold text-lg">主题颜色</span>
+                        <span class="text-text-main font-bold text-lg">{{ $t('components.theme.ToggleColor.paletteTitle') }}</span>
                     </div>
                     <span class="w-10 h-7 bg-bg-secondary flex items-center justify-center text-text-icon rounded-lg text-sm font-bold transition-all duration-200">{{ currentHue }}</span>
                 </div>
