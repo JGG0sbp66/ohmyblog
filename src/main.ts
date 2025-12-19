@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import i18n from './locales'
+import i18n from './locales/useLang'
 
 // 全局引入 Tailwind CSS 样式
 import './css/tailwind.css'
