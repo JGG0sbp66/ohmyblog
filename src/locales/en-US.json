@@ -1,4 +1,11 @@
 {
+  "components": {
+    "theme": {
+      "ToggleColor": {
+        "paletteTitle": "Theme Color"
+      }
+    }
+  },
   "test": {
     "text": "Test Text"
   }
