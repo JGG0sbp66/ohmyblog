@@ -2,54 +2,47 @@
 import { currentHue } from './useTheme';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import ColorPicker from '@/components/icon/ColorPicker.vue';
+import BasePop from '../base/pop/BasePop.vue';
 import { ref } from 'vue';
-import { onClickOutside } from '@vueuse/core';
 
 const isShow = ref(false);
-const containerRef = ref(null)
+const btnRef = ref(null);
 
 const toggleShow = () => {
     isShow.value = !isShow.value;
 };
 
-onClickOutside(containerRef, () => {
-    isShow.value = false;
-});
-
-const positionClass = `absolute top-full z-50`
 
 </script>
 
 <template>
     <div class="relative" ref="containerRef">
-        <div class="w-11 h-11">
+        <div ref="btnRef" class="w-11 h-11">
             <ButtonSecondary :hasSlot="true" :isActive="isShow" @click="toggleShow">
                 <ColorPicker />
             </ButtonSecondary>
         </div>
 
         <!-- 画板显示区域 -->
-        <Transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-2"
-            enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150"
-            leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-2">
-            <div v-if="isShow"
-                :class="['bg-bg-card', positionClass, 'mt-6', 'p-4', 'rounded-lg', 'shadow-lg', 'flex', 'flex-col', 'gap-4', 'min-w-60']">
-                <!-- 标题行 -->
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <!-- 动态指示条，跟随当前 hue 变化 -->
-                        <div class="w-1 h-4 rounded-sm"
-                            :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }">
-                        </div>
-                        <span class="text-text-main font-bold text-lg">{{ $t('components.theme.ToggleColor.paletteTitle') }}</span>
+        <BasePop v-model="isShow" :trigger-ref="btnRef" class="flex flex-col gap-4 min-w-60">
+            <!-- 标题行 -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <!-- 动态指示条，跟随当前 hue 变化 -->
+                    <div class="w-1 h-4 rounded-sm" :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }">
                     </div>
-                    <span class="w-10 h-7 bg-bg-secondary flex items-center justify-center text-text-icon rounded-lg text-sm font-bold transition-all duration-200">{{ currentHue }}</span>
+                    <span class="text-text-main font-bold text-lg">{{ $t('components.theme.ToggleColor.paletteTitle')
+                        }}</span>
                 </div>
+                <span
+                    class="w-10 h-7 bg-bg-secondary flex items-center justify-center text-text-icon rounded-lg text-sm font-bold transition-all duration-200">{{
+                    currentHue }}</span>
+            </div>
 
-                <!-- 颜色滑动条 -->
-                <div class="flex flex-col gap-2 py-2">
-                    <input type="range" v-model.number="currentHue" min="0" max="360"
-                        class="w-full h-3 rounded-full appearance-none cursor-pointer outline-none" style="background: linear-gradient(to right, 
+            <!-- 颜色滑动条 -->
+            <div class="flex flex-col gap-2 py-2">
+                <input type="range" v-model.number="currentHue" min="0" max="360"
+                    class="w-full h-3 rounded-full appearance-none cursor-pointer outline-none" style="background: linear-gradient(to right, 
                             oklch(0.6 0.18 0), 
                             oklch(0.6 0.18 45),
                             oklch(0.6 0.18 90),
@@ -60,9 +53,8 @@ const positionClass = `absolute top-full z-50`
                             oklch(0.6 0.18 315),
                             oklch(0.6 0.18 360)
                         )" />
-                </div>
             </div>
-        </Transition>
+        </BasePop>
     </div>
 </template>
 
