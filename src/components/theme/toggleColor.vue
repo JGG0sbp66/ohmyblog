@@ -24,7 +24,7 @@ const toggleShow = () => {
         </div>
 
         <!-- 画板显示区域 -->
-        <BasePop v-model="isShow" :trigger-ref="btnRef" class="flex flex-col gap-4 min-w-60">
+        <BasePop v-model="isShow" :trigger-ref="btnRef" class="flex flex-col gap-4 min-w-60 p-4">
             <!-- 标题行 -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
