@@ -4,10 +4,20 @@ import zhCN from './zh-CN.json'
 import enUS from './en-US.json'
 
 // 定义语言包
-const messages = {
-    'zh-CN': zhCN,
-    'en-US': enUS,
-}
+const LOCALE_CONFIG = {
+    'zh-CN': {
+        label: '简体中文',
+        message: zhCN
+    },
+    'en-US': {
+        label: 'English',
+        message: enUS
+    }
+} as const
+
+const messages = Object.fromEntries(
+    Object.entries(LOCALE_CONFIG).map(([key, value]) => [key, value.message])
+)
 
 function getBestLocale(messages: Record<string, any>): string {
     const supportedLocales = Object.keys(messages)
@@ -55,15 +65,22 @@ const i18n = createI18n({
 
 export default i18n
 
-// 限制只能为messages中定义的语言
-type MessageSchema = keyof typeof messages
-export const setLocale = (lang: MessageSchema) => {
+export const setLocale = (lang: LocaleType) => {
     // 1. 修改 i18n 内部状态，触发界面更新
     i18n.global.locale.value = lang
-    
+
     // 2. 更新 localStorage
     localeStorage.value = lang
-    
+
     // 3. 设置 HTML lang 属性
     document.querySelector('html')?.setAttribute('lang', lang)
 }
+
+// 导出语言类型
+export type LocaleType = keyof typeof LOCALE_CONFIG
+
+// 适用于列表渲染
+export const SUPPORTED_LOCALES = Object.entries(LOCALE_CONFIG).map(([key, value]) => ({
+    label: value.label,
+    value: key as LocaleType
+}))
