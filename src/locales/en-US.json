@@ -7,7 +7,7 @@
     }
   },
   "test": {
-    "text": "Status 1",
+    "text": "status 1",
     "text2": "Loading"
   }
 }
