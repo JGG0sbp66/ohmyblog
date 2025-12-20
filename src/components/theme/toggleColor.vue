@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { currentHue } from './useTheme';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
-import ColorPicker from '@/components/icon/ColorPicker.vue';
+import ColorPicker from '../icon/theme/ColorPicker.vue'
 import BasePop from '../base/pop/BasePop.vue';
 import { ref } from 'vue';
 

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { colorMode, cycleTheme, THEME_MODES, setTheme } from './useTheme';
 import ButtonSecondary from '../base/button/ButtonSecondary.vue';
-import ThemePicker from '../icon/ThemePicker.vue';
+import ThemePicker from '../icon/theme/ThemePicker.vue';
 import { computed } from 'vue';
 import BasePop from '../base/pop/BasePop.vue';
 import { ref } from 'vue';

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
-import LanguagePicker from '@/components/icon/LanguagePicker.vue';
+import LanguagePicker from '../icon/theme/LanguagePicker.vue'
 import BasePop from '../base/pop/BasePop.vue';
 import { ref } from 'vue';
 import i18n,{ SUPPORTED_LOCALES, setLocale, type LocaleType } from '@/locales/useLang';
