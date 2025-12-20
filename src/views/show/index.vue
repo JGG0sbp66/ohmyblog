@@ -4,12 +4,16 @@ import ToggleColor from '@/components/theme/ToggleColor.vue';
 import ToggleTheme from '@/components/theme/ToggleTheme.vue';
 import Loading from '@/components/icon/Loading.vue';
 import ButtonPrimary from '@/components/base/button/ButtonPrimary.vue';
+import ToggleLanguage from '@/components/theme/ToggleLanguage.vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n(); 
 const isloading = ref(false);
 
 // 使用 computed 确保切换语言时文字会自动更新
-const text = computed(() => isloading.value ? '加载中' : '下一步');
-
+const text = computed(() => 
+  isloading.value ? t('test.text2') : t('test.text')
+);
 const testLoading = () => {
   isloading.value = true;
   // text 会自动变为 '加载中' / 'Loading...'
@@ -30,5 +34,6 @@ const testLoading = () => {
   <div class="bg-bg-card h-18 flex items-center justify-center">
     <ToggleColor />
     <ToggleTheme />
+    <ToggleLanguage />
   </div>
 </template>
