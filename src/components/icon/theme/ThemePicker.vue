@@ -6,7 +6,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <RiContrastLine v-if="props.theme == 'auto'" class="text-[1.25rem]" />
-    <RiSunLine v-if="props.theme == 'light'" class="text-[1.25rem]" />
-    <RiMoonLine v-if="props.theme == 'dark'" class="text-[1.25rem]" />
+    <RiContrastLine v-if="props.theme == 'auto'" class="text-[1.25rem] w-[1em] h-[1em]" />
+    <RiSunLine v-if="props.theme == 'light'" class="text-[1.25rem] w-[1em] h-[1em]" />
+    <RiMoonLine v-if="props.theme == 'dark'" class="text-[1.25rem] w-[1em] h-[1em]" />
 </template>
