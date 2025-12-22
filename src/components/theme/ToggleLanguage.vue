@@ -28,12 +28,14 @@ const switchLanguage = (value: LocaleType) => {
     <div class="relative" ref="btnRef">
         <div class="w-11 h-11">
             <ButtonSecondary :hasSlot="true" :isActive="isShow" @click="toggleShow">
-                <LanguagePicker />
+                <LanguagePicker :language="'translate'"/>
             </ButtonSecondary>
         </div>
-        <BasePop v-model="isShow" :trigger-ref="btnRef" class="min-w-30 p-2">
+        <BasePop v-model="isShow" :trigger-ref="btnRef" class="min-w-32 p-2">
             <div v-for="value in SUPPORTED_LOCALES" :key="value.label" class="flex flex-col mt-0.5 mb-0.5">
-                <ButtonSecondary @click="switchLanguage(value.value)" :text="value.label" class="p-2" :isActive="isActive(value.value)"></ButtonSecondary>
+                <ButtonSecondary @click="switchLanguage(value.value)" :text="value.label" class="p-2" :isActive="isActive(value.value)" :hasSlot="true">
+                    <LanguagePicker :language="value.value"/>
+                </ButtonSecondary>
             </div>
         </BasePop>
     </div>
