@@ -7,7 +7,7 @@
       "ToggleTheme": {
         "light": "Light",
         "dark": "Dark",
-        "auto": "Follow System"
+        "auto": "System"
       }
     }
   },
