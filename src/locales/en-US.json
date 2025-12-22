@@ -3,6 +3,11 @@
     "theme": {
       "ToggleColor": {
         "paletteTitle": "Theme Color"
+      },
+      "ToggleTheme": {
+        "light": "Light",
+        "dark": "Dark",
+        "auto": "Follow System"
       }
     }
   },

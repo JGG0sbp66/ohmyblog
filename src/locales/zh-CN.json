@@ -3,6 +3,11 @@
     "theme": {
       "ToggleColor": {
         "paletteTitle": "主题颜色"
+      },
+      "ToggleTheme": {
+        "light": "浅色",
+        "dark": "深色",
+        "auto": "跟随系统"
       }
     }
   },
