@@ -24,7 +24,6 @@ const switchLanguage = (value: LocaleType) => {
 </script>
 
 <template>
-    <!-- TODO: 添加语言的图标，然后语言可以向左对齐，仿照fuwair的明暗主题弹窗 -->
     <div class="relative" ref="btnRef">
         <div class="w-11 h-11">
             <ButtonSecondary :hasSlot="true" :isActive="isShow" @click="toggleShow">
