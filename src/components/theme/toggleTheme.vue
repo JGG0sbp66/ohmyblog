@@ -46,7 +46,6 @@ const isActive = (value: string) => {
 
         <BasePop v-model="isShow" :trigger-ref="btnRef" class="min-w-30 p-2">
             <div v-for="option in themeOptions" :key="option.value" class="flex flex-col mt-0.5 mb-0.5">
-                <!-- TODO: 1. 将value映射为可读性更好的名称，并做i18n处理 -->
                 <ButtonSecondary @click="setTheme(option.value)" :text="option.label" class="p-2 justify-start px-3" :isActive="isActive(option.value)" :hasSlot="true">
                     <ThemePicker :theme="option.value" />
                 </ButtonSecondary>
