@@ -46,6 +46,7 @@ const isActive = (value: string) => {
 
         <BasePop v-model="isShow" :trigger-ref="btnRef" class="min-w-30 p-2">
             <div v-for="option in themeOptions" :key="option.value" class="flex flex-col mt-0.5 mb-0.5">
+                <!-- TODO: 学习图标和文字之间的排布与空间位置，目前看起来还是有点奇怪（感觉整体有点靠左），后续再优化 -->
                 <ButtonSecondary @click="setTheme(option.value)" :text="option.label" class="p-2 justify-start px-3" :isActive="isActive(option.value)" :hasSlot="true">
                     <ThemePicker :theme="option.value" />
                 </ButtonSecondary>
