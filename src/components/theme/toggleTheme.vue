@@ -4,7 +4,7 @@ import ButtonSecondary from '../base/button/ButtonSecondary.vue';
 import ThemePicker from '../icon/theme/ThemePicker.vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import DropButton from '../common/DropButton.vue';
+import DropButton from '../common/button/DropButton.vue';
 
 const { t } = useI18n();
 
