@@ -2,30 +2,18 @@
 import { currentHue } from './useTheme';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import ColorPicker from '../icon/theme/ColorPicker.vue'
-import BasePop from '../base/pop/BasePop.vue';
-import { ref } from 'vue';
-
-const isShow = ref(false);
-const btnRef = ref(null);
-
-const toggleShow = () => {
-    isShow.value = !isShow.value;
-};
-
-
+import DropButton from '../common/button/DropButton.vue';
 </script>
 
 <template>
-    <div class="relative" ref="containerRef">
-        <div ref="btnRef" class="w-11 h-11">
-            <ButtonSecondary :hasSlot="true" :isActive="isShow" @click="toggleShow">
+    <DropButton :contentClass="'flex flex-col gap-4 min-w-60 p-4'">
+        <template #trigger="{ active }">
+            <ButtonSecondary :hasSlot="true" :isActive="active">
                 <ColorPicker />
             </ButtonSecondary>
-        </div>
+        </template>
 
-        <!-- 画板显示区域 -->
-        <BasePop v-model="isShow" :trigger-ref="btnRef" class="flex flex-col gap-4 min-w-60 p-4">
-            <!-- 标题行 -->
+        <template #content>
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <!-- 动态指示条，跟随当前 hue 变化 -->
@@ -36,7 +24,7 @@ const toggleShow = () => {
                 </div>
                 <span
                     class="w-10 h-7 bg-bg-secondary flex items-center justify-center text-text-icon rounded-lg text-sm font-bold transition-all duration-200">{{
-                    currentHue }}</span>
+                        currentHue }}</span>
             </div>
 
             <!-- 颜色滑动条 -->
@@ -54,8 +42,8 @@ const toggleShow = () => {
                             oklch(0.6 0.18 360)
                         )" />
             </div>
-        </BasePop>
-    </div>
+        </template>
+    </DropButton>
 </template>
 
 <style scoped>
