@@ -37,14 +37,15 @@ const btnBaseClass = `
   hover:before:scale-100           /* 悬停时伪元素恢复正常大小 */
   
   /* 交互反馈 */
+  text-text-main                   /* 默认使用主文字颜色 */
   hover:text-text-icon             /* 悬停时使用主题中的图标文字颜色 */
   active:scale-85                  /* 点击时轻微缩小，提供点击反馈 */
 `;
 
 const contentClass = "relative z-10";
 
-const hasMr = computed(() => (props.text === "" && props.hasSlot ? "" : "mr-2"));
-const isActiveClass = computed(() => (props.isActive ? 'before:opacity-100 before:scale-100 text-text-icon' : ''))
+const hasMr = computed(() => (props.text === "" && props.hasSlot ? "" : "mr-3"));
+const isActiveClass = computed(() => (props.isActive ? 'before:opacity-100 before:scale-100 !text-text-icon' : ''))
 </script>
 
 <template>
@@ -52,6 +53,6 @@ const isActiveClass = computed(() => (props.isActive ? 'before:opacity-100 befor
         <span v-if="props.hasSlot" :class="[hasMr, contentClass]">
             <slot></slot>
         </span>
-        <span :class="[contentClass, 'text-text-main']">{{ props.text }}</span>
+        <span :class="contentClass">{{ props.text }}</span>
     </button>
 </template>

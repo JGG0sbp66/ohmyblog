@@ -3,10 +3,16 @@
     "theme": {
       "ToggleColor": {
         "paletteTitle": "主题颜色"
+      },
+      "ToggleTheme": {
+        "light": "浅色",
+        "dark": "深色",
+        "auto": "系统"
       }
     }
   },
   "test": {
-    "text": "测试文字"
+    "text": "状态1",
+    "text2": "加载中"
   }
 }

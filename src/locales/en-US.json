@@ -3,10 +3,16 @@
     "theme": {
       "ToggleColor": {
         "paletteTitle": "Theme Color"
+      },
+      "ToggleTheme": {
+        "light": "Light",
+        "dark": "Dark",
+        "auto": "System"
       }
     }
   },
   "test": {
-    "text": "Test Text"
+    "text": "status 1",
+    "text2": "Loading"
   }
 }
