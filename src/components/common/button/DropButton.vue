@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import BasePop from '../base/pop/BasePop.vue';
+import BasePop from '@/components/base/pop/BasePop.vue';
 import { ref } from 'vue';
 
 interface Props {
