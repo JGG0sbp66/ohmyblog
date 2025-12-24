@@ -30,6 +30,7 @@ const isActive = (value: string) => {
                 <ThemePicker :theme="colorMode" />
             </ButtonSecondary>
         </template>
+
         <template #content>
             <div v-for="option in themeOptions" :key="option.value" class="flex flex-col mt-0.5 mb-0.5">
                 <ButtonSecondary @click="setTheme(option.value)" :text="option.label" class="p-2 justify-start px-3"
