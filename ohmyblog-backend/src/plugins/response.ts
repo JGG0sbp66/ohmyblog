@@ -36,6 +36,6 @@ const formatResponse = ({ response }: any) => {
     };
 };
 
-export const responsePlugin = new Elysia({ name: 'response-plugin' })
+export const responsePlugin = (app: Elysia) => app
     .onError(formatError)
     .mapResponse(formatResponse);
