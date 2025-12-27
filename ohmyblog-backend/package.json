@@ -1,0 +1,24 @@
+{
+  "name": "ohmyblog-backend",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.ts",
+    "db:push": "drizzle-kit push --config=db/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=db/drizzle.config.ts",
+    "db:gen": "drizzle-kit generate --config=db/drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config=db/drizzle.config.ts"
+  },
+  "dependencies": {
+    "@elysiajs/openapi": "^1.4.13",
+    "@paralleldrive/cuid2": "^3.0.4",
+    "drizzle-orm": "^0.45.1",
+    "elysia": "^1.4.19"
+  },
+  "devDependencies": {
+    "better-sqlite3": "^12.5.0",
+    "bun-types": "latest",
+    "drizzle-kit": "^0.31.8"
+  },
+  "module": "src/index.js"
+}
