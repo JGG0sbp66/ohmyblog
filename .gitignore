@@ -56,3 +56,9 @@ __screenshots__/
 **/*.zip
 **/*.tar.gz
 **/*.tgz
+
+# --- 数据库 ---
+**/*.db
+**/*.db-journal
+**/*.db-shm
+**/*.db-wal
