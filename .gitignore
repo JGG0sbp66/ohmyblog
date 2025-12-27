@@ -1,4 +1,13 @@
-# Logs
+# --- 依赖 (涵盖 Vue 和 Elysia) ---
+node_modules/
+.pnp
+.pnp.js
+# 如果你前端用 npm 而后端用 bun，通常建议保留 lock 文件。
+# 如果你确定不需要 package-lock.json，再取消下面这行的注释：
+# package-lock.json
+**/*.bun
+
+# --- 日志与调试 ---
 logs
 *.log
 npm-debug.log*
@@ -6,31 +15,44 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+**/*.trace
 
-node_modules
-.DS_Store
-dist
-dist-ssr
-coverage
+# --- 构建产物 ---
+# Vue 默认输出是 dist，Elysia 如果编译可能是 dist 或 build
+dist/
+dist-ssr/
+build/
+/out/
+/.next/
+*.tsbuildinfo
+.eslintcache
+.vercel
+
+# --- 测试 ---
+coverage/
+/cypress/videos/
+/cypress/screenshots/
+__screenshots__/
+
+# --- 环境与秘钥 ---
+.env
+.env.*
+!.env.example
 *.local
+*.pem
 
-# Editor directories and files
+# --- 编辑器与系统 ---
+.DS_Store
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
-*.tsbuildinfo
-
-.eslintcache
-
-# Cypress
-/cypress/videos/
-/cypress/screenshots/
-
-# Vitest
-__screenshots__/
+# --- 压缩包 ---
+**/*.zip
+**/*.tar.gz
+**/*.tgz
