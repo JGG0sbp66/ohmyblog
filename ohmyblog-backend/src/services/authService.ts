@@ -1,0 +1,76 @@
+import { usersDao } from '../dao/usersDao';
+import { systemLogger } from '../plugins/logger';
+
+class AuthService {
+    private logger = systemLogger.child({ module: 'AuthService' });
+
+    /**
+     * 注册逻辑
+     */
+    async register(body: { username: string; email: string; password: string }) {
+        // 1. 查重
+        const exists = await usersDao.checkExists(body.username, body.email);
+        if (exists) {
+            throw new Error("用户名或邮箱已被注册");
+        }
+
+        // 检查是否已有管理员用户
+        const hasAdmin = await usersDao.hasAnyAdmin();
+        const role = hasAdmin ? 'user' : 'admin';
+
+        // 2. 密码哈希 (使用 Bun 原生的高性能 Argon2/Bcrypt)
+        const hashedPassword = await Bun.password.hash(body.password);
+
+        // 3. 落库
+        const newUser = await usersDao.createUser({
+            username: body.username,
+            email: body.email,
+            passwordHash: hashedPassword,
+            role: role,
+        });
+
+        this.logger.info(
+            { userId: newUser.uuid, role },
+            role === 'admin' ? "初始化管理员账号注册成功" : "用户注册成功"
+        );
+        return newUser;
+    }
+
+    /**
+     * 登录逻辑
+     */
+    async login(identifier: string, passwordPlain: string) {
+        // 1. 查找用户
+        const user = await usersDao.findByIdentifier(identifier);
+        if (!user) {
+            throw new Error("账号或密码错误");
+        }
+
+        // 2. 校验密码
+        const isMatch = await Bun.password.verify(passwordPlain, user.passwordHash);
+        if (!isMatch) {
+            this.logger.warn({ identifier }, "用户登录失败：密码错误");
+            throw new Error("账号或密码错误");
+        }
+
+        // 3. 检查状态
+        if (user.status === 'banned') {
+            this.logger.warn({ user: user.username }, "尝试登录被封禁的账户");
+            throw new Error("账户已被封禁");
+        }
+
+        if (user.status === 'inactive') {
+            this.logger.info({ user: user.username }, "用户首次登录，自动激活账户");
+            await usersDao.activateUser(user.uuid);
+            user.status = 'active';
+        }
+
+        // 4. 更新最后登录时间
+        await usersDao.updateLastLogin(user.uuid);
+
+        this.logger.info({ userId: user.uuid }, "用户登录成功");
+        return user;
+    }
+}
+
+export const authService = new AuthService();

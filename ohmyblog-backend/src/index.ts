@@ -1,9 +1,13 @@
 import { Elysia } from "elysia";
 import { responsePlugin } from "./plugins/response.js";
-import { healthRoute } from "./routes/healthRoute.js";
 import { openapi } from '@elysiajs/openapi'
+import { logPlugin } from "./plugins/logger.js";
+import { healthRoute } from "./routes/healthRoute.js";
+import { authRoute } from "./routes/authRoute.js";
 
 const app = new Elysia()
+  // 日志插件
+  .use(logPlugin)
   // OpenAPI 插件
   .use(openapi({
     documentation: {
@@ -17,6 +21,7 @@ const app = new Elysia()
   .use(responsePlugin)
   // 挂载路由
   .use(healthRoute)
+  .use(authRoute)
   // 启动服务
   .listen(3000);
 
