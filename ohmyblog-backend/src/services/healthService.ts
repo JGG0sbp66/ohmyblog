@@ -1,3 +1,5 @@
+import { systemLogger } from "../plugins/logger";
+
 export class HealthService {
     private commitHash: string = "unknown";
 
@@ -20,21 +22,17 @@ export class HealthService {
             this.commitHash = text.trim();
         } catch (e) {
             // TODO: 硬编码提示
-            console.warn("无法获取 Git 提交哈希，使用默认值 'unknown'");
+            // TODO: 添加logger.chlidren，方便记录是哪个模块发出的日志
+            systemLogger.warn({ err: e }, "无法获取 Git 提交哈希，将使用默认值 'unknown'");
         }
     }
 
     /**
      * 获取健康状态数据
-     * 这里是纯粹的业务逻辑
      */
-    // TODO: 后续优化返回结构
     getSystemStatus() {
         return {
-            status: "running",
             version: this.commitHash,
-            uptime: process.uptime(),
-            timestamp: new Date().toISOString(),
         };
     }
 }
