@@ -2,6 +2,7 @@ import { systemLogger } from "../plugins/logger";
 
 export class HealthService {
     private commitHash: string = "unknown";
+    private logger = systemLogger.child({ module: 'HealthService' });
 
     constructor() {
         // 在服务初始化时就确定版本号，避免每次请求都去判断
@@ -12,6 +13,7 @@ export class HealthService {
         // 策略 1: 优先读取环境变量 (Docker/生产环境)
         if (process.env.GIT_COMMIT) {
             this.commitHash = process.env.GIT_COMMIT;
+            this.logger.info({ commitHash: this.commitHash }, "已从环境变量加载 Git版本");
             return;
         }
 
@@ -20,10 +22,11 @@ export class HealthService {
             const proc = Bun.spawn(["git", "rev-parse", "--short", "HEAD"]);
             const text = await new Response(proc.stdout).text();
             this.commitHash = text.trim();
+            this.logger.info({ commitHash: this.commitHash }, "已通过本地 Git 命令加载版本");
         } catch (e) {
             // TODO: 硬编码提示
             // TODO: 添加logger.chlidren，方便记录是哪个模块发出的日志
-            systemLogger.warn({ err: e }, "无法获取 Git 提交哈希，将使用默认值 'unknown'");
+            this.logger.warn({ err: e }, "无法获取 Git 提交哈希，将使用默认值 'unknown'");
         }
     }
 
