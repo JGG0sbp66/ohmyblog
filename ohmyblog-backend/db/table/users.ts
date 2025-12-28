@@ -25,10 +25,10 @@ export const users = sqliteTable('users', {
   bio: text('bio'),
 
   // 用户角色: admin, user 等，默认 user
-  role: text('role', { enum: roles }).default('user'),
+  role: text('role', { enum: roles }).default('user').notNull(),
 
   // 用户状态: active, inactive, banned 等，默认 inactive
-  status: text('status', { enum: statuses }).default('inactive'),
+  status: text('status', { enum: statuses }).default('inactive').notNull(),
 
   // 账户创建时间
   // mode: 'timestamp' 会自动将 JS Date 对象转为 SQLite 整数（Unix时间戳）
