@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.10",
+    "@elysiajs/jwt": "^1.4.0",
     "@elysiajs/openapi": "^1.4.13",
     "@paralleldrive/cuid2": "^3.0.4",
     "drizzle-orm": "^0.45.1",
