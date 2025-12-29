@@ -5,16 +5,33 @@ import { Elysia } from "elysia";
 // ---------------------------------------------
 const formatError = ({ code, error }: any) => {
 
+    if (code === 'VALIDATION') {
+        // error.all 是一个包含所有错误详情的数组
+        // 我们遍历它，只提取 "字段" 和 "错误信息"
+        const formattedErrors = error.all.map((err: any) => {
+            return {
+                // err.path 通常是 "/password" 或 "/body/email"
+                // 我们把开头的 "/" 去掉，看起来更干净
+                field: err.path.slice(1) || 'unknown',
+                message: err.message
+            };
+        });
+
+        return {
+            success: false,
+            // data 里放详细的字段错误列表，方便前端在输入框底下标红
+            data: {
+                message: "请求参数验证失败",
+                field: formattedErrors
+            }
+        };
+    }
+
     return {
         success: false,
         data: {
-            // 直接使用 error 对象原本的信息
-            // 如果是校验错误，Elysia 会自动生成 "Expected string..." 之类的技术描述
-            // 如果是你手动抛的 error(400, "文章不存在")，这里就是 "文章不存在"
+            // 手动抛的 error(400, "文章不存在")，这里就是 "文章不存在"
             message: error.message,
-            // 可选：如果是校验错误，就把详细字段信息带上，方便调试，不是校验错误就是 null
-            // TODO: 校验错误的时候，里面返回的内容过于丑陋，存在转义问题，后续需要美化一下
-            detail: code === 'VALIDATION' ? error.all : null
         }
     };
 };
