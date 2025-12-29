@@ -78,7 +78,7 @@ export const authRoute = (app: Elysia) =>
             // === 登出接口 ===
             .post('/logout', ({ cookie }) => {
                 cookie.auth_token.remove();
-                return { success: true, message: "已退出登录" };
+                return { message: "已退出登录" };
             }, {
                 detail: { summary: "退出登录" }
             })
