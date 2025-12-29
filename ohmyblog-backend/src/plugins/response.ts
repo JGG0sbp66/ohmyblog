@@ -1,7 +1,6 @@
 import { Elysia } from "elysia";
 
 //TODO: bugfix: 当我注册失败时候，返回的依然是成功响应体
-//TODO: bugfix: 当我退出登陆的时候，没有返回对应合适的响应体
 
 // ---------------------------------------------
 // 失败响应包装
@@ -34,7 +33,6 @@ const formatResponse = ({ response }: any) => {
 
     return {
         success: true,
-        message: "ok",
         data: response
     };
 };
