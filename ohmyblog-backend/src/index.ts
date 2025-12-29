@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { config } from "./env";
 import { responsePlugin } from "./plugins/response.js";
 import { openapi } from '@elysiajs/openapi'
 import { logPlugin } from "./plugins/logger.js";
@@ -23,7 +24,7 @@ const app = new Elysia()
   .use(healthRoute)
   .use(authRoute)
   // 启动服务
-  .listen(3000);
+  .listen(config.PORT as number);
 
 const { port } = app.server!;
 const protocol = 'http';
