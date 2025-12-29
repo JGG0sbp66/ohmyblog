@@ -7,12 +7,6 @@ import { healthRoute } from "./routes/healthRoute.js";
 import { authRoute } from "./routes/authRoute.js";
 
 const app = new Elysia()
-  // 挂载插件
-  .use(logPlugin)
-  .use(responsePlugin)
-  // 挂载路由
-  .use(healthRoute)
-  .use(authRoute)
   // OpenAPI 插件
   .use(openapi({
     documentation: {
@@ -22,6 +16,12 @@ const app = new Elysia()
       }
     }
   }))
+  // 挂载插件
+  .use(logPlugin)
+  .use(responsePlugin)
+  // 挂载路由
+  .use(healthRoute)
+  .use(authRoute)
   // 启动服务
   .listen(config.PORT as number);
 
