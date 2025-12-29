@@ -16,7 +16,8 @@
     "@paralleldrive/cuid2": "^3.0.4",
     "drizzle-orm": "^0.45.1",
     "elysia": "https://pkg.pr.new/elysiajs/elysia@1637",
-    "pino": "^10.1.0"
+    "pino": "^10.1.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "better-sqlite3": "^12.5.0",
