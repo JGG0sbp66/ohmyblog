@@ -32,3 +32,5 @@ const baseUrl = `${protocol}://localhost:${port}`;
 console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`); // 青色链接
 console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`); // 青色链接
 console.log(`\nReady to accept requests...\n`);
+
+console.warn("⚠️  正在使用 Elysia 修复版 (PR #1637)，记得关注 v1.4.20 正式版发布！");
