@@ -2,14 +2,14 @@ import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { authService } from "../services/authService";
 import { RegisterDTO, LoginDTO } from "../dtos/auth.dto";
+import { config } from "../env";
 
 // TODO: 后续新增鉴权plugin插件功能
 
-// TODO: 后续新增读取环境变量功能，这里先暂时写死
 const jwtConfig = {
     name: 'jwt',
-    secret: 'ohmyblog_secret_key_change_me',
-    exp: '7d',
+    secret: config.JWT_SECRET as string,
+    exp: config.JWT_EXP as string,
     schema: t.Object({
         uuid: t.String(),
         role: t.String(),
