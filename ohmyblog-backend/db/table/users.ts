@@ -5,6 +5,8 @@ import { sql } from 'drizzle-orm';
 export const roles = ["admin", "user"] as const;
 export const statuses = ["active", "inactive", "banned"] as const;
 
+export type Roles = (typeof roles)[number]
+
 export const users = sqliteTable('users', {
   // uuid: UUID 格式，在 SQLite 中存储为 text
   uuid: text('uuid').primaryKey().$defaultFn(() => createId()),
