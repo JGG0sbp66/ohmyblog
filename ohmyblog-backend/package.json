@@ -15,7 +15,7 @@
     "@elysiajs/openapi": "^1.4.13",
     "@paralleldrive/cuid2": "^3.0.4",
     "drizzle-orm": "^0.45.1",
-    "elysia": "^1.4.19",
+    "elysia": "https://pkg.pr.new/elysiajs/elysia@1637",
     "pino": "^10.1.0"
   },
   "devDependencies": {
