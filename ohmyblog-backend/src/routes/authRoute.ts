@@ -11,7 +11,7 @@ const jwtConfig = {
     secret: 'ohmyblog_secret_key_change_me',
     exp: '7d',
     schema: t.Object({
-        id: t.String(),
+        uuid: t.String(),
         role: t.String(),
         username: t.String()
     })
@@ -33,7 +33,7 @@ export const authRoute = (app: Elysia) =>
 
                 return {
                     user: {
-                        id: user.uuid,
+                        uuid: user.uuid,
                         username: user.username,
                         role: user.role
                     }
@@ -48,7 +48,7 @@ export const authRoute = (app: Elysia) =>
                 const user = await authService.login(body.identifier, body.password);
 
                 const token = await jwt.sign({
-                    id: user.uuid,
+                    uuid: user.uuid,
                     role: user.role!, 
                     username: user.username
                 });
@@ -64,7 +64,7 @@ export const authRoute = (app: Elysia) =>
 
                 return {
                     user: {
-                        id: user.uuid,
+                        uuid: user.uuid,
                         username: user.username,
                         role: user.role,
                         avatar: user.avatarUrl
