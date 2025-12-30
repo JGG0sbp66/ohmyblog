@@ -1,21 +1,7 @@
-import { Elysia, t } from "elysia";
-import { jwt } from "@elysiajs/jwt";
+import { Elysia } from "elysia";
 import { authService } from "../services/authService";
 import { RegisterDTO, LoginDTO } from "../dtos/auth.dto";
-import { config } from "../env";
-
-// TODO: 后续新增鉴权plugin插件功能
-
-const jwtConfig = {
-    name: 'jwt',
-    secret: config.JWT_SECRET as string,
-    exp: config.JWT_EXP as string,
-    schema: t.Object({
-        uuid: t.String(),
-        role: t.String(),
-        username: t.String()
-    })
-};
+import { authPlugin } from "../plugins/auth";
 
 export const authRoute = (app: Elysia) =>
     app.group('/auth',
@@ -23,7 +9,7 @@ export const authRoute = (app: Elysia) =>
             detail: { tags: ['Auth (认证)'] }
         },
         (app) => app
-            .use(jwt(jwtConfig))
+            .use(authPlugin)
 
             // === 注册接口 ===
             .post('/register', async ({ body, set }) => {
