@@ -13,7 +13,7 @@ export const jwtConfig = {
     })
 };
 
-export const authPlugin = new Elysia({ name: 'auth-plugin' })
+export const authPlugin = (app: Elysia) => app
     .use(jwt(jwtConfig))
     .macro({
         role: (expectedRole: Roles) => ({
