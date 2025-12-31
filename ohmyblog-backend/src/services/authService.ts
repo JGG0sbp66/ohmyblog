@@ -1,13 +1,15 @@
-import { usersDao } from '../dao/usersDao';
-import { systemLogger } from '../plugins/logger';
+import { usersDao } from "../dao/usersDao";
+import { systemLogger } from "../plugins/logger";
 
 class AuthService {
-    private logger = systemLogger.child({ module: 'AuthService' });
+    private logger = systemLogger.child({ module: "AuthService" });
 
     /**
      * 注册逻辑
      */
-    async register(body: { username: string; email: string; password: string }) {
+    async register(
+        body: { username: string; email: string; password: string },
+    ) {
         // 1. 查重
         const exists = await usersDao.checkExists(body.username, body.email);
         if (exists) {
@@ -16,7 +18,7 @@ class AuthService {
 
         // 检查是否已有管理员用户
         const hasAdmin = await usersDao.hasAnyAdmin();
-        const role = hasAdmin ? 'user' : 'admin';
+        const role = hasAdmin ? "user" : "admin";
 
         // 2. 密码哈希 (使用 Bun 原生的高性能 Argon2/Bcrypt)
         const hashedPassword = await Bun.password.hash(body.password);
@@ -31,7 +33,7 @@ class AuthService {
 
         this.logger.info(
             { userId: newUser.uuid, role },
-            role === 'admin' ? "初始化管理员账号注册成功" : "用户注册成功"
+            role === "admin" ? "初始化管理员账号注册成功" : "用户注册成功",
         );
         return newUser;
     }
@@ -47,22 +49,28 @@ class AuthService {
         }
 
         // 2. 校验密码
-        const isMatch = await Bun.password.verify(passwordPlain, user.passwordHash);
+        const isMatch = await Bun.password.verify(
+            passwordPlain,
+            user.passwordHash,
+        );
         if (!isMatch) {
             this.logger.warn({ identifier }, "用户登录失败：密码错误");
             throw new Error("账号或密码错误");
         }
 
         // 3. 检查状态
-        if (user.status === 'banned') {
+        if (user.status === "banned") {
             this.logger.warn({ user: user.username }, "尝试登录被封禁的账户");
             throw new Error("账户已被封禁");
         }
 
-        if (user.status === 'inactive') {
-            this.logger.info({ user: user.username }, "用户首次登录，自动激活账户");
+        if (user.status === "inactive") {
+            this.logger.info(
+                { user: user.username },
+                "用户首次登录，自动激活账户",
+            );
             await usersDao.activateUser(user.uuid);
-            user.status = 'active';
+            user.status = "active";
         }
 
         // 4. 更新最后登录时间

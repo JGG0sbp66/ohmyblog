@@ -1,6 +1,6 @@
-import { eq, or } from 'drizzle-orm';
-import { db } from '../../db/index';
-import { users } from '../../db/schema';
+import { eq, or } from "drizzle-orm";
+import { db } from "../../db/index";
+import { users } from "../../db/schema";
 
 export type NewUser = typeof users.$inferInsert;
 
@@ -21,7 +21,7 @@ class UsersDao {
             .from(users)
             .where(or(
                 eq(users.email, identifier),
-                eq(users.username, identifier)
+                eq(users.username, identifier),
             ))
             .limit(1);
         return result[0] || null;
@@ -46,7 +46,7 @@ class UsersDao {
             .from(users)
             .where(or(
                 eq(users.username, username),
-                eq(users.email, email)
+                eq(users.email, email),
             ))
             .limit(1);
         return result.length > 0;
@@ -58,7 +58,7 @@ class UsersDao {
     async hasAnyAdmin() {
         const result = await db.select({ uuid: users.uuid })
             .from(users)
-            .where(eq(users.role, 'admin'))
+            .where(eq(users.role, "admin"))
             .limit(1);
         return result.length > 0;
     }
@@ -69,7 +69,7 @@ class UsersDao {
     async activateUser(uuid: string) {
         await db.update(users)
             .set({
-                status: 'active',
+                status: "active",
             })
             .where(eq(users.uuid, uuid));
     }
