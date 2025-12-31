@@ -25,6 +25,8 @@ const app = new Elysia()
   // 启动服务
   .listen(config.PORT as number);
 
+export type App = typeof app;
+
 const { port } = app.server!;
 const protocol = "http";
 const baseUrl = `${protocol}://localhost:${port}`;
