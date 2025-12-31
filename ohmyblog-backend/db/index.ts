@@ -6,8 +6,6 @@ import { join } from "node:path";
 import { existsSync, mkdirSync } from "node:fs";
 import { systemLogger } from "../src/plugins/logger";
 
-// TODO: 将console.log 修改为systemLogger
-
 // 1. 路径定义
 // 使用 process.cwd() 确保在 Docker 或不同环境下路径的一致性
 const DATA_DIR = join(process.cwd(), "data"); 
