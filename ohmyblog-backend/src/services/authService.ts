@@ -1,5 +1,6 @@
 import { usersDao } from "../dao/usersDao";
 import { systemLogger } from "../plugins/logger";
+import { BusinessError } from "../plugins/errors";
 
 class AuthService {
     private logger = systemLogger.child({ module: "AuthService" });
@@ -13,7 +14,9 @@ class AuthService {
         // 1. 查重
         const exists = await usersDao.checkExists(body.username, body.email);
         if (exists) {
-            throw new Error("用户名或邮箱已被注册");
+            throw new BusinessError("用户名或邮箱已被注册", {
+                status: 409,
+            });
         }
 
         // 检查是否已有管理员用户
@@ -45,7 +48,7 @@ class AuthService {
         // 1. 查找用户
         const user = await usersDao.findByIdentifier(identifier);
         if (!user) {
-            throw new Error("账号或密码错误");
+            throw new BusinessError("账号或密码错误", { status: 401 });
         }
 
         // 2. 校验密码
@@ -55,13 +58,13 @@ class AuthService {
         );
         if (!isMatch) {
             this.logger.warn({ identifier }, "用户登录失败：密码错误");
-            throw new Error("账号或密码错误");
+            throw new BusinessError("账号或密码错误", { status: 401 });
         }
 
         // 3. 检查状态
         if (user.status === "banned") {
             this.logger.warn({ user: user.username }, "尝试登录被封禁的账户");
-            throw new Error("账户已被封禁");
+            throw new BusinessError("账户已被封禁", { status: 403 });
         }
 
         if (user.status === "inactive") {
