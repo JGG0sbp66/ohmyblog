@@ -14,7 +14,7 @@ export const jwtConfig = {
 };
 
 // TODO: 发现抛出异常好像也会被log 记录，实际上这些是预期内的错误，不应该算作日志
-export const authPlugin = (app: Elysia) => app
+export const authPlugin = new Elysia({ name: 'authPlugin' })
     .use(jwt(jwtConfig))
     .macro({
         role: (expectedRole: Roles) => ({
