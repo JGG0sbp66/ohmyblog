@@ -1,8 +1,22 @@
 import { logger } from "@bogeychan/elysia-logger";
 import { pino } from "pino";
+import { BusinessError } from "./errors";
 
 const logConfig = {
     level: "info",
+    hooks: {
+        /**
+         * 业务可预期异常不写入 error 日志（silent）
+         */
+        logMethod(args: any[], method: (...a: any[]) => void) {
+            const payload = args[0];
+            const err: unknown = payload?.err ?? payload?.error ?? payload;
+            if (err instanceof BusinessError && err.silent) {
+                return;
+            }
+            method.apply(this, args);
+        },
+    },
     transport: {
         targets: [
             // === 目标 1: 控制台输出 (开发用) ===

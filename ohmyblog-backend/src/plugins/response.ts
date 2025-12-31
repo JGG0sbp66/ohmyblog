@@ -3,19 +3,19 @@ import { Elysia } from "elysia";
 // ---------------------------------------------
 // 失败响应包装
 // ---------------------------------------------
-const formatError = ({ code, error }: any) => {
+const formatError = ({ code, error, set }: any) => {
+    // 处理验证错误
     if (code === "VALIDATION") {
         // error.all 是一个包含所有错误详情的数组
-        // 我们遍历它，只提取 "字段" 和 "错误信息"
+        // 遍历它，只提取 "字段" 和 "错误信息"
         const formattedErrors = error.all.map((err: any) => {
             return {
                 // err.path 通常是 "/password" 或 "/body/email"
-                // 我们把开头的 "/" 去掉，看起来更干净
+                // 把开头的 "/" 去掉
                 field: err.path.slice(1) || "unknown",
                 message: err.message,
             };
         });
-
         return {
             success: false,
             // data 里放详细的字段错误列表，方便前端在输入框底下标红
@@ -26,10 +26,10 @@ const formatError = ({ code, error }: any) => {
         };
     }
 
+    set.status = error.status ?? 400;
     return {
         success: false,
         data: {
-            // 手动抛的 error(400, "文章不存在")，这里就是 "文章不存在"
             message: error.message,
         },
     };
