@@ -2,6 +2,7 @@ import { Roles } from "../../db/schema";
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { config } from "../env";
+import { BusinessError } from "./errors";
 
 export const jwtConfig = {
     name: "jwt",
@@ -13,7 +14,6 @@ export const jwtConfig = {
     }),
 };
 
-// TODO: 发现抛出异常好像也会被log 记录，实际上这些是预期内的错误，不应该算作日志
 export const authPlugin = new Elysia({ name: "authPlugin" })
     .use(jwt(jwtConfig))
     .macro({
@@ -24,7 +24,9 @@ export const authPlugin = new Elysia({ name: "authPlugin" })
                 // 1. 如果没有 token，说明未登录
                 if (!token || typeof token !== "string") {
                     set.status = 401;
-                    throw new Error("未登录或会话已过期");
+                    throw new BusinessError("未登录或会话已过期", {
+                        status: 401,
+                    });
                 }
 
                 // 2. 验证 JWT
@@ -33,14 +35,16 @@ export const authPlugin = new Elysia({ name: "authPlugin" })
                     set.status = 401;
                     // Token 过期或非法时，建议清除无效 Cookie
                     auth_token.remove();
-                    throw new Error("未登录或会话已过期");
+                    throw new BusinessError("未登录或会话已过期", {
+                        status: 401,
+                    });
                 }
 
                 // 3. 权限校验
                 // 如果角色不匹配且不是超级管理员 (admin)，则拦截
                 if (payload.role !== expectedRole && payload.role !== "admin") {
                     set.status = 403;
-                    throw new Error("权限不足");
+                    throw new BusinessError("权限不足", { status: 403 });
                 }
 
                 // 4. 将用户信息存入 context，方便后续路由使用
