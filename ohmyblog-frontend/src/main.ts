@@ -1,17 +1,17 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
 
-import App from './App.vue'
-import router from './router'
-import i18n from './locales/useLang'
+import App from "./App.vue";
+import router from "./router";
+import i18n from "./locales/useLang";
 
 // 全局引入 Tailwind CSS 样式
-import './css/tailwind.css'
+import "./css/tailwind.css";
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(createPinia())
-app.use(router)
-app.use(i18n)
+app.use(createPinia());
+app.use(router);
+app.use(i18n);
 
-app.mount('#app')
+app.mount("#app");
