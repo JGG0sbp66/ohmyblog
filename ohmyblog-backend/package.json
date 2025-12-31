@@ -4,7 +4,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
-    "debug": "bun --inspect --watch src/index.ts",
+    "debug": "bun --inspect-wait --watch src/index.ts",
     "db:push": "drizzle-kit push --config=db/drizzle.config.ts",
     "db:studio": "drizzle-kit studio --config=db/drizzle.config.ts",
     "db:gen": "drizzle-kit generate --config=db/drizzle.config.ts",
