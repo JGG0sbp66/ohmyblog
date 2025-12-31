@@ -43,7 +43,7 @@ __screenshots__/
 
 # --- 编辑器与系统 ---
 .DS_Store
-.vscode/*
+.vscode/
 !.vscode/extensions.json
 .idea/
 *.suo
