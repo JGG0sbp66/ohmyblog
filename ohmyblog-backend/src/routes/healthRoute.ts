@@ -1,20 +1,18 @@
 import { Elysia } from "elysia";
 import { healthService } from "../services/healthService";
-import { authPlugin } from "../plugins/auth";
 
 export const healthRoute = new Elysia({ name: "healthRoute" })
-    .use(authPlugin).group("/health", {
+    .group("/health", {
         detail: {
             tags: ["健康检查"],
         },
     }, (app) =>
         app.get(
             "",
-            () => {
-                return healthService.getSystemStatus();
+            async () => {
+                return await healthService.getSystemStatus();
             },
             {
-                role: "admin",
                 detail: {
                     summary: "系统健康检查",
                     description: "获取系统健康状态，包括当前运行的版本信息",
