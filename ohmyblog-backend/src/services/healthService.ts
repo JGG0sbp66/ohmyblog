@@ -1,4 +1,5 @@
 import { systemLogger } from "../plugins/logger";
+import { usersDao } from "../dao/usersDao";
 
 export class HealthService {
     private commitHash: string = "unknown";
@@ -40,9 +41,11 @@ export class HealthService {
     /**
      * 获取健康状态数据
      */
-    getSystemStatus() {
+    async getSystemStatus() {
+        const hasAdmin = await usersDao.hasAnyAdmin();
         return {
             version: this.commitHash,
+            initialized: hasAdmin,
         };
     }
 }
