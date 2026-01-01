@@ -5,6 +5,7 @@ import { openapi } from "@elysiajs/openapi";
 import { logPlugin } from "./plugins/logger.js";
 import { healthRoute } from "./routes/healthRoute.js";
 import { authRoute } from "./routes/authRoute.js";
+import { configRoute } from "./routes/configRoute.js";
 
 const app = new Elysia()
   // OpenAPI 插件
@@ -24,6 +25,7 @@ const app = new Elysia()
     app
       .use(healthRoute)
       .use(authRoute)
+      .use(configRoute)
   )
   // 启动服务
   .listen(config.PORT as number);
