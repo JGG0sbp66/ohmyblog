@@ -32,4 +32,3 @@ export const ensureAdminIfExists = async (ctx: any) => {
     const guard = createRoleGuard("admin");
     await guard(ctx);
 };
-
