@@ -1,5 +1,5 @@
 import { eq, or } from "drizzle-orm";
-import { db } from "../../db/index";
+import { db } from "../../db/connection";
 import { users } from "../../db/schema";
 
 export type NewUser = typeof users.$inferInsert;

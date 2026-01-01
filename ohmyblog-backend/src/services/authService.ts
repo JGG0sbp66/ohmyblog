@@ -34,6 +34,12 @@ class AuthService {
             role: role,
         });
 
+        // 一旦创建管理员，更新缓存，避免后续再查库
+        if (role === "admin") {
+            const { markHasAdmin } = await import("../plugins/adminGuard");
+            markHasAdmin();
+        }
+
         this.logger.info(
             { userId: newUser.uuid, role },
             role === "admin" ? "初始化管理员账号注册成功" : "用户注册成功",

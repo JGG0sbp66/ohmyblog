@@ -3,10 +3,18 @@
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
+    // 让 paths 从工程根解析（别名生效）
+    "baseUrl": ".",
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      // 仅导入后端类型（不打包 runtime）
+      "@server/app": ["../ohmyblog-backend/src/app.d.ts"],
+      // 前后端共享同一份 Elysia 类型，避免版本不一致报错
+      "elysia": ["../ohmyblog-backend/node_modules/elysia"],
+      // 后端 DTO 类型（例如 TRegisterDTO / TLoginDTO）
+      "@server/dtos/*": ["../ohmyblog-backend/src/dtos/*"]
     }
   }
 }
