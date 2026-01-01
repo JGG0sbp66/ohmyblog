@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { join } from "path";
 import { randomBytes } from "crypto";
+import { existsSync, mkdirSync } from "node:fs";
 import { systemLogger } from "./plugins/logger";
 
 type ConfigItem = {
@@ -34,7 +35,13 @@ const configDef = {
 // =================================================================
 // 2. 自动化引擎
 // =================================================================
-const ENV_PATH = join(process.cwd(), "config", ".env");
+const DATA_DIR = join(process.cwd(), "data");
+const ENV_PATH = join(DATA_DIR, ".env");
+
+if (!existsSync(DATA_DIR)) {
+    systemLogger.info(`📂 目录 ${DATA_DIR} 不存在，正在自动创建...`);
+    mkdirSync(DATA_DIR, { recursive: true });
+}
 
 async function initConfig() {
     const file = Bun.file(ENV_PATH);
@@ -42,11 +49,7 @@ async function initConfig() {
 
     if (!await file.exists()) {
         // 使用 Logger 替代 console
-        systemLogger.warn(`⚙️  检测到 config/.env 不存在，正在自动生成...`);
-
-        const fs = await import("node:fs");
-        const dir = join(process.cwd(), "config");
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        systemLogger.warn(`⚙️  检测到 data/.env 不存在，正在自动生成...`);
 
         let fileContent = `# Auto-generated config\n`;
 
