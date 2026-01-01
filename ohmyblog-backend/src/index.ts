@@ -20,8 +20,11 @@ const app = new Elysia()
   .use(logPlugin)
   .use(responsePlugin)
   // 挂载路由
-  .use(healthRoute)
-  .use(authRoute)
+  .group("/api", (app) =>
+    app
+      .use(healthRoute)
+      .use(authRoute)
+  )
   // 启动服务
   .listen(config.PORT as number);
 
