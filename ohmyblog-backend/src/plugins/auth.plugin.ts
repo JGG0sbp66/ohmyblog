@@ -1,3 +1,4 @@
+// src/plugins/auth.plugin.ts
 import { Roles } from "../../db/schema";
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";

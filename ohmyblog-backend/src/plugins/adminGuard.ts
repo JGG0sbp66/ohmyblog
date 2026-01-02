@@ -1,3 +1,4 @@
+// src/plugins/adminGuard.ts
 import { usersDao } from "../dao/users.dao";
 import { createRoleGuard } from "./auth.plugin";
 
