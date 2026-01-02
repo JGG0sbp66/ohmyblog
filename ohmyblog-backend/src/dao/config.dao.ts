@@ -1,3 +1,4 @@
+// src/dao/config.dao.ts
 import { eq } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { config } from "../../db/schema";

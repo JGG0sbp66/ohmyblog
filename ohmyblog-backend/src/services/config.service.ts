@@ -1,9 +1,56 @@
-import { configDao, ConfigUpdate, NewConfig } from "../dao/config.dao";
+// src/services/config.service.ts
+import { configDao } from "../dao/config.dao";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger.plugin";
+import { TConfigUpsertDTO } from "../dtos/config.dto";
 
 class ConfigService {
     private logger = systemLogger.child({ module: "ConfigService" });
+
+    /**
+     * 保存或更新配置, 存在则更新, 不存在则创建
+     */
+    async upsert(data: TConfigUpsertDTO) {
+        const { configKey, ...updateFields } = data;
+
+        // 查找是否存在
+        const existing = await configDao.findByKey(configKey);
+
+        if (existing) {
+            // 存在则更新
+            const updated = await configDao.updateByKey(
+                configKey,
+                updateFields,
+            );
+            this.logger.info({ configKey }, "配置已更新");
+            return updated;
+        } else {
+            if (data.configValue === undefined) {
+                throw new BusinessError(
+                    `创建新配置 [${configKey}] 时，configValue 不能为空`,
+                    {
+                        status: 400,
+                    },
+                );
+            }
+            // 不存在则创建
+            const created = await configDao.createConfig(data as any);
+            this.logger.info({ configKey }, "配置已创建");
+            return created;
+        }
+    }
+
+    /**
+     * 删除配置，不存在则 404
+     */
+    async delete(configKey: string) {
+        const removed = await configDao.deleteByKey(configKey);
+        if (!removed) {
+            throw new BusinessError("配置不存在", { status: 404 });
+        }
+        this.logger.info({ configKey }, "配置已删除");
+        return removed;
+    }
 
     /**
      * 列出配置，可选过滤公开字段
@@ -29,44 +76,6 @@ class ConfigService {
     async listPublic() {
         return await configDao.listPublicConfigs();
     }
-
-    /**
-     * 新建配置，键名冲突则返回 409
-     */
-    async create(data: NewConfig) {
-        const exists = await configDao.findByKey(data.configKey);
-        if (exists) {
-            throw new BusinessError("配置键已存在", { status: 409 });
-        }
-        const created = await configDao.createConfig(data);
-        this.logger.info({ configKey: created.configKey }, "配置已创建");
-        return created;
-    }
-
-    /**
-     * 更新配置，不存在则 404
-     */
-    async update(configKey: string, data: ConfigUpdate) {
-        const updated = await configDao.updateByKey(configKey, data);
-        if (!updated) {
-            throw new BusinessError("配置不存在", { status: 404 });
-        }
-        this.logger.info({ configKey }, "配置已更新");
-        return updated;
-    }
-
-    /**
-     * 删除配置，不存在则 404
-     */
-    async delete(configKey: string) {
-        const removed = await configDao.deleteByKey(configKey);
-        if (!removed) {
-            throw new BusinessError("配置不存在", { status: 404 });
-        }
-        this.logger.info({ configKey }, "配置已删除");
-        return removed;
-    }
 }
 
 export const configService = new ConfigService();
-
