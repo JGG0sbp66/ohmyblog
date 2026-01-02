@@ -29,7 +29,7 @@ export const createRoleGuard = (expectedRole: Roles) => async (ctx: any) => {
     }
 
     // 3. 权限校验
-    // 如果角色不匹配且不是超级管理员 (admin)，则拦截
+    // 如果角色不匹配且不是管理员 (admin)，则拦截
     if (payload.role !== expectedRole && payload.role !== "admin") {
         set.status = 403;
         throw new BusinessError("权限不足", { status: 403 });
@@ -49,8 +49,32 @@ export const jwtConfig = {
     }),
 };
 
+export type JwtUserPayload = {
+    uuid: string;
+    role: string;
+    username: string;
+};
+
 export const authPlugin = new Elysia({ name: "authPlugin" })
     .use(jwt(jwtConfig))
+    // 将 JWT 中的用户信息注入到 context，便于后续路由直接使用 ctx.user
+    .derive(async ({ cookie: { auth_token }, jwt }) => {
+        const token = auth_token?.value;
+        if (!token || typeof token !== "string") {
+            return { user: undefined as JwtUserPayload | undefined };
+        }
+
+        const payload = await jwt.verify(token).catch(() => undefined) as
+            | JwtUserPayload
+            | undefined;
+        if (!payload) {
+            // Token 失效时清理 Cookie，避免后续重复校验
+            auth_token.remove?.();
+            return { user: undefined as JwtUserPayload | undefined };
+        }
+
+        return { user: payload };
+    })
     .macro({
         role: (expectedRole: Roles) => ({
             beforeHandle: createRoleGuard(expectedRole),
