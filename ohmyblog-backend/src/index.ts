@@ -1,8 +1,8 @@
 import { Elysia } from "elysia";
 import { config } from "./env";
-import { responsePlugin } from "./plugins/response.js";
+import { responsePlugin } from "./plugins/response.plugin.js";
 import { openapi } from "@elysiajs/openapi";
-import { logPlugin } from "./plugins/logger.js";
+import { logPlugin } from "./plugins/logger.plugin.js";
 import { healthRoute } from "./routes/health.route.js";
 import { authRoute } from "./routes/auth.route.js";
 import { configRoute } from "./routes/config.route.js";

@@ -1,4 +1,4 @@
-import { systemLogger } from "../plugins/logger";
+import { systemLogger } from "../plugins/logger.plugin";
 import { usersDao } from "../dao/users.dao";
 
 export class HealthService {

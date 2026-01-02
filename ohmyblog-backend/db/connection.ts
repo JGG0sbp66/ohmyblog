@@ -4,7 +4,7 @@ import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import * as schema from "./schema";
 import { join } from "node:path";
 import { existsSync, mkdirSync } from "node:fs";
-import { systemLogger } from "../src/plugins/logger";
+import { systemLogger } from "../src/plugins/logger.plugin";
 
 // 1. 路径定义
 // 使用 process.cwd() 确保在 Docker 或不同环境下路径的一致性

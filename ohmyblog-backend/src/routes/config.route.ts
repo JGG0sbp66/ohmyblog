@@ -2,7 +2,7 @@ import { Elysia } from "elysia";
 import { configService } from "../services/config.service";
 import { BusinessError } from "../plugins/errors";
 import { ConfigCreateDTO, ConfigUpdateDTO } from "../dtos/config.dto";
-import { authPlugin } from "../plugins/auth";
+import { authPlugin } from "../plugins/auth.plugin";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 
 // TODO: 后续再新增删除，查找接口，目前只支持更新

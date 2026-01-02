@@ -1,6 +1,6 @@
 import { configDao, ConfigUpdate, NewConfig } from "../dao/config.dao";
 import { BusinessError } from "../plugins/errors";
-import { systemLogger } from "../plugins/logger";
+import { systemLogger } from "../plugins/logger.plugin";
 
 class ConfigService {
     private logger = systemLogger.child({ module: "ConfigService" });

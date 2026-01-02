@@ -1,6 +1,5 @@
 import { usersDao } from "../dao/users.dao";
-import { BusinessError } from "./errors";
-import { createRoleGuard } from "./auth";
+import { createRoleGuard } from "./auth.plugin";
 
 let hasAdminCache: boolean | null = null;
 

@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
 import { authService } from "../services/auth.service";
 import { LoginDTO, RegisterDTO } from "../dtos/auth.dto";
-import { authPlugin } from "../plugins/auth";
+import { authPlugin } from "../plugins/auth.plugin";
 
 export const authRoute = new Elysia({ name: "authRoute" })
     .group("/auth", {
