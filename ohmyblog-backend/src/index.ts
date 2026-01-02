@@ -1,11 +1,11 @@
 import { Elysia } from "elysia";
 import { config } from "./env";
-import { responsePlugin } from "./plugins/response.js";
+import { responsePlugin } from "./plugins/response.plugin.js";
 import { openapi } from "@elysiajs/openapi";
-import { logPlugin } from "./plugins/logger.js";
-import { healthRoute } from "./routes/healthRoute.js";
-import { authRoute } from "./routes/authRoute.js";
-import { configRoute } from "./routes/configRoute.js";
+import { logPlugin } from "./plugins/logger.plugin.js";
+import { healthRoute } from "./routes/health.route.js";
+import { authRoute } from "./routes/auth.route.js";
+import { configRoute } from "./routes/config.route.js";
 
 const app = new Elysia()
   // OpenAPI 插件

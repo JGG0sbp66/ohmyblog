@@ -1,5 +1,5 @@
-import { usersDao } from "../dao/usersDao";
-import { systemLogger } from "../plugins/logger";
+import { usersDao } from "../dao/users.dao";
+import { systemLogger } from "../plugins/logger.plugin";
 import { BusinessError } from "../plugins/errors";
 
 class AuthService {

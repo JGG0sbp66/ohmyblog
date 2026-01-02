@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { healthService } from "../services/healthService";
+import { healthService } from "../services/health.service";
 
 export const healthRoute = new Elysia({ name: "healthRoute" })
     .group("/health", {

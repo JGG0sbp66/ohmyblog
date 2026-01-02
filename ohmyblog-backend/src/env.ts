@@ -2,7 +2,7 @@ import { z } from "zod";
 import { join } from "path";
 import { randomBytes } from "crypto";
 import { existsSync, mkdirSync } from "node:fs";
-import { systemLogger } from "./plugins/logger";
+import { systemLogger } from "./plugins/logger.plugin";
 
 type ConfigItem = {
     desc: string;

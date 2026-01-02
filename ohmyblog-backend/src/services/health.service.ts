@@ -1,5 +1,5 @@
-import { systemLogger } from "../plugins/logger";
-import { usersDao } from "../dao/usersDao";
+import { systemLogger } from "../plugins/logger.plugin";
+import { usersDao } from "../dao/users.dao";
 
 export class HealthService {
     private commitHash: string = "unknown";
