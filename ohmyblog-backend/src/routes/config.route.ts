@@ -2,7 +2,7 @@
 import { Elysia } from "elysia";
 import { configService } from "../services/config.service";
 import { ConfigUpsertDTO } from "../dtos/config.dto";
-import { authPlugin, type JwtUserPayload } from "../plugins/auth.plugin";
+import { authPlugin } from "../plugins/auth.plugin";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 
 // TODO: 后续再新增删除，查找接口，目前只支持更新
@@ -17,8 +17,7 @@ export const configRoute = new Elysia({ name: "configRoute" })
                  * - 用于创建或更新配置
                  */
                 .post("/", async ({ body }) => {
-                    const data = body as typeof ConfigUpsertDTO.static;
-                    const config = await configService.upsert(data);
+                    const config = await configService.upsert(body);
 
                     return {
                         message: "保存成功",
@@ -36,15 +35,12 @@ export const configRoute = new Elysia({ name: "configRoute" })
                 .get(
                     "/:configKey",
                     async (
-                        { params, user }: {
-                            params: { configKey: string };
-                            user?: JwtUserPayload;
-                        },
+                        { params: { configKey }, user },
                     ) => {
                         const isAdmin = user?.role === "admin";
 
                         const config = await configService.getByKey(
-                            params.configKey,
+                            configKey,
                             isAdmin,
                         );
                         return {
