@@ -5,7 +5,6 @@ import { ConfigUpsertDTO } from "../dtos/config.dto";
 import { authPlugin } from "../plugins/auth.plugin";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 
-// TODO: 后续再新增删除，查找接口，目前只支持更新
 export const configRoute = new Elysia({ name: "configRoute" })
     .use(authPlugin).group(
         "/config",
