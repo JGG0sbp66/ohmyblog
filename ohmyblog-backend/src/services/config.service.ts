@@ -53,28 +53,16 @@ class ConfigService {
     }
 
     /**
-     * 列出配置，可选过滤公开字段
+     * 获取单个配置
+     * @param configKey 键名
+     * @param isAdmin 是否以管理员身份访问 (如果是，则绕过 isPublic 限制)
      */
-    async list(options?: { isPublic?: boolean }) {
-        return await configDao.listConfigs(options);
-    }
-
-    /**
-     * 获取单个配置，默认仅用于后台调用
-     */
-    async getByKey(configKey: string) {
+    async getByKey(configKey: string, isAdmin: boolean = false) {
         const item = await configDao.findByKey(configKey);
-        if (!item) {
+        if (!item || (!isAdmin && !item.isPublic)) {
             throw new BusinessError("配置不存在", { status: 404 });
         }
         return item;
-    }
-
-    /**
-     * 列出公开配置
-     */
-    async listPublic() {
-        return await configDao.listPublicConfigs();
     }
 }
 
