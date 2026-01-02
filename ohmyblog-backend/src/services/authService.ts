@@ -1,4 +1,4 @@
-import { usersDao } from "../dao/usersDao";
+import { usersDao } from "../dao/users.dao";
 import { systemLogger } from "../plugins/logger";
 import { BusinessError } from "../plugins/errors";
 

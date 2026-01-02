@@ -1,4 +1,4 @@
-import { usersDao } from "../dao/usersDao";
+import { usersDao } from "../dao/users.dao";
 import { BusinessError } from "./errors";
 import { createRoleGuard } from "./auth";
 
