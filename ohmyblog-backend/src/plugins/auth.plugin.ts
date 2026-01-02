@@ -1,44 +1,16 @@
-// src/plugins/auth.plugin.ts
 import { Roles } from "../../db/schema";
 import { Elysia, t } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { config } from "../env";
 import { BusinessError } from "./errors";
 
-export const createRoleGuard = (expectedRole: Roles) => async (ctx: any) => {
-    const { jwt, set, cookie: { auth_token } } = ctx;
-    const token = auth_token.value;
-
-    // 1. 如果没有 token，说明未登录
-    if (!token || typeof token !== "string") {
-        set.status = 401;
-        throw new BusinessError("未登录或会话已过期", {
-            status: 401,
-        });
-    }
-
-    // 2. 验证 JWT
-    const payload = await jwt.verify(token);
-    if (!payload) {
-        set.status = 401;
-        // Token 过期或非法时，建议清除无效 Cookie
-        auth_token.remove();
-        throw new BusinessError("未登录或会话已过期", {
-            status: 401,
-        });
-    }
-
-    // 3. 权限校验
-    // 如果角色不匹配且不是管理员 (admin)，则拦截
-    if (payload.role !== expectedRole && payload.role !== "admin") {
-        set.status = 403;
-        throw new BusinessError("权限不足", { status: 403 });
-    }
-
-    // 4. 将用户信息存入 context，方便后续路由使用
-    ctx.user = payload;
+export type JwtUserPayload = {
+    uuid: string;
+    role: string;
+    username: string;
 };
 
+// JWT 配置
 export const jwtConfig = {
     name: "jwt",
     secret: config.JWT_SECRET as string,
@@ -49,33 +21,46 @@ export const jwtConfig = {
     }),
 };
 
-export type JwtUserPayload = {
-    uuid: string;
-    role: string;
-    username: string;
-};
+// 权限校验逻辑 (仅负责检查 user 对象，不负责解析 Token)
+// 此时 derive 已经运行过了，ctx 中已经有 user 了
+export const createRoleGuard =
+    (expectedRole: Roles) => ({ user, set, cookie: { auth_token } }: any) => {
+        // 如果 derive 没找到 user，说明 Token 无效或缺失
+        if (!user) {
+            // 清理可能存在的无效 Cookie
+            auth_token.remove();
+            throw new BusinessError("未登录或会话已过期", { status: 401 });
+        }
+
+        // 角色校验 (管理员放行)
+        if (user.role !== expectedRole && user.role !== "admin") {
+            throw new BusinessError("权限不足", { status: 403 });
+        }
+    };
 
 export const authPlugin = new Elysia({ name: "authPlugin" })
     .use(jwt(jwtConfig))
-    // 将 JWT 中的用户信息注入到 context，便于后续路由直接使用 ctx.user
-    .derive(async ({ cookie: { auth_token }, jwt }) => {
-        const token = auth_token?.value;
+    .derive({ as: "global" }, async ({ jwt, cookie: { auth_token } }) => {
+        const token = auth_token.value;
+
+        // 如果没有 token，直接返回空 user，让后面的 Guard 去拦截
+        if (!token) return { user: null };
+
         if (!token || typeof token !== "string") {
-            return { user: undefined as JwtUserPayload | undefined };
+            return { user: null };
         }
 
-        const payload = await jwt.verify(token).catch(() => undefined) as
-            | JwtUserPayload
-            | undefined;
-        if (!payload) {
-            // Token 失效时清理 Cookie，避免后续重复校验
-            auth_token.remove?.();
-            return { user: undefined as JwtUserPayload | undefined };
-        }
+        // 验证 JWT
+        const payload = await jwt.verify(token);
+        if (!payload) return { user: null };
 
-        return { user: payload };
+        // 返回 user 对象，后续所有路由都能通过 ctx.user 拿到
+        return {
+            user: payload as JwtUserPayload,
+        };
     })
     .macro({
+        // 定义宏：在路由上直接写 role: "admin"
         role: (expectedRole: Roles) => ({
             beforeHandle: createRoleGuard(expectedRole),
         }),
