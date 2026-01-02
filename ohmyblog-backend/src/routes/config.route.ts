@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { configService } from "../services/configService";
+import { configService } from "../services/config.service";
 import { BusinessError } from "../plugins/errors";
 import { ConfigCreateDTO, ConfigUpdateDTO } from "../dtos/config.dto";
 import { authPlugin } from "../plugins/auth";

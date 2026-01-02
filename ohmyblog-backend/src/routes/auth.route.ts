@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { authService } from "../services/authService";
+import { authService } from "../services/auth.service";
 import { LoginDTO, RegisterDTO } from "../dtos/auth.dto";
 import { authPlugin } from "../plugins/auth";
 

@@ -1,4 +1,4 @@
-import { configDao, ConfigUpdate, NewConfig } from "../dao/configDao";
+import { configDao, ConfigUpdate, NewConfig } from "../dao/config.dao";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger";
 
