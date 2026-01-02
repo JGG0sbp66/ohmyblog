@@ -55,26 +55,5 @@ class ConfigDao {
             .limit(1);
         return result[0] || null;
     }
-
-    /**
-     * 列出配置，可按是否公开过滤
-     */
-    async listConfigs(options?: { isPublic?: boolean }) {
-        const { isPublic } = options ?? {};
-
-        const query = isPublic === undefined
-            ? db.select().from(config)
-            : db.select().from(config).where(eq(config.isPublic, isPublic));
-
-        const rows = await query;
-        return rows;
-    }
-
-    /**
-     * 列出所有公开配置
-     */
-    async listPublicConfigs() {
-        return await this.listConfigs({ isPublic: true });
-    }
 }
 export const configDao = new ConfigDao();
