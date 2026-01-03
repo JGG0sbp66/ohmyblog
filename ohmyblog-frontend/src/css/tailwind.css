@@ -1,9 +1,11 @@
+/* src/css/tailwind.css */
 @import "tailwindcss";
 
 /* 映射层 将主题映射给 Tailwind */
 @theme {
     /* --- 全局字体设置 --- */
-    --font-sans: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "sans-serif";
+    --font-sans:
+        "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "sans-serif";
 
     /* 按钮颜色 */
     --color-primary: var(--theme-primary);
@@ -83,14 +85,24 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor); /* 默认边框色处理，防止过渡时闪烁 */
+        border-color: var(
+            --color-gray-200,
+            currentColor
+        ); /* 默认边框色处理，防止过渡时闪烁 */
     }
 
     *,
     ::after,
     ::before {
         /* 保留主题切换的“视觉过渡”，但去掉文字 color 的过渡，避免黑白闪烁 */
-        transition-property: background-color, border-color, fill, stroke;
+        transition-property:
+            background-color,
+            border-color,
+            fill,
+            stroke,
+            stop-color,
+            opacity,
+            stop-opacity;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         transition-duration: 200ms;
     }

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { currentHue } from './useTheme';
+import { currentHue } from '@/composables/theme.hook';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import ColorPicker from '../icon/theme/ColorPicker.vue'
 import DropButton from '../common/button/DropButton.vue';

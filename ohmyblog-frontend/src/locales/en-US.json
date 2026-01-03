@@ -9,6 +9,13 @@
         "dark": "Dark",
         "auto": "System"
       }
+    },
+    "icon": {
+      "TypingBrand": {
+        "line1": "Welcome to",
+        "line2": "ohmyblog",
+        "line3": "Let's start configuring"
+      }
     }
   },
   "test": {

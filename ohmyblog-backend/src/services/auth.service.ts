@@ -7,6 +7,8 @@ class AuthService {
 
     /**
      * 注册逻辑
+     * @param body 用户注册信息（用户名、邮箱、明文密码）
+     * @returns 创建后的用户记录，包含角色与 uuid
      */
     async register(
         body: { username: string; email: string; password: string },
@@ -49,6 +51,9 @@ class AuthService {
 
     /**
      * 登录逻辑
+     * @param identifier 用户名或邮箱
+     * @param passwordPlain 明文密码
+     * @returns 登录后的用户实体，调用方可读取 role / uuid 等字段
      */
     async login(identifier: string, passwordPlain: string) {
         // 1. 查找用户

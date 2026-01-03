@@ -9,6 +9,13 @@
         "dark": "深色",
         "auto": "系统"
       }
+    },
+    "icon": {
+      "TypingBrand": {
+        "line1": "欢迎使用",
+        "line2": "ohmyblog",
+        "line3": "让我们开始配置吧"
+      }
     }
   },
   "test": {
