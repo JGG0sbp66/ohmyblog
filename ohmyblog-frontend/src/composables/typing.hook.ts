@@ -1,3 +1,4 @@
+// src/composables/typing.hook.ts
 import { type Ref, ref, unref, watch } from "vue";
 
 /**
@@ -15,32 +16,39 @@ export function useTyping(speed = 50) {
      * @param delay 延迟开始时间 (ms)
      */
     const type = (text: string | undefined, delay = 0) => {
-        return new Promise<void>((resolve) => {
-            const id = ++currentAnimationId;
+        // 每次调用 type，生成一个新的 ID
+        const id = ++currentAnimationId;
 
-            // 立即进入打字状态（显示光标）
-            isTyping.value = true;
+        return new Promise<void>((resolve) => {
+            // 立即停止并重置当前状态
+            const stopAndResolve = () => {
+                isTyping.value = false;
+                resolve();
+            };
 
             if (!text) {
                 displayText.value = "";
-                isTyping.value = false;
-                resolve();
+                stopAndResolve();
                 return;
             }
 
+            // 1. 处理延迟逻辑
             setTimeout(() => {
+                // 如果在延迟期间，ID 已经变了，说明该动画已被废弃
                 if (id !== currentAnimationId) {
-                    resolve();
+                    resolve(); // 直接结束，不设置 isTyping
                     return;
                 }
 
-                let index = 0;
+                // 2. 正式开始打字
+                isTyping.value = true;
                 displayText.value = "";
+                let index = 0;
 
                 const interval = setInterval(() => {
+                    // 每一帧都检查 ID，确保动画是当前最新的
                     if (id !== currentAnimationId) {
                         clearInterval(interval);
-                        isTyping.value = false;
                         resolve();
                         return;
                     }
@@ -49,6 +57,7 @@ export function useTyping(speed = 50) {
                         displayText.value += text[index];
                         index++;
                     } else {
+                        // 打字完成
                         clearInterval(interval);
                         isTyping.value = false;
                         resolve();

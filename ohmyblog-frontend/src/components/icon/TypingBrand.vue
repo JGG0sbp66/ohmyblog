@@ -1,4 +1,4 @@
-<!-- src/components/icon/BlogLogo.vue -->
+<!-- src/components/icon/TypingBrand.vue -->
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue'
 import { useTyping } from '@/composables/typing.hook'
@@ -20,15 +20,23 @@ const { displayText: line3Text, type: type3, reset: reset3, isTyping: isTyping3 
 
 const animationKey = ref(0)
 
+let lastCallId = 0
+
 // 开始执行三行字的连贯动画
 async function startAnimation() {
+    const currentId = ++lastCallId
+
     animationKey.value++
     reset1()
     reset2()
     reset3()
 
     await type1(props.line1, 300)
+    if (currentId !== lastCallId) return
+
     await type2(props.line2, 200)
+    if (currentId !== lastCallId) return
+
     await type3(props.line3, 200)
 }
 
@@ -76,17 +84,20 @@ onMounted(() => {
 
             <!-- 第一行文字：引用图标色/弱化文字色 -->
             <text x="180" y="85" font-size="18" fill="var(--theme-text-icon)" font-weight="400" text-anchor="middle">
-                {{ line1Text }}<tspan class="cursor" :style="{ visibility: isTyping1 ? 'visible' : 'hidden' }" fill="var(--theme-primary)">|</tspan>
+                {{ line1Text }}<tspan class="cursor" :style="{ visibility: isTyping1 ? 'visible' : 'hidden' }"
+                    fill="var(--theme-primary)">|</tspan>
             </text>
 
             <!-- 第二行文字（重点）：引用主色 -->
             <text x="180" y="120" font-size="32" fill="var(--theme-primary)" font-weight="700" text-anchor="middle">
-                {{ line2Text }}<tspan class="cursor" :style="{ visibility: isTyping2 ? 'visible' : 'hidden' }" fill="var(--theme-primary)">|</tspan>
+                {{ line2Text }}<tspan class="cursor" :style="{ visibility: isTyping2 ? 'visible' : 'hidden' }"
+                    fill="var(--theme-primary)">|</tspan>
             </text>
 
             <!-- 第三行文字：引用主文本色 -->
             <text x="180" y="155" font-size="16" fill="var(--theme-text-main)" font-weight="500" text-anchor="middle">
-                {{ line3Text }}<tspan class="cursor" :style="{ visibility: isTyping3 ? 'visible' : 'hidden' }" fill="var(--theme-primary)">|</tspan>
+                {{ line3Text }}<tspan class="cursor" :style="{ visibility: isTyping3 ? 'visible' : 'hidden' }"
+                    fill="var(--theme-primary)">|</tspan>
             </text>
 
             <!-- 装饰小按钮：引用主色 -->
