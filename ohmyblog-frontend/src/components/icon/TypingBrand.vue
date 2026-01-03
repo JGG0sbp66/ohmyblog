@@ -76,20 +76,17 @@ onMounted(() => {
 
             <!-- 第一行文字：引用图标色/弱化文字色 -->
             <text x="180" y="85" font-size="18" fill="var(--theme-text-icon)" font-weight="400" text-anchor="middle">
-                {{ line1Text }}
-                <tspan class="cursor" v-if="isTyping1" fill="var(--theme-primary)">|</tspan>
+                {{ line1Text }}<tspan class="cursor" :style="{ visibility: isTyping1 ? 'visible' : 'hidden' }" fill="var(--theme-primary)">|</tspan>
             </text>
 
             <!-- 第二行文字（重点）：引用主色 -->
             <text x="180" y="120" font-size="32" fill="var(--theme-primary)" font-weight="700" text-anchor="middle">
-                {{ line2Text }}
-                <tspan class="cursor" v-if="isTyping2" fill="var(--theme-primary)">|</tspan>
+                {{ line2Text }}<tspan class="cursor" :style="{ visibility: isTyping2 ? 'visible' : 'hidden' }" fill="var(--theme-primary)">|</tspan>
             </text>
 
             <!-- 第三行文字：引用主文本色 -->
             <text x="180" y="155" font-size="16" fill="var(--theme-text-main)" font-weight="500" text-anchor="middle">
-                {{ line3Text }}
-                <tspan class="cursor" v-if="isTyping3" fill="var(--theme-primary)">|</tspan>
+                {{ line3Text }}<tspan class="cursor" :style="{ visibility: isTyping3 ? 'visible' : 'hidden' }" fill="var(--theme-primary)">|</tspan>
             </text>
 
             <!-- 装饰小按钮：引用主色 -->
