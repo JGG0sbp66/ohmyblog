@@ -1,7 +1,7 @@
 import { createI18n } from "vue-i18n";
 import { useStorage } from "@vueuse/core";
-import zhCN from "./zh-CN.json";
-import enUS from "./en-US.json";
+import zhCN from "@/locales/zh-CN.json";
+import enUS from "@/locales/en-US.json";
 
 // 定义语言包
 const LOCALE_CONFIG = {
