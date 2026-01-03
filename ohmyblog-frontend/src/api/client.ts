@@ -1,3 +1,4 @@
+// src/api/client.ts
 import { treaty } from '@elysiajs/eden';
 import type { ServerApp } from '@server/app';
 
