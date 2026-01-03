@@ -2,10 +2,15 @@
 import { defineStore } from "pinia";
 import { getHealth } from "@/api/health.api";
 
+interface SystemState {
+    version: string;
+    initialized: boolean | null;
+}
+
 export const useSystemStore = defineStore("system", {
-    state: () => ({
-        version: "" as string,
-        initialized: null as boolean | null,
+    state: (): SystemState => ({
+        version: "",
+        initialized: null,
     }),
 
     actions: {
@@ -22,7 +27,7 @@ export const useSystemStore = defineStore("system", {
 
             try {
                 const data = await getHealth();
-                
+
                 if (!data || typeof data.initialized !== "boolean") {
                     throw new Error("后端返回的健康状态数据格式不正确");
                 }
