@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import LanguagePicker from '../icon/theme/LanguagePicker.vue'
-import i18n, { SUPPORTED_LOCALES, setLocale, type LocaleType } from '@/locales/useLang';
+import i18n, { SUPPORTED_LOCALES, setLocale, type LocaleType } from '@/composables/lang.hook';
 import DropButton from '../common/button/DropButton.vue';
 
 
