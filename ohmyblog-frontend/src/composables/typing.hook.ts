@@ -1,13 +1,13 @@
-import { ref, watch, unref, type Ref } from 'vue'
+import { type Ref, ref, unref, watch } from "vue";
 
 /**
  * 打字机效果 Hook
  * @param speed 打字速度 (ms)
  */
 export function useTyping(speed = 50) {
-    const displayText = ref('')
-    const isTyping = ref(false)
-    let currentAnimationId = 0
+    const displayText = ref("");
+    const isTyping = ref(false);
+    let currentAnimationId = 0;
 
     /**
      * 执行打字动画
@@ -16,58 +16,61 @@ export function useTyping(speed = 50) {
      */
     const type = (text: string | undefined, delay = 0) => {
         return new Promise<void>((resolve) => {
-            const id = ++currentAnimationId
-            
+            const id = ++currentAnimationId;
+
+            // 立即进入打字状态（显示光标）
+            isTyping.value = true;
+
             if (!text) {
-                displayText.value = ''
-                resolve()
-                return
+                displayText.value = "";
+                isTyping.value = false;
+                resolve();
+                return;
             }
 
             setTimeout(() => {
                 if (id !== currentAnimationId) {
-                    resolve()
-                    return
+                    resolve();
+                    return;
                 }
 
-                let index = 0
-                displayText.value = ''
-                isTyping.value = true
+                let index = 0;
+                displayText.value = "";
 
                 const interval = setInterval(() => {
                     if (id !== currentAnimationId) {
-                        clearInterval(interval)
-                        isTyping.value = false
-                        resolve()
-                        return
+                        clearInterval(interval);
+                        isTyping.value = false;
+                        resolve();
+                        return;
                     }
 
                     if (index < text.length) {
-                        displayText.value += text[index]
-                        index++
+                        displayText.value += text[index];
+                        index++;
                     } else {
-                        clearInterval(interval)
-                        isTyping.value = false
-                        resolve()
+                        clearInterval(interval);
+                        isTyping.value = false;
+                        resolve();
                     }
-                }, speed)
-            }, delay)
-        })
-    }
+                }, speed);
+            }, delay);
+        });
+    };
 
     /**
      * 重置文本
      */
     const reset = () => {
-        currentAnimationId++
-        displayText.value = ''
-        isTyping.value = false
-    }
+        currentAnimationId++;
+        displayText.value = "";
+        isTyping.value = false;
+    };
 
     return {
         displayText,
         isTyping,
         type,
-        reset
-    }
+        reset,
+    };
 }
