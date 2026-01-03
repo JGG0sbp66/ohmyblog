@@ -1,6 +1,7 @@
 <!-- src/components/icon/BlogLogo.vue -->
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue'
+import { useTyping } from '@/composables/typing.hook'
 
 // 1. 定义 Props，设置默认值为空字符串
 const props = withDefaults(defineProps<{
@@ -13,61 +14,26 @@ const props = withDefaults(defineProps<{
     line3: ''
 })
 
-// 动画显示用的响应式变量
-const line1Text = ref('')
-const line2Text = ref('')
-const line3Text = ref('')
+const { displayText: line1Text, type: type1, reset: reset1, isTyping: isTyping1 } = useTyping(50)
+const { displayText: line2Text, type: type2, reset: reset2, isTyping: isTyping2 } = useTyping(50)
+const { displayText: line3Text, type: type3, reset: reset3, isTyping: isTyping3 } = useTyping(50)
+
 const animationKey = ref(0)
-
-/**
- * 打字机核心函数
- * @param fullText 完整的文字
- * @param targetRef 要修改的响应式变量
- * @param delay 延迟多久开始打字
- */
-function typeText(fullText: string, targetRef: typeof line1Text, delay: number) {
-    return new Promise<void>((resolve) => {
-        // 如果没传文字，直接结束
-        if (!fullText) {
-            resolve()
-            return
-        }
-
-        setTimeout(() => {
-            let index = 0
-            targetRef.value = ''
-            const interval = setInterval(() => {
-                if (index < fullText.length) {
-                    targetRef.value += fullText[index]
-                    index++
-                } else {
-                    clearInterval(interval)
-                    resolve()
-                }
-            }, 50)
-        }, delay)
-    })
-}
 
 // 开始执行三行字的连贯动画
 async function startAnimation() {
-    line1Text.value = ''
-    line2Text.value = ''
-    line3Text.value = ''
+    animationKey.value++
+    reset1()
+    reset2()
+    reset3()
 
-    await typeText(props.line1, line1Text, 300)
-    await typeText(props.line2, line2Text, 200)
-    await typeText(props.line3, line3Text, 200)
+    await type1(props.line1, 300)
+    await type2(props.line2, 200)
+    await type3(props.line3, 200)
 }
-
-// 辅助计算属性：判断是否正在输入，用来控制光标显示
-const isTyping1 = computed(() => line1Text.value.length > 0 && line1Text.value.length < props.line1.length)
-const isTyping2 = computed(() => line2Text.value.length > 0 && line2Text.value.length < props.line2.length)
-const isTyping3 = computed(() => line3Text.value.length > 0 && line3Text.value.length < props.line3.length)
 
 // 监听内容变化，内容变了就重播动画
 watch(() => [props.line1, props.line2, props.line3], () => {
-    animationKey.value++
     startAnimation()
 })
 
