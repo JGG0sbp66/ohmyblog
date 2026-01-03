@@ -13,6 +13,7 @@ export const markHasAdmin = () => {
 
 /**
  * 缓存模式获取是否存在管理员
+ * @returns 是否已存在管理员用户
  */
 const hasAdmin = async () => {
     if (hasAdminCache === null) {

@@ -3,6 +3,13 @@ import { Elysia } from "elysia";
 // ---------------------------------------------
 // 失败响应包装
 // ---------------------------------------------
+/**
+ * 统一错误响应格式化
+ * @param code Elysia 错误代码
+ * @param error 框架或业务异常对象
+ * @param set 响应控制对象，可设置状态码
+ * @returns 统一格式的错误响应体
+ */
 const formatError = ({ code, error, set }: any) => {
     // 处理验证错误
     if (code === "VALIDATION") {
@@ -38,6 +45,12 @@ const formatError = ({ code, error, set }: any) => {
 // ---------------------------------------------
 // 成功响应包装
 // ---------------------------------------------
+/**
+ * 统一成功响应包装，避免重复包装已格式化对象
+ * @param response 原始响应数据
+ * @param set 响应控制对象，用于读取状态码
+ * @returns 包装后的成功响应或透传原始响应
+ */
 const formatResponse = ({ response, set }: any) => {
     // 如果是错误响应，直接放行
     if (set.status >= 400) {

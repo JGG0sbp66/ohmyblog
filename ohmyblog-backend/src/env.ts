@@ -43,6 +43,10 @@ if (!existsSync(DATA_DIR)) {
     mkdirSync(DATA_DIR, { recursive: true });
 }
 
+/**
+ * 初始化配置文件，若 data/.env 不存在则自动生成，并返回 kv 映射
+ * @returns 合并后的环境变量映射
+ */
 async function initConfig() {
     const file = Bun.file(ENV_PATH);
     let envMap: Record<string, string> = {};

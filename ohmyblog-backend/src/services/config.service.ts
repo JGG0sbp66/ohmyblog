@@ -9,6 +9,8 @@ class ConfigService {
 
     /**
      * 保存或更新配置, 存在则更新, 不存在则创建
+     * @param data 配置载荷，包含 configKey 以及要更新的字段
+     * @returns 新增或更新后的配置记录
      */
     async upsert(data: TConfigUpsertDTO) {
         const { configKey, ...updateFields } = data;
@@ -42,6 +44,8 @@ class ConfigService {
 
     /**
      * 删除配置，不存在则 404
+     * @param configKey 要删除的配置键名
+     * @returns 被删除的配置记录
      */
     async delete(configKey: string) {
         const removed = await configDao.deleteByKey(configKey);
@@ -56,6 +60,7 @@ class ConfigService {
      * 获取单个配置
      * @param configKey 键名
      * @param isAdmin 是否以管理员身份访问 (如果是，则绕过 isPublic 限制)
+     * @returns 配置记录，若不存在或无权限则抛出 404
      */
     async getByKey(configKey: string, isAdmin: boolean = false) {
         const item = await configDao.findByKey(configKey);

@@ -21,8 +21,12 @@ export const jwtConfig = {
     }),
 };
 
-// 权限校验逻辑 (仅负责检查 user 对象，不负责解析 Token)
-// 此时 derive 已经运行过了，ctx 中已经有 user 了
+/**
+ * 权限校验逻辑 (仅负责检查 user 对象，不负责解析 Token)
+ * 此时 derive 已经运行过了，ctx 中已经有 user 了
+ * @param expectedRole 需要满足的角色（管理员也默认放行）
+ * @returns Elysia beforeHandle 兼容的守卫函数
+ */
 export const createRoleGuard =
     (expectedRole: Roles) => ({ user, set, cookie: { auth_token } }: any) => {
         // 如果 derive 没找到 user，说明 Token 无效或缺失

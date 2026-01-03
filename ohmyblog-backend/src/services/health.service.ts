@@ -10,6 +10,9 @@ export class HealthService {
         this.initCommitHash();
     }
 
+    /**
+     * 初始化版本号，优先从环境变量读取，失败则尝试 Git 命令
+     */
     private async initCommitHash() {
         // 策略 1: 优先读取环境变量 (Docker/生产环境)
         if (process.env.GIT_COMMIT) {
@@ -40,6 +43,7 @@ export class HealthService {
 
     /**
      * 获取健康状态数据
+     * @returns 当前版本号及是否已初始化管理员
      */
     async getSystemStatus() {
         const hasAdmin = await usersDao.hasAnyAdmin();
