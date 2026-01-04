@@ -1,5 +1,23 @@
 {
   "components": {
+    "common": {
+      "layout": {
+        "Header": {
+          "nav": {
+            "home": "Home",
+            "archive": "Archive",
+            "about": "About"
+          }
+        }
+      }
+    },
+    "base": {
+      "progress": {
+        "BaseProgress": {
+          "step": "Step {current}/{total}"
+        }
+      }
+    },
     "theme": {
       "ToggleColor": {
         "paletteTitle": "Theme Color"
