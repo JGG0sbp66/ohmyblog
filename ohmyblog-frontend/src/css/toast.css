@@ -28,6 +28,12 @@
     --toastify-color-error: oklch(0.60 0.18 20); /* 红色系 */
 }
 
+/* 3. 让自定义图标自动读取对应的状态颜色 */
+.Toastify__toast--success .Toastify__toast-icon { color: var(--toastify-color-success); }
+.Toastify__toast--error .Toastify__toast-icon { color: var(--toastify-color-error); }
+.Toastify__toast--info .Toastify__toast-icon { color: var(--toastify-color-info); }
+.Toastify__toast--warning .Toastify__toast-icon { color: var(--toastify-color-warning); }
+
 /* 右上角按钮样式调整 */
 .Toastify__close-button--light {
     color: var(--theme-text-main);
