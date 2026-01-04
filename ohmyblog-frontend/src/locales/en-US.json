@@ -1,5 +1,16 @@
 {
   "components": {
+    "common": {
+      "layout": {
+        "Header": {
+          "nav": {
+            "home": "Home",
+            "archive": "Archive",
+            "about": "About"
+          }
+        }
+      }
+    },
     "base": {
       "progress": {
         "BaseProgress": {
