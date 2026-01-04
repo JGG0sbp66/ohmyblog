@@ -8,6 +8,7 @@ import "@/composables/theme.hook";
 
 // 全局引入 Tailwind CSS 样式
 import "./css/tailwind.css";
+import "./css/toastify.css";
 
 const app = createApp(App);
 
