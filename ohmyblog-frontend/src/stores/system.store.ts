@@ -1,6 +1,7 @@
 // src/stores/system.store.ts
 import { defineStore } from "pinia";
 import { getHealth } from "@/api/health.api";
+import { toast } from "vue3-toastify";
 
 interface SystemState {
     version: string;
@@ -38,6 +39,7 @@ export const useSystemStore = defineStore("system", {
             } catch (error) {
                 console.error("Store 中获取系统状态失败:", error);
                 // TODO: 后续修改为发送全局弹窗
+                toast.error("系统健康检查失败");
                 // 如果失败了，默认返回当前状态或 false，防止路由死锁
                 return this.initialized ?? false;
             }
