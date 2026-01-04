@@ -36,6 +36,23 @@
       }
     }
   },
+  "views": {
+    "setup": {
+      "steps": {
+        "step1": {
+          "welcome": "Welcome to your new blog journey.",
+          "title": "Appearance",
+          "description": "Customize how your blog looks and feels.",
+          "language": "Language",
+          "theme": "Theme Mode",
+          "color": "Accent Color"
+        }
+      }
+    }
+  },
+  "common": {
+    "next": "Next Step"
+  },
   "test": {
     "text": "status 1",
     "text2": "Loading"

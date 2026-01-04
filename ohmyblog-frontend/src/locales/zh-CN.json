@@ -36,6 +36,23 @@
       }
     }
   },
+  "views": {
+    "setup": {
+      "steps": {
+        "step1": {
+          "welcome": "欢迎开始你的博客之旅。",
+          "title": "外观设置",
+          "description": "自定义你的博客外观和感觉。",
+          "language": "语言",
+          "theme": "主题模式",
+          "color": "主题色"
+        }
+      }
+    }
+  },
+  "common": {
+    "next": "下一步"
+  },
   "test": {
     "text": "状态1",
     "text2": "加载中"
