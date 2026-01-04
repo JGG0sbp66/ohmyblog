@@ -22,7 +22,7 @@ const isActive = (value: string) => {
 </script>
 
 <template>
-    <DropButton>
+    <DropButton placement="-left-10">
         <template #trigger="{ active }">
             <!-- 点击触发循环切换 -->
             <ButtonSecondary :hasSlot="true" :isActive="active" @click="cycleTheme()">

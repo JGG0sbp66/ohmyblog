@@ -6,7 +6,7 @@ import DropButton from '../common/button/DropButton.vue';
 </script>
 
 <template>
-    <DropButton :contentClass="'flex flex-col gap-4 min-w-60 p-4'">
+    <DropButton :contentClass="'flex flex-col gap-4 min-w-60 p-4'" placement="-left-20">
         <template #trigger="{ active }">
             <ButtonSecondary :hasSlot="true" :isActive="active">
                 <ColorPicker />
