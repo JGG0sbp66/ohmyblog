@@ -5,11 +5,13 @@ import { ref } from 'vue';
 interface Props {
     triggerClass?: string;
     contentClass?: string;
+    placement?: string;
 }
 
 const {
     triggerClass = 'w-11 h-11',
-    contentClass = 'min-w-30 p-2'
+    contentClass = 'min-w-30 p-2',
+    placement = 'left-0'
 } = defineProps<Props>();
 
 const isShow = ref(false);
@@ -31,9 +33,9 @@ const hidePop = () => {
         </div>
 
         <!-- 桥接层：填充按钮和浮窗之间的间隙，防止鼠标移动时浮窗消失 -->
-        <div v-if="isShow" class="absolute -left-5 right-0 h-6 w-36 top-11"></div>
+        <div v-if="isShow" :class="['absolute h-6 w-40 top-11', placement]"></div>
 
-        <BasePop v-model="isShow" :trigger-ref="btnRef" :class="contentClass">
+        <BasePop v-model="isShow" :trigger-ref="btnRef" :class="[contentClass, placement]">
             <slot name="content"></slot>
         </BasePop>
     </div>
