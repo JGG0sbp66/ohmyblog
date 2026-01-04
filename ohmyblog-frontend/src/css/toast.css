@@ -3,7 +3,7 @@
 /* 引入官方基础样式 */
 @import "vue3-toastify/dist/index.css";
 
-/* 2. 覆盖 Toastify 的全局 CSS 变量 */
+/* 覆盖 Toastify 的全局 CSS 变量 */
 :root {
     /* 基础跨度 */
     --toastify-toast-width: 320px;
@@ -28,11 +28,19 @@
     --toastify-color-error: oklch(0.60 0.18 20); /* 红色系 */
 }
 
-/* 3. 让自定义图标自动读取对应的状态颜色 */
-.Toastify__toast--success .Toastify__toast-icon { color: var(--toastify-color-success); }
-.Toastify__toast--error .Toastify__toast-icon { color: var(--toastify-color-error); }
-.Toastify__toast--info .Toastify__toast-icon { color: var(--toastify-color-info); }
-.Toastify__toast--warning .Toastify__toast-icon { color: var(--toastify-color-warning); }
+/* 让自定义图标自动读取对应的状态颜色 */
+.Toastify__toast--success .Toastify__toast-icon {
+    color: var(--toastify-color-success);
+}
+.Toastify__toast--error .Toastify__toast-icon {
+    color: var(--toastify-color-error);
+}
+.Toastify__toast--info .Toastify__toast-icon {
+    color: var(--toastify-color-info);
+}
+.Toastify__toast--warning .Toastify__toast-icon {
+    color: var(--toastify-color-warning);
+}
 
 /* 右上角按钮样式调整 */
 .Toastify__close-button--light {
@@ -42,4 +50,20 @@
 
 .Toastify__close-button--light:hover {
     opacity: 1;
+}
+
+/* 确保图标容器本身是 Flex 居中的 */
+.Toastify__toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; /* 固定的容器宽度 */
+    height: 24px; /* 固定的容器高度 */
+    margin-inline-end: 12px; /* 与文字的间距 */
+}
+
+.Toastify__toast-icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
 }
