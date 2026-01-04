@@ -47,7 +47,6 @@ transition-all duration-200 ease-in-out
 
             <!-- 右侧按钮区域 -->
             <div class="flex items-center mr-4 gap-2">
-                <!-- TODO: 需要优化弹出弹出的位置，目前有点靠右，小屏幕下可能会被挡住 -->
                 <ToggleColor />
                 <ToggleTheme />
                 <ToggleLanguage />
