@@ -1,5 +1,12 @@
 {
   "components": {
+    "base": {
+      "progress": {
+        "BaseProgress": {
+          "step": "第 {current}/{total} 步"
+        }
+      }
+    },
     "theme": {
       "ToggleColor": {
         "paletteTitle": "主题颜色"

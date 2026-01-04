@@ -1,5 +1,12 @@
 {
   "components": {
+    "base": {
+      "progress": {
+        "BaseProgress": {
+          "step": "Step {current}/{total}"
+        }
+      }
+    },
     "theme": {
       "ToggleColor": {
         "paletteTitle": "Theme Color"
