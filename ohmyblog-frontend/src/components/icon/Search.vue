@@ -1,3 +1,4 @@
+<!-- src/components/icon/Search.vue -->
 <script setup lang="ts">
 import { RiSearchLine } from '@remixicon/vue';
 </script>
