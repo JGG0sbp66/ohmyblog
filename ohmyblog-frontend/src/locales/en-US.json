@@ -51,7 +51,8 @@
     }
   },
   "common": {
-    "next": "Next Step"
+    "next": "Next Step",
+    "prev": "Previous"
   },
   "test": {
     "text": "status 1",
