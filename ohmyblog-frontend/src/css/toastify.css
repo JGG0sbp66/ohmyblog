@@ -1,0 +1,39 @@
+/* src/css/toastify.css */
+
+/* 引入官方基础样式 */
+@import "vue3-toastify/dist/index.css";
+
+/* 2. 覆盖 Toastify 的全局 CSS 变量 */
+:root {
+    /* 基础跨度 */
+    --toastify-toast-width: 320px;
+    --toastify-toast-bd-radius: 12px;
+    --toastify-font-family: var(--font-sans);
+
+    /* 默认状态下的背景和文字 (Light Mode) */
+    --toastify-color-light: var(--theme-bg-card);
+    --toastify-text-color-light: var(--theme-text-main);
+
+    /* 进度条颜色 */
+    --toastify-color-progress-light: var(--theme-primary);
+    --toastify-color-progress-info: var(--theme-primary);
+    --toastify-color-progress-success: var(--theme-primary);
+    --toastify-color-progress-warning: var(--theme-primary);
+    --toastify-color-progress-error: var(--theme-primary);
+
+    /* 各种状态颜色映射 */
+    --toastify-color-info: var(--theme-primary);
+    --toastify-color-success: oklch(0.65 0.15 150); /* 绿色系 */
+    --toastify-color-warning: oklch(0.75 0.15 80); /* 黄色系 */
+    --toastify-color-error: oklch(0.60 0.18 20); /* 红色系 */
+}
+
+/* 右上角按钮样式调整 */
+.Toastify__close-button--light {
+    color: var(--theme-text-main);
+    opacity: 0.7;
+}
+
+.Toastify__close-button--light:hover {
+    opacity: 1;
+}
