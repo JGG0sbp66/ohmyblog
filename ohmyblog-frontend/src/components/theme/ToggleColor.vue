@@ -25,7 +25,7 @@ import ColorSlider from '../base/slider/ColorSlider.vue';
                         }}</span>
                 </div>
                 <span
-                    class="w-10 h-7 bg-bg-secondary flex items-center justify-center text-text-icon rounded-lg text-sm font-bold transition-all duration-200">{{
+                    class="w-10 h-7 bg-bg-secondary flex items-center justify-center text-text-icon rounded-lg text-sm font-bold">{{
                         currentHue }}</span>
             </div>
 
