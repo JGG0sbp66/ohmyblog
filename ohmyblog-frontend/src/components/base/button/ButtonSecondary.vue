@@ -1,3 +1,4 @@
+<!-- src/components/base/button/ButtonSecondary.vue -->
 <script lang="ts" setup>
 import { computed } from 'vue';
 
