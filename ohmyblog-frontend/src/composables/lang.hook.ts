@@ -1,3 +1,4 @@
+// src/composables/lang.hook.ts
 import { createI18n } from "vue-i18n";
 import { useStorage } from "@vueuse/core";
 import zhCN from "@/locales/zh-CN.json";
