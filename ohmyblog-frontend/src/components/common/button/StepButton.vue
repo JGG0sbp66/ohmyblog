@@ -1,4 +1,4 @@
-<!-- src/views/setup/components/StepNavigation.vue -->
+<!-- src/views/setup/components/StepButton.vue -->
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
