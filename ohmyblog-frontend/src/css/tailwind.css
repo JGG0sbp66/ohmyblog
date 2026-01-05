@@ -112,3 +112,9 @@ body {
     background-color: var(--theme-bg-page);
     color: var(--theme-text-main);
 }
+
+@layer utilities {
+    .text-text-icon {
+        @apply transition-all duration-200;
+    }
+}
