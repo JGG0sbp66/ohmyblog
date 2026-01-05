@@ -1,3 +1,4 @@
+// src/composables/theme.hook.ts
 import { useColorMode, useStorage } from '@vueuse/core';
 import { watch, computed } from 'vue';
 
