@@ -27,6 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const stepStore = useSetupStore();
 
+defineEmits(['next']);
 </script>
 
 <template>
@@ -36,7 +37,7 @@ const stepStore = useSetupStore();
             @click="stepStore.prev()" :text="prevText || t('common.prev')" />
 
         <!-- 下一步按钮 -->
-        <ButtonPrimary class="flex-1 py-2" @click="stepStore.next()" :text="nextText || t('common.next')"
+        <ButtonPrimary class="flex-1 py-2" @click="$emit('next')" :text="nextText || t('common.next')"
             :disabled="nextDisabled" :loading="loading" />
     </div>
 </template>
