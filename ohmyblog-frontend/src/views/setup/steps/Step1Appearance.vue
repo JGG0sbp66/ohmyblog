@@ -23,7 +23,7 @@ async function handleNext() {
         isSubmitting.value = true;
 
         const res = await upsertConfig({
-            configKey: '',
+            configKey: 'appearance',
             configValue: {
                 theme: colorMode.value,
                 hue: currentHue.value,
