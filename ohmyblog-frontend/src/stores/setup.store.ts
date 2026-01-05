@@ -5,8 +5,6 @@ import { useI18n } from "vue-i18n";
 
 export const useSetupStore = defineStore("setup", () => {
     const { t } = useI18n();
-    const currentStep = ref(1);
-    const totalSteps = 5;
     // 进度标题对应的国际化键
     const progressTitleKeys = [
         "stores.setup.progress.step1",
@@ -18,6 +16,8 @@ export const useSetupStore = defineStore("setup", () => {
     const currentTitle = computed(() =>
         t(progressTitleKeys[currentStep.value - 1]!)
     );
+    const currentStep = ref(1);
+    const totalSteps = progressTitleKeys.length;
 
     function next() {
         if (currentStep.value < totalSteps) currentStep.value++;
