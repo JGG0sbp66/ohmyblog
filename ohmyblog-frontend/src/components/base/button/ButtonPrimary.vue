@@ -1,13 +1,16 @@
+<!-- src/components/base/button/ButtonPrimary.vue -->
 <script lang="ts" setup>
 import { computed } from "vue";
 
 const props = withDefaults(
     defineProps<{
-        isLoading?: boolean;
+        loading?: boolean;
+        disabled?: boolean;
         text?: string;
     }>(),
     {
-        isLoading: false,
+        loading: false,
+        disabled: false,
         text: "请输入文本",
     },
 );
@@ -27,8 +30,8 @@ const btnClass = computed(() => {
     `;
 
     // 状态样式 - 根据当前状态动态变化的样式
-    const state = props.isLoading
-        // Loading状态样式
+    const state = props.disabled || props.loading
+        // 加载或者禁用状态样式
         ? `
             bg-primary-active              /* 使用激活状态的主色调 */
             cursor-not-allowed             /* 禁用光标，表示不可点击 */
@@ -47,10 +50,10 @@ const btnClass = computed(() => {
 </script>
 
 <template>
-    <button :disabled="props.isLoading" :class="btnClass">
+    <button :disabled="props.disabled" :class="btnClass">
 
         <!-- Loading 图标插槽 -->
-        <span v-if="props.isLoading" class="mr-2">
+        <span v-if="props.loading" class="mr-2">
             <slot></slot>
         </span>
 
