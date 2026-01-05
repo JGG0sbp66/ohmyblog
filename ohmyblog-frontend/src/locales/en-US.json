@@ -64,5 +64,15 @@
         "step5": "Connect the dots"
       }
     }
+  },
+  "api": {
+    "errors": {
+      "请求参数验证失败": "Request validation failed"
+    },
+    "success": {
+      "config": {
+        "保存成功": "Settings saved successfully"
+      }
+    }
   }
 }
