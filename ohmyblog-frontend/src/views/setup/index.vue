@@ -29,19 +29,19 @@ const CurrentStepComponent = computed(() => {
 <template>
     <div class="min-h-screen flex flex-col bg-bg-primary overflow-x-hidden">
 
-        <!-- 包裹区域 -->
-        <main class="flex-1 flex flex-col items-center pt-20 pb-12 p-4 md:p-8">
+        <!-- main 撑满除 Footer 外的所有高度 -->
+        <main class="flex-1 flex flex-col p-4 md:p-8">
 
-            <div class="w-full max-w-122 lg:max-w-5xl flex flex-col gap-15">
-                <!-- 进度条区域 -->
-                <div class="w-full">
-                    <BaseProgress :currentStep="stepStore.currentStep" :totalSteps="stepStore.totalSteps"
-                        :title="stepStore.currentTitle" />
-                </div>
+            <!-- 进度条区域：固定在上方，不受居中影响 -->
+            <div class="w-full max-w-5xl mx-auto pt-4">
+                <BaseProgress :currentStep="stepStore.currentStep" :totalSteps="stepStore.totalSteps"
+                    :title="stepStore.currentTitle" />
+            </div>
 
-                <!-- 初始化区域 -->
-                <div class="w-full gap-12 max-w-5xl flex flex-1 items-center justify-center">
+            <!-- 初始化/表单核心区域：使用 flex-1 占据所有剩余高度 -->
+            <div class="flex-1 flex items-center justify-center">
 
+                <div class="w-full max-w-5xl flex items-center justify-center gap-12">
                     <!-- 左侧：Logo 展示区 -->
                     <div class="hidden lg:block w-full">
                         <TypingBrand :line1="t('components.icon.TypingBrand.line1')"
@@ -50,9 +50,7 @@ const CurrentStepComponent = computed(() => {
                     </div>
 
                     <!-- 右侧：表单流程区 -->
-                    <div v-auto-animate class="w-full max-w-122 bg-bg-card rounded-3xl">
-
-                        <!-- TODO: 完善流程区域 -->
+                    <div v-auto-animate class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl">
                         <component :is="CurrentStepComponent" :key="stepStore.currentStep" />
                     </div>
                 </div>
@@ -60,6 +58,6 @@ const CurrentStepComponent = computed(() => {
         </main>
 
         <!-- 底部版权信息 -->
-        <Footer />
+        <Footer></Footer>
     </div>
 </template>
