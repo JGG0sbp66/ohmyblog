@@ -1,29 +1,46 @@
 <!-- src/views/setup/index.vue -->
 <script setup lang="ts">
 import TypingBrand from '@/components/icon/TypingBrand.vue';
-import Header from '@/components/common/layout/Header.vue';
 import Footer from '@/components/common/layout/Footer.vue';
 import BaseProgress from '@/components/base/progress/BaseProgress.vue';
+
+import { vAutoAnimate } from '@formkit/auto-animate'
+import { useSetupStore } from '@/stores/setup.store';
 import { useI18n } from 'vue-i18n';
+import { computed } from 'vue';
 
 const { t } = useI18n();
+const stepStore = useSetupStore();
+
+// 引入步骤组件
+import Step1Appearance from '@/views/setup/steps/Step1Appearance.vue';
+import Step2Info from '@/views/setup/steps/Step2Info.vue';
+
+const stepComponents = [
+    Step1Appearance,
+    Step2Info
+]
+
+const CurrentStepComponent = computed(() => {
+    return stepComponents[stepStore.currentStep - 1];
+});
 </script>
 
 <template>
-    <div v-if="true" class="min-h-screen flex flex-col bg-bg-primary">
-        <!-- 顶部调试栏 -->
-        <Header />
+    <div class="min-h-screen flex flex-col bg-bg-primary overflow-x-hidden">
 
         <!-- 包裹区域 -->
-        <main class="flex-1 flex items-center justify-center p-4 md:p-8">
+        <main class="flex-1 flex flex-col items-center pt-20 pb-12 p-4 md:p-8">
 
-            <div class="w-full max-w-122 lg:max-w-5xl flex flex-col gap-8">
+            <div class="w-full max-w-122 lg:max-w-5xl flex flex-col gap-15">
                 <!-- 进度条区域 -->
-                <!-- TODO: 后续改为真实进度 -->
-                <BaseProgress :currentStep="1" :totalSteps="5" :title="'我是进度条title'" />
+                <div class="w-full">
+                    <BaseProgress :currentStep="stepStore.currentStep" :totalSteps="stepStore.totalSteps"
+                        :title="stepStore.currentTitle" />
+                </div>
 
                 <!-- 初始化区域 -->
-                <div class="w-full gap-12 max-w-5xl flex items-center justify-center">
+                <div class="w-full gap-12 max-w-5xl flex flex-1 items-center justify-center">
 
                     <!-- 左侧：Logo 展示区 -->
                     <div class="hidden lg:block w-full">
@@ -33,8 +50,10 @@ const { t } = useI18n();
                     </div>
 
                     <!-- 右侧：表单流程区 -->
-                    <div class="w-full max-w-122 bg-bg-card text-text-icon rounded-3xl">
-                        <div class="p-4 h-125 block">请输入文本</div>
+                    <div v-auto-animate class="w-full max-w-122 bg-bg-card rounded-3xl">
+
+                        <!-- TODO: 完善流程区域 -->
+                        <component :is="CurrentStepComponent" :key="stepStore.currentStep" />
                     </div>
                 </div>
             </div>
