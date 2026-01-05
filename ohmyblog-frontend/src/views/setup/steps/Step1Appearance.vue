@@ -8,13 +8,42 @@ import LanguagePicker from '@/components/icon/theme/LanguagePicker.vue';
 import ThemePicker from '@/components/icon/theme/ThemePicker.vue';
 import ColorSlider from '@/components/base/slider/ColorSlider.vue';
 import StepButton from '@/components/common/button/StepButton.vue';
+import { useSetupStore } from '@/stores/setup.store';
+import { useToast } from '@/composables/toast.hook';
+import { ref } from 'vue';
+import { upsertConfig } from '@/api/config.api';
 
 const { t, locale } = useI18n();
+
+const stepStore = useSetupStore();
+const isSubmitting = ref(false);
+
+async function handleNext() {
+    try {
+        isSubmitting.value = true;
+
+        const res = await upsertConfig({
+            configKey: '',
+            configValue: {
+                theme: colorMode.value,
+                hue: currentHue.value,
+                language: locale.value
+            }
+        });
+
+        useToast.success(t(`api.success.config.${res!.message}`));
+
+        stepStore.next();
+    } catch (error) {
+        useToast.error(t(`api.errors.${error}`));
+    } finally {
+        isSubmitting.value = false;
+    }
+}
 </script>
 
 <template>
     <div class="p-8 flex flex-col gap-8">
-        <!-- TODO: 颜色文本需要添加过渡动画 druantion-200ms transiton-all -->
         <!-- 标题 -->
         <div class="flex flex-col gap-2">
             <h2 class="text-2xl font-bold text-text-main">{{ t('views.setup.steps.step1.title') }}</h2>
@@ -73,6 +102,6 @@ const { t, locale } = useI18n();
         </div>
 
         <!-- 按钮区域 -->
-        <StepButton :showPrev="false" />
+        <StepButton :showPrev="false" :loading="isSubmitting" @next="handleNext" />
     </div>
 </template>
