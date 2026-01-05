@@ -1,3 +1,4 @@
+// src/api/config.api.ts
 import { api, unwrap } from "./client";
 import type { TConfigUpsertDTO } from "@server/dtos/config.dto";
 
