@@ -54,8 +54,15 @@
     "next": "Next Step",
     "prev": "Previous"
   },
-  "test": {
-    "text": "status 1",
-    "text2": "Loading"
+  "stores": {
+    "setup": {
+      "progress": {
+        "step1": "Define your style",
+        "step2": "Give it a name",
+        "step3": "You are the admin",
+        "step4": "Make it look better",
+        "step5": "Connect the dots"
+      }
+    }
   }
 }
