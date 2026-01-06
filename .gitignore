@@ -58,6 +58,7 @@ __screenshots__/
 **/*.tgz
 
 # --- 数据库 ---
+data/
 **/*.db
 **/*.db-journal
 **/*.db-shm
