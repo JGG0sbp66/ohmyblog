@@ -1,10 +1,12 @@
 <!-- src/components/theme/ToggleColor.vue -->
 <script lang="ts" setup>
-import { currentHue } from '@/composables/theme.hook';
+import { useTheme } from '@/composables/theme.hook';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import ColorPicker from '../icon/theme/ColorPicker.vue'
 import DropButton from '../common/button/DropButton.vue';
 import ColorSlider from '../base/slider/ColorSlider.vue';
+
+const { currentHue } = useTheme();
 </script>
 
 <template>
