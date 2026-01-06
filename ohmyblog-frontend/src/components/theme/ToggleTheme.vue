@@ -1,5 +1,6 @@
+<!-- src/components/theme/ToggleTheme.vue -->
 <script lang="ts" setup>
-import { colorMode, cycleTheme, THEME_MODES, setTheme } from '@/composables/theme.hook';
+import { useTheme } from '@/composables/theme.hook';
 import ButtonSecondary from '../base/button/ButtonSecondary.vue';
 import ThemePicker from '../icon/theme/ThemePicker.vue';
 import { computed } from 'vue';
@@ -7,6 +8,7 @@ import { useI18n } from 'vue-i18n';
 import DropButton from '../common/button/DropButton.vue';
 
 const { t } = useI18n();
+const { colorMode, cycleTheme, setTheme, THEME_MODES } = useTheme();
 
 const themeOptions = computed(() => {
     return THEME_MODES.map((mode) => ({
