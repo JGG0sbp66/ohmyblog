@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import { useI18n } from 'vue-i18n';
-import { currentHue, colorMode, setTheme, THEME_MODES } from '@/composables/theme.hook';
+import { useTheme } from '@/composables/theme.hook';
 import { SUPPORTED_LOCALES, setLocale } from '@/composables/lang.hook';
 import LanguagePicker from '@/components/icon/theme/LanguagePicker.vue';
 import ThemePicker from '@/components/icon/theme/ThemePicker.vue';
@@ -14,6 +14,7 @@ import { ref } from 'vue';
 import { upsertConfig } from '@/api/config.api';
 
 const { t, locale } = useI18n();
+const { currentHue, colorMode, setTheme, THEME_MODES } = useTheme();
 
 const stepStore = useSetupStore();
 const isSubmitting = ref(false);
