@@ -1,8 +1,11 @@
 import { Elysia } from "elysia";
-import { config } from "./env";
-import { responsePlugin } from "./plugins/response.plugin.js";
 import { openapi } from "@elysiajs/openapi";
+import { config } from "./env";
+
+import { responsePlugin } from "./plugins/response.plugin.js";
 import { logPlugin } from "./plugins/logger.plugin.js";
+import { staticPlugin } from "@elysiajs/static";
+
 import { healthRoute } from "./routes/health.route.js";
 import { authRoute } from "./routes/auth.route.js";
 import { configRoute } from "./routes/config.route.js";
@@ -20,6 +23,11 @@ const app = new Elysia()
   // 挂载插件
   .use(logPlugin)
   .use(responsePlugin)
+  .use(staticPlugin({
+    // TODO: 接口文档关于读取静态文件的描述还非常简略，需要更新
+    assets: "data/uploads",
+    prefix: "/api/uploads",
+  }))
   // 挂载路由
   .group("/api", (app) =>
     app
