@@ -1,7 +1,8 @@
+<!-- src/components/icon/theme/ColorPicker.vue -->
 <script setup lang="ts">
-import { RiColorFilterLine } from '@remixicon/vue'
+import { Palette } from 'lucide-vue-next';
 </script>
 
 <template>
-    <RiColorFilterLine class="text-[1.25rem] w-[1em] h-[1em]" />
+    <Palette class="w-5 h-5"/>
 </template>
