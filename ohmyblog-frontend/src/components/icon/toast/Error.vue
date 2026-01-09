@@ -4,5 +4,5 @@ import { CircleX } from 'lucide-vue-next';
 </script>
 
 <template>
-    <CircleX class="h-5 w-5" />
+    <CircleX class="w-5 h-5" />
 </template>

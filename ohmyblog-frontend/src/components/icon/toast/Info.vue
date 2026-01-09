@@ -4,5 +4,5 @@ import { Info } from 'lucide-vue-next';
 </script>
 
 <template>
-    <Info class="h-5 w-5" />
+    <Info class="w-5 h-5" />
 </template>

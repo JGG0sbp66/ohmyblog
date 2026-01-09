@@ -4,5 +4,5 @@ import { TriangleAlert } from 'lucide-vue-next';
 </script>
 
 <template>
-    <TriangleAlert class="h-5 w-5" />
+    <TriangleAlert class="w-5 h-5" />
 </template>

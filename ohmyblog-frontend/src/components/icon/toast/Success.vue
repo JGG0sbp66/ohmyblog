@@ -4,5 +4,5 @@ import { CircleCheck } from 'lucide-vue-next';
 </script>
 
 <template>
-    <CircleCheck class="h-5 w-5" />
+    <CircleCheck class="w-5 h-5" />
 </template>
