@@ -1,8 +1,8 @@
 <!-- src/components/icon/toast/Info.vue -->
 <script setup lang="ts">
-import { RiInformationFill } from '@remixicon/vue';
+import { Info } from 'lucide-vue-next';
 </script>
 
 <template>
-    <RiInformationFill class="text-[1.25rem] w-[1em] h-[1em]" />
+    <Info class="h-5 w-5" />
 </template>

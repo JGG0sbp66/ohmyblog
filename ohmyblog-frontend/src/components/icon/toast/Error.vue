@@ -1,8 +1,8 @@
 <!-- src/components/icon/toast/Error.vue -->
 <script setup lang="ts">
-import { RiCloseCircleFill } from '@remixicon/vue';
+import { CircleX } from 'lucide-vue-next';
 </script>
 
 <template>
-    <RiCloseCircleFill class="text-[1.25rem] w-[1em] h-[1em]" />
+    <CircleX class="h-5 w-5" />
 </template>

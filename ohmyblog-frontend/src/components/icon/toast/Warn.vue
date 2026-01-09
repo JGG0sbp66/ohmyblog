@@ -1,8 +1,8 @@
 <!-- src/components/icon/toast/Warn.vue -->
 <script setup lang="ts">
-import { RiSpam2Fill } from '@remixicon/vue';
+import { TriangleAlert } from 'lucide-vue-next';
 </script>
 
 <template>
-    <RiSpam2Fill class="text-[1.25rem] w-[1em] h-[1em]" />
+    <TriangleAlert class="h-5 w-5" />
 </template>
