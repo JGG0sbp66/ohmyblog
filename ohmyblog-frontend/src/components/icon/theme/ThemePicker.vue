@@ -1,3 +1,4 @@
+<!-- src/components/icon/theme/ThemePicker.vue -->
 <script lang="ts" setup>
 import { RiContrastLine, RiSunLine, RiMoonLine } from '@remixicon/vue';
 const props = defineProps<{
