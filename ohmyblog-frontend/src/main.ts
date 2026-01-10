@@ -14,8 +14,8 @@ import "./css/toast.css";
 const app = createApp(App);
 
 app.use(createPinia());
-app.use(router);
 app.use(i18n);
+app.use(router);
 app.use(Vue3Toastify, toastConfig);
 
 app.mount("#app");
