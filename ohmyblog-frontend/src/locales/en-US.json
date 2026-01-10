@@ -9,6 +9,11 @@
             "about": "About"
           }
         }
+      },
+      "input": {
+        "TipInput": {
+          "required": "This field cannot be empty"
+        }
       }
     },
     "base": {
