@@ -1,7 +1,7 @@
 // src/stores/setup.store.ts
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
-import { useI18n } from "vue-i18n";
+import { useI18n } from "@/composables/lang.hook";
 
 export const useSetupStore = defineStore("setup", () => {
     const { t } = useI18n();

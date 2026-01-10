@@ -4,7 +4,7 @@ import { useTheme } from '@/composables/theme.hook';
 import ButtonSecondary from '../base/button/ButtonSecondary.vue';
 import ThemePicker from '../icon/theme/ThemePicker.vue';
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from '@/composables/lang.hook';
 import DropButton from '../common/button/DropButton.vue';
 
 const { t } = useI18n();

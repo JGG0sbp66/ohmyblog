@@ -1,6 +1,6 @@
 <!-- src/views/setup/components/StepButton.vue -->
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
+import { useI18n } from '@/composables/lang.hook';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import ButtonPrimary from '@/components/base/button/ButtonPrimary.vue';
 import { useSetupStore } from '@/stores/setup.store';

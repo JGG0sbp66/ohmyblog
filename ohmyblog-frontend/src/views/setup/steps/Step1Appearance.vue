@@ -1,9 +1,8 @@
 <!-- src/views/setup/steps/Step1Appearance.vue -->
 <script setup lang="ts">
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
-import { useI18n } from 'vue-i18n';
 import { useTheme } from '@/composables/theme.hook';
-import { SUPPORTED_LOCALES, setLocale } from '@/composables/lang.hook';
+import { SUPPORTED_LOCALES, setLocale, useI18n } from '@/composables/lang.hook';
 import LanguagePicker from '@/components/icon/theme/LanguagePicker.vue';
 import ThemePicker from '@/components/icon/theme/ThemePicker.vue';
 import ColorSlider from '@/components/base/slider/ColorSlider.vue';

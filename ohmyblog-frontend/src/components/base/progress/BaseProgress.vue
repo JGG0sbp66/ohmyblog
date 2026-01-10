@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useI18n } from '@/composables/lang.hook';
 
 interface Props {
     title?: string;      // 进度条左上角的文字

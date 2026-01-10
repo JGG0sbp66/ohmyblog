@@ -1,5 +1,5 @@
 // src/composables/lang.hook.ts
-import { createI18n } from "vue-i18n";
+import { createI18n, useI18n } from "vue-i18n";
 import { useStorage } from "@vueuse/core";
 import zhCN from "@/locales/zh-CN.json";
 import enUS from "@/locales/en-US.json";
@@ -81,6 +81,8 @@ export const setLocale = (lang: LocaleType) => {
 
 // 导出语言类型
 export type LocaleType = keyof typeof LOCALE_CONFIG;
+
+export { useI18n };
 
 // 适用于列表渲染
 export const SUPPORTED_LOCALES = Object.entries(LOCALE_CONFIG).map((
