@@ -18,9 +18,14 @@ export const unwrap = async <T extends { data: any; error: any }>(
 
   // 处理网络层或框架层错误 (Eden Treaty 捕获的错误)
   if (res.error) {
-    // 抛出 formatError
-    const errorData = res.error.value.data as any;
-    throw errorData.message;
+    const errorVal = res.error.value;
+
+    // 如果后端返回了 JSON 错误信息, 则抛出
+    if (errorVal && typeof errorVal === "object" && "data" in errorVal) {
+      throw (errorVal.data as any)?.message;
+    }
+
+    throw res.error;
   }
 
   // 获取后端包装后的结果 { success, data }
