@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import { useTheme } from '@/composables/theme.hook';
-import { SUPPORTED_LOCALES, setLocale, useI18n } from '@/composables/lang.hook';
+import { useLang } from '@/composables/lang.hook';
 import LanguagePicker from '@/components/icon/theme/LanguagePicker.vue';
 import ThemePicker from '@/components/icon/theme/ThemePicker.vue';
 import ColorSlider from '@/components/base/slider/ColorSlider.vue';
@@ -12,7 +12,7 @@ import { useToast } from '@/composables/toast.hook';
 import { ref } from 'vue';
 import { upsertConfig } from '@/api/config.api';
 
-const { t, locale } = useI18n();
+const { t, locale, setLocale, SUPPORTED_LOCALES } = useLang();
 const { currentHue, colorMode, setTheme, THEME_MODES } = useTheme();
 
 const stepStore = useSetupStore();

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import LanguagePicker from '../icon/theme/LanguagePicker.vue'
-import { SUPPORTED_LOCALES, setLocale, type LocaleType, useI18n } from '@/composables/lang.hook';
+import { type LocaleType, useLang } from '@/composables/lang.hook';
 import DropButton from '../common/button/DropButton.vue';
 
-const { locale } = useI18n();
+const { locale, setLocale, SUPPORTED_LOCALES } = useLang();
 
 // 判断当前语言是否为选中语言
 const isActive = (value: string) => {

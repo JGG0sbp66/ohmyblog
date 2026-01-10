@@ -20,33 +20,33 @@ const messages = Object.fromEntries(
     Object.entries(LOCALE_CONFIG).map(([key, value]) => [key, value.message]),
 );
 
-function getBestLocale(messages: Record<string, any>): string {
-    const supportedLocales = Object.keys(messages);
+/**
+ * 语言自适应检测
+ * 策略：
+ * 1. 尝试精确匹配浏览器语言列表 (如 zh-CN)
+ * 2. 尝试模糊匹配语言前缀 (如 zh-TW -> zh)
+ * 3. 最终兜底使用英文 (en-US)
+ */
+function getBestLocale(): LocaleType {
+    const supported = Object.keys(messages);
     // 获取浏览器语言偏好列表，例如 ["zh-CN", "en-US", "en"]
-    // 如果浏览器不支持 navigator.languages，退而求其次使用 navigator.language
     const userLangs = navigator.languages || [navigator.language];
 
     for (const lang of userLangs) {
-        // 1. 尝试精确匹配 (zh-CN)
-        if (supportedLocales.includes(lang)) {
-            return lang;
-        }
+        // 1. 尝试精确匹配
+        if (supported.includes(lang)) return lang as LocaleType;
 
-        // 2. 尝试模糊匹配 (zh-CN -> zh)
-        const shortLang = lang.split("-")[0] || "";
-        const fuzzyMatch = supportedLocales.find((item) =>
-            item.startsWith(shortLang)
-        );
-        if (fuzzyMatch) {
-            return fuzzyMatch;
-        }
+        // 2. 尝试模糊匹配 (取前缀，如 'zh-HK' -> 'zh')
+        const short = lang.split("-")[0] || "";
+        const fuzzy = supported.find((item) => item.startsWith(short));
+        if (fuzzy) return fuzzy as LocaleType;
     }
 
-    // 3. 最终兜底：如果遍历完所有偏好都没匹配到，返回默认语言
+    // 3. 最终兜底
     return "en-US";
 }
 
-const localeStorage = useStorage("locale", getBestLocale(messages));
+const localeStorage = useStorage<LocaleType>("locale", getBestLocale());
 
 // 创建 i18n 实例
 const i18n = createI18n({
@@ -68,23 +68,28 @@ const i18n = createI18n({
 
 export default i18n;
 
-export const setLocale = (lang: LocaleType) => {
-    // 1. 修改 i18n 内部状态，触发界面更新
-    i18n.global.locale.value = lang;
+/**
+ * 核心 Composable：统一管理语言状态与方法
+ */
+export function useLang() {
+    const instance = useI18n();
 
-    // 2. 更新 localStorage
-    localeStorage.value = lang;
+    const setLocale = (lang: LocaleType) => {
+        instance.locale.value = lang;
+        i18n.global.locale.value = lang;
+        localeStorage.value = lang;
+        document.documentElement.setAttribute("lang", lang);
+    };
 
-    // 3. 设置 HTML lang 属性
-    document.querySelector("html")?.setAttribute("lang", lang);
-};
+    return {
+        ...instance,
+        setLocale,
+        SUPPORTED_LOCALES,
+    };
+}
 
-// 导出语言类型
+// 导出类型与常量
 export type LocaleType = keyof typeof LOCALE_CONFIG;
-
-export { useI18n };
-
-// 适用于列表渲染
 export const SUPPORTED_LOCALES = Object.entries(LOCALE_CONFIG).map((
     [key, value],
 ) => ({

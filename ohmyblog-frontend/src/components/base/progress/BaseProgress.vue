@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useI18n } from '@/composables/lang.hook';
+import { useLang } from '@/composables/lang.hook';
 
 interface Props {
     title?: string;      // 进度条左上角的文字
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const { t } = useI18n();
+const { t } = useLang();
 
 // 自动计算百分比宽度
 const progressWidth = computed(() => {

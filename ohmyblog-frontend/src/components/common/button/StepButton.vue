@@ -1,6 +1,6 @@
 <!-- src/views/setup/components/StepButton.vue -->
 <script setup lang="ts">
-import { useI18n } from '@/composables/lang.hook';
+import { useLang } from '@/composables/lang.hook';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import ButtonPrimary from '@/components/base/button/ButtonPrimary.vue';
 import { useSetupStore } from '@/stores/setup.store';
@@ -14,7 +14,7 @@ interface Props {
     gapClass?: string;
 }
 
-const { t } = useI18n();
+const { t } = useLang();
 
 const props = withDefaults(defineProps<Props>(), {
     nextText: '',
