@@ -1,3 +1,4 @@
+<!-- src/components/common/button/DropButton.vue -->
 <script lang="ts" setup>
 import BasePop from '@/components/base/pop/BasePop.vue';
 import { ref } from 'vue';
