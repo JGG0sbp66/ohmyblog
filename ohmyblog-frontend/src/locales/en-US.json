@@ -68,7 +68,8 @@
   "api": {
     "errors": {
       "Error": "Unable to connect to the backend service",
-      "请求参数验证失败": "Request validation failed"
+      "请求参数验证失败": "Request validation failed",
+      "系统健康检查失败": "System health check failed"
     },
     "success": {
       "config": {
