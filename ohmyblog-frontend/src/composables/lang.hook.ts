@@ -1,5 +1,5 @@
 // src/composables/lang.hook.ts
-import { createI18n, useI18n } from "vue-i18n";
+import { createI18n } from "vue-i18n";
 import { useStorage } from "@vueuse/core";
 import zhCN from "@/locales/zh-CN.json";
 import enUS from "@/locales/en-US.json";
@@ -72,17 +72,17 @@ export default i18n;
  * 核心 Composable：统一管理语言状态与方法
  */
 export function useLang() {
-    const instance = useI18n();
+    const instance = i18n.global;
 
     const setLocale = (lang: LocaleType) => {
         instance.locale.value = lang;
-        i18n.global.locale.value = lang;
         localeStorage.value = lang;
         document.documentElement.setAttribute("lang", lang);
     };
 
     return {
-        ...instance,
+        t: instance.t,
+        locale: instance.locale,
         setLocale,
         SUPPORTED_LOCALES,
     };
