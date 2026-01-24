@@ -5,6 +5,13 @@ import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
 
 /**
+ * 可校验组件的接口定义
+ */
+export interface Validatable {
+    validate: () => boolean;
+}
+
+/**
  * 设置步骤通用逻辑 Hook
  * 封装了 Loading 状态、API 调用包装、通知提示以及自动跳转下一步
  */
@@ -21,13 +28,24 @@ export function useSetupStep() {
     async function runStep(
         action: () => Promise<any>,
         options: {
+            validate?: (Validatable | null | undefined)[]; // 需要校验的组件列表
             successMsg?: string; // 成功提示转换 key
             autoNext?: boolean; // 是否自动跳转到下一步，默认为 true
         } = {},
     ) {
         if (isSubmitting.value) return;
 
-        const { successMsg, autoNext = true } = options;
+        const { validate, successMsg, autoNext = true } = options;
+
+        // 执行校验逻辑
+        if (validate && validate.length > 0) {
+            // 校验数组中的每一项，并确保所有项的 validate 方法都被执行（以触发 UI 报错）
+            const isValid = validate
+                .map((item) => item?.validate?.() ?? true)
+                .every((res) => res === true);
+
+            if (!isValid) return; // 校验不通过，拦截提交
+        }
 
         try {
             isSubmitting.value = true;
