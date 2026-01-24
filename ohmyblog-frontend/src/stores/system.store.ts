@@ -1,7 +1,8 @@
 // src/stores/system.store.ts
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { getHealth } from "@/api/health.api";
+import { getConfig } from "@/api/config.api";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
 
@@ -10,6 +11,41 @@ export const useSystemStore = defineStore("system", () => {
 
     const version = ref("");
     const initialized = ref<boolean | null>(null);
+
+    // 站点全局配置
+    const siteInfo = ref({
+        title: "",
+        footer: "",
+        icp: "",
+    });
+
+    /**
+     * 获取站点基本信息
+     */
+    async function fetchSiteInfo() {
+        try {
+            const res = await getConfig("site_info");
+            if (res?.config?.configValue) {
+                siteInfo.value = {
+                    ...siteInfo.value,
+                    ...res.config.configValue,
+                };
+            }
+        } catch (error) {
+            useToast.error(t("api.errors.获取站点基本信息失败"));
+        }
+    }
+
+    // 监听标题变化，全局同步 document.title
+    watch(
+        () => siteInfo.value.title,
+        (newTitle) => {
+            if (newTitle) {
+                document.title = newTitle;
+            }
+        },
+        { immediate: true },
+    );
 
     /**
      * 获取并检查系统健康状态
@@ -42,6 +78,8 @@ export const useSystemStore = defineStore("system", () => {
     return {
         version,
         initialized,
+        siteInfo,
+        fetchSiteInfo,
         checkStatus,
     };
 });
