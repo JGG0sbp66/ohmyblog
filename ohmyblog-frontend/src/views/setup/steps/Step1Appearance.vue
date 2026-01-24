@@ -6,7 +6,7 @@ import { useLang } from '@/composables/lang.hook';
 import LanguagePicker from '@/components/icon/theme/LanguagePicker.vue';
 import ThemePicker from '@/components/icon/theme/ThemePicker.vue';
 import ColorSlider from '@/components/base/slider/ColorSlider.vue';
-import StepButton from '@/components/common/button/StepButton.vue';
+import StepLayout from './StepLayout.vue';
 import { useSetupStore } from '@/stores/setup.store';
 import { useToast } from '@/composables/toast.hook';
 import { ref } from 'vue';
@@ -43,13 +43,8 @@ async function handleNext() {
 </script>
 
 <template>
-    <div class="p-8 flex flex-col gap-8">
-        <!-- 标题 -->
-        <div class="flex flex-col gap-2">
-            <h2 class="text-2xl font-bold text-text-main">{{ t('views.setup.steps.step1.title') }}</h2>
-            <p class="text-text-icon text-sm">{{ t('views.setup.steps.step1.description') }}</p>
-        </div>
-
+    <StepLayout :title="t('views.setup.steps.step1.title')" :description="t('views.setup.steps.step1.description')"
+        :showPrev="false" :loading="isSubmitting" @next="handleNext">
         <!-- 1. 语言选择 -->
         <div class="flex flex-col gap-3 text-text-icon">
             <label class="text-sm font-bold uppercase tracking-wider">
@@ -100,8 +95,5 @@ async function handleNext() {
                 <ColorSlider v-model="currentHue" />
             </div>
         </div>
-
-        <!-- 按钮区域 -->
-        <StepButton :showPrev="false" :loading="isSubmitting" @next="handleNext" />
-    </div>
+    </StepLayout>
 </template>
