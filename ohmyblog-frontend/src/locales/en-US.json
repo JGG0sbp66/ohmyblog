@@ -86,7 +86,8 @@
     "errors": {
       "Error": "Unable to connect to the backend service",
       "请求参数验证失败": "Request validation failed",
-      "系统健康检查失败": "System health check failed"
+      "系统健康检查失败": "System health check failed",
+      "获取站点基本信息失败": "Failed to fetch site info"
     },
     "success": {
       "config": {
