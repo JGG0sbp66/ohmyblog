@@ -15,6 +15,7 @@ export const useSystemStore = defineStore("system", () => {
     // 站点全局配置
     const siteInfo = ref({
         title: "",
+        logo: "",
         footer: "",
         icp: "",
     });
@@ -42,6 +43,22 @@ export const useSystemStore = defineStore("system", () => {
         (newTitle) => {
             if (newTitle) {
                 document.title = newTitle;
+            }
+        },
+        { immediate: true },
+    );
+
+    // 监听图标变化，全局同步 favicon
+    watch(
+        () => siteInfo.value.logo,
+        (newLogo) => {
+            if (newLogo) {
+                const favicon = document.getElementById(
+                    "dynamic-favicon",
+                ) as HTMLLinkElement;
+                if (favicon) {
+                    favicon.href = newLogo;
+                }
             }
         },
         { immediate: true },
