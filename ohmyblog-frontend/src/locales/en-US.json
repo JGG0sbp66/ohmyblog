@@ -51,6 +51,15 @@
           "language": "Language",
           "theme": "Theme Mode",
           "color": "Accent Color"
+        },
+        "step2": {
+          "title": "Site Information",
+          "description": "This information will be displayed on the browser tab and at the bottom of the page.",
+          "siteTitle": "Site Title",
+          "siteTitlePlaceholder": "e.g., My Personal Blog",
+          "footer": "Footer Copyright",
+          "footerPlaceholder": "YourName. All rights reserved.",
+          "footerHint": "Supports strings, will be displayed at the very bottom of the page"
         }
       }
     }
