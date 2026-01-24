@@ -7,39 +7,22 @@ import LanguagePicker from '@/components/icon/theme/LanguagePicker.vue';
 import ThemePicker from '@/components/icon/theme/ThemePicker.vue';
 import ColorSlider from '@/components/base/slider/ColorSlider.vue';
 import StepLayout from './StepLayout.vue';
-import { useSetupStore } from '@/stores/setup.store';
-import { useToast } from '@/composables/toast.hook';
-import { ref } from 'vue';
+import { useSetupStep } from '@/composables/setup-step.hook';
 import { upsertConfig } from '@/api/config.api';
 
 const { t, locale, setLocale, SUPPORTED_LOCALES } = useLang();
 const { currentHue, colorMode, setTheme, THEME_MODES } = useTheme();
 
-const stepStore = useSetupStore();
-const isSubmitting = ref(false);
+const { isSubmitting, runStep } = useSetupStep();
 
-async function handleNext() {
-    try {
-        isSubmitting.value = true;
-
-        const res = await upsertConfig({
-            configKey: 'appearance',
-            configValue: {
-                theme: colorMode.value,
-                hue: currentHue.value,
-                language: locale.value
-            }
-        });
-
-        useToast.success(t(`api.success.config.${res!.message}`));
-
-        stepStore.next();
-    } catch (error) {
-        useToast.error(t(`api.errors.${error}`));
-    } finally {
-        isSubmitting.value = false;
+const handleNext = () => runStep(() => upsertConfig({
+    configKey: 'appearance',
+    configValue: {
+        theme: colorMode.value,
+        hue: currentHue.value,
+        language: locale.value
     }
-}
+}));
 </script>
 
 <template>
