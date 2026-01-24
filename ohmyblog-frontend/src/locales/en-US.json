@@ -59,7 +59,10 @@
           "siteTitlePlaceholder": "e.g., My Personal Blog",
           "footer": "Footer Copyright",
           "footerPlaceholder": "YourName. All rights reserved.",
-          "footerHint": "Supports strings, will be displayed at the very bottom of the page"
+          "footerHint": "Supports strings, will be displayed at the very bottom of the page",
+          "icp": "ICP Filing Number",
+          "icpPlaceholder": "e.g., ICP 00000000",
+          "icpHint": "According to Chinese law, if your server is located in mainland China, you must display the ICP filing number"
         }
       }
     }
