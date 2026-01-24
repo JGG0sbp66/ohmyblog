@@ -51,6 +51,7 @@ __screenshots__/
 *.njsproj
 *.sln
 *.sw?
+.devcontainer/
 
 # --- 压缩包 ---
 **/*.zip
