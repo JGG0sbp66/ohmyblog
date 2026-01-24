@@ -23,7 +23,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "better-sqlite3": "^12.6.2",
     "bun-types": "latest",
     "drizzle-kit": "^0.31.8",
     "pino-pretty": "^13.1.3"
