@@ -6,10 +6,10 @@ import BaseProgress from '@/components/base/progress/BaseProgress.vue';
 
 import { vAutoAnimate } from '@formkit/auto-animate'
 import { useSetupStore } from '@/stores/setup.store';
-import { useI18n } from 'vue-i18n';
+import { useLang } from '@/composables/lang.hook';
 import { computed } from 'vue';
 
-const { t } = useI18n();
+const { t } = useLang();
 const stepStore = useSetupStore();
 
 // 引入步骤组件
