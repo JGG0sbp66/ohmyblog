@@ -15,14 +15,17 @@
   },
   "dependencies": {
     "@elysiajs/eden": "^1.4.6",
+    "@formkit/auto-animate": "^0.9.0",
     "@remixicon/vue": "^4.7.0",
     "@tailwindcss/vite": "^4.1.18",
     "@vueuse/core": "^14.1.0",
+    "lucide-vue-next": "^0.562.0",
     "pinia": "^3.0.4",
     "tailwindcss": "^4.1.18",
     "vue": "^3.5.25",
     "vue-i18n": "^11.2.2",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.3",
+    "vue3-toastify": "^0.2.8"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.3",

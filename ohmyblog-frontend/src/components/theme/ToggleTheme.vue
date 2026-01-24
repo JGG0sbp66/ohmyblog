@@ -1,12 +1,14 @@
+<!-- src/components/theme/ToggleTheme.vue -->
 <script lang="ts" setup>
-import { colorMode, cycleTheme, THEME_MODES, setTheme } from '@/composables/theme.hook';
+import { useTheme } from '@/composables/theme.hook';
 import ButtonSecondary from '../base/button/ButtonSecondary.vue';
 import ThemePicker from '../icon/theme/ThemePicker.vue';
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useLang } from '@/composables/lang.hook';
 import DropButton from '../common/button/DropButton.vue';
 
-const { t } = useI18n();
+const { t } = useLang();
+const { colorMode, cycleTheme, setTheme, THEME_MODES } = useTheme();
 
 const themeOptions = computed(() => {
     return THEME_MODES.map((mode) => ({
@@ -22,7 +24,7 @@ const isActive = (value: string) => {
 </script>
 
 <template>
-    <DropButton>
+    <DropButton placement="-left-10">
         <template #trigger="{ active }">
             <!-- 点击触发循环切换 -->
             <ButtonSecondary :hasSlot="true" :isActive="active" @click="cycleTheme()">

@@ -7,6 +7,7 @@ export const ConfigUpsertDTO = t.Object({
         minLength: 1,
         maxLength: 100,
         description: "配置键名",
+        error: "配置键名不能为空且长度不能超过100个字符",
     }),
     configValue: t.Optional(t.Any({
         description: "配置值（JSON）",
@@ -14,10 +15,22 @@ export const ConfigUpsertDTO = t.Object({
     description: t.Optional(t.String({
         maxLength: 255,
         description: "配置描述",
+        error: "配置描述长度不能超过255个字符",
     })),
     isPublic: t.Optional(t.Boolean({
         description: "是否公开给前端",
     })),
 });
 
+// 网站icon图标 DTO
+export const UploadIconDTO = t.Object({
+    icon: t.File({
+        type: "image",
+        maxSize: "1m",
+        description: "网站图标文件，最大1MB",
+        error: "请上传有效的图片文件",
+    }),
+});
+
 export type TConfigUpsertDTO = Static<typeof ConfigUpsertDTO>;
+export type TUploadIconDTO = Static<typeof UploadIconDTO>;

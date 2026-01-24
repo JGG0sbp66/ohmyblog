@@ -1,46 +1,102 @@
 // src/stores/system.store.ts
+import { ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { getHealth } from "@/api/health.api";
+import { getConfig } from "@/api/config.api";
+import { useToast } from "@/composables/toast.hook";
+import { useLang } from "@/composables/lang.hook";
 
-interface SystemState {
-    version: string;
-    initialized: boolean | null;
-}
+export const useSystemStore = defineStore("system", () => {
+    const { t } = useLang();
 
-export const useSystemStore = defineStore("system", {
-    state: (): SystemState => ({
-        version: "",
-        initialized: null,
-    }),
+    const version = ref("");
+    const initialized = ref<boolean | null>(null);
 
-    actions: {
-        /**
-         * 获取并检查系统健康状态
-         * @param forceRefresh 是否强制刷新, 不使用缓存
-         * @returns 返回最新的初始化状态
-         */
-        async checkStatus(forceRefresh = false) {
-            // 如果已经初始化过且不强制刷新, 直接返回缓存的状态
-            if (this.initialized !== null && !forceRefresh) {
-                return this.initialized;
+    // 站点全局配置
+    const siteInfo = ref({
+        title: "",
+        logo: "",
+        footer: "",
+        icp: "",
+    });
+
+    /**
+     * 获取站点基本信息
+     */
+    async function fetchSiteInfo() {
+        try {
+            const res = await getConfig("site_info");
+            if (res?.config?.configValue) {
+                siteInfo.value = {
+                    ...siteInfo.value,
+                    ...res.config.configValue,
+                };
             }
+        } catch (error) {
+            useToast.error(t("api.errors.获取站点基本信息失败"));
+        }
+    }
 
-            try {
-                const data = await getHealth();
-
-                if (!data || typeof data.initialized !== "boolean") {
-                    throw new Error("后端返回的健康状态数据格式不正确");
-                }
-                this.version = data.version;
-                this.initialized = data.initialized;
-
-                return this.initialized;
-            } catch (error) {
-                console.error("Store 中获取系统状态失败:", error);
-                // TODO: 后续修改为发送全局弹窗
-                // 如果失败了，默认返回当前状态或 false，防止路由死锁
-                return this.initialized ?? false;
+    // 监听标题变化，全局同步 document.title
+    watch(
+        () => siteInfo.value.title,
+        (newTitle) => {
+            if (newTitle) {
+                document.title = newTitle;
             }
         },
-    },
+        { immediate: true },
+    );
+
+    // 监听图标变化，全局同步 favicon
+    watch(
+        () => siteInfo.value.logo,
+        (newLogo) => {
+            if (newLogo) {
+                const favicon = document.getElementById(
+                    "dynamic-favicon",
+                ) as HTMLLinkElement;
+                if (favicon) {
+                    favicon.href = newLogo;
+                }
+            }
+        },
+        { immediate: true },
+    );
+
+    /**
+     * 获取并检查系统健康状态
+     * @param forceRefresh 是否强制刷新, 不使用缓存
+     * @returns 返回最新的初始化状态
+     */
+    async function checkStatus(forceRefresh = false) {
+        // 如果已经初始化过且不强制刷新, 直接返回缓存的状态
+        if (initialized.value !== null && !forceRefresh) {
+            return initialized.value;
+        }
+
+        try {
+            const data = await getHealth();
+
+            if (!data || typeof data.initialized !== "boolean") {
+                throw new Error("后端返回的健康状态数据格式不正确");
+            }
+            version.value = data.version;
+            initialized.value = data.initialized;
+
+            return initialized.value;
+        } catch (error) {
+            useToast.error(t("api.errors.系统健康检查失败"));
+            // 如果失败了，默认返回当前状态或 false，防止路由死锁
+            return initialized.value ?? false;
+        }
+    }
+
+    return {
+        version,
+        initialized,
+        siteInfo,
+        fetchSiteInfo,
+        checkStatus,
+    };
 });

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useLang } from '@/composables/lang.hook';
 
 interface Props {
     title?: string;      // 进度条左上角的文字
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const { t } = useI18n();
+const { t } = useLang();
 
 // 自动计算百分比宽度
 const progressWidth = computed(() => {
@@ -21,7 +21,7 @@ const progressWidth = computed(() => {
 <template>
     <div class="w-full space-y-2">
         <!-- 进度文字描述 -->
-        <div class="flex justify-between text-sm text-text-icon px-1 transition-all duration-200">
+        <div class="flex justify-between text-sm text-text-icon px-1">
             <span>{{ title }}</span>
             <span>{{ t('components.base.progress.BaseProgress.step', { current: currentStep, total: totalSteps }) }}</span>
         </div>

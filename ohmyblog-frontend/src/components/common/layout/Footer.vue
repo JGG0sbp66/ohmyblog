@@ -6,7 +6,10 @@ const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-    <!-- TODO: 页脚demo，后续再优化 -->
+    <!-- TODO: 页脚demo，后续再优化
+     1. 可以参考https://blog.acofork.com/的页脚
+     2. 可以通过读取system.store中的siteInfo来动态显示站点信息
+     3. 需要超链接+自动显示ICP备案号 -->
     <footer class="w-full bg-bg-page border-t border-text-main/5 transition-colors duration-200">
         <div class="max-w-250 mx-auto py-10 px-6">
 

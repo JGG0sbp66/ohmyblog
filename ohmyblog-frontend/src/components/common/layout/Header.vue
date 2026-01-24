@@ -4,10 +4,10 @@ import ToggleTheme from '@/components/theme/ToggleTheme.vue';
 import ToggleColor from '@/components/theme/ToggleColor.vue';
 import ButtonSecondary from '@/components/base/button/ButtonSecondary.vue';
 import HeaderSearch from '@/components/base/search/HeaderSearch.vue';
-import { useI18n } from 'vue-i18n';
+import { useLang } from '@/composables/lang.hook';
 import { computed } from 'vue';
 
-const { t } = useI18n();
+const { t } = useLang();
 
 const navItems = computed(() => [
     { name: 'home', label: t('components.common.layout.Header.nav.home') },
@@ -47,7 +47,6 @@ transition-all duration-200 ease-in-out
 
             <!-- 右侧按钮区域 -->
             <div class="flex items-center mr-4 gap-2">
-                <!-- TODO: 需要优化弹出弹出的位置，目前有点靠右，小屏幕下可能会被挡住 -->
                 <ToggleColor />
                 <ToggleTheme />
                 <ToggleLanguage />

@@ -9,6 +9,11 @@
             "about": "About"
           }
         }
+      },
+      "input": {
+        "TipInput": {
+          "required": "This field cannot be empty"
+        }
       }
     },
     "base": {
@@ -36,8 +41,65 @@
       }
     }
   },
-  "test": {
-    "text": "status 1",
-    "text2": "Loading"
+  "views": {
+    "setup": {
+      "steps": {
+        "step1": {
+          "welcome": "Welcome to your new blog journey.",
+          "title": "Appearance",
+          "description": "Customize how your blog looks and feels.",
+          "language": "Language",
+          "theme": "Theme Mode",
+          "color": "Accent Color"
+        },
+        "step2": {
+          "title": "Site Information",
+          "description": "This information will be displayed on the browser tab and at the bottom of the page.",
+          "siteTitle": "Site Title",
+          "siteTitlePlaceholder": "e.g., My Personal Blog",
+          "siteIcon": "Site Icon",
+          "uploadIcon": "Upload Icon",
+          "changeIcon": "Change Icon",
+          "uploading": "Uploading",
+          "iconUploaded": "Icon Uploaded",
+          "siteIconHelp1": "Recommended to use 256x256 or larger PNG/ICO files",
+          "siteIconHelp2": "This will also be used as the browser's favicon",
+          "footer": "Footer Copyright",
+          "footerPlaceholder": "YourName. All rights reserved.",
+          "footerHint": "Supports strings, will be displayed at the very bottom of the page",
+          "icp": "ICP Filing Number",
+          "icpPlaceholder": "e.g., ICP 00000000",
+          "icpHint": "According to Chinese law, if your server is located in mainland China, you must display the ICP filing number"
+        }
+      }
+    }
+  },
+  "common": {
+    "next": "Next Step",
+    "prev": "Previous"
+  },
+  "stores": {
+    "setup": {
+      "progress": {
+        "step1": "Define your style",
+        "step2": "Give it a name",
+        "step3": "You are the admin",
+        "step4": "Make it look better",
+        "step5": "Connect the dots"
+      }
+    }
+  },
+  "api": {
+    "errors": {
+      "Error": "Unable to connect to the backend service",
+      "请求参数验证失败": "Request validation failed",
+      "系统健康检查失败": "System health check failed",
+      "获取站点基本信息失败": "Failed to fetch site info"
+    },
+    "success": {
+      "config": {
+        "保存成功": "Settings saved successfully"
+      }
+    }
   }
 }

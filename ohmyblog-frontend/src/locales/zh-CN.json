@@ -9,6 +9,11 @@
             "about": "关于"
           }
         }
+      },
+      "input": {
+        "TipInput": {
+          "required": "此项不能为空"
+        }
       }
     },
     "base": {
@@ -36,8 +41,65 @@
       }
     }
   },
-  "test": {
-    "text": "状态1",
-    "text2": "加载中"
+  "views": {
+    "setup": {
+      "steps": {
+        "step1": {
+          "welcome": "欢迎开始你的博客之旅。",
+          "title": "外观设置",
+          "description": "自定义你的博客外观和感觉。",
+          "language": "语言",
+          "theme": "主题模式",
+          "color": "主题色"
+        },
+        "step2": {
+          "title": "站点信息",
+          "description": "这些信息将展示在浏览器标签页和页面底部。",
+          "siteTitle": "站点标题",
+          "siteTitlePlaceholder": "例如：我的个人博客",
+          "siteIcon": "站点图标",
+          "uploadIcon": "上传图标",
+          "changeIcon": "修改图标",
+          "uploading": "上传中",
+          "iconUploaded": "图标已上传",
+          "siteIconHelp1": "推荐使用 256x256 或更大的 PNG/ICO 格式文件",
+          "siteIconHelp2": "这也会作为浏览器的 favicon 显示",
+          "footer": "页脚版权信息",
+          "footerPlaceholder": "YourName. All rights reserved.",
+          "footerHint": "支持字符串，将显示在页面最底部",
+          "icp": "备案号",
+          "icpPlaceholder": "例如：京ICP备00000000号",
+          "icpHint": "根据中国法律，若您的服务器位于中国大陆，则必须展示备案号"
+        }
+      }
+    }
+  },
+  "common": {
+    "next": "下一步",
+    "prev": "上一步"
+  },
+  "stores": {
+    "setup": {
+      "progress": {
+        "step1": "定义你的风格",
+        "step2": "给博客起个名字",
+        "step3": "你是这里的超级管理员",
+        "step4": "让主页更好看",
+        "step5": "打通消息通知"
+      }
+    }
+  },
+  "api": {
+    "errors": {
+      "Error": "无法连接到后端服务",
+      "请求参数验证失败": "请求参数验证失败",
+      "系统健康检查失败": "系统健康检查失败",
+      "获取站点基本信息失败": "获取站点基本信息失败"
+    },
+    "success": {
+      "config": {
+        "保存成功": "保存成功"
+      }
+    }
   }
 }

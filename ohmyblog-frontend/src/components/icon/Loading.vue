@@ -1,3 +1,4 @@
+<!-- src/components/icon/Loading.vue -->
 <script lang="ts" setup>
 const props = withDefaults(defineProps<{
     sizeClass?: string;
