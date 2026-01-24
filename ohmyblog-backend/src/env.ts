@@ -35,12 +35,14 @@ const configDef = {
 // =================================================================
 // 2. 自动化引擎
 // =================================================================
+// TODO: 查找并完善项目中的创建文件夹逻辑，现在有点七零八落的
 const DATA_DIR = join(process.cwd(), "data");
+const UPLOADS_DIR = join(DATA_DIR, "uploads");
 const ENV_PATH = join(DATA_DIR, ".env");
 
-if (!existsSync(DATA_DIR)) {
-    systemLogger.info(`📂 目录 ${DATA_DIR} 不存在，正在自动创建...`);
-    mkdirSync(DATA_DIR, { recursive: true });
+if (!existsSync(UPLOADS_DIR)) {
+    systemLogger.info(`📂 目录 ${UPLOADS_DIR} 不存在，正在自动创建...`);
+    mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
 /**
