@@ -33,7 +33,9 @@ export const useSystemStore = defineStore("system", () => {
         };
       }
     } catch (error) {
-      useToast.error(t("api.errors.获取站点基本信息失败"));
+      if (initialized.value == null || initialized.value) {
+        useToast.error(t("api.errors.获取站点基本信息失败"));
+      }
     }
   }
 
