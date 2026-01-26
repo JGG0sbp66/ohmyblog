@@ -1,17 +1,17 @@
 <!-- src/views/setup/steps/Step2Info.vue -->
 <script setup lang="ts">
-import { ref } from 'vue';
-import TipInput from '@/components/common/input/TipInput.vue';
-import StepLayout from './StepLayout.vue';
-import { useLang } from '@/composables/lang.hook';
-import { useSetupStep, type Validatable } from '@/composables/setup-step.hook';
-import { upsertConfig, uploadFavicon } from '@/api/config.api';
-import { useSystemStore } from '@/stores/system.store';
-import { useToast } from '@/composables/toast.hook';
-import ButtonPrimary from '@/components/base/button/ButtonPrimary.vue';
-import Picture from '@/components/icon/Picture.vue';
-import Loading from '@/components/icon/Loading.vue';
-import Check from '@/components/icon/Check.vue';
+import { ref } from "vue";
+import TipInput from "@/components/common/input/TipInput.vue";
+import StepLayout from "./StepLayout.vue";
+import { useLang } from "@/composables/lang.hook";
+import { useSetupStep, type Validatable } from "@/composables/setup-step.hook";
+import { upsertConfig, uploadFavicon } from "@/api/config.api";
+import { useSystemStore } from "@/stores/system.store";
+import { useToast } from "@/composables/toast.hook";
+import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
+import Picture from "@/components/icon/Picture.vue";
+import Loading from "@/components/icon/Loading.vue";
+import Check from "@/components/icon/Check.vue";
 
 const { t } = useLang();
 const { isSubmitting, runStep } = useSetupStep();
@@ -39,57 +39,85 @@ const handleFileChange = async (e: Event) => {
     // 同时也赋值给 store，让界面显示“已上传”状态
     systemStore.siteInfo.logo = `/api/uploads/system/favicon.png?t=${Date.now()}`;
 
-    useToast.success(t('api.success.config.保存成功'));
+    useToast.success(t("api.success.config.保存成功"));
   } catch (error) {
-    useToast.error(t('api.errors.Error'));
+    useToast.error(t("api.errors.Error"));
   } finally {
     uploading.value = false;
     // 清空 input，允许重复上传同一张图
-    if (fileInputRef.value) fileInputRef.value.value = '';
+    if (fileInputRef.value) fileInputRef.value.value = "";
   }
 };
 
-const handleNext = () => runStep(() => {
-
-  return upsertConfig({
-    configKey: 'site_info',
-    configValue: systemStore.siteInfo
-  });
-}, { validate: [titleInputRef.value] });
-
+const handleNext = () =>
+  runStep(
+    () => {
+      return upsertConfig({
+        configKey: "site_info",
+        configValue: systemStore.siteInfo,
+      });
+    },
+    { validate: [titleInputRef.value] },
+  );
 </script>
 
 <template>
-  <StepLayout :title="t('views.setup.steps.step2.title')" :description="t('views.setup.steps.step2.description')"
-    :loading="isSubmitting" @next="handleNext">
+  <StepLayout
+    :title="t('views.setup.steps.step2.title')"
+    :description="t('views.setup.steps.step2.description')"
+    :loading="isSubmitting"
+    @next="handleNext"
+  >
     <!-- 站点名称 -->
-    <TipInput ref="titleInputRef" v-model="systemStore.siteInfo.title" :label="t('views.setup.steps.step2.siteTitle')"
-      :placeholder="t('views.setup.steps.step2.siteTitlePlaceholder')" required />
+    <TipInput
+      ref="titleInputRef"
+      v-model="systemStore.siteInfo.title"
+      :label="t('views.setup.steps.step2.siteTitle')"
+      :placeholder="t('views.setup.steps.step2.siteTitlePlaceholder')"
+      required
+    />
 
     <!-- 页脚版权 -->
-    <TipInput v-model="systemStore.siteInfo.footer" :label="t('views.setup.steps.step2.footer')"
-      :placeholder="t('views.setup.steps.step2.footerPlaceholder')" :hint="t('views.setup.steps.step2.footerHint')" />
+    <TipInput
+      v-model="systemStore.siteInfo.footer"
+      :label="t('views.setup.steps.step2.footer')"
+      :placeholder="t('views.setup.steps.step2.footerPlaceholder')"
+      :hint="t('views.setup.steps.step2.footerHint')"
+    />
 
     <!-- 备案号 -->
-    <TipInput v-model="systemStore.siteInfo.icp" :label="t('views.setup.steps.step2.icp')"
-      :placeholder="t('views.setup.steps.step2.icpPlaceholder')" :hint="t('views.setup.steps.step2.icpHint')" />
+    <TipInput
+      v-model="systemStore.siteInfo.icp"
+      :label="t('views.setup.steps.step2.icp')"
+      :placeholder="t('views.setup.steps.step2.icpPlaceholder')"
+      :hint="t('views.setup.steps.step2.icpHint')"
+    />
 
     <!-- 站点图标上传 -->
     <div class="space-y-2">
       <label class="block text-sm font-medium text-text-main pb-1">
-        {{ t('views.setup.steps.step2.siteIcon') }}
+        {{ t("views.setup.steps.step2.siteIcon") }}
       </label>
       <div class="flex items-start gap-5">
         <!-- 预览区域 -->
         <div class="shrink-0">
           <div
-            class="w-20 h-20 border-2 border-dashed border-border-subtle rounded-xl flex items-center justify-center bg-bg-secondary overflow-hidden relative group transition-colors hover:border-primary/50">
-            <img v-if="systemStore.siteInfo.logo" :src="systemStore.siteInfo.logo" alt="Site Icon"
-              class="w-full h-full object-contain" :class="{ 'opacity-50': uploading }" />
+            class="w-20 h-20 border-2 border-dashed border-border-subtle rounded-xl flex items-center justify-center bg-bg-secondary overflow-hidden relative group transition-colors hover:border-primary/50"
+          >
+            <img
+              v-if="systemStore.siteInfo.logo"
+              :src="systemStore.siteInfo.logo"
+              alt="Site Icon"
+              class="w-full h-full object-contain"
+              :class="{ 'opacity-50': uploading }"
+            />
             <Picture v-else size-class="w-8 h-8 text-text-icon opacity-40" />
 
             <!-- 上传中遮罩 -->
-            <div v-if="uploading" class="absolute inset-0 flex items-center justify-center bg-bg-card/60">
+            <div
+              v-if="uploading"
+              class="absolute inset-0 flex items-center justify-center bg-bg-card/60"
+            >
               <Loading size-class="w-6 h-6 text-primary" />
             </div>
           </div>
@@ -97,28 +125,44 @@ const handleNext = () => runStep(() => {
 
         <!-- 按钮与说明 -->
         <div class="flex-1 pt-1">
-          <input ref="fileInputRef" type="file"
+          <input
+            ref="fileInputRef"
+            type="file"
             accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,image/gif,image/apng,image/avif,image/x-icon,image/vnd.microsoft.icon,.ico"
-            @change="handleFileChange" class="hidden" />
+            @change="handleFileChange"
+            class="hidden"
+          />
 
           <div class="flex items-center gap-3">
-            <ButtonPrimary type="button" class="w-auto! h-auto! px-4 py-1.5 text-sm" @click="handleIconClick"
+            <ButtonPrimary
+              type="button"
+              class="w-auto! h-auto! px-4 py-1.5 text-sm"
+              @click="handleIconClick"
               :disabled="uploading"
-              :text="uploading ? t('views.setup.steps.step2.uploading') : (systemStore.siteInfo.logo ? t('views.setup.steps.step2.changeIcon') : t('views.setup.steps.step2.uploadIcon'))" />
+              :text="
+                uploading
+                  ? t('views.setup.steps.step2.uploading')
+                  : systemStore.siteInfo.logo
+                    ? t('views.setup.steps.step2.changeIcon')
+                    : t('views.setup.steps.step2.uploadIcon')
+              "
+            />
 
-            <div v-if="systemStore.siteInfo.logo"
-              class="text-[10px] text-green-500 flex items-center gap-1 bg-green-500/10 px-2 py-0.5 rounded-full">
+            <div
+              v-if="systemStore.siteInfo.logo"
+              class="text-[10px] text-green-500 flex items-center gap-1 bg-green-500/10 px-2 py-0.5 rounded-full"
+            >
               <Check size-class="w-3 h-3" />
-              {{ t('views.setup.steps.step2.iconUploaded') }}
+              {{ t("views.setup.steps.step2.iconUploaded") }}
             </div>
           </div>
 
           <div class="mt-3 space-y-1">
             <p class="text-[11px] text-text-icon leading-relaxed">
-              {{ t('views.setup.steps.step2.siteIconHelp1') }}
+              {{ t("views.setup.steps.step2.siteIconHelp1") }}
             </p>
             <p class="text-[11px] text-text-icon leading-relaxed">
-              {{ t('views.setup.steps.step2.siteIconHelp2') }}
+              {{ t("views.setup.steps.step2.siteIconHelp2") }}
             </p>
           </div>
         </div>

@@ -62,9 +62,13 @@ const cssHue = useCssVar("--app-hue", document.documentElement);
  * 确保无论是通过 setBrandHue 方法更新，还是通过 v-model 直接操作 hueStore，
  * 都能实时触发 CSS 变量的重绘。
  */
-watch(hueStore, (val) => {
-  cssHue.value = String(val);
-}, { immediate: true });
+watch(
+  hueStore,
+  (val) => {
+    cssHue.value = String(val);
+  },
+  { immediate: true },
+);
 
 /**
  * 主题管理 Hook
@@ -75,10 +79,11 @@ export function useTheme() {
    * 是否处于深色模式 (计算属性)
    * 逻辑：明确为 'dark'，或者为 'auto' 且系统当前偏好为深色
    */
-  const isDark = computed(() =>
-    colorMode.value === "dark" ||
-    (colorMode.value === "auto" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches)
+  const isDark = computed(
+    () =>
+      colorMode.value === "dark" ||
+      (colorMode.value === "auto" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches),
   );
 
   /**

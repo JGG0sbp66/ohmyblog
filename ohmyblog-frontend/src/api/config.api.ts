@@ -7,16 +7,14 @@ import type { TConfigUpsertDTO } from "@server/dtos/config.dto";
  * 读取配置项
  */
 export const getConfig = (configKey: string) =>
-    unwrap(api.api.config({ configKey }).get());
+  unwrap(api.api.config({ configKey }).get());
 
 /**
  * POST /api/config
  * 创建或更新配置项
  */
-export const upsertConfig = (
-    data: TConfigUpsertDTO,
-) => {
-    return unwrap(api.api.config.post(data));
+export const upsertConfig = (data: TConfigUpsertDTO) => {
+  return unwrap(api.api.config.post(data));
 };
 
 /**
@@ -25,7 +23,9 @@ export const upsertConfig = (
  * @param file 这是一个 File 对象 (来自 <input type="file"> 或 Drag/Drop)
  */
 export const uploadFavicon = (file: File) => {
-    return unwrap(api.api.config["upload-icon"].post({
-        icon: file,
-    }));
+  return unwrap(
+    api.api.config["upload-icon"].post({
+      icon: file,
+    }),
+  );
 };

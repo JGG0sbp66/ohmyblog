@@ -1,8 +1,8 @@
 <!-- src/App.vue -->
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useTheme } from '@/composables/theme.hook';
-import { useSystemStore } from '@/stores/system.store';
+import { onMounted } from "vue";
+import { useTheme } from "@/composables/theme.hook";
+import { useSystemStore } from "@/stores/system.store";
 
 const { initThemeConfig } = useTheme();
 const systemStore = useSystemStore();
