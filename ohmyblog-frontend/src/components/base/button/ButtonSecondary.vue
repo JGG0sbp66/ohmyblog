@@ -1,14 +1,14 @@
 <!-- src/components/base/button/ButtonSecondary.vue -->
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = withDefaults(
-    defineProps<{
-        hasSlot?: boolean;
-        isActive?: boolean;
-        text?: string;
-    }>(),
-    { hasSlot: false, isActive: false, text: '' },
+  defineProps<{
+    hasSlot?: boolean;
+    isActive?: boolean;
+    text?: string;
+  }>(),
+  { hasSlot: false, isActive: false, text: "" },
 );
 
 /* 基础按钮样式类 - 使用 Tailwind CSS 工具类 */
@@ -55,15 +55,30 @@ const interactionClass = `
 
 const contentClass = "relative z-10 pointer-events-none";
 
-const hasMr = computed(() => (props.text === "" && props.hasSlot ? "" : "mr-3"));
-const isActiveClass = computed(() => (props.isActive ? 'before:opacity-100 before:scale-100 !text-text-icon transition-all duration-200' : ''))
+const hasMr = computed(() =>
+  props.text === "" && props.hasSlot ? "" : "mr-3",
+);
+const isActiveClass = computed(() =>
+  props.isActive
+    ? "before:opacity-100 before:scale-100 !text-text-icon transition-all duration-200"
+    : "",
+);
 </script>
 
 <template>
-    <button :class="[layoutClass, appearanceClass, beforeClass, hoverClass, interactionClass, isActiveClass]">
-        <span v-if="props.hasSlot" :class="[hasMr, contentClass]">
-            <slot></slot>
-        </span>
-        <span :class="contentClass">{{ props.text }}</span>
-    </button>
+  <button
+    :class="[
+      layoutClass,
+      appearanceClass,
+      beforeClass,
+      hoverClass,
+      interactionClass,
+      isActiveClass,
+    ]"
+  >
+    <span v-if="props.hasSlot" :class="[hasMr, contentClass]">
+      <slot></slot>
+    </span>
+    <span :class="contentClass">{{ props.text }}</span>
+  </button>
 </template>
