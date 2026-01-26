@@ -11,7 +11,7 @@ export default defineConfig({
     proxy: {
       // 开发环境将 /api 前缀转发到后端 3000
       "/api": {
-        target: "http://172.17.0.3:3000",
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
     },
