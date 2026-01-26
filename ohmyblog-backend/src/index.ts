@@ -37,7 +37,11 @@ const app = new Elysia()
 
 export type App = typeof app;
 
-const { port } = app.server!;
+if (!app.server) {
+	throw new Error("Server failed to start");
+}
+
+const { port } = app.server;
 const protocol = "http";
 const baseUrl = `${protocol}://localhost:${port}`;
 

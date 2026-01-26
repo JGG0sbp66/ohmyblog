@@ -1,5 +1,5 @@
 // src/services/config.service.ts
-import { configDao } from "../dao/config.dao";
+import { type NewConfig, configDao } from "../dao/config.dao";
 import type { TConfigUpsertDTO } from "../dtos/config.dto";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger.plugin";
@@ -34,7 +34,7 @@ class ConfigService {
 				);
 			}
 			// 不存在则创建
-			const created = await configDao.createConfig(data as any);
+			const created = await configDao.createConfig(data as NewConfig);
 			this.logger.info({ configKey }, "配置已创建");
 			return created;
 		}
@@ -90,8 +90,10 @@ class ConfigService {
 			return {
 				url: webPath,
 			};
-		} catch (error: any) {
-			this.logger.error({ error: error.message }, "网站图标上传失败");
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error ? error.message : String(error);
+			this.logger.error({ error: errorMessage }, "网站图标上传失败");
 
 			// 抛出业务异常，会被 Elysia 的 error 钩子捕获
 			throw new BusinessError("图标处理失败，请检查文件格式或重试", {

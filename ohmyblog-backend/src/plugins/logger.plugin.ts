@@ -8,8 +8,8 @@ const logConfig = {
 		/**
 		 * 业务可预期异常不写入 error 日志（silent）
 		 */
-		logMethod(args: any[], method: (...a: any[]) => void) {
-			const payload = args[0];
+		logMethod(args: unknown[], method: (...a: unknown[]) => void) {
+			const payload = args[0] as { err?: unknown; error?: unknown } | undefined;
 			const err: unknown = payload?.err ?? payload?.error ?? payload;
 			if (err instanceof BusinessError && err.silent) {
 				return;

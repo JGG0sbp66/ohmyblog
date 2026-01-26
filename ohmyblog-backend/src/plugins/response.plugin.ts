@@ -10,11 +10,13 @@ import { Elysia } from "elysia";
  * @param set 响应控制对象，可设置状态码
  * @returns 统一格式的错误响应体
  */
+// biome-ignore lint/suspicious/noExplicitAny: Elysia context is dynamically extended by plugins
 const formatError = ({ code, error, set }: any) => {
 	// 处理验证错误
 	if (code === "VALIDATION") {
 		// error.all 是一个包含所有错误详情的数组
 		// 遍历它，只提取 "字段" 和 "错误信息"
+		// biome-ignore lint/suspicious/noExplicitAny: Elysia validation error structure
 		const formattedErrors = error.all.map((err: any) => {
 			return {
 				// err.path 通常是 "/password" 或 "/body/email"
@@ -51,6 +53,7 @@ const formatError = ({ code, error, set }: any) => {
  * @param set 响应控制对象，用于读取状态码
  * @returns 包装后的成功响应或透传原始响应
  */
+// biome-ignore lint/suspicious/noExplicitAny: Elysia context is dynamically extended by plugins
 const formatResponse = ({ response, set }: any) => {
 	// 如果是错误响应，直接放行
 	if (set.status >= 400) {

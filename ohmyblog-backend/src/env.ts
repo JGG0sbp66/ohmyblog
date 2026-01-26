@@ -7,8 +7,8 @@ import { systemLogger } from "./plugins/logger.plugin";
 type ConfigItem = {
 	desc: string;
 	schema: z.ZodTypeAny;
-	default?: any;
-	autoGen?: () => any;
+	default?: unknown;
+	autoGen?: () => unknown;
 };
 
 // =================================================================
@@ -94,7 +94,7 @@ const mergedEnv = { ...process.env, ...loadedEnv };
 // =================================================================
 // 3. 构建 Schema
 // =================================================================
-const schemaShape: any = {};
+const schemaShape: Record<string, z.ZodTypeAny> = {};
 for (const [key, value] of Object.entries(configDef)) {
 	const def = value as ConfigItem;
 	if (def.default !== undefined) {

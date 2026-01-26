@@ -29,7 +29,8 @@ export const jwtConfig = {
  */
 export const createRoleGuard =
 	(expectedRole: Roles) =>
-	({ user, set, cookie: { auth_token } }: any) => {
+	// biome-ignore lint/suspicious/noExplicitAny: Elysia context is dynamically extended by plugins
+	({ user, cookie: { auth_token } }: any) => {
 		// 如果 derive 没找到 user，说明 Token 无效或缺失
 		if (!user) {
 			// 清理可能存在的无效 Cookie

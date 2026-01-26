@@ -25,6 +25,7 @@ const hasAdmin = async () => {
 /**
  * 若系统已有管理员，则强制需要 admin；否则放行（用于初始化阶段）
  */
+// biome-ignore lint/suspicious/noExplicitAny: Elysia context is dynamically extended by plugins
 export const ensureAdminIfExists = async (ctx: any) => {
 	const exists = await hasAdmin();
 	if (!exists) return;
