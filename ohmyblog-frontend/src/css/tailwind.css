@@ -19,6 +19,7 @@
 
   /* --- 文本色 --- */
   --color-text-main: var(--theme-text-main);
+  --color-text-secondary: var(--theme-text-secondary);
   --color-text-on-primary: var(--theme-text-on-primary);
   --color-text-icon: var(--theme-text-icon);
 }
@@ -49,6 +50,7 @@
 
   /* --- 文本色 --- */
   --theme-text-main: oklch(0.2 0.03 var(--app-hue));
+  --theme-text-secondary: #00000080;
   --theme-text-on-primary: white;
   --theme-text-icon: oklch(0.65 0.15 var(--app-hue));
 
@@ -72,6 +74,7 @@
 
   /* --- 文本色 --- */
   --theme-text-main: oklch(0.95 0.01 var(--app-hue));
+  --theme-text-secondary: #FFFFFF80;
   --theme-text-on-primary: white;
   --theme-text-icon: oklch(0.75 0.14 var(--app-hue));
 
@@ -109,7 +112,7 @@ body {
 }
 
 @layer utilities {
-  .text-text-icon {
+  .text-text-icon, .bg-text-icon {
     @apply transition-all duration-200;
   }
 }
