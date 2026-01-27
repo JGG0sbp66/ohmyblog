@@ -42,7 +42,7 @@ const handleFileChange = async (e: Event) => {
 
     useToast.success(t("api.success.config.保存成功"));
   } catch (error) {
-    useToast.error(t("api.errors.Error"));
+    useToast.error(t(`api.errors.${error}`));
   } finally {
     uploading.value = false;
     // 清空 input，允许重复上传同一张图
