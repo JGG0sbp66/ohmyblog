@@ -3,14 +3,13 @@
 import { ref } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import StepLayout from "./StepLayout.vue";
+import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStep, type Validatable } from "@/composables/setup-step.hook";
 import { upsertConfig, uploadFavicon } from "@/api/config.api";
 import { useSystemStore } from "@/stores/system.store";
 import { useToast } from "@/composables/toast.hook";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
-import Picture from "@/components/icon/Picture.vue";
-import Loading from "@/components/icon/Loading.vue";
 import Check from "@/components/icon/Check.vue";
 
 const { t } = useLang();
@@ -18,17 +17,20 @@ const { isSubmitting, runStep } = useSetupStep();
 const systemStore = useSystemStore();
 
 const titleInputRef = ref<Validatable | null>(null);
-const fileInputRef = ref<HTMLInputElement | null>(null);
+const imageUploadRef = ref<InstanceType<typeof ImageUpload> | null>(null);
 const uploading = ref(false);
 
+/**
+ * 手动点击上传按钮时，触发 ImageUpload 组件内部的文件选择逻辑
+ */
 const handleIconClick = () => {
-  fileInputRef.value?.click();
+  imageUploadRef.value?.triggerClick();
 };
 
-const handleFileChange = async (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0];
-  if (!file) return;
-
+/**
+ * 处理 ImageUpload 组件抛出的文件，执行实际的上传 API 请求
+ */
+const handleFileChange = async (file: File) => {
   try {
     uploading.value = true;
 
@@ -41,11 +43,9 @@ const handleFileChange = async (e: Event) => {
 
     useToast.success(t("api.success.config.保存成功"));
   } catch (error) {
-    useToast.error(t("api.errors.Error"));
+    useToast.error(t(`api.errors.${error}`));
   } finally {
     uploading.value = false;
-    // 清空 input，允许重复上传同一张图
-    if (fileInputRef.value) fileInputRef.value.value = "";
   }
 };
 
@@ -101,38 +101,17 @@ const handleNext = () =>
       <div class="flex items-start gap-5">
         <!-- 预览区域 -->
         <div class="shrink-0">
-          <div
-            class="w-20 h-20 border-2 border-dashed border-border-subtle rounded-xl flex items-center justify-center bg-bg-secondary overflow-hidden relative group transition-colors hover:border-primary/50"
-          >
-            <img
-              v-if="systemStore.siteInfo.logo"
-              :src="systemStore.siteInfo.logo"
-              alt="Site Icon"
-              class="w-full h-full object-contain"
-              :class="{ 'opacity-50': uploading }"
-            />
-            <Picture v-else size-class="w-8 h-8 text-text-icon opacity-40" />
-
-            <!-- 上传中遮罩 -->
-            <div
-              v-if="uploading"
-              class="absolute inset-0 flex items-center justify-center bg-bg-card/60"
-            >
-              <Loading size-class="w-6 h-6 text-primary" />
-            </div>
-          </div>
+          <ImageUpload
+            ref="imageUploadRef"
+            v-model="systemStore.siteInfo.logo"
+            :loading="uploading"
+            accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,image/gif,image/apng,image/avif,image/x-icon,image/vnd.microsoft.icon,.ico"
+            @change="handleFileChange"
+          />
         </div>
 
         <!-- 按钮与说明 -->
         <div class="flex-1 pt-1">
-          <input
-            ref="fileInputRef"
-            type="file"
-            accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,image/gif,image/apng,image/avif,image/x-icon,image/vnd.microsoft.icon,.ico"
-            @change="handleFileChange"
-            class="hidden"
-          />
-
           <div class="flex items-center gap-3">
             <ButtonPrimary
               type="button"

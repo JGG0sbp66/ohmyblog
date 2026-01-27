@@ -63,13 +63,29 @@
           "uploading": "Uploading",
           "iconUploaded": "Icon Uploaded",
           "siteIconHelp1": "Recommended to use 256x256 or larger PNG/ICO files",
-          "siteIconHelp2": "This will also be used as the browser's favicon",
+          "siteIconHelp2": "Maximum supported image size is 1MB",
           "footer": "Footer Copyright",
           "footerPlaceholder": "YourName. All rights reserved.",
           "footerHint": "Supports strings, will be displayed at the very bottom of the page",
           "icp": "ICP Filing Number",
           "icpPlaceholder": "e.g., ICP 00000000",
           "icpHint": "According to Chinese law, if your server is located in mainland China, you must display the ICP filing number"
+        },
+        "step3": {
+          "title": "Create Admin",
+          "description": "Create your administrator account to log in and manage your blog.",
+          "username": "Username",
+          "usernamePlaceholder": "e.g., admin or your name",
+          "email": "Email Address",
+          "emailPlaceholder": "e.g., admin@example.com",
+          "password": "Password",
+          "passwordPlaceholder": "Enter a strong password",
+          "confirmPassword": "Confirm Password",
+          "confirmPasswordPlaceholder": "Re-enter your password",
+          "passwordMismatch": "Passwords do not match",
+          "usernameError": "Username must be between 3-50 characters",
+          "emailError": "Please enter a valid email address",
+          "passwordError": "Password must be between 6-50 characters"
         }
       }
     }
