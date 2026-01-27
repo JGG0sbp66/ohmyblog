@@ -104,7 +104,10 @@ const handleNext = () =>
         <div class="shrink-0">
           <div
             class="w-20 h-20 border-2 border-dashed border-border-subtle rounded-xl flex items-center justify-center bg-bg-secondary overflow-hidden relative group transition-colors hover:border-primary/50"
-            :class="{ 'cursor-pointer': !uploading, 'cursor-not-allowed': uploading }"
+            :class="{
+              'cursor-pointer': !uploading,
+              'cursor-not-allowed': uploading,
+            }"
             @click="handleIconClick"
           >
             <img
