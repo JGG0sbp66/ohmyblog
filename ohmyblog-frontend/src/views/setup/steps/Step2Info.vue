@@ -22,6 +22,7 @@ const fileInputRef = ref<HTMLInputElement | null>(null);
 const uploading = ref(false);
 
 const handleIconClick = () => {
+  if (uploading.value) return;
   fileInputRef.value?.click();
 };
 
@@ -103,6 +104,8 @@ const handleNext = () =>
         <div class="shrink-0">
           <div
             class="w-20 h-20 border-2 border-dashed border-border-subtle rounded-xl flex items-center justify-center bg-bg-secondary overflow-hidden relative group transition-colors hover:border-primary/50"
+            :class="{ 'cursor-pointer': !uploading, 'cursor-not-allowed': uploading }"
+            @click="handleIconClick"
           >
             <img
               v-if="systemStore.siteInfo.logo"
@@ -112,6 +115,14 @@ const handleNext = () =>
               :class="{ 'opacity-50': uploading }"
             />
             <Picture v-else size-class="w-8 h-8 text-text-icon opacity-40" />
+
+            <!-- 悬浮触发遮罩 -->
+            <div
+              v-if="!uploading && systemStore.siteInfo.logo"
+              class="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <Picture size-class="w-6 h-6 text-white drop-shadow-sm" />
+            </div>
 
             <!-- 上传中遮罩 -->
             <div
