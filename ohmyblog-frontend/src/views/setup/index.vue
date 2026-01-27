@@ -15,8 +15,9 @@ const stepStore = useSetupStore();
 // 引入步骤组件
 import Step1Appearance from "@/views/setup/steps/Step1Appearance.vue";
 import Step2Info from "@/views/setup/steps/Step2Info.vue";
+import Step3Admin from "@/views/setup/steps/Step3Admin.vue";
 
-const stepComponents = [Step1Appearance, Step2Info];
+const stepComponents = [Step1Appearance, Step2Info, Step3Admin];
 
 const CurrentStepComponent = computed(() => {
   return stepComponents[stepStore.currentStep - 1];

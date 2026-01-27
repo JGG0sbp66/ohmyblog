@@ -63,13 +63,29 @@
           "uploading": "上传中",
           "iconUploaded": "图标已上传",
           "siteIconHelp1": "推荐使用 256x256 或更大的 PNG/ICO 格式文件",
-          "siteIconHelp2": "这也会作为浏览器的 favicon 显示",
+          "siteIconHelp2": "最大支持 1MB 的图片",
           "footer": "页脚版权信息",
           "footerPlaceholder": "YourName. All rights reserved.",
           "footerHint": "支持字符串，将显示在页面最底部",
           "icp": "备案号",
           "icpPlaceholder": "例如：京ICP备00000000号",
           "icpHint": "根据中国法律，若您的服务器位于中国大陆，则必须展示备案号"
+        },
+        "step3": {
+          "title": "创建管理员",
+          "description": "创建你的管理员账号，用于登录后台管理博客。",
+          "username": "用户名",
+          "usernamePlaceholder": "例如：admin 或你的名字",
+          "email": "电子邮箱",
+          "emailPlaceholder": "例如：admin@example.com",
+          "password": "密码",
+          "passwordPlaceholder": "请设置一个安全的密码",
+          "confirmPassword": "确认密码",
+          "confirmPasswordPlaceholder": "请再次输入密码以确认",
+          "passwordMismatch": "两次输入的密码不一致",
+          "usernameError": "用户名长度需在3-50位之间",
+          "emailError": "请输入有效的电子邮箱地址",
+          "passwordError": "密码长度需在6-50位之间"
         }
       }
     }
