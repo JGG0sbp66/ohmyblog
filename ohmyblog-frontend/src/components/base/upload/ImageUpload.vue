@@ -20,6 +20,8 @@ interface Props {
   accept?: string;
   /** 圆角类名 */
   roundedClass?: string;
+  /** 未上传图片时显示的说明文字 */
+  description?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -92,8 +94,15 @@ defineExpose({
         :class="{ 'opacity-50': loading }"
       />
       
-      <!-- 默认图标 -->
-      <Picture v-else size-class="w-8 h-8 text-text-icon opacity-40" />
+      <!-- 默认内容 (图标 + 说明文字) -->
+      <div v-else class="flex flex-col items-center gap-2 p-2">
+        <slot name="icon">
+          <Picture size-class="w-8 h-8 text-text-icon opacity-40" />
+        </slot>
+        <p v-if="description" class="text-[10px] text-text-icon opacity-60 text-center leading-tight">
+          {{ description }}
+        </p>
+      </div>
 
       <!-- 悬浮遮罩 (仅在有图片且非加载时显示) -->
       <div
