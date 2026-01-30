@@ -77,7 +77,7 @@
           "username": "Username",
           "usernamePlaceholder": "e.g., admin or your name",
           "email": "Email Address",
-          "emailPlaceholder": "e.g., admin@example.com",
+          "emailPlaceholder": "e.g., admin{'@'}example.com",
           "password": "Password",
           "passwordPlaceholder": "Enter a strong password",
           "confirmPassword": "Confirm Password",
