@@ -14,7 +14,10 @@
       // 前后端共享同一份 Elysia 类型，避免版本不一致报错
       "elysia": ["../ohmyblog-backend/node_modules/elysia"],
       // 后端 DTO 类型（例如 TRegisterDTO / TLoginDTO）
-      "@server/dtos/*": ["../ohmyblog-backend/src/dtos/*"]
+      "@server/dtos/*": ["../ohmyblog-backend/src/dtos/*"],
+      // TypeBox runtime 校验（复用后端依赖）
+      "@sinclair/typebox": ["../ohmyblog-backend/node_modules/@sinclair/typebox"],
+      "@sinclair/typebox/*": ["../ohmyblog-backend/node_modules/@sinclair/typebox/*"]
     }
   }
 }
