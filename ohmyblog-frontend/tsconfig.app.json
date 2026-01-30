@@ -16,8 +16,12 @@
       // 后端 DTO 类型（例如 TRegisterDTO / TLoginDTO）
       "@server/dtos/*": ["../ohmyblog-backend/src/dtos/*"],
       // TypeBox runtime 校验（复用后端依赖）
-      "@sinclair/typebox": ["../ohmyblog-backend/node_modules/@sinclair/typebox"],
-      "@sinclair/typebox/*": ["../ohmyblog-backend/node_modules/@sinclair/typebox/*"]
+      "@sinclair/typebox": [
+        "../ohmyblog-backend/node_modules/@sinclair/typebox"
+      ],
+      "@sinclair/typebox/*": [
+        "../ohmyblog-backend/node_modules/@sinclair/typebox/*"
+      ]
     }
   }
 }
