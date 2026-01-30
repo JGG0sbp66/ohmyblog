@@ -1,5 +1,8 @@
+<!-- src/components/common/input/TipInput.vue -->
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { Value } from "@sinclair/typebox/value";
+import type { TSchema } from "@sinclair/typebox";
 import { useVModel } from "@vueuse/core";
 import { vAutoAnimate } from "@formkit/auto-animate";
 import { useLang } from "@/composables/lang.hook";
@@ -20,12 +23,10 @@ interface Props {
   hint?: string;
   /** 是否为必填项 */
   required?: boolean;
-  /** 校验正则表达式 */
-  pattern?: RegExp;
-  /** 正则校验失败文案 */
-  errorMessage?: string;
   /** 外部传入的错误信息 */
   externalError?: string;
+  /** 可选：字段级 schema（与后端 DTO 共用） */
+  schema?: TSchema;
 }
 
 const props = defineProps<Props>();
@@ -50,11 +51,18 @@ const validate = () => {
     return false;
   }
 
-  // 2. 正则校验
-  if (props.pattern && value && !props.pattern.test(value)) {
-    internalError.value = props.errorMessage || "";
-    emit("validate", false);
-    return false;
+  // 2. Schema 校验
+  if (props.schema) {
+    // 使用 trim() 后的值进行校验，避免前后空格导致 schema 校验失败
+    const error = Value.Errors(props.schema, value).First();
+    if (error) {
+      // 优先从 schema 的自定义 error 属性中获取标识符
+      const errorKey = (error.schema as any).error || error.message;
+      // 自动拼接到 common.validation 路径进行翻译
+      internalError.value = errorKey ? t(`common.validation.${errorKey}`) : "";
+      emit("validate", false);
+      return false;
+    }
   }
 
   internalError.value = "";
