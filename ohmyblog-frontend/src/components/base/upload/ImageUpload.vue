@@ -81,7 +81,9 @@ defineExpose({
         height,
         roundedClass,
         'border-2 border-dashed border-border-subtle flex items-center justify-center bg-bg-secondary overflow-hidden relative group transition-colors',
-        loading ? 'cursor-not-allowed' : 'cursor-pointer hover:border-primary/50',
+        loading
+          ? 'cursor-not-allowed'
+          : 'cursor-pointer hover:border-primary/50',
       ]"
       @click="handleClick"
     >
@@ -93,13 +95,16 @@ defineExpose({
         class="w-full h-full object-contain"
         :class="{ 'opacity-50': loading }"
       />
-      
+
       <!-- 默认内容 (图标 + 说明文字) -->
       <div v-else class="flex flex-col items-center gap-2 p-2">
         <slot name="icon">
           <Picture size-class="w-8 h-8 text-text-icon opacity-40" />
         </slot>
-        <p v-if="description" class="text-[10px] text-text-icon opacity-60 text-center leading-tight">
+        <p
+          v-if="description"
+          class="text-[10px] text-text-icon opacity-60 text-center leading-tight"
+        >
           {{ description }}
         </p>
       </div>
