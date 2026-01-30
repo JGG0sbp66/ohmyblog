@@ -5,8 +5,8 @@ import TipInput from "@/components/common/input/TipInput.vue";
 import StepLayout from "./StepLayout.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStep, type Validatable } from "@/composables/setup-step.hook";
-import { useToast } from "@/composables/toast.hook";
 import { register, login } from "@/api/auth.api";
+import { RegisterDTO, type TRegisterDTO } from "@server/dtos/auth.dto";
 
 const { t } = useLang();
 const { isSubmitting, runStep } = useSetupStep();
@@ -16,29 +16,30 @@ const emailRef = ref<Validatable | null>(null);
 const passwordRef = ref<Validatable | null>(null);
 const confirmPasswordRef = ref<Validatable | null>(null);
 
-const form = reactive({
+const confirmError = ref("");
+
+type RegisterForm = TRegisterDTO & { confirmPassword: string };
+
+const form = reactive<RegisterForm>({
   username: "",
   email: "",
   password: "",
   confirmPassword: "",
 });
 
-// 基础正则规则
-const patterns = {
-  // 用户名：3-50位
-  username: /^.{3,50}$/,
-  // 邮箱：标准邮箱格式
-  email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-  // 密码：6-50位
-  password: /^.{6,50}$/,
+// 仅做确认密码一致性校验（复杂规则仍在 DTO schema 内）
+const validateConfirmPassword = () => {
+  confirmError.value = "";
+  if (form.password !== form.confirmPassword) {
+    confirmError.value = t("views.setup.steps.step3.passwordMismatch");
+    return false;
+  }
+  return true;
 };
 
+// 提交前：先校验确认密码，再交给 runStep 执行后端请求
 const handleNext = () => {
-  // 手动校验密码一致性
-  if (form.password !== form.confirmPassword) {
-    useToast.error(t("views.setup.steps.step3.passwordMismatch"));
-    return;
-  }
+  if (!validateConfirmPassword()) return;
 
   runStep(
     async () => {
@@ -80,8 +81,7 @@ const handleNext = () => {
       v-model="form.username"
       :label="t('views.setup.steps.step3.username')"
       :placeholder="t('views.setup.steps.step3.usernamePlaceholder')"
-      :pattern="patterns.username"
-      :error-message="t('views.setup.steps.step3.usernameError')"
+      :schema="RegisterDTO.properties.username"
       required
     />
 
@@ -92,8 +92,7 @@ const handleNext = () => {
       type="email"
       :label="t('views.setup.steps.step3.email')"
       :placeholder="t('views.setup.steps.step3.emailPlaceholder')"
-      :pattern="patterns.email"
-      :error-message="t('views.setup.steps.step3.emailError')"
+      :schema="RegisterDTO.properties.email"
       required
     />
 
@@ -104,8 +103,7 @@ const handleNext = () => {
       type="password"
       :label="t('views.setup.steps.step3.password')"
       :placeholder="t('views.setup.steps.step3.passwordPlaceholder')"
-      :pattern="patterns.password"
-      :error-message="t('views.setup.steps.step3.passwordError')"
+      :schema="RegisterDTO.properties.password"
       required
     />
 
@@ -116,6 +114,8 @@ const handleNext = () => {
       type="password"
       :label="t('views.setup.steps.step3.confirmPassword')"
       :placeholder="t('views.setup.steps.step3.confirmPasswordPlaceholder')"
+      :external-error="confirmError"
+      @input="validateConfirmPassword"
       required
     />
   </StepLayout>

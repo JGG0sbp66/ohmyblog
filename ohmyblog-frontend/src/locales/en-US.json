@@ -77,20 +77,24 @@
           "username": "Username",
           "usernamePlaceholder": "e.g., admin or your name",
           "email": "Email Address",
-          "emailPlaceholder": "e.g., admin@example.com",
+          "emailPlaceholder": "e.g., admin{'@'}example.com",
           "password": "Password",
           "passwordPlaceholder": "Enter a strong password",
           "confirmPassword": "Confirm Password",
           "confirmPasswordPlaceholder": "Re-enter your password",
-          "passwordMismatch": "Passwords do not match",
-          "usernameError": "Username must be between 3-50 characters",
-          "emailError": "Please enter a valid email address",
-          "passwordError": "Password must be between 6-50 characters"
+          "passwordMismatch": "Passwords do not match"
         }
       }
     }
   },
   "common": {
+    "validation": {
+      "auth": {
+        "username_range": "Username must be between 3-50 characters",
+        "email_invalid": "Please enter a valid email address",
+        "password_range": "Password must be between 6-50 characters"
+      }
+    },
     "next": "Next Step",
     "prev": "Previous"
   },

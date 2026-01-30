@@ -74,7 +74,7 @@
 
   /* --- 文本色 --- */
   --theme-text-main: oklch(0.95 0.01 var(--app-hue));
-  --theme-text-secondary: #FFFFFF80;
+  --theme-text-secondary: #ffffff80;
   --theme-text-on-primary: white;
   --theme-text-icon: oklch(0.75 0.14 var(--app-hue));
 
@@ -112,7 +112,8 @@ body {
 }
 
 @layer utilities {
-  .text-text-icon, .bg-text-icon {
+  .text-text-icon,
+  .bg-text-icon {
     @apply transition-all duration-200;
   }
 }

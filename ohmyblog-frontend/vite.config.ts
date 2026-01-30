@@ -33,6 +33,19 @@ export default defineConfig({
       elysia: fileURLToPath(
         new URL("../ohmyblog-backend/node_modules/elysia", import.meta.url),
       ),
+      // TypeBox runtime（与后端共用依赖目录）
+      "@sinclair/typebox": fileURLToPath(
+        new URL(
+          "../ohmyblog-backend/node_modules/@sinclair/typebox",
+          import.meta.url,
+        ),
+      ),
+      "@sinclair/typebox/value": fileURLToPath(
+        new URL(
+          "../ohmyblog-backend/node_modules/@sinclair/typebox/value",
+          import.meta.url,
+        ),
+      ),
     },
   },
 });

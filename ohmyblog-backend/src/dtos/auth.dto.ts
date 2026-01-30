@@ -8,16 +8,19 @@ export const RegisterDTO = t.Object({
 		maxLength: 50,
 		description: "用户名",
 		examples: ["zhangsan"],
+		error: "auth.username_range",
 	}),
 	email: t.String({
 		format: "email",
 		description: "邮箱",
 		examples: ["test@example.com"],
+		error: "auth.email_invalid",
 	}),
 	password: t.String({
 		minLength: 6,
 		maxLength: 50,
 		description: "密码",
+		error: "auth.password_range",
 	}),
 });
 

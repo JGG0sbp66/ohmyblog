@@ -1,8 +1,10 @@
+<!-- src/components/common/input/TipInput.vue -->
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import type { TSchema } from "@sinclair/typebox";
 import { useVModel } from "@vueuse/core";
 import { vAutoAnimate } from "@formkit/auto-animate";
-import { useLang } from "@/composables/lang.hook";
+import { useValidator } from "@/composables/validator.hook";
 import BaseTooltip from "@/components/base/pop/BaseTooltip.vue";
 
 interface Props {
@@ -20,12 +22,10 @@ interface Props {
   hint?: string;
   /** 是否为必填项 */
   required?: boolean;
-  /** 校验正则表达式 */
-  pattern?: RegExp;
-  /** 正则校验失败文案 */
-  errorMessage?: string;
   /** 外部传入的错误信息 */
   externalError?: string;
+  /** 可选：字段级 schema（与后端 DTO 共用） */
+  schema?: TSchema;
 }
 
 const props = defineProps<Props>();
@@ -33,40 +33,40 @@ const emit = defineEmits(["update:modelValue", "blur", "validate"]);
 
 const innerValue = useVModel(props, "modelValue", emit);
 
-const { t } = useLang();
+/** 初始化校验 Hook */
+const { validate: runValidator } = useValidator();
+/** 内部校验产生的错误信息（由 runValidator 返回） */
 const internalError = ref("");
 
-/** 最终展示出来的错误信息 */
+/** 
+ * 最终展示出来的错误信息 
+ * 优先级：内部校验错误 > 外部传入错误 (props.externalError)
+ */
 const displayError = computed(() => internalError.value || props.externalError);
 
-/** 校验逻辑 */
+/** 
+ * 执行组件校验
+ * 结合 Props 中的必填项和 Schema 进行验证，并同步 internalError 状态
+ * @returns {boolean} 校验是否通过
+ */
 const validate = () => {
-  const value = String(innerValue.value || "").trim();
+  const { isValid, error } = runValidator(innerValue.value, {
+    required: props.required,
+    schema: props.schema,
+  });
 
-  // 1. 必填校验：利用已有的 i18n
-  if (props.required && !value) {
-    internalError.value = t("components.common.input.TipInput.required");
-    emit("validate", false);
-    return false;
-  }
-
-  // 2. 正则校验
-  if (props.pattern && value && !props.pattern.test(value)) {
-    internalError.value = props.errorMessage || "";
-    emit("validate", false);
-    return false;
-  }
-
-  internalError.value = "";
-  emit("validate", true);
-  return true;
+  internalError.value = error;
+  emit("validate", isValid);
+  return isValid;
 };
 
+/** 失去焦点时触发校验 */
 const handleBlur = () => {
   validate();
   emit("blur");
 };
 
+/** 暴露接口给父组件，支持外部手动触发校验 */
 defineExpose({ validate });
 </script>
 

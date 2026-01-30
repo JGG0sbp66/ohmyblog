@@ -77,20 +77,24 @@
           "username": "用户名",
           "usernamePlaceholder": "例如：admin 或你的名字",
           "email": "电子邮箱",
-          "emailPlaceholder": "例如：admin@example.com",
+          "emailPlaceholder": "例如：admin{'@'}example.com",
           "password": "密码",
           "passwordPlaceholder": "请设置一个安全的密码",
           "confirmPassword": "确认密码",
           "confirmPasswordPlaceholder": "请再次输入密码以确认",
-          "passwordMismatch": "两次输入的密码不一致",
-          "usernameError": "用户名长度需在3-50位之间",
-          "emailError": "请输入有效的电子邮箱地址",
-          "passwordError": "密码长度需在6-50位之间"
+          "passwordMismatch": "两次输入的密码不一致"
         }
       }
     }
   },
   "common": {
+    "validation": {
+      "auth": {
+        "username_range": "用户名长度需在3-50位之间",
+        "email_invalid": "请输入有效的电子邮箱地址",
+        "password_range": "密码长度需在6-50位之间"
+      }
+    },
     "next": "下一步",
     "prev": "上一步"
   },
