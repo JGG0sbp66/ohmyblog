@@ -35,10 +35,16 @@ export default defineConfig({
       ),
       // TypeBox runtime（与后端共用依赖目录）
       "@sinclair/typebox": fileURLToPath(
-        new URL("../ohmyblog-backend/node_modules/@sinclair/typebox", import.meta.url),
+        new URL(
+          "../ohmyblog-backend/node_modules/@sinclair/typebox",
+          import.meta.url,
+        ),
       ),
       "@sinclair/typebox/value": fileURLToPath(
-        new URL("../ohmyblog-backend/node_modules/@sinclair/typebox/value", import.meta.url),
+        new URL(
+          "../ohmyblog-backend/node_modules/@sinclair/typebox/value",
+          import.meta.url,
+        ),
       ),
     },
   },
