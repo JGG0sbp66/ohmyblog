@@ -1,8 +1,8 @@
 // src/services/config.service.ts
 import { join } from "node:path";
-import { SYSTEM_UPLOADS_DIR } from "../env";
 import { configDao, type NewConfig } from "../dao/config.dao";
 import type { TConfigUpsertDTO } from "../dtos/config.dto";
+import { SYSTEM_UPLOADS_DIR } from "../env";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger.plugin";
 import { ImageService } from "./image.service";
