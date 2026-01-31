@@ -66,7 +66,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="relative inline-block">
+  <div :class="['relative', width]">
     <input
       ref="fileInputRef"
       type="file"
