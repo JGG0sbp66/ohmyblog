@@ -18,7 +18,7 @@ export const ImageService = {
 		file: File,
 		targetPath: string,
 		isIcon: boolean = false,
-	) {
+	): Promise<string> {
 		const buffer = Buffer.from(await file.arrayBuffer());
 
 		// 确保目标目录存在
