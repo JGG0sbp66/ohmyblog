@@ -115,9 +115,9 @@
       "请求参数验证失败": "Request validation failed",
       "系统健康检查失败": "System health check failed",
       "获取站点基本信息失败": "Failed to fetch site info",
-      "请上传 1MB 以内的有效图片，系统将自动处理为 128x128 PNG 格式": "Please upload a valid image under 1MB. It will be automatically processed into 128x128 PNG format.",
-      "请上传 5MB 以内的有效图片，系统将自动处理为 WebP 横幅格式": "Please upload a valid image under 5MB. It will be automatically processed into WebP hero format.",
-      "请上传 2MB 以内的有效图片，系统将自动处理为 WebP 头像格式": "Please upload a valid image under 2MB. It will be automatically processed into WebP avatar format."
+      "请上传 1MB 以内的有效图片": "Please upload a valid image under 1MB.",
+      "请上传 5MB 以内的有效图片": "Please upload a valid image under 5MB.",
+      "请上传 2MB 以内的有效图片": "Please upload a valid image under 2MB."
     },
     "success": {
       "config": {

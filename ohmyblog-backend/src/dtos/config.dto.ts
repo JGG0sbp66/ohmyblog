@@ -34,7 +34,7 @@ export const UploadIconDTO = t.Object({
 		type: "image",
 		maxSize: "1m",
 		description: "网站图标文件，最大1MB",
-		error: "请上传 1MB 以内的有效图片，系统将自动处理为 128x128 PNG 格式",
+		error: "请上传 1MB 以内的有效图片",
 	}),
 });
 
@@ -44,7 +44,7 @@ export const UploadHeroDTO = t.Object({
 		type: "image",
 		maxSize: "5m",
 		description: "首页横幅图片，最大5MB",
-		error: "请上传 5MB 以内的有效图片，系统将自动处理为 WebP 横幅格式",
+		error: "请上传 5MB 以内的有效图片",
 	}),
 });
 
@@ -54,7 +54,7 @@ export const UploadAvatarDTO = t.Object({
 		type: "image",
 		maxSize: "2m",
 		description: "管理员头像，最大2MB",
-		error: "请上传 2MB 以内的有效图片，系统将自动处理为 WebP 头像格式",
+		error: "请上传 2MB 以内的有效图片",
 	}),
 });
 
