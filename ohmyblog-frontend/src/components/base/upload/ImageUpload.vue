@@ -80,7 +80,7 @@ defineExpose({
         width,
         height,
         roundedClass,
-        'border-2 border-dashed border-border-subtle flex items-center justify-center bg-bg-secondary overflow-hidden relative group transition-colors',
+        'border-2 border-dashed border-border-subtle flex items-center justify-center bg-bg-secondary/50 overflow-hidden relative group transition-colors',
         loading
           ? 'cursor-not-allowed'
           : 'cursor-pointer hover:border-primary/50',
