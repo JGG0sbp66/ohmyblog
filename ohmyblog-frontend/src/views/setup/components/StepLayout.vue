@@ -1,4 +1,4 @@
-<!-- src/views/setup/steps/StepLayout.vue -->
+<!-- src/views/setup/components/StepLayout.vue -->
 <script setup lang="ts">
 import StepButton from "@/components/common/button/StepButton.vue";
 
