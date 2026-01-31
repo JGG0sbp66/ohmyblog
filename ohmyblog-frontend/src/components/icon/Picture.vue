@@ -1,6 +1,6 @@
 <!-- src/components/icon/Picture.vue -->
 <script setup lang="ts">
-import { Image } from "lucide-vue-next";
+import { RiImageAddFill } from "@remixicon/vue";
 const props = withDefaults(
   defineProps<{
     sizeClass?: string;
@@ -12,5 +12,5 @@ const props = withDefaults(
 </script>
 
 <template>
-  <Image :class="props.sizeClass" />
+  <RiImageAddFill :class="props.sizeClass" />
 </template>
