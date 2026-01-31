@@ -48,41 +48,68 @@
           "welcome": "Welcome to your new blog journey.",
           "title": "Appearance",
           "description": "Customize how your blog looks and feels.",
-          "language": "Language",
-          "theme": "Theme Mode",
-          "color": "Accent Color"
+          "settings": {
+            "language": "Language",
+            "theme": "Theme Mode",
+            "color": "Accent Color"
+          }
         },
         "step2": {
           "title": "Site Information",
           "description": "This information will be displayed on the browser tab and at the bottom of the page.",
-          "siteTitle": "Site Title",
-          "siteTitlePlaceholder": "e.g., My Personal Blog",
-          "siteIcon": "Site Icon",
-          "uploadIcon": "Upload Icon",
-          "changeIcon": "Change Icon",
-          "uploading": "Uploading",
-          "iconUploaded": "Icon Uploaded",
-          "siteIconHelp1": "Recommended to use 256x256 or larger PNG/ICO files",
-          "siteIconHelp2": "Maximum supported image size is 1MB",
-          "footer": "Footer Copyright",
-          "footerPlaceholder": "YourName. All rights reserved.",
-          "footerHint": "Supports strings, will be displayed at the very bottom of the page",
-          "icp": "ICP Filing Number",
-          "icpPlaceholder": "e.g., ICP 00000000",
-          "icpHint": "According to Chinese law, if your server is located in mainland China, you must display the ICP filing number"
+          "siteTitle": {
+            "label": "Site Title",
+            "placeholder": "e.g., My Personal Blog"
+          },
+          "siteIcon": {
+            "label": "Site Icon",
+            "upload": "Upload Icon",
+            "change": "Change Icon",
+            "uploading": "Uploading",
+            "success": "Icon Uploaded",
+            "help1": "Recommended to use 256x256 or larger PNG/ICO files",
+            "help2": "Maximum supported image size is 1MB"
+          },
+          "footer": {
+            "label": "Footer Copyright",
+            "placeholder": "YourName. All rights reserved.",
+            "hint": "Supports strings, will be displayed at the very bottom of the page"
+          },
+          "icp": {
+            "label": "ICP Filing Number",
+            "placeholder": "e.g., ICP 00000000",
+            "hint": "According to Chinese law, if your server is located in mainland China, you must display the ICP filing number"
+          }
         },
         "step3": {
           "title": "Create Admin",
           "description": "Create your administrator account to log in and manage your blog.",
-          "username": "Username",
-          "usernamePlaceholder": "e.g., admin or your name",
-          "email": "Email Address",
-          "emailPlaceholder": "e.g., admin{'@'}example.com",
-          "password": "Password",
-          "passwordPlaceholder": "Enter a strong password",
-          "confirmPassword": "Confirm Password",
-          "confirmPasswordPlaceholder": "Re-enter your password",
-          "passwordMismatch": "Passwords do not match"
+          "username": {
+            "label": "Username",
+            "placeholder": "e.g., admin or your name"
+          },
+          "email": {
+            "label": "Email Address",
+            "placeholder": "e.g., admin{'@'}example.com"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "Enter a strong password"
+          },
+          "confirm": {
+            "label": "Confirm Password",
+            "placeholder": "Re-enter your password",
+            "error": "Passwords do not match"
+          }
+        },
+        "step4": {
+          "title": "Personalization",
+          "description": "Make your blog unique by uploading an avatar and home page banner for key locations.",
+          "personalization": {
+            "title": "Enable Personalization",
+            "description": "Enabling this allows you to set an admin avatar and home page background.",
+            "tag": "Optional"
+          }
         }
       }
     }

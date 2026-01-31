@@ -48,41 +48,68 @@
           "welcome": "欢迎开始你的博客之旅。",
           "title": "外观设置",
           "description": "自定义你的博客外观和感觉。",
-          "language": "语言",
-          "theme": "主题模式",
-          "color": "主题色"
+          "settings": {
+            "language": "语言",
+            "theme": "主题模式",
+            "color": "主题色"
+          }
         },
         "step2": {
           "title": "站点信息",
           "description": "这些信息将展示在浏览器标签页和页面底部。",
-          "siteTitle": "站点标题",
-          "siteTitlePlaceholder": "例如：我的个人博客",
-          "siteIcon": "站点图标",
-          "uploadIcon": "上传图标",
-          "changeIcon": "修改图标",
-          "uploading": "上传中",
-          "iconUploaded": "图标已上传",
-          "siteIconHelp1": "推荐使用 256x256 或更大的 PNG/ICO 格式文件",
-          "siteIconHelp2": "最大支持 1MB 的图片",
-          "footer": "页脚版权信息",
-          "footerPlaceholder": "YourName. All rights reserved.",
-          "footerHint": "支持字符串，将显示在页面最底部",
-          "icp": "备案号",
-          "icpPlaceholder": "例如：京ICP备00000000号",
-          "icpHint": "根据中国法律，若您的服务器位于中国大陆，则必须展示备案号"
+          "siteTitle": {
+            "label": "站点标题",
+            "placeholder": "例如：我的个人博客"
+          },
+          "siteIcon": {
+            "label": "站点图标",
+            "upload": "上传图标",
+            "change": "修改图标",
+            "uploading": "上传中",
+            "success": "图标已上传",
+            "help1": "推荐使用 256x256 或更大的 PNG/ICO 格式文件",
+            "help2": "最大支持 1MB 的图片"
+          },
+          "footer": {
+            "label": "页脚版权信息",
+            "placeholder": "YourName. All rights reserved.",
+            "hint": "支持字符串，将显示在页面最底部"
+          },
+          "icp": {
+            "label": "备案号",
+            "placeholder": "例如：京ICP备00000000号",
+            "hint": "根据中国法律，若您的服务器位于中国大陆，则必须展示备案号"
+          }
         },
         "step3": {
           "title": "创建管理员",
           "description": "创建你的管理员账号，用于登录后台管理博客。",
-          "username": "用户名",
-          "usernamePlaceholder": "例如：admin 或你的名字",
-          "email": "电子邮箱",
-          "emailPlaceholder": "例如：admin{'@'}example.com",
-          "password": "密码",
-          "passwordPlaceholder": "请设置一个安全的密码",
-          "confirmPassword": "确认密码",
-          "confirmPasswordPlaceholder": "请再次输入密码以确认",
-          "passwordMismatch": "两次输入的密码不一致"
+          "username": {
+            "label": "用户名",
+            "placeholder": "例如：admin 或你的名字"
+          },
+          "email": {
+            "label": "电子邮箱",
+            "placeholder": "例如：admin{'@'}example.com"
+          },
+          "password": {
+            "label": "密码",
+            "placeholder": "请设置一个安全的密码"
+          },
+          "confirm": {
+            "label": "确认密码",
+            "placeholder": "请再次输入密码以确认",
+            "error": "两次输入的密码不一致"
+          }
+        },
+        "step4": {
+          "title": "个性化",
+          "description": "让你的博客更具个性，上传头像与首页图片，展示在站点关键位置。",
+          "personalization": {
+            "title": "启用个性化",
+            "description": "开启后可以设置管理员头像和主页背景图。",
+            "tag": "可选"
+          }
         }
       }
     }
