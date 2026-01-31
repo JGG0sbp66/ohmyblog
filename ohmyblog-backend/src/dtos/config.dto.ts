@@ -34,9 +34,31 @@ export const UploadIconDTO = t.Object({
 		type: "image",
 		maxSize: "1m",
 		description: "网站图标文件，最大1MB",
-		error: "请上传有效的图片文件",
+		error: "请上传 1MB 以内的有效图片，系统将自动处理为 128x128 PNG 格式",
+	}),
+});
+
+// 首页 Hero 横幅 DTO
+export const UploadHeroDTO = t.Object({
+	hero: t.File({
+		type: "image",
+		maxSize: "5m",
+		description: "首页横幅图片，最大5MB",
+		error: "请上传 5MB 以内的有效图片，系统将自动处理为 WebP 横幅格式",
+	}),
+});
+
+// 管理员头像 DTO
+export const UploadAvatarDTO = t.Object({
+	avatar: t.File({
+		type: "image",
+		maxSize: "2m",
+		description: "管理员头像，最大2MB",
+		error: "请上传 2MB 以内的有效图片，系统将自动处理为 WebP 头像格式",
 	}),
 });
 
 export type TConfigUpsertDTO = Static<typeof ConfigUpsertDTO>;
 export type TUploadIconDTO = Static<typeof UploadIconDTO>;
+export type TUploadHeroDTO = Static<typeof UploadHeroDTO>;
+export type TUploadAvatarDTO = Static<typeof UploadAvatarDTO>;
