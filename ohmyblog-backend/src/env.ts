@@ -1,18 +1,15 @@
 import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
 import { z } from "zod";
+import {
+	DATA_DIR,
+	DB_PATH,
+	ENV_PATH,
+	LOGS_DIR,
+	SYSTEM_UPLOADS_DIR,
+	UPLOADS_DIR,
+} from "./constants";
 import { systemLogger } from "./plugins/logger.plugin";
-
-// =================================================================
-// 0. 路径定义
-// =================================================================
-export const DATA_DIR = join(process.cwd(), "data");
-export const UPLOADS_DIR = join(DATA_DIR, "uploads");
-export const SYSTEM_UPLOADS_DIR = join(UPLOADS_DIR, "system");
-export const LOGS_DIR = join(process.cwd(), "logs");
-export const ENV_PATH = join(DATA_DIR, ".env");
-export const DB_PATH = join(DATA_DIR, "sqlite.db");
 
 type ConfigItem = {
 	desc: string;
@@ -53,6 +50,15 @@ for (const dir of REQUIRED_DIRS) {
 		mkdirSync(dir, { recursive: true });
 	}
 }
+
+export {
+	DATA_DIR,
+	UPLOADS_DIR,
+	SYSTEM_UPLOADS_DIR,
+	LOGS_DIR,
+	ENV_PATH,
+	DB_PATH,
+};
 
 /**
  * 初始化配置文件，若 data/.env 不存在则自动生成，并返回 kv 映射
