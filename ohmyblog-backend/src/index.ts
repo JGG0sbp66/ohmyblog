@@ -1,7 +1,7 @@
 import { openapi } from "@elysiajs/openapi";
 import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
-import { config } from "./env";
+import { config, UPLOADS_DIR } from "./env";
 import { logPlugin } from "./plugins/logger.plugin.js";
 import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
@@ -26,7 +26,7 @@ const app = new Elysia()
 	.use(
 		staticPlugin({
 			// TODO: 接口文档关于读取静态文件的描述还非常简略，需要更新
-			assets: "data/uploads",
+			assets: UPLOADS_DIR,
 			prefix: "/api/uploads",
 		}),
 	)

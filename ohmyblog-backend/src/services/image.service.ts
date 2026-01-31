@@ -18,8 +18,9 @@ export const ImageService = {
 	) {
 		const buffer = Buffer.from(await file.arrayBuffer());
 
-		targetPath = path.join(process.cwd(), targetPath);
-		await mkdir(path.dirname(targetPath), { recursive: true });
+		// 确保目标目录存在
+		const absolutePath = path.resolve(targetPath);
+		await mkdir(path.dirname(absolutePath), { recursive: true });
 
 		const pipeline = sharp(buffer).rotate();
 
@@ -27,12 +28,12 @@ export const ImageService = {
 			await pipeline
 				.resize(128, 128, { fit: "inside", withoutEnlargement: true })
 				.png()
-				.toFile(targetPath);
+				.toFile(absolutePath);
 		} else {
 			// 如果是博客普通图片：统一转 WebP
-			await pipeline.webp({ quality: 85 }).toFile(targetPath);
+			await pipeline.webp({ quality: 85 }).toFile(absolutePath);
 		}
 
-		return targetPath;
+		return absolutePath;
 	},
 };

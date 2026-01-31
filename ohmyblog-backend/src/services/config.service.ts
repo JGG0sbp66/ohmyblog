@@ -1,4 +1,6 @@
 // src/services/config.service.ts
+import { join } from "node:path";
+import { SYSTEM_UPLOADS_DIR } from "../env";
 import { configDao, type NewConfig } from "../dao/config.dao";
 import type { TConfigUpsertDTO } from "../dtos/config.dto";
 import { BusinessError } from "../plugins/errors";
@@ -79,8 +81,8 @@ class ConfigService {
 			// 定义存储路径
 			// 物理路径用于 Sharp 写入，访问路径用于返回给前端
 			const filename = "favicon.png";
-			const webPath = `/uploads/system/${filename}`;
-			const physicalPath = `data${webPath}`; // 结果如: data/uploads/system/favicon.png
+			const physicalPath = join(SYSTEM_UPLOADS_DIR, filename);
+			const webPath = `/api/uploads/system/${filename}`;
 
 			// 调用工具类进行处理
 			await ImageService.optimizeAndSave(file, physicalPath, true);
