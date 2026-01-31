@@ -2,7 +2,7 @@ import { Database } from "bun:sqlite";
 import { join } from "node:path";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
-import { DB_PATH } from "../src/env";
+import { DB_PATH } from "../src/constants";
 import { systemLogger } from "../src/plugins/logger.plugin";
 import * as schema from "./schema";
 

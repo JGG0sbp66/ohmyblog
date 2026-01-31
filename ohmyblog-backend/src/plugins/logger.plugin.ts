@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { logger } from "@bogeychan/elysia-logger";
 import { pino } from "pino";
-import { LOGS_DIR } from "../env";
+import { LOGS_DIR } from "../constants";
 import { BusinessError } from "./errors";
 
 const logConfig = {
