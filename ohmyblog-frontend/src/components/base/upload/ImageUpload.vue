@@ -92,7 +92,7 @@ defineExpose({
         v-if="modelValue"
         :src="modelValue"
         alt="Preview"
-        class="w-full h-full object-contain"
+        class="w-full h-full object-cover"
         :class="{ 'opacity-50': loading }"
       />
 
