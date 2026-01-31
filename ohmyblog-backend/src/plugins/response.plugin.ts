@@ -22,14 +22,16 @@ const formatError = ({ code, error, set }: any) => {
 				// err.path 通常是 "/password" 或 "/body/email"
 				// 把开头的 "/" 去掉
 				field: err.path.slice(1) || "unknown",
-				message: err.message,
+				// 优先使用 schema 中定义的自定义错误信息
+				message: err.schema?.error || err.message,
 			};
 		});
 		return {
 			success: false,
 			// data 里放详细的字段错误列表，方便前端在输入框底下标红
+			// message 优先展示第一个具体的错误信息，提升前端 Toast 提示的友好度
 			data: {
-				message: "请求参数验证失败",
+				message: formattedErrors[0]?.message || "请求参数验证失败",
 				field: formattedErrors,
 			},
 		};
