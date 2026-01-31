@@ -74,31 +74,31 @@ const handleNext = () =>
     <TipInput
       ref="titleInputRef"
       v-model="systemStore.siteInfo.title"
-      :label="t('views.setup.steps.step2.siteTitle')"
-      :placeholder="t('views.setup.steps.step2.siteTitlePlaceholder')"
+      :label="t('views.setup.steps.step2.siteTitle.label')"
+      :placeholder="t('views.setup.steps.step2.siteTitle.placeholder')"
       required
     />
 
     <!-- 页脚版权 -->
     <TipInput
       v-model="systemStore.siteInfo.footer"
-      :label="t('views.setup.steps.step2.footer')"
-      :placeholder="t('views.setup.steps.step2.footerPlaceholder')"
-      :hint="t('views.setup.steps.step2.footerHint')"
+      :label="t('views.setup.steps.step2.footer.label')"
+      :placeholder="t('views.setup.steps.step2.footer.placeholder')"
+      :hint="t('views.setup.steps.step2.footer.hint')"
     />
 
     <!-- 备案号 -->
     <TipInput
       v-model="systemStore.siteInfo.icp"
-      :label="t('views.setup.steps.step2.icp')"
-      :placeholder="t('views.setup.steps.step2.icpPlaceholder')"
-      :hint="t('views.setup.steps.step2.icpHint')"
+      :label="t('views.setup.steps.step2.icp.label')"
+      :placeholder="t('views.setup.steps.step2.icp.placeholder')"
+      :hint="t('views.setup.steps.step2.icp.hint')"
     />
 
     <!-- 站点图标上传 -->
     <div class="space-y-2">
       <label class="block text-sm font-medium text-text-main pb-1">
-        {{ t("views.setup.steps.step2.siteIcon") }}
+        {{ t("views.setup.steps.step2.siteIcon.label") }}
       </label>
       <div class="flex items-start gap-5">
         <!-- 预览区域 -->
@@ -122,10 +122,10 @@ const handleNext = () =>
               :disabled="uploading"
               :text="
                 uploading
-                  ? t('views.setup.steps.step2.uploading')
+                  ? t('views.setup.steps.step2.siteIcon.uploading')
                   : systemStore.siteInfo.logo
-                    ? t('views.setup.steps.step2.changeIcon')
-                    : t('views.setup.steps.step2.uploadIcon')
+                    ? t('views.setup.steps.step2.siteIcon.change')
+                    : t('views.setup.steps.step2.siteIcon.upload')
               "
             />
 
@@ -136,16 +136,16 @@ const handleNext = () =>
               <template #icon>
                 <Check size-class="w-3 h-3" />
               </template>
-              {{ t("views.setup.steps.step2.iconUploaded") }}
+              {{ t("views.setup.steps.step2.siteIcon.success") }}
             </BaseTag>
           </div>
 
           <div class="mt-3 space-y-1">
             <p class="text-[11px] text-text-icon leading-relaxed">
-              {{ t("views.setup.steps.step2.siteIconHelp1") }}
+              {{ t("views.setup.steps.step2.siteIcon.help1") }}
             </p>
             <p class="text-[11px] text-text-icon leading-relaxed">
-              {{ t("views.setup.steps.step2.siteIconHelp2") }}
+              {{ t("views.setup.steps.step2.siteIcon.help2") }}
             </p>
           </div>
         </div>

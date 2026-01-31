@@ -39,7 +39,7 @@ const handleNext = () =>
     <!-- 1. 语言选择 -->
     <div class="flex flex-col gap-3 text-text-icon">
       <label class="text-sm font-bold uppercase tracking-wider">
-        {{ t("views.setup.steps.step1.language") }}
+        {{ t("views.setup.steps.step1.settings.language") }}
       </label>
       <div class="grid grid-cols-2 gap-3">
         <ButtonSecondary
@@ -61,7 +61,7 @@ const handleNext = () =>
     <!-- 2. 主题模式 (明/暗) -->
     <div class="flex flex-col gap-3">
       <label class="text-sm font-bold text-text-icon uppercase tracking-wider">
-        {{ t("views.setup.steps.step1.theme") }}
+        {{ t("views.setup.steps.step1.settings.theme") }}
       </label>
       <div class="grid grid-cols-3 gap-3">
         <ButtonSecondary
@@ -88,7 +88,7 @@ const handleNext = () =>
         <label
           class="text-sm font-bold text-text-icon uppercase tracking-wider"
         >
-          {{ t("views.setup.steps.step1.color") }}
+          {{ t("views.setup.steps.step1.settings.color") }}
         </label>
         <!-- 当前颜色预览小块 -->
         <div

@@ -31,7 +31,7 @@ const form = reactive<RegisterForm>({
 const validateConfirmPassword = () => {
   confirmError.value = "";
   if (form.password !== form.confirmPassword) {
-    confirmError.value = t("views.setup.steps.step3.passwordMismatch");
+    confirmError.value = t("views.setup.steps.step3.confirm.error");
     return false;
   }
   return true;
@@ -79,8 +79,8 @@ const handleNext = () => {
     <TipInput
       ref="usernameRef"
       v-model="form.username"
-      :label="t('views.setup.steps.step3.username')"
-      :placeholder="t('views.setup.steps.step3.usernamePlaceholder')"
+      :label="t('views.setup.steps.step3.username.label')"
+      :placeholder="t('views.setup.steps.step3.username.placeholder')"
       :schema="RegisterDTO.properties.username"
       required
     />
@@ -90,8 +90,8 @@ const handleNext = () => {
       ref="emailRef"
       v-model="form.email"
       type="email"
-      :label="t('views.setup.steps.step3.email')"
-      :placeholder="t('views.setup.steps.step3.emailPlaceholder')"
+      :label="t('views.setup.steps.step3.email.label')"
+      :placeholder="t('views.setup.steps.step3.email.placeholder')"
       :schema="RegisterDTO.properties.email"
       required
     />
@@ -101,8 +101,8 @@ const handleNext = () => {
       ref="passwordRef"
       v-model="form.password"
       type="password"
-      :label="t('views.setup.steps.step3.password')"
-      :placeholder="t('views.setup.steps.step3.passwordPlaceholder')"
+      :label="t('views.setup.steps.step3.password.label')"
+      :placeholder="t('views.setup.steps.step3.password.placeholder')"
       :schema="RegisterDTO.properties.password"
       required
     />
@@ -112,8 +112,8 @@ const handleNext = () => {
       ref="confirmPasswordRef"
       v-model="form.confirmPassword"
       type="password"
-      :label="t('views.setup.steps.step3.confirmPassword')"
-      :placeholder="t('views.setup.steps.step3.confirmPasswordPlaceholder')"
+      :label="t('views.setup.steps.step3.confirm.label')"
+      :placeholder="t('views.setup.steps.step3.confirm.placeholder')"
       :external-error="confirmError"
       @input="validateConfirmPassword"
       required
