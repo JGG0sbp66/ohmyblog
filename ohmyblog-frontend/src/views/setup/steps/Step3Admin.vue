@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
-import StepLayout from "./StepLayout.vue";
+import StepLayout from "../components/StepLayout.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStep, type Validatable } from "@/composables/setup-step.hook";
 import { register, login } from "@/api/auth.api";

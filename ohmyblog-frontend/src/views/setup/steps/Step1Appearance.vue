@@ -6,7 +6,7 @@ import { useLang } from "@/composables/lang.hook";
 import LanguagePicker from "@/components/icon/theme/LanguagePicker.vue";
 import ThemePicker from "@/components/icon/theme/ThemePicker.vue";
 import ColorSlider from "@/components/base/slider/ColorSlider.vue";
-import StepLayout from "./StepLayout.vue";
+import StepLayout from "../components/StepLayout.vue";
 import { useSetupStep } from "@/composables/setup-step.hook";
 import { upsertConfig } from "@/api/config.api";
 

@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
-import StepLayout from "./StepLayout.vue";
+import StepLayout from "../components/StepLayout.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStep, type Validatable } from "@/composables/setup-step.hook";
@@ -12,6 +12,7 @@ import { useSystemStore } from "@/stores/system.store";
 import { useToast } from "@/composables/toast.hook";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import Check from "@/components/icon/Check.vue";
+import BaseTag from "@/components/base/tag/BaseTag.vue";
 
 const { t } = useLang();
 const { isSubmitting, runStep } = useSetupStep();
@@ -128,13 +129,15 @@ const handleNext = () =>
               "
             />
 
-            <div
+            <BaseTag
               v-if="systemStore.siteInfo.logo"
-              class="text-[10px] text-green-500 flex items-center gap-1 bg-green-500/10 px-2 py-0.5 rounded-full"
+              type="success"
             >
-              <Check size-class="w-3 h-3" />
+              <template #icon>
+                <Check size-class="w-3 h-3" />
+              </template>
               {{ t("views.setup.steps.step2.iconUploaded") }}
-            </div>
+            </BaseTag>
           </div>
 
           <div class="mt-3 space-y-1">
