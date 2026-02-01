@@ -23,8 +23,9 @@ const btnClass = computed(() => {
   // 基础样式 - 所有状态下都应用的公共样式
   const base = `
         flex items-center justify-center  /* 弹性布局，水平和垂直居中 */
-        w-full h-full                     /* 占满父容器宽度和高度 */
-        font-bold text-white              /* 粗体字，白色文字 */
+        w-full min-h-full px-4 py-2       /* 最小占满父容器，增加内边距 */
+        font-bold text-white              /* 粗体，白色文字 */
+        leading-tight                     /* 紧凑行高，适应换行 */
         rounded-lg                        /* 大圆角 */
         transition-all duration-200       /* 所有属性200ms过渡动画 */
     `;

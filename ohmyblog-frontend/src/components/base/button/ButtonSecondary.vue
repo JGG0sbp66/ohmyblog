@@ -16,7 +16,8 @@ const props = withDefaults(
 /* 布局相关 */
 const layoutClass = `
   flex items-center justify-center  /* 弹性盒子，内容居中 */
-  w-full h-full                    /* 占满父容器宽度和高度 */
+  w-full min-h-full px-4 py-2       /* 占满父容器宽度，最小占满高度，增加内边距 */
+  leading-tight                     /* 紧凑行高 */
 `;
 
 /* 外观样式 */
