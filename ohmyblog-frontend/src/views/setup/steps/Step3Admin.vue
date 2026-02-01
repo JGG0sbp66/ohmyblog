@@ -51,7 +51,7 @@ const handleNext = () => {
       });
 
       // 2. 注册成功后立即登录，以获取后续操作所需的 Cookie/Token
-      await login({
+      return login({
         identifier: form.username,
         password: form.password,
       });

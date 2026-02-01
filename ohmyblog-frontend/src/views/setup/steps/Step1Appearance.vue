@@ -15,17 +15,18 @@ const { currentHue, colorMode, setTheme, THEME_MODES } = useTheme();
 
 const { isSubmitting, runStep } = useSetupStep();
 
-const handleNext = () =>
-  runStep(() =>
-    upsertConfig({
+const handleNext = () => {
+  runStep(async () => {
+    return upsertConfig({
       configKey: "appearance",
       configValue: {
         theme: colorMode.value,
         hue: currentHue.value,
         language: locale.value,
       },
-    }),
-  );
+    });
+  });
+};
 </script>
 
 <template>

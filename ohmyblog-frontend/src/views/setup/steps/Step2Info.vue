@@ -52,9 +52,9 @@ const handleFileChange = (file: File) => {
   );
 };
 
-const handleNext = () =>
+const handleNext = () => {
   runStep(
-    () => {
+    async () => {
       return upsertConfig({
         configKey: "site_info",
         configValue: systemStore.siteInfo,
@@ -62,6 +62,7 @@ const handleNext = () =>
     },
     { validate: [titleInputRef.value] },
   );
+};
 </script>
 
 <template>
