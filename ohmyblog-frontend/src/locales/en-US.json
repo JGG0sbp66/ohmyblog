@@ -100,7 +100,8 @@
             "label": "Confirm Password",
             "placeholder": "Re-enter your password",
             "error": "Passwords do not match"
-          }
+          },
+          "alreadyRegistered": "Account created"
         },
         "step4": {
           "title": "Personalization",
