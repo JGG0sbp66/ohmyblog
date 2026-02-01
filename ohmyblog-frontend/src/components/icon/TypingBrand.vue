@@ -36,15 +36,12 @@ const {
   isTyping: isTyping3,
 } = useTyping(50);
 
-const animationKey = ref(0);
-
 let lastCallId = 0;
 
 // 开始执行三行字的连贯动画
 async function startAnimation() {
   const currentId = ++lastCallId;
 
-  animationKey.value++;
   reset1();
   reset2();
   reset3();
@@ -77,7 +74,6 @@ onMounted(() => {
     viewBox="0 0 600 400"
     xmlns="http://www.w3.org/2000/svg"
     class="illustration-svg"
-    :key="animationKey"
     preserveAspectRatio="xMidYMid meet"
   >
     <defs>
