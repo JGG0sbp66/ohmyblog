@@ -1,6 +1,7 @@
 <!-- src/components/base/tag/BaseTag.vue -->
 <script setup lang="ts">
 import { computed } from "vue";
+import Check from "@/components/icon/Check.vue";
 
 /**
  * 基础标签/药丸组件
@@ -51,7 +52,9 @@ const classes = computed(() => {
 <template>
   <div :class="classes">
     <!-- 图标插槽 -->
-    <slot name="icon" />
+    <slot name="icon">
+      <Check v-if="type === 'success'" size-class="w-3 h-3" />
+    </slot>
     <!-- 默认文本插槽 -->
     <slot />
   </div>
