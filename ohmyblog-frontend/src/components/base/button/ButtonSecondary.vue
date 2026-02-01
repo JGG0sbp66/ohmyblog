@@ -15,13 +15,11 @@ const props = withDefaults(
 /* 基础按钮样式类 - 使用 Tailwind CSS 工具类 */
 
 /* 布局相关 */
-const layoutClass = computed(
-  () => `
+const layoutClass = computed(() => `
   flex items-center justify-center  /* 弹性盒子，内容居中 */
   ${props.fit ? "w-fit" : "w-full"} min-h-full px-2 py-1.5       /* 宽度模式与间距 */
   leading-tight                     /* 紧凑行高 */
-`,
-);
+`);
 
 /* 外观样式 */
 const appearanceClass = `
