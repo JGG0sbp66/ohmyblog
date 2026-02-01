@@ -20,23 +20,51 @@ export const useSystemStore = defineStore("system", () => {
     icp: "",
   });
 
+  // 个性化配置 (Hero, 头像等)
+  const personalInfo = ref({
+    avatar: "",
+    heroImage: "",
+  });
+
   /**
-   * 获取站点基本信息
+   * 通用配置获取辅助函数
    */
-  async function fetchSiteInfo() {
+  async function fetchConfig(
+    configKey: string,
+    target: any,
+    errorMsgMask: string,
+  ) {
     try {
-      const res = await getConfig("site_info");
+      const res = await getConfig(configKey);
       if (res?.config?.configValue) {
-        siteInfo.value = {
-          ...siteInfo.value,
+        target.value = {
+          ...target.value,
           ...res.config.configValue,
         };
       }
     } catch (error) {
       if (initialized.value == null || initialized.value) {
-        useToast.error(t("api.errors.获取站点基本信息失败"));
+        useToast.error(t(errorMsgMask));
       }
     }
+  }
+
+  /**
+   * 获取站点基本信息
+   */
+  async function fetchSiteInfo() {
+    await fetchConfig("site_info", siteInfo, "api.errors.获取站点基本信息失败");
+  }
+
+  /**
+   * 获取个性化配置
+   */
+  async function fetchPersonalInfo() {
+    await fetchConfig(
+      "personal_info",
+      personalInfo,
+      "api.errors.获取个性化配置失败",
+    );
   }
 
   // 监听标题变化，全局同步 document.title
@@ -98,7 +126,9 @@ export const useSystemStore = defineStore("system", () => {
     version,
     initialized,
     siteInfo,
+    personalInfo,
     fetchSiteInfo,
+    fetchPersonalInfo,
     checkStatus,
   };
 });

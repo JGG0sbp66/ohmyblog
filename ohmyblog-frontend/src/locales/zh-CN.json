@@ -48,41 +48,88 @@
           "welcome": "欢迎开始你的博客之旅。",
           "title": "外观设置",
           "description": "自定义你的博客外观和感觉。",
-          "language": "语言",
-          "theme": "主题模式",
-          "color": "主题色"
+          "settings": {
+            "language": "语言",
+            "theme": "主题模式",
+            "color": "主题色"
+          }
         },
         "step2": {
           "title": "站点信息",
           "description": "这些信息将展示在浏览器标签页和页面底部。",
-          "siteTitle": "站点标题",
-          "siteTitlePlaceholder": "例如：我的个人博客",
-          "siteIcon": "站点图标",
-          "uploadIcon": "上传图标",
-          "changeIcon": "修改图标",
-          "uploading": "上传中",
-          "iconUploaded": "图标已上传",
-          "siteIconHelp1": "推荐使用 256x256 或更大的 PNG/ICO 格式文件",
-          "siteIconHelp2": "最大支持 1MB 的图片",
-          "footer": "页脚版权信息",
-          "footerPlaceholder": "YourName. All rights reserved.",
-          "footerHint": "支持字符串，将显示在页面最底部",
-          "icp": "备案号",
-          "icpPlaceholder": "例如：京ICP备00000000号",
-          "icpHint": "根据中国法律，若您的服务器位于中国大陆，则必须展示备案号"
+          "siteTitle": {
+            "label": "站点标题",
+            "placeholder": "例如：我的个人博客"
+          },
+          "siteIcon": {
+            "label": "站点图标",
+            "upload": "上传图标",
+            "change": "修改图标",
+            "uploading": "上传中",
+            "success": "图标已上传",
+            "help1": "推荐使用 256x256 或更大的 PNG/ICO 格式文件",
+            "help2": "最大支持 1MB 的图片"
+          },
+          "footer": {
+            "label": "页脚版权信息",
+            "placeholder": "YourName. All rights reserved.",
+            "hint": "支持字符串，将显示在页面最底部"
+          },
+          "icp": {
+            "label": "备案号",
+            "placeholder": "例如：京ICP备00000000号",
+            "hint": "根据中国法律，若您的服务器位于中国大陆，则必须展示备案号"
+          }
         },
         "step3": {
           "title": "创建管理员",
           "description": "创建你的管理员账号，用于登录后台管理博客。",
-          "username": "用户名",
-          "usernamePlaceholder": "例如：admin 或你的名字",
-          "email": "电子邮箱",
-          "emailPlaceholder": "例如：admin{'@'}example.com",
-          "password": "密码",
-          "passwordPlaceholder": "请设置一个安全的密码",
-          "confirmPassword": "确认密码",
-          "confirmPasswordPlaceholder": "请再次输入密码以确认",
-          "passwordMismatch": "两次输入的密码不一致"
+          "username": {
+            "label": "用户名",
+            "placeholder": "例如：admin 或你的名字"
+          },
+          "email": {
+            "label": "电子邮箱",
+            "placeholder": "例如：admin{'@'}example.com"
+          },
+          "password": {
+            "label": "密码",
+            "placeholder": "请设置一个安全的密码"
+          },
+          "confirm": {
+            "label": "确认密码",
+            "placeholder": "请再次输入密码以确认",
+            "error": "两次输入的密码不一致"
+          },
+          "alreadyRegistered": "账号创建成功"
+        },
+        "step4": {
+          "title": "个性化",
+          "description": "让你的博客更具个性，上传头像与首页图片，展示在站点关键位置。",
+          "personalization": {
+            "title": "启用个性化",
+            "description": "开启后可以设置管理员头像和主页背景图。",
+            "tag": "可选"
+          },
+          "avatar": {
+            "label": "管理员头像",
+            "description": "显示在首页侧边栏，推荐尺寸 256x256 像素。",
+            "upload": "上传头像",
+            "change": "更换头像",
+            "uploading": "上传中",
+            "success": "头像已上传",
+            "help": "支持常见图片格式 · 最大 2MB"
+          },
+          "hero": {
+            "label": "首页横幅图",
+            "description": "这是你的主页门面，将展示在首页顶部的核心位置。",
+            "upload": "上传横幅",
+            "change": "更换横幅",
+            "uploading": "上传中",
+            "success": "横幅已上传",
+            "recommend": "推荐 16:9 比例 · 宽度 ≥ 1920px",
+            "format": "支持常见图片格式 · 最大 5MB"
+          }
         }
       }
     }
@@ -114,11 +161,18 @@
       "Error": "无法连接到后端服务",
       "请求参数验证失败": "请求参数验证失败",
       "系统健康检查失败": "系统健康检查失败",
-      "获取站点基本信息失败": "获取站点基本信息失败"
+      "获取站点基本信息失败": "获取站点基本信息失败",
+      "获取个性化配置失败": "获取个性化配置失败",
+      "用户名或邮箱已被注册": "用户名或邮箱已被注册",
+      "未登录或会话已过期": "未登录或会话已过期",
+      "请上传 1MB 以内的有效图片": "请上传 1MB 以内的有效图片",
+      "请上传 5MB 以内的有效图片": "请上传 5MB 以内的有效图片",
+      "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片"
     },
     "success": {
       "config": {
-        "保存成功": "保存成功"
+        "保存成功": "保存成功",
+        "登录成功": "登录成功"
       }
     }
   }

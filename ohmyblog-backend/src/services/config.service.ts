@@ -3,7 +3,6 @@ import { configDao, type NewConfig } from "../dao/config.dao";
 import type { TConfigUpsertDTO } from "../dtos/config.dto";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger.plugin";
-import { ImageService } from "./image.service";
 
 class ConfigService {
 	private logger = systemLogger.child({ module: "ConfigService" });
@@ -66,40 +65,6 @@ class ConfigService {
 			throw new BusinessError("配置不存在", { status: 404 });
 		}
 		return item;
-	}
-
-	/**
-	 * 上传并处理网站图标 (Favicon)
-	 * 仅处理文件并返回路径
-	 * @param file 原始图片文件
-	 * @returns 处理后的访问路径
-	 */
-	async uploadFavicon(file: File) {
-		try {
-			// 定义存储路径
-			// 物理路径用于 Sharp 写入，访问路径用于返回给前端
-			const filename = "favicon.png";
-			const webPath = `/uploads/system/${filename}`;
-			const physicalPath = `data${webPath}`; // 结果如: data/uploads/system/favicon.png
-
-			// 调用工具类进行处理
-			await ImageService.optimizeAndSave(file, physicalPath, true);
-
-			this.logger.info({ webPath }, "网站图标已成功上传");
-
-			return {
-				url: webPath,
-			};
-		} catch (error: unknown) {
-			const errorMessage =
-				error instanceof Error ? error.message : String(error);
-			this.logger.error({ error: errorMessage }, "网站图标上传失败");
-
-			// 抛出业务异常，会被 Elysia 的 error 钩子捕获
-			throw new BusinessError("图标处理失败，请检查文件格式或重试", {
-				status: 500,
-			});
-		}
 	}
 }
 

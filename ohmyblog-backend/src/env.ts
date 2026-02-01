@@ -1,7 +1,14 @@
 import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
 import { z } from "zod";
+import {
+	DATA_DIR,
+	DB_PATH,
+	ENV_PATH,
+	LOGS_DIR,
+	SYSTEM_UPLOADS_DIR,
+	UPLOADS_DIR,
+} from "./constants";
 import { systemLogger } from "./plugins/logger.plugin";
 
 type ConfigItem = {
@@ -33,17 +40,25 @@ const configDef = {
 };
 
 // =================================================================
-// 2. 自动化引擎
+// 2. 自动化引擎 & 目录初始化
 // =================================================================
-// TODO: 查找并完善项目中的创建文件夹逻辑，现在有点七零八落的
-const DATA_DIR = join(process.cwd(), "data");
-const UPLOADS_DIR = join(DATA_DIR, "uploads");
-const ENV_PATH = join(DATA_DIR, ".env");
+const REQUIRED_DIRS = [DATA_DIR, UPLOADS_DIR, SYSTEM_UPLOADS_DIR, LOGS_DIR];
 
-if (!existsSync(UPLOADS_DIR)) {
-	systemLogger.info(`📂 目录 ${UPLOADS_DIR} 不存在，正在自动创建...`);
-	mkdirSync(UPLOADS_DIR, { recursive: true });
+for (const dir of REQUIRED_DIRS) {
+	if (!existsSync(dir)) {
+		systemLogger.info(`📂 目录 ${dir} 不存在，正在自动创建...`);
+		mkdirSync(dir, { recursive: true });
+	}
 }
+
+export {
+	DATA_DIR,
+	UPLOADS_DIR,
+	SYSTEM_UPLOADS_DIR,
+	LOGS_DIR,
+	ENV_PATH,
+	DB_PATH,
+};
 
 /**
  * 初始化配置文件，若 data/.env 不存在则自动生成，并返回 kv 映射

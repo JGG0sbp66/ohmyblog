@@ -28,15 +28,4 @@ export const ConfigUpsertDTO = t.Object({
 	),
 });
 
-// 网站icon图标 DTO
-export const UploadIconDTO = t.Object({
-	icon: t.File({
-		type: "image",
-		maxSize: "1m",
-		description: "网站图标文件，最大1MB",
-		error: "请上传有效的图片文件",
-	}),
-});
-
 export type TConfigUpsertDTO = Static<typeof ConfigUpsertDTO>;
-export type TUploadIconDTO = Static<typeof UploadIconDTO>;

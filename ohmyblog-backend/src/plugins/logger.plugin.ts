@@ -1,5 +1,7 @@
+import { join } from "node:path";
 import { logger } from "@bogeychan/elysia-logger";
 import { pino } from "pino";
+import { LOGS_DIR } from "../constants";
 import { BusinessError } from "./errors";
 
 const logConfig = {
@@ -33,7 +35,7 @@ const logConfig = {
 				target: "pino/file",
 				level: "error",
 				options: {
-					destination: "./logs/error.log",
+					destination: join(LOGS_DIR, "error.log"),
 					mkdir: true,
 				},
 			},

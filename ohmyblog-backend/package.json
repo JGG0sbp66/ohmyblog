@@ -9,9 +9,9 @@
 		"db:studio": "drizzle-kit studio --config=db/drizzle.config.ts",
 		"db:gen": "drizzle-kit generate --config=db/drizzle.config.ts",
 		"db:migrate": "drizzle-kit migrate --config=db/drizzle.config.ts",
-		"lint": "biome lint ./",
-		"lint:fix": "biome check --write ./",
-		"format": "biome format --write ./"
+		"lint": "biome lint .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write ."
 	},
 	"dependencies": {
 		"@bogeychan/elysia-logger": "^0.1.10",

@@ -1,6 +1,6 @@
 // src/routes/config.route.ts
 import { Elysia } from "elysia";
-import { ConfigUpsertDTO, UploadIconDTO } from "../dtos/config.dto";
+import { ConfigUpsertDTO } from "../dtos/config.dto";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 import { authPlugin } from "../plugins/auth.plugin";
 import { configService } from "../services/config.service";
@@ -46,30 +46,6 @@ export const configRoute = new Elysia({ name: "configRoute" })
 				},
 				{
 					detail: { summary: "获取单个配置（GET）" },
-				},
-			)
-			/**
-			 * POST /config/upload-icon
-			 * - 上传网站图标 (Favicon)
-			 */
-			.post(
-				"/upload-icon",
-				async ({ body: { icon } }) => {
-					const result = await configService.uploadFavicon(icon);
-
-					return {
-						message: "图标上传成功",
-						...result,
-					};
-				},
-				{
-					beforeHandle: ensureAdminIfExists,
-					body: UploadIconDTO,
-					detail: {
-						summary: "上传网站图标 (POST)",
-
-						description: "仅限管理员操作，上传后自动处理为 128x128 的 PNG 格式",
-					},
 				},
 			),
 	);

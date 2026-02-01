@@ -3,6 +3,7 @@
 import { useSystemStore } from "@/stores/system.store";
 import { storeToRefs } from "pinia";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
+import { vAutoAnimate } from "@formkit/auto-animate";
 
 const systemStore = useSystemStore();
 const { siteInfo } = storeToRefs(systemStore);
@@ -14,8 +15,8 @@ const currentYear = new Date().getFullYear();
   <footer class="w-full bg-bg-page">
     <div class="w-2/3 mx-auto border-t border-text-main/5"></div>
 
-    <div class="max-w-250 mx-auto py-6 px-6">
-      <div class="flex flex-col items-center gap-4">
+    <div class="max-w-250 mx-auto py-4 px-6">
+      <div class="flex flex-col items-center gap-1" v-auto-animate>
         <!-- 版权与驱动信息 -->
         <div
           class="transition-all duration-200 flex flex-col items-center gap-1.5 text-sm text-text-secondary text-center"
@@ -26,7 +27,8 @@ const currentYear = new Date().getFullYear();
             <span> © {{ currentYear }} </span>
             <ButtonSecondary
               :text="siteInfo.title || 'ohmyblog'"
-              class="w-auto! h-7! font-medium text-text-icon/60! px-2 transition-all duration-200"
+              fit
+              class="h-7! font-medium text-text-icon/60! transition-all duration-200"
             />
 
             <span v-if="siteInfo.footer">
@@ -44,7 +46,8 @@ const currentYear = new Date().getFullYear();
         >
           <ButtonSecondary
             :text="siteInfo.icp"
-            class="w-auto! text-[10px]! text-text-icon/60! font-normal! px-3 transition-all duration-200"
+            fit
+            class="h-7! text-[10px]! text-text-icon/60! font-normal! transition-all duration-200"
           />
         </a>
       </div>

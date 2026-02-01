@@ -1,4 +1,4 @@
-<!-- src/views/setup/steps/StepLayout.vue -->
+<!-- src/views/setup/components/StepLayout.vue -->
 <script setup lang="ts">
 import StepButton from "@/components/common/button/StepButton.vue";
 
@@ -28,7 +28,7 @@ defineEmits(["next"]); // 定义“下一步”点击事件
 </script>
 
 <template>
-  <div class="p-8 flex flex-col gap-8">
+  <div class="relative p-8 flex flex-col gap-8">
     <!-- 头部区域：包含标题和副标题/描述 -->
     <div class="flex flex-col gap-2">
       <h2 class="text-2xl font-bold text-text-main">

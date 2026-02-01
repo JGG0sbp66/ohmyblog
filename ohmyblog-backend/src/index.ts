@@ -1,12 +1,13 @@
 import { openapi } from "@elysiajs/openapi";
 import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
-import { config } from "./env";
+import { config, UPLOADS_DIR } from "./env";
 import { logPlugin } from "./plugins/logger.plugin.js";
 import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
 import { configRoute } from "./routes/config.route.js";
 import { healthRoute } from "./routes/health.route.js";
+import { uploadRoute } from "./routes/upload.route.js";
 
 const app = new Elysia()
 	// OpenAPI 插件
@@ -26,12 +27,14 @@ const app = new Elysia()
 	.use(
 		staticPlugin({
 			// TODO: 接口文档关于读取静态文件的描述还非常简略，需要更新
-			assets: "data/uploads",
+			assets: UPLOADS_DIR,
 			prefix: "/api/uploads",
 		}),
 	)
 	// 挂载路由
-	.group("/api", (app) => app.use(healthRoute).use(authRoute).use(configRoute))
+	.group("/api", (app) =>
+		app.use(healthRoute).use(authRoute).use(configRoute).use(uploadRoute),
+	)
 	// 启动服务
 	.listen(config.PORT as number);
 

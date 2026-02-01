@@ -6,7 +6,7 @@ import { useLang } from "@/composables/lang.hook";
 import LanguagePicker from "@/components/icon/theme/LanguagePicker.vue";
 import ThemePicker from "@/components/icon/theme/ThemePicker.vue";
 import ColorSlider from "@/components/base/slider/ColorSlider.vue";
-import StepLayout from "./StepLayout.vue";
+import StepLayout from "../components/StepLayout.vue";
 import { useSetupStep } from "@/composables/setup-step.hook";
 import { upsertConfig } from "@/api/config.api";
 
@@ -15,17 +15,18 @@ const { currentHue, colorMode, setTheme, THEME_MODES } = useTheme();
 
 const { isSubmitting, runStep } = useSetupStep();
 
-const handleNext = () =>
-  runStep(() =>
-    upsertConfig({
+const handleNext = () => {
+  runStep(async () => {
+    return upsertConfig({
       configKey: "appearance",
       configValue: {
         theme: colorMode.value,
         hue: currentHue.value,
         language: locale.value,
       },
-    }),
-  );
+    });
+  });
+};
 </script>
 
 <template>
@@ -39,7 +40,7 @@ const handleNext = () =>
     <!-- 1. 语言选择 -->
     <div class="flex flex-col gap-3 text-text-icon">
       <label class="text-sm font-bold uppercase tracking-wider">
-        {{ t("views.setup.steps.step1.language") }}
+        {{ t("views.setup.steps.step1.settings.language") }}
       </label>
       <div class="grid grid-cols-2 gap-3">
         <ButtonSecondary
@@ -61,7 +62,7 @@ const handleNext = () =>
     <!-- 2. 主题模式 (明/暗) -->
     <div class="flex flex-col gap-3">
       <label class="text-sm font-bold text-text-icon uppercase tracking-wider">
-        {{ t("views.setup.steps.step1.theme") }}
+        {{ t("views.setup.steps.step1.settings.theme") }}
       </label>
       <div class="grid grid-cols-3 gap-3">
         <ButtonSecondary
@@ -88,7 +89,7 @@ const handleNext = () =>
         <label
           class="text-sm font-bold text-text-icon uppercase tracking-wider"
         >
-          {{ t("views.setup.steps.step1.color") }}
+          {{ t("views.setup.steps.step1.settings.color") }}
         </label>
         <!-- 当前颜色预览小块 -->
         <div

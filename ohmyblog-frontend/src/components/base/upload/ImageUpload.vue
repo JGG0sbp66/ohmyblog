@@ -66,7 +66,7 @@ defineExpose({
 </script>
 
 <template>
-  <div class="relative inline-block">
+  <div :class="['relative', width]">
     <input
       ref="fileInputRef"
       type="file"
@@ -80,7 +80,7 @@ defineExpose({
         width,
         height,
         roundedClass,
-        'border-2 border-dashed border-border-subtle flex items-center justify-center bg-bg-secondary overflow-hidden relative group transition-colors',
+        'border-2 border-dashed border-border-subtle flex items-center justify-center bg-bg-secondary/50 overflow-hidden relative group transition-colors',
         loading
           ? 'cursor-not-allowed'
           : 'cursor-pointer hover:border-primary/50',
@@ -92,7 +92,7 @@ defineExpose({
         v-if="modelValue"
         :src="modelValue"
         alt="Preview"
-        class="w-full h-full object-contain"
+        class="w-full h-full object-cover"
         :class="{ 'opacity-50': loading }"
       />
 

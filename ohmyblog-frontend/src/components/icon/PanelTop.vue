@@ -1,6 +1,6 @@
-<!-- src/components/icon/Picture.vue -->
+<!-- src/components/icon/PanelTop.vue -->
 <script setup lang="ts">
-import { RiImageAddFill } from "@remixicon/vue";
+import { RiGalleryFill } from "@remixicon/vue";
 const props = withDefaults(
   defineProps<{
     sizeClass?: string;
@@ -12,5 +12,5 @@ const props = withDefaults(
 </script>
 
 <template>
-  <RiImageAddFill :class="props.sizeClass" />
+  <RiGalleryFill :class="props.sizeClass" />
 </template>
