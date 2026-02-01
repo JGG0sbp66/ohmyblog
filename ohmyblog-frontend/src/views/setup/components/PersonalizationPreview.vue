@@ -104,7 +104,6 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         <div class="flex flex-col md:flex-row items-center gap-4">
           <ButtonPrimary
             :loading="avatarLoading"
-            fit
             class="text-sm"
             :text="
               avatar.getButtonText(
@@ -147,7 +146,6 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         </div>
         <ButtonPrimary
           :loading="heroLoading"
-          fit
           class="text-sm"
           :text="
             hero.getButtonText(
