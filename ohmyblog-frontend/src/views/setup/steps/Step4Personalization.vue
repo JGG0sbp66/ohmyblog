@@ -17,6 +17,7 @@ const { isSubmitting, runStep } = useSetupStep();
 
 const handleNext = () => {
   runStep(async () => {
+    // 保存头像, hero横幅的URL
     return upsertConfig({
       configKey: "personal_info",
       configValue: systemStore.personalInfo,
