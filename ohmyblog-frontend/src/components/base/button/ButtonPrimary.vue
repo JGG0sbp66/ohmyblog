@@ -1,19 +1,20 @@
 <!-- src/components/base/button/ButtonPrimary.vue -->
 <script lang="ts" setup>
 import { computed } from "vue";
+import Loading from "@/components/icon/Loading.vue";
 
 const props = withDefaults(
   defineProps<{
     loading?: boolean;
     disabled?: boolean;
     text?: string;
-    fit?: boolean;
+    full?: boolean;
   }>(),
   {
     loading: false,
     disabled: false,
     text: "请输入文本",
-    fit: false,
+    full: false,
   },
 );
 
@@ -24,10 +25,10 @@ const props = withDefaults(
 const btnClass = computed(() => {
   // 基础样式 - 所有状态下都应用的公共样式
   const base = `
-        flex items-center justify-center  /* 弹性布局，水平和垂直居中 */
-        ${props.fit ? "w-fit" : "w-full"} min-h-full px-2 py-1.5       /* 宽度模式与间距 */
+        flex items-center justify-center flex-nowrap whitespace-nowrap /* 弹性布局，强制单行显示 */
+        ${props.full ? "w-full" : "w-fit"} px-4 py-2                  /* 宽度模式与间距 */
         font-bold text-white              /* 粗体，白色文字 */
-        leading-tight                     /* 紧凑行高，适应换行 */
+        leading-tight                     /* 紧凑行高 */
         rounded-lg                        /* 大圆角 */
         transition-all duration-200       /* 所有属性200ms过渡动画 */
     `;
@@ -54,12 +55,14 @@ const btnClass = computed(() => {
 </script>
 
 <template>
-  <button :disabled="props.disabled" :class="btnClass">
+  <button :disabled="props.disabled || props.loading" :class="btnClass">
     <!-- Loading 图标插槽 -->
-    <span v-if="props.loading" class="mr-2">
-      <slot></slot>
+    <span v-if="props.loading" class="mr-2 shrink-0 flex items-center justify-center">
+      <slot>
+        <Loading />
+      </slot>
     </span>
 
-    <span>{{ props.text }}</span>
+    <span class="truncate">{{ props.text }}</span>
   </button>
 </template>
