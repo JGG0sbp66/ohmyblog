@@ -19,6 +19,15 @@ export const useSetupStore = defineStore("setup", () => {
   const currentStep = ref(1);
   const totalSteps = progressTitleKeys.length;
 
+  // 状态：管理员是否已注册（用于 Step3 的回退处理）
+  const isAdminRegistered = ref(false);
+  const adminForm = ref({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   // 状态：是否启用个性化
   const isPersonalized = ref(false);
 
@@ -34,6 +43,8 @@ export const useSetupStore = defineStore("setup", () => {
     currentStep,
     totalSteps,
     currentTitle,
+    isAdminRegistered,
+    adminForm,
     isPersonalized,
     next,
     prev,
