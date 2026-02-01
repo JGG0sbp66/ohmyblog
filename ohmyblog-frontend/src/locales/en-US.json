@@ -117,7 +117,17 @@
             "change": "Change Avatar",
             "uploading": "Uploading",
             "success": "Avatar Uploaded",
-            "help": "PNG/JPG/WebP · Max 2MB"
+            "help": "Support common image formats · Max 2MB"
+          },
+          "hero": {
+            "label": "Home Page Banner",
+            "description": "This is your front door, displayed at the top of the home page.",
+            "upload": "Upload Banner",
+            "change": "Change Banner",
+            "uploading": "Uploading",
+            "success": "Banner Uploaded",
+            "recommend": "Recommended 16:9 ratio · Width ≥ 1920px",
+            "format": "Support common image formats · Max 5MB"
           }
         }
       }

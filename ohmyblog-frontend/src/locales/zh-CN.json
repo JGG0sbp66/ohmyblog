@@ -117,7 +117,17 @@
             "change": "更换头像",
             "uploading": "上传中",
             "success": "头像已上传",
-            "help": "PNG/JPG/WebP · 最大 2MB"
+            "help": "支持常见图片格式 · 最大 2MB"
+          },
+          "hero": {
+            "label": "首页横幅图",
+            "description": "这是你的主页门面，将展示在首页顶部的核心位置。",
+            "upload": "上传横幅",
+            "change": "更换横幅",
+            "uploading": "上传中",
+            "success": "横幅已上传",
+            "recommend": "推荐 16:9 比例 · 宽度 ≥ 1920px",
+            "format": "支持常见图片格式 · 最大 5MB"
           }
         }
       }
