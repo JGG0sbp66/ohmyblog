@@ -57,7 +57,10 @@ const btnClass = computed(() => {
 <template>
   <button :disabled="props.disabled || props.loading" :class="btnClass">
     <!-- Loading 图标插槽 -->
-    <span v-if="props.loading" class="mr-2 shrink-0 flex items-center justify-center">
+    <span
+      v-if="props.loading"
+      class="mr-2 shrink-0 flex items-center justify-center"
+    >
       <slot>
         <Loading />
       </slot>
