@@ -118,7 +118,6 @@ const handleNext = () => {
           <div class="flex items-center gap-3">
             <ButtonPrimary
               type="button"
-              fit
               class="text-sm"
               @click="handleIconClick"
               :disabled="uploading"
