@@ -121,13 +121,15 @@ const handleNext = () =>
               class="w-auto! h-auto! px-4 py-1.5 text-sm"
               @click="handleIconClick"
               :disabled="uploading"
-              :text="getButtonText('views.setup.steps.step2.siteIcon', systemStore.siteInfo.logo)"
+              :text="
+                getButtonText(
+                  'views.setup.steps.step2.siteIcon',
+                  systemStore.siteInfo.logo,
+                )
+              "
             />
 
-            <BaseTag
-              v-if="systemStore.siteInfo.logo"
-              type="success"
-            >
+            <BaseTag v-if="systemStore.siteInfo.logo" type="success">
               <template #icon>
                 <Check size-class="w-3 h-3" />
               </template>

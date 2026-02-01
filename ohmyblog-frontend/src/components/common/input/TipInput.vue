@@ -38,13 +38,13 @@ const { validate: runValidator } = useValidator();
 /** 内部校验产生的错误信息（由 runValidator 返回） */
 const internalError = ref("");
 
-/** 
- * 最终展示出来的错误信息 
+/**
+ * 最终展示出来的错误信息
  * 优先级：内部校验错误 > 外部传入错误 (props.externalError)
  */
 const displayError = computed(() => internalError.value || props.externalError);
 
-/** 
+/**
  * 执行组件校验
  * 结合 Props 中的必填项和 Schema 进行验证，并同步 internalError 状态
  * @returns {boolean} 校验是否通过

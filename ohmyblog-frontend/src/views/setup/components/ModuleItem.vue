@@ -25,7 +25,9 @@ const modelValue = defineModel<boolean>({ default: false });
     class="flex items-center justify-between rounded-2xl bg-bg-secondary/50 p-5"
   >
     <div class="flex-1 pr-4">
-      <h3 class="flex items-center gap-2 text-base font-semibold text-text-main">
+      <h3
+        class="flex items-center gap-2 text-base font-semibold text-text-main"
+      >
         {{ title }}
         <BaseTag v-if="tag" size="sm">{{ tag }}</BaseTag>
       </h3>

@@ -6,7 +6,7 @@ import { computed } from "vue";
  * 基础标签/药丸组件
  */
 interface Props {
-  /** 
+  /**
    * 标签类型（预设颜色）
    * primary: 主题色
    * success: 绿色

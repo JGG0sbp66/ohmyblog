@@ -12,5 +12,5 @@ const props = withDefaults(
 </script>
 
 <template>
-   <RiGalleryFill :class="props.sizeClass" />
+  <RiGalleryFill :class="props.sizeClass" />
 </template>

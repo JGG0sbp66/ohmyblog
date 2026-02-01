@@ -29,7 +29,11 @@ export const useSystemStore = defineStore("system", () => {
   /**
    * 通用配置获取辅助函数
    */
-  async function fetchConfig(configKey: string, target: any, errorMsgMask: string) {
+  async function fetchConfig(
+    configKey: string,
+    target: any,
+    errorMsgMask: string,
+  ) {
     try {
       const res = await getConfig(configKey);
       if (res?.config?.configValue) {

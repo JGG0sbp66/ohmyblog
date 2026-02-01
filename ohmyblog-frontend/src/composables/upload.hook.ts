@@ -61,7 +61,8 @@ export function useImageUpload() {
       }
     } catch (error: any) {
       // 这里的 error 可能是 string (unwrap 抛出) 或 Error 对象
-      const errorMsg = typeof error === "string" ? error : error?.message || "Error";
+      const errorMsg =
+        typeof error === "string" ? error : error?.message || "Error";
       useToast.error(t(`api.errors.${errorMsg}`));
     } finally {
       loading.value = false;
@@ -76,4 +77,3 @@ export function useImageUpload() {
     handleUpload,
   };
 }
-
