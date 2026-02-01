@@ -7,18 +7,19 @@ const props = withDefaults(
     hasSlot?: boolean;
     isActive?: boolean;
     text?: string;
+    fit?: boolean;
   }>(),
-  { hasSlot: false, isActive: false, text: "" },
+  { hasSlot: false, isActive: false, text: "", fit: false },
 );
 
 /* 基础按钮样式类 - 使用 Tailwind CSS 工具类 */
 
 /* 布局相关 */
-const layoutClass = `
+const layoutClass = computed(() => `
   flex items-center justify-center  /* 弹性盒子，内容居中 */
-  w-full min-h-full px-4 py-2       /* 占满父容器宽度，最小占满高度，增加内边距 */
+  ${props.fit ? "w-fit" : "w-full"} min-h-full px-2 py-1.5       /* 宽度模式与间距 */
   leading-tight                     /* 紧凑行高 */
-`;
+`);
 
 /* 外观样式 */
 const appearanceClass = `

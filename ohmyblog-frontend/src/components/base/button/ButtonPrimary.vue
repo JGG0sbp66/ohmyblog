@@ -7,11 +7,13 @@ const props = withDefaults(
     loading?: boolean;
     disabled?: boolean;
     text?: string;
+    fit?: boolean;
   }>(),
   {
     loading: false,
     disabled: false,
     text: "请输入文本",
+    fit: false,
   },
 );
 
@@ -23,7 +25,7 @@ const btnClass = computed(() => {
   // 基础样式 - 所有状态下都应用的公共样式
   const base = `
         flex items-center justify-center  /* 弹性布局，水平和垂直居中 */
-        w-full min-h-full px-4 py-2       /* 最小占满父容器，增加内边距 */
+        ${props.fit ? "w-fit" : "w-full"} min-h-full px-2 py-1.5       /* 宽度模式与间距 */
         font-bold text-white              /* 粗体，白色文字 */
         leading-tight                     /* 紧凑行高，适应换行 */
         rounded-lg                        /* 大圆角 */
