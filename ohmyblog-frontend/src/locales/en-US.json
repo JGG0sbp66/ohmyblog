@@ -109,6 +109,15 @@
             "title": "Enable Personalization",
             "description": "Enabling this allows you to set an admin avatar and home page background.",
             "tag": "Optional"
+          },
+          "avatar": {
+            "label": "Admin Avatar",
+            "description": "Displayed in the homepage sidebar, recommended size 256x256 pixels.",
+            "upload": "Upload Avatar",
+            "change": "Change Avatar",
+            "uploading": "Uploading",
+            "success": "Avatar Uploaded",
+            "help": "PNG/JPG/WebP · Max 2MB"
           }
         }
       }
@@ -142,6 +151,7 @@
       "请求参数验证失败": "Request validation failed",
       "系统健康检查失败": "System health check failed",
       "获取站点基本信息失败": "Failed to fetch site info",
+      "获取个性化配置失败": "Failed to fetch personalization info",
       "请上传 1MB 以内的有效图片": "Please upload a valid image under 1MB.",
       "请上传 5MB 以内的有效图片": "Please upload a valid image under 5MB.",
       "请上传 2MB 以内的有效图片": "Please upload a valid image under 2MB."
