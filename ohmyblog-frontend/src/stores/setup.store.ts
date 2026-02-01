@@ -19,6 +19,9 @@ export const useSetupStore = defineStore("setup", () => {
   const currentStep = ref(1);
   const totalSteps = progressTitleKeys.length;
 
+  // 状态：是否启用个性化
+  const isPersonalized = ref(false);
+
   function next() {
     if (currentStep.value < totalSteps) currentStep.value++;
   }
@@ -31,6 +34,7 @@ export const useSetupStore = defineStore("setup", () => {
     currentStep,
     totalSteps,
     currentTitle,
+    isPersonalized,
     next,
     prev,
   };
