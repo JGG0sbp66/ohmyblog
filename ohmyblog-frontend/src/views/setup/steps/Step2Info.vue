@@ -11,7 +11,6 @@ import { upsertConfig } from "@/api/config.api";
 import { uploadFavicon } from "@/api/upload.api";
 import { useSystemStore } from "@/stores/system.store";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
-import Check from "@/components/icon/Check.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 
 const { t } = useLang();
@@ -119,7 +118,8 @@ const handleNext = () => {
           <div class="flex items-center gap-3">
             <ButtonPrimary
               type="button"
-              class="w-auto! h-auto! px-4 py-1.5 text-sm"
+              fit
+              class="text-sm"
               @click="handleIconClick"
               :disabled="uploading"
               :text="
@@ -131,9 +131,6 @@ const handleNext = () => {
             />
 
             <BaseTag v-if="systemStore.siteInfo.logo" type="success">
-              <template #icon>
-                <Check size-class="w-3 h-3" />
-              </template>
               {{ t("views.setup.steps.step2.siteIcon.success") }}
             </BaseTag>
           </div>
