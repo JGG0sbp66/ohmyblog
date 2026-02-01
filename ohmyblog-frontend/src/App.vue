@@ -13,6 +13,9 @@ onMounted(() => {
 
   // 获取站点基本信息（如标题等）
   systemStore.fetchSiteInfo();
+
+  // 获取个性化配置（如头像等）
+  systemStore.fetchPersonalInfo();
 });
 </script>
 
