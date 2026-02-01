@@ -27,7 +27,8 @@ const currentYear = new Date().getFullYear();
             <span> © {{ currentYear }} </span>
             <ButtonSecondary
               :text="siteInfo.title || 'ohmyblog'"
-              class="w-auto! h-7! font-medium text-text-icon/60! px-2 transition-all duration-200"
+              fit
+              class="h-7! font-medium text-text-icon/60! transition-all duration-200"
             />
 
             <span v-if="siteInfo.footer">
@@ -45,7 +46,8 @@ const currentYear = new Date().getFullYear();
         >
           <ButtonSecondary
             :text="siteInfo.icp"
-            class="w-auto! text-[10px]! text-text-icon/60! font-normal! px-3 transition-all duration-200"
+            fit
+            class="h-7! text-[10px]! text-text-icon/60! font-normal! transition-all duration-200"
           />
         </a>
       </div>
