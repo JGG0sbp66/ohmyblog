@@ -29,13 +29,12 @@ export function useSetupStep() {
     action: () => Promise<any>,
     options: {
       validate?: (Validatable | null | undefined)[]; // 需要校验的组件列表
-      successMsg?: string; // 成功提示转换 key
       autoNext?: boolean; // 是否自动跳转到下一步，默认为 true
     } = {},
   ) {
     if (isSubmitting.value) return;
 
-    const { validate, successMsg, autoNext = true } = options;
+    const { validate, autoNext = true } = options;
 
     // 执行校验逻辑
     if (validate && validate.length > 0) {
@@ -51,15 +50,8 @@ export function useSetupStep() {
       isSubmitting.value = true;
       const res = await action();
 
-      // 成功提示处理
-      if (successMsg) {
-        // 如果提供了完整的 i18n key 则直接使用，否则拼接通用前缀
-        const translationKey = successMsg.includes(".")
-          ? successMsg
-          : `api.success.config.${successMsg}`;
-        useToast.success(t(translationKey));
-      } else if (res?.message) {
-        // 如果接口返回了 message，默认尝试从 api.success.config 寻找翻译
+      // 成功提示处理：如果接口返回了 message，默认尝试从 api.success.config 寻找翻译
+      if (res?.message) {
         useToast.success(t(`api.success.config.${res.message}`));
       }
 
