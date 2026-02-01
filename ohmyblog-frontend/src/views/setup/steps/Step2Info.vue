@@ -6,10 +6,10 @@ import StepLayout from "../components/StepLayout.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStep, type Validatable } from "@/composables/setup-step.hook";
+import { useImageUpload } from "@/composables/upload.hook";
 import { upsertConfig } from "@/api/config.api";
 import { uploadFavicon } from "@/api/upload.api";
 import { useSystemStore } from "@/stores/system.store";
-import { useToast } from "@/composables/toast.hook";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import Check from "@/components/icon/Check.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
@@ -18,37 +18,38 @@ const { t } = useLang();
 const { isSubmitting, runStep } = useSetupStep();
 const systemStore = useSystemStore();
 
+/**
+ * 站点图标（Favicon）上传管理
+ * 使用通用上传 Hook 统一处理图标的选择、上传状态与成功反馈
+ */
+const {
+  loading: uploading, // 当前图标是否正在上传
+  uploadRef: imageUploadRef, // 对 ImageUpload 组件实例的引用
+  trigger: handleIconClick, // 触发文件选择对话框
+  getButtonText, // 获取按钮文字
+  handleUpload, // 核心上传执行逻辑
+} = useImageUpload();
+
 const titleInputRef = ref<Validatable | null>(null);
-const imageUploadRef = ref<InstanceType<typeof ImageUpload> | null>(null);
-const uploading = ref(false);
 
 /**
- * 手动点击上传按钮时，触发 ImageUpload 组件内部的文件选择逻辑
+ * 响应图标文件选择变更
+ * @param file 选中的图标文件
  */
-const handleIconClick = () => {
-  imageUploadRef.value?.triggerClick();
-};
-
-/**
- * 处理 ImageUpload 组件抛出的文件，执行实际的上传 API 请求
- */
-const handleFileChange = async (file: File) => {
-  try {
-    uploading.value = true;
-
-    // 执行文件上传
-    await uploadFavicon(file);
-
-    // 上传成功后，更新本地预览路径（带上时间戳避缓存）
-    // 同时也赋值给 store，让界面显示“已上传”状态
-    systemStore.siteInfo.logo = `/api/uploads/system/favicon.png?t=${Date.now()}`;
-
-    useToast.success(t("api.success.config.保存成功"));
-  } catch (error) {
-    useToast.error(t(`api.errors.${error}`));
-  } finally {
-    uploading.value = false;
-  }
+const handleFileChange = (file: File) => {
+  handleUpload(
+    file,
+    uploadFavicon, // 调用后端图标上传接口
+    () => {
+      /**
+       * 成功回调：同步全局 Store
+       * 约定路径：/api/uploads/system/favicon.png
+       * 附加时间戳 (?t=...) 用于绕过浏览器图片缓存，确保预览即时更新
+       */
+      systemStore.siteInfo.logo = `/api/uploads/system/favicon.png?t=${Date.now()}`;
+    },
+    "api.success.config.保存成功", // 成功时的 i18n 提示 Key
+  );
 };
 
 const handleNext = () =>
@@ -120,13 +121,7 @@ const handleNext = () =>
               class="w-auto! h-auto! px-4 py-1.5 text-sm"
               @click="handleIconClick"
               :disabled="uploading"
-              :text="
-                uploading
-                  ? t('views.setup.steps.step2.siteIcon.uploading')
-                  : systemStore.siteInfo.logo
-                    ? t('views.setup.steps.step2.siteIcon.change')
-                    : t('views.setup.steps.step2.siteIcon.upload')
-              "
+              :text="getButtonText('views.setup.steps.step2.siteIcon', systemStore.siteInfo.logo)"
             />
 
             <BaseTag
