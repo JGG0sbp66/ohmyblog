@@ -15,8 +15,8 @@ const currentYear = new Date().getFullYear();
   <footer class="w-full bg-bg-page">
     <div class="w-2/3 mx-auto border-t border-text-main/5"></div>
 
-    <div class="max-w-250 mx-auto py-6 px-6">
-      <div class="flex flex-col items-center gap-4" v-auto-animate>
+    <div class="max-w-250 mx-auto py-4 px-6">
+      <div class="flex flex-col items-center gap-1" v-auto-animate>
         <!-- 版权与驱动信息 -->
         <div
           class="transition-all duration-200 flex flex-col items-center gap-1.5 text-sm text-text-secondary text-center"
