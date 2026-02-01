@@ -102,18 +102,18 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
 
         <!-- 2. 按钮与状态 -->
         <div class="flex flex-col md:flex-row items-center gap-4">
-          <div class="w-36 min-h-10 text-sm">
-            <ButtonPrimary
-              :loading="avatarLoading"
-              :text="
-                avatar.getButtonText(
-                  'views.setup.steps.step4.avatar',
-                  systemStore.personalInfo.avatar,
-                )
-              "
-              @click="avatar.trigger"
-            />
-          </div>
+          <ButtonPrimary
+            :loading="avatarLoading"
+            fit
+            class="text-sm"
+            :text="
+              avatar.getButtonText(
+                'views.setup.steps.step4.avatar',
+                systemStore.personalInfo.avatar,
+              )
+            "
+            @click="avatar.trigger"
+          />
 
           <BaseTag
             v-if="systemStore.personalInfo.avatar && !avatarLoading"
@@ -145,18 +145,18 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
             {{ t("views.setup.steps.step4.hero.description") }}
           </p>
         </div>
-        <div class="w-full md:w-36 min-h-10 text-sm">
-          <ButtonPrimary
-            :loading="heroLoading"
-            :text="
-              hero.getButtonText(
-                'views.setup.steps.step4.hero',
-                systemStore.personalInfo.heroImage,
-              )
-            "
-            @click="hero.trigger"
-          />
-        </div>
+        <ButtonPrimary
+          :loading="heroLoading"
+          fit
+          class="text-sm"
+          :text="
+            hero.getButtonText(
+              'views.setup.steps.step4.hero',
+              systemStore.personalInfo.heroImage,
+            )
+          "
+          @click="hero.trigger"
+        />
       </div>
 
       <!-- 第二行：预览框 -->
