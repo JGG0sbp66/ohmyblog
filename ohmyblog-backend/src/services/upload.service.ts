@@ -23,7 +23,7 @@ class UploadService {
 	 * @returns 处理后的访问路径
 	 */
 	async uploadHero(file: File) {
-		return this.uploadSystemAsset(file, "hero-banner.webp", "首页横幅", false);
+		return this.uploadSystemAsset(file, "hero.webp", "首页横幅", false);
 	}
 
 	/**
@@ -34,7 +34,7 @@ class UploadService {
 	async uploadAvatar(file: File) {
 		return this.uploadSystemAsset(
 			file,
-			"admin-avatar.webp",
+			"avatar.webp",
 			"管理员头像",
 			false,
 		);
