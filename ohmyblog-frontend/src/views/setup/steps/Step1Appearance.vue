@@ -24,6 +24,7 @@ const handleNext = () => {
         hue: currentHue.value,
         language: locale.value,
       },
+      description: "外观设置（主题颜色、色相、语言）",
     });
   });
 };

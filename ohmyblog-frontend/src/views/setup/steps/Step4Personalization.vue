@@ -21,6 +21,7 @@ const handleNext = () => {
     return upsertConfig({
       configKey: "personal_info",
       configValue: systemStore.personalInfo,
+      description: "个性化配置（头像、首页横幅）",
     });
   });
 };
