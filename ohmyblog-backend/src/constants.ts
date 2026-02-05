@@ -15,7 +15,7 @@ export const UPLOADS_DIR = join(DATA_DIR, "uploads");
 export const SYSTEM_UPLOADS_DIR = join(UPLOADS_DIR, "system");
 
 /** 运行日志存放目录 */
-export const LOGS_DIR = join(process.cwd(), "logs");
+export const LOGS_DIR = join(DATA_DIR, "logs");
 
 /** 自动化生成的环境变量配置文件路径 */
 export const ENV_PATH = join(DATA_DIR, ".env");

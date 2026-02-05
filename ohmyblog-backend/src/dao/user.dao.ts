@@ -1,17 +1,17 @@
 import { eq, or } from "drizzle-orm";
 import { db } from "../../db/connection";
-import { users } from "../../db/schema";
+import { user } from "../../db/schema";
 
-export type NewUser = typeof users.$inferInsert;
+export type NewUser = typeof user.$inferInsert;
 
-class UsersDao {
+class UserDao {
 	/**
 	 * 创建用户
-	 * @param user 用户实体，包含用户名、邮箱、密码哈希等
+	 * @param userData 用户实体，包含用户名、邮箱、密码哈希等
 	 * @returns 新创建的用户记录
 	 */
-	async createUser(user: NewUser) {
-		const result = await db.insert(users).values(user).returning();
+	async createUser(userData: NewUser) {
+		const result = await db.insert(user).values(userData).returning();
 		return result[0];
 	}
 
@@ -23,8 +23,8 @@ class UsersDao {
 	async findByIdentifier(identifier: string) {
 		const result = await db
 			.select()
-			.from(users)
-			.where(or(eq(users.email, identifier), eq(users.username, identifier)))
+			.from(user)
+			.where(or(eq(user.email, identifier), eq(user.username, identifier)))
 			.limit(1);
 		return result[0] || null;
 	}
@@ -37,8 +37,8 @@ class UsersDao {
 	async findById(uuid: string) {
 		const result = await db
 			.select()
-			.from(users)
-			.where(eq(users.uuid, uuid))
+			.from(user)
+			.where(eq(user.uuid, uuid))
 			.limit(1);
 		return result[0] || null;
 	}
@@ -51,9 +51,9 @@ class UsersDao {
 	 */
 	async checkExists(username: string, email: string) {
 		const result = await db
-			.select({ uuid: users.uuid })
-			.from(users)
-			.where(or(eq(users.username, username), eq(users.email, email)))
+			.select({ uuid: user.uuid })
+			.from(user)
+			.where(or(eq(user.username, username), eq(user.email, email)))
 			.limit(1);
 		return result.length > 0;
 	}
@@ -64,9 +64,9 @@ class UsersDao {
 	 */
 	async hasAnyAdmin() {
 		const result = await db
-			.select({ uuid: users.uuid })
-			.from(users)
-			.where(eq(users.role, "admin"))
+			.select({ uuid: user.uuid })
+			.from(user)
+			.where(eq(user.role, "admin"))
 			.limit(1);
 		return result.length > 0;
 	}
@@ -77,11 +77,11 @@ class UsersDao {
 	 */
 	async activateUser(uuid: string) {
 		await db
-			.update(users)
+			.update(user)
 			.set({
 				status: "active",
 			})
-			.where(eq(users.uuid, uuid));
+			.where(eq(user.uuid, uuid));
 	}
 
 	/**
@@ -90,10 +90,22 @@ class UsersDao {
 	 */
 	async updateLastLogin(uuid: string) {
 		await db
-			.update(users)
+			.update(user)
 			.set({ lastLoginAt: new Date() })
-			.where(eq(users.uuid, uuid));
+			.where(eq(user.uuid, uuid));
+	}
+
+	/**
+	 * 更新头像 URL
+	 * @param uuid 用户唯一标识
+	 * @param avatarUrl 头像访问路径
+	 */
+	async updateAvatarUrl(uuid: string, avatarUrl: string) {
+		await db
+			.update(user)
+			.set({ avatarUrl })
+			.where(eq(user.uuid, uuid));
 	}
 }
 
-export const usersDao = new UsersDao();
+export const userDao = new UserDao();

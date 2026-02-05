@@ -1,2 +1,2 @@
 export * from "./table/config";
-export * from "./table/users";
+export * from "./table/user";

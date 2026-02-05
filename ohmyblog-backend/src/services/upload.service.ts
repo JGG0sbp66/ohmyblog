@@ -1,6 +1,7 @@
 // src/services/upload.service.ts
 import { join } from "node:path";
 import { SYSTEM_UPLOADS_DIR } from "../constants";
+import { userDao } from "../dao/user.dao";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger.plugin";
 import { ImageService } from "./image.service";
@@ -23,21 +24,32 @@ class UploadService {
 	 * @returns 处理后的访问路径
 	 */
 	async uploadHero(file: File) {
-		return this.uploadSystemAsset(file, "hero-banner.webp", "首页横幅", false);
+		return this.uploadSystemAsset(file, "hero.webp", "首页横幅", false);
 	}
 
 	/**
-	 * 上传并处理管理员头像
+	 * 上传并处理管理员头像，并同步更新 users 表中的 avatar_url
 	 * @param file 原始图片文件
+	 * @param userUuid 用户 UUID
 	 * @returns 处理后的访问路径
 	 */
-	async uploadAvatar(file: File) {
-		return this.uploadSystemAsset(
+	async uploadAvatar(file: File, userUuid: string) {
+		const result = await this.uploadSystemAsset(
 			file,
-			"admin-avatar.webp",
+			"avatar.webp",
 			"管理员头像",
 			false,
 		);
+
+		try {
+			await userDao.updateAvatarUrl(userUuid, result.url);
+			this.logger.info({ userUuid, url: result.url }, "已同步更新用户头像字段");
+		} catch (error) {
+			// 数据库更新失败仅记录日志，不阻断主流程
+			this.logger.error({ userUuid, error }, "同步更新用户头像字段失败");
+		}
+
+		return result;
 	}
 
 	/**

@@ -11,11 +11,21 @@ const logConfig = {
 		 * 业务可预期异常不写入 error 日志（silent）
 		 */
 		logMethod(args: unknown[], method: (...a: unknown[]) => void) {
-			const payload = args[0] as { err?: unknown; error?: unknown } | undefined;
+			const payload = args[0] as
+				| { err?: unknown; error?: unknown; code?: string }
+				| undefined;
 			const err: unknown = payload?.err ?? payload?.error ?? payload;
+
+			// 1. 业务可预期异常且显式要求静默则不记录
 			if (err instanceof BusinessError && err.silent) {
 				return;
 			}
+
+			// 2. 框架抛出的验证错误和解析错误（400类客户端错误）不计入 error.log
+			if (payload?.code === "VALIDATION" || payload?.code === "PARSE") {
+				return;
+			}
+
 			method.apply(this, args);
 		},
 	},

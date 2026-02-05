@@ -15,7 +15,7 @@ export const useSystemStore = defineStore("system", () => {
   // 站点全局配置
   const siteInfo = ref({
     title: "",
-    logo: "",
+    favicon: "",
     footer: "",
     icp: "",
   });
@@ -23,7 +23,7 @@ export const useSystemStore = defineStore("system", () => {
   // 个性化配置 (Hero, 头像等)
   const personalInfo = ref({
     avatar: "",
-    heroImage: "",
+    hero: "",
   });
 
   /**
@@ -80,14 +80,14 @@ export const useSystemStore = defineStore("system", () => {
 
   // 监听图标变化，全局同步 favicon
   watch(
-    () => siteInfo.value.logo,
-    (newLogo) => {
-      if (newLogo) {
+    () => siteInfo.value.favicon,
+    (newFavicon) => {
+      if (newFavicon) {
         const favicon = document.getElementById(
           "dynamic-favicon",
         ) as HTMLLinkElement;
         if (favicon) {
-          favicon.href = newLogo;
+          favicon.href = newFavicon;
         }
       }
     },

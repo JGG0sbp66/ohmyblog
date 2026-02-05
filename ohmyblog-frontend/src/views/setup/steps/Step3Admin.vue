@@ -8,7 +8,7 @@ import { useLang } from "@/composables/lang.hook";
 import { useSetupStep, type Validatable } from "@/composables/setup-step.hook";
 import { useSetupStore } from "@/stores/setup.store";
 import { register, login } from "@/api/auth.api";
-import { RegisterDTO, type TRegisterDTO } from "@server/dtos/auth.dto";
+import { RegisterDTO } from "@server/dtos/auth.dto";
 
 const { t } = useLang();
 const { isSubmitting, runStep } = useSetupStep();

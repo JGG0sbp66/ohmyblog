@@ -45,7 +45,7 @@ const handleFileChange = (file: File) => {
        * 约定路径：/api/uploads/system/favicon.png
        * 附加时间戳 (?t=...) 用于绕过浏览器图片缓存，确保预览即时更新
        */
-      systemStore.siteInfo.logo = `/api/uploads/system/favicon.png?t=${Date.now()}`;
+      systemStore.siteInfo.favicon = `/api/uploads/system/favicon.png?t=${Date.now()}`;
     },
     "api.success.config.保存成功", // 成功时的 i18n 提示 Key
   );
@@ -57,6 +57,7 @@ const handleNext = () => {
       return upsertConfig({
         configKey: "site_info",
         configValue: systemStore.siteInfo,
+        description: "站点基本信息（标题、图标、页脚、备案号）",
       });
     },
     { validate: [titleInputRef.value] },
@@ -106,7 +107,7 @@ const handleNext = () => {
         <div class="shrink-0">
           <ImageUpload
             ref="imageUploadRef"
-            v-model="systemStore.siteInfo.logo"
+            v-model="systemStore.siteInfo.favicon"
             :loading="uploading"
             accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,image/gif,image/apng,image/avif,image/x-icon,image/vnd.microsoft.icon,.ico"
             @change="handleFileChange"
@@ -124,12 +125,12 @@ const handleNext = () => {
               :text="
                 getButtonText(
                   'views.setup.steps.step2.siteIcon',
-                  systemStore.siteInfo.logo,
+                  systemStore.siteInfo.favicon,
                 )
               "
             />
 
-            <BaseTag v-if="systemStore.siteInfo.logo" type="success">
+            <BaseTag v-if="systemStore.siteInfo.favicon" type="success">
               {{ t("views.setup.steps.step2.siteIcon.success") }}
             </BaseTag>
           </div>

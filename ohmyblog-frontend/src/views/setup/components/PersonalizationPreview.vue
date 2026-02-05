@@ -22,13 +22,13 @@ const UPLOAD_CONFIGS = {
   avatar: {
     api: uploadAvatar,
     storeKey: "avatar",
-    fileName: "admin-avatar",
+    fileName: "avatar",
     msg: "views.setup.steps.step4.avatar.success",
   },
   hero: {
     api: uploadHero,
-    storeKey: "heroImage",
-    fileName: "hero-banner",
+    storeKey: "hero",
+    fileName: "hero",
     msg: "views.setup.steps.step4.hero.success",
   },
 } as const;
@@ -37,7 +37,7 @@ const UPLOAD_CONFIGS = {
 const avatar = useImageUpload();
 const hero = useImageUpload();
 
-// 2. 提取变量供模板直接使用 (解决类型报错并享受自动解构)
+// 2. 提取变量供模板直接使用
 const avatarLoading = avatar.loading;
 const heroLoading = hero.loading;
 const avatarUploadRef = avatar.uploadRef;
@@ -150,7 +150,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           :text="
             hero.getButtonText(
               'views.setup.steps.step4.hero',
-              systemStore.personalInfo.heroImage,
+              systemStore.personalInfo.hero,
             )
           "
           @click="hero.trigger"
@@ -161,7 +161,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
       <div class="relative group">
         <ImageUpload
           ref="heroUploadRef"
-          v-model="systemStore.personalInfo.heroImage"
+          v-model="systemStore.personalInfo.hero"
           :loading="heroLoading"
           width="w-full"
           height="h-48 md:h-56"
@@ -187,7 +187,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         </p>
 
         <BaseTag
-          v-if="systemStore.personalInfo.heroImage && !heroLoading"
+          v-if="systemStore.personalInfo.hero && !heroLoading"
           type="success"
         >
           <template #icon>
