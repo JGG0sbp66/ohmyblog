@@ -1,4 +1,4 @@
-import { usersDao } from "../dao/users.dao";
+import { userDao } from "../dao/user.dao";
 import { systemLogger } from "../plugins/logger.plugin";
 
 export class HealthService {
@@ -46,7 +46,7 @@ export class HealthService {
 	 * @returns 当前版本号及是否已初始化管理员
 	 */
 	async getSystemStatus() {
-		const hasAdmin = await usersDao.hasAnyAdmin();
+		const hasAdmin = await userDao.hasAnyAdmin();
 		return {
 			version: this.commitHash,
 			initialized: hasAdmin,

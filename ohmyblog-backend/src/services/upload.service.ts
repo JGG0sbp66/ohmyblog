@@ -1,7 +1,7 @@
 // src/services/upload.service.ts
 import { join } from "node:path";
 import { SYSTEM_UPLOADS_DIR } from "../constants";
-import { usersDao } from "../dao/users.dao";
+import { userDao } from "../dao/user.dao";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger.plugin";
 import { ImageService } from "./image.service";
@@ -42,7 +42,7 @@ class UploadService {
 		);
 
 		try {
-			await usersDao.updateAvatarUrl(userUuid, result.url);
+			await userDao.updateAvatarUrl(userUuid, result.url);
 			this.logger.info({ userUuid, url: result.url }, "已同步更新用户头像字段");
 		} catch (error) {
 			// 数据库更新失败仅记录日志，不阻断主流程
