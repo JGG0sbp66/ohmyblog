@@ -7,7 +7,7 @@ export const statuses = ["active", "inactive", "banned"] as const;
 
 export type Roles = (typeof roles)[number];
 
-export const users = sqliteTable("users", {
+export const user = sqliteTable("user", {
 	// uuid: UUID 格式，在 SQLite 中存储为 text
 	uuid: text("uuid")
 		.primaryKey()
