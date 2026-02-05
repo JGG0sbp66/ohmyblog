@@ -1,5 +1,5 @@
 // src/plugins/adminGuard.ts
-import { usersDao } from "../dao/users.dao";
+import { userDao } from "../dao/user.dao";
 import { createRoleGuard } from "./auth.plugin";
 
 let hasAdminCache: boolean | null = null;
@@ -17,7 +17,7 @@ export const markHasAdmin = () => {
  */
 const hasAdmin = async () => {
 	if (hasAdminCache === null) {
-		hasAdminCache = await usersDao.hasAnyAdmin();
+		hasAdminCache = await userDao.hasAnyAdmin();
 	}
 	return hasAdminCache;
 };
