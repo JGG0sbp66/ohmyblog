@@ -91,7 +91,7 @@ defineExpose({ validate });
       :class="[
         readonly
           ? 'opacity-60 cursor-not-allowed'
-          : 'focus-within:ring-2 focus-within:ring-primary/30',
+          : 'focus-within:ring-2 focus-within:ring-accent/30',
         displayError ? 'ring-2 ring-red-500' : '',
       ]"
     >
