@@ -2,6 +2,16 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
+/* TODO: 存在的一些问题, 以及修改的期望
+1. button 增加 type="button"，避免在表单中误触发 submit
+2. 默认内容宽度，只有需要撑满时才加 block
+3. 删除 hasSlot prop，改为组件内部用 useSlots() 自动判断是否有插槽
+4. text 改为可选渲染：无文本时不输出第二个 <span>
+5. 合并零散 class：把静态样式收敛成一个常量，只保留少量动态 computed
+6. 去掉重复/冲突动画类（如 transition-all 与局部 transition 混用）
+7. 统一激活态与 hover 态规则，避免 isActive 里重复覆盖太多 class
+8. 补充注释，明确按钮 API（variant/size/full）和默认行为
+*/
 const props = withDefaults(
   defineProps<{
     hasSlot?: boolean;
