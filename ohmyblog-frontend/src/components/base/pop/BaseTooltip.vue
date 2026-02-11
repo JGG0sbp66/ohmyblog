@@ -25,9 +25,7 @@ defineProps<Props>();
       <div
         class="bg-bg-card border border-fg-subtle/10 shadow-xl rounded-lg px-3 py-2"
       >
-        <p
-          class="text-[11px] leading-relaxed text-fg normal-case font-medium"
-        >
+        <p class="text-[11px] leading-relaxed text-fg normal-case font-medium">
           {{ content }}
         </p>
       </div>

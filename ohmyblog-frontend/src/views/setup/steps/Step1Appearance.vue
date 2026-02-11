@@ -93,9 +93,7 @@ const handleNext = () => {
           {{ t("views.setup.steps.step1.settings.color") }}
         </label>
         <!-- 当前颜色预览小块 -->
-        <div
-          class="flex items-center gap-2 bg-bg-muted px-2 py-1 rounded-md"
-        >
+        <div class="flex items-center gap-2 bg-bg-muted px-2 py-1 rounded-md">
           <div
             class="w-3 h-3 rounded-full"
             :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }"

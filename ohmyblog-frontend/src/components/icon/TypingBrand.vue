@@ -90,16 +90,8 @@ onMounted(() => {
 
       <!-- 次要装饰渐变：引用文本或图标色 -->
       <linearGradient id="g2" x1="0" x2="1" y1="1" y2="0">
-        <stop
-          offset="0%"
-          stop-color="var(--theme-fg)"
-          stop-opacity="0.2"
-        />
-        <stop
-          offset="100%"
-          stop-color="var(--theme-fg)"
-          stop-opacity="0.05"
-        />
+        <stop offset="0%" stop-color="var(--theme-fg)" stop-opacity="0.2" />
+        <stop offset="100%" stop-color="var(--theme-fg)" stop-opacity="0.05" />
       </linearGradient>
     </defs>
 
