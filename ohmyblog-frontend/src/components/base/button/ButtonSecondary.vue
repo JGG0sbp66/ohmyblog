@@ -49,7 +49,7 @@ const beforeClass = `
   before:w-full before:h-full      /* 占满整个按钮 */
   before:rounded-lg                /* 与按钮相同的圆角 */
   before:transition-[background-color,opacity,transform,scale] before:duration-200 before:ease-in-out  /* 伪元素过渡效果，避免颜色插值 */
-  before:bg-bg-secondary           /* 使用主题中的次要背景色 */
+  before:bg-bg-muted               /* 使用主题中的次要背景色 */
   before:opacity-0 before:scale-85 /* 初始状态：完全透明且缩小为85% */
 `;
 
@@ -61,8 +61,8 @@ const hoverClass = `
 
 /* 交互反馈 */
 const interactionClass = `
-  text-text-main                   /* 默认使用主文字颜色 */
-  hover:text-text-icon             /* 悬停时使用主题中的图标文字颜色 */
+  text-fg                          /* 默认使用主文字颜色 */
+  hover:text-fg-subtle             /* 悬停时使用主题中的图标文字颜色 */
   active:scale-85                  /* 点击时轻微缩小，提供点击反馈 */
   active:opacity-80                /* 点击时降低不透明度，提供点击反馈 */
 `;
@@ -74,7 +74,7 @@ const hasMr = computed(() =>
 );
 const isActiveClass = computed(() =>
   props.isActive
-    ? "before:opacity-100 before:scale-100 !text-text-icon transition-all duration-200"
+    ? "before:opacity-100 before:scale-100 !text-fg-subtle transition-all duration-200"
     : "",
 );
 </script>

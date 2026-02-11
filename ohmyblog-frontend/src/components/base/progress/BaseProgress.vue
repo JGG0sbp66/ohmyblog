@@ -21,7 +21,7 @@ const progressWidth = computed(() => {
 <template>
   <div class="w-full space-y-2">
     <!-- 进度文字描述 -->
-    <div class="flex justify-between text-sm text-text-icon px-1">
+    <div class="flex justify-between text-sm text-fg-subtle px-1">
       <span>{{ title }}</span>
       <span>{{
         t("components.base.progress.BaseProgress.step", {
@@ -32,10 +32,10 @@ const progressWidth = computed(() => {
     </div>
 
     <!-- 进度条底色 -->
-    <div class="w-full h-2 bg-bg-secondary rounded-full overflow-hidden">
+    <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden">
       <!-- 实际进度填充 -->
       <div
-        class="h-full bg-primary transition-all duration-200"
+        class="h-full bg-accent transition-all duration-200"
         :style="{ width: progressWidth }"
       ></div>
     </div>

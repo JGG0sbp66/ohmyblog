@@ -27,11 +27,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 // 颜色映射
 const typeClasses = {
-  primary: "bg-primary/10 text-primary",
+  primary: "bg-accent/10 text-accent",
   success: "bg-green-500/10 text-green-500",
   warn: "bg-orange-500/10 text-orange-500",
   error: "bg-red-500/10 text-red-500",
-  info: "bg-text-icon/10 text-text-icon",
+  info: "bg-fg-subtle/10 text-fg-subtle",
 };
 
 // 大小映射

@@ -7,21 +7,24 @@
   --font-sans:
     "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "sans-serif";
 
-  /* 按钮颜色 */
-  --color-primary: var(--theme-primary);
-  --color-primary-hover: var(--theme-primary-hover);
-  --color-primary-active: var(--theme-primary-active);
+  /* 按钮颜色：强调、交互重点 */
+  --color-accent: var(--theme-accent);
+  --color-accent-hover: var(--theme-accent-hover);
+  --color-accent-active: var(--theme-accent-active);
 
   /* --- 背景色 --- */
-  --color-bg-page: var(--theme-bg-page);
-  --color-bg-secondary: var(--theme-bg-secondary);
+  /* bg: 页面主背景；bg-muted: 次级背景区块 */
+  --color-bg: var(--theme-bg);
+  --color-bg-muted: var(--theme-bg-muted);
   --color-bg-card: var(--theme-bg-card);
 
   /* --- 文本色 --- */
-  --color-text-main: var(--theme-text-main);
-  --color-text-secondary: var(--theme-text-secondary);
-  --color-text-on-primary: var(--theme-text-on-primary);
-  --color-text-icon: var(--theme-text-icon);
+  /* fg: 主文本；fg-muted: 次要文本；fg-subtle: 更弱的文字/图标色 */
+  /* fg-soft: fg-subtle 的软化版，用于占位、提示等弱化场景 */
+  --color-fg: var(--theme-fg);
+  --color-fg-muted: var(--theme-fg-muted);
+  --color-fg-soft: var(--theme-fg-soft);
+  --color-fg-subtle: var(--theme-fg-subtle);
 }
 
 /* --- 主题定义层 --- */
@@ -39,20 +42,22 @@
        无需再为每个颜色写单独的 class
     */
   /* Light Mode 下的主色 */
-  --theme-primary: oklch(0.6 0.18 var(--app-hue));
-  --theme-primary-hover: oklch(0.55 0.18 var(--app-hue));
-  --theme-primary-active: oklch(0.5 0.18 var(--app-hue));
+  --theme-accent: oklch(0.6 0.18 var(--app-hue));
+  --theme-accent-hover: oklch(0.55 0.18 var(--app-hue));
+  --theme-accent-active: oklch(0.5 0.18 var(--app-hue));
 
   /* --- 背景色 --- */
-  --theme-bg-page: oklch(0.97 0.01 var(--app-hue));
-  --theme-bg-secondary: oklch(0.95 0.03 var(--app-hue));
+  /* bg: 页面主背景；bg-muted: 次级背景区块 */
+  --theme-bg: oklch(0.97 0.01 var(--app-hue));
+  --theme-bg-muted: oklch(0.95 0.03 var(--app-hue));
   --theme-bg-card: white;
 
   /* --- 文本色 --- */
-  --theme-text-main: oklch(0.2 0.03 var(--app-hue));
-  --theme-text-secondary: #00000080;
-  --theme-text-on-primary: white;
-  --theme-text-icon: oklch(0.65 0.15 var(--app-hue));
+  /* fg: 主文本；fg-muted: 次要文本；fg-subtle: 更弱的文字/图标色 */
+  --theme-fg: oklch(0.2 0.03 var(--app-hue));
+  --theme-fg-muted: #00000080;
+  --theme-fg-subtle: oklch(0.65 0.15 var(--app-hue));
+  --theme-fg-soft: color-mix(in oklch, var(--theme-fg-subtle) 40%, transparent);
 
   /* 浏览器系统样式 */
   color-scheme: light;
@@ -63,20 +68,22 @@
 
 .dark {
   /* Dark Mode 下的主色 */
-  --theme-primary: oklch(0.65 0.18 var(--app-hue));
-  --theme-primary-hover: oklch(0.7 0.18 var(--app-hue));
-  --theme-primary-active: oklch(0.6 0.18 var(--app-hue));
+  --theme-accent: oklch(0.65 0.18 var(--app-hue));
+  --theme-accent-hover: oklch(0.7 0.18 var(--app-hue));
+  --theme-accent-active: oklch(0.6 0.18 var(--app-hue));
 
   /* --- 背景色 --- */
-  --theme-bg-page: oklch(0.16 0.014 var(--app-hue));
-  --theme-bg-secondary: oklch(0.25 0.03 var(--app-hue));
+  /* bg: 页面主背景；bg-muted: 次级背景区块 */
+  --theme-bg: oklch(0.16 0.014 var(--app-hue));
+  --theme-bg-muted: oklch(0.25 0.03 var(--app-hue));
   --theme-bg-card: oklch(0.2 0.02 var(--app-hue));
 
   /* --- 文本色 --- */
-  --theme-text-main: oklch(0.95 0.01 var(--app-hue));
-  --theme-text-secondary: #ffffff80;
-  --theme-text-on-primary: white;
-  --theme-text-icon: oklch(0.75 0.14 var(--app-hue));
+  /* fg: 主文本；fg-muted: 次要文本；fg-subtle: 更弱的文字/图标色 */
+  --theme-fg: oklch(0.95 0.01 var(--app-hue));
+  --theme-fg-muted: #ffffff80;
+  --theme-fg-subtle: oklch(0.75 0.14 var(--app-hue));
+  --theme-fg-soft: color-mix(in oklch, var(--theme-fg-subtle) 40%, transparent);
 
   color-scheme: dark;
 }
@@ -107,13 +114,15 @@
 }
 
 body {
-  background-color: var(--theme-bg-page);
-  color: var(--theme-text-main);
+  background-color: var(--theme-bg);
+  color: var(--theme-fg);
 }
 
 @layer utilities {
-  .text-text-icon,
-  .bg-text-icon {
+  .text-fg-subtle,
+  .bg-fg-subtle,
+  .text-fg-soft,
+  .bg-fg-soft {
     @apply transition-all duration-200;
   }
 }

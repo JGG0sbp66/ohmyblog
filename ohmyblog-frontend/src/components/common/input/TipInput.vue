@@ -75,7 +75,7 @@ defineExpose({ validate });
     <!-- Label 区域 -->
     <div v-if="label" class="flex items-center gap-1.5 mb-1.5 px-1">
       <label
-        class="text-xs font-bold text-text-icon uppercase tracking-wider select-none"
+        class="text-xs font-bold text-fg-subtle uppercase tracking-wider select-none"
       >
         {{ label }}
         <span v-if="required" class="text-red-500 ml-0.5">*</span>
@@ -87,7 +87,7 @@ defineExpose({ validate });
 
     <!-- Input Wrapper -->
     <div
-      class="w-full bg-bg-secondary py-3 px-4 rounded-xl text-text-main border border-transparent transition-all flex items-center"
+      class="w-full bg-bg-muted py-3 px-4 rounded-xl text-fg border border-transparent transition-all flex items-center"
       :class="[
         readonly
           ? 'opacity-60 cursor-not-allowed'
@@ -102,7 +102,7 @@ defineExpose({ validate });
         @input="internalError && validate()"
         :placeholder="placeholder"
         :readonly="readonly"
-        class="w-full bg-transparent outline-none placeholder:text-text-icon/40 text-sm font-medium"
+        class="w-full bg-transparent outline-none placeholder:text-fg-soft text-sm font-medium"
       />
     </div>
 

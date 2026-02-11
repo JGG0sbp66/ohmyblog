@@ -28,12 +28,12 @@ const { currentHue } = useTheme();
             class="w-1 h-4 rounded-sm"
             :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }"
           ></div>
-          <span class="text-text-main font-bold text-lg">{{
+          <span class="text-fg font-bold text-lg">{{
             $t("components.theme.ToggleColor.paletteTitle")
           }}</span>
         </div>
         <span
-          class="w-10 h-7 bg-bg-secondary flex items-center justify-center text-text-icon rounded-lg text-sm font-bold"
+          class="w-10 h-7 bg-bg-muted flex items-center justify-center text-fg-subtle rounded-lg text-sm font-bold"
           >{{ currentHue }}</span
         >
       </div>

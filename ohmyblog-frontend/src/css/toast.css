@@ -11,22 +11,22 @@
 
   /* 让 Toast 背景直接跟你的卡片色同步 */
   --toastify-color-light: var(--theme-bg-card);
-  --toastify-text-color-light: var(--theme-text-main);
+  --toastify-text-color-light: var(--theme-fg);
 
   /* 状态颜色：基于--app-hue 动态生成，使用标准的 OKLCH 语义色 */
   --toast-success: oklch(0.65 0.15 150);
   --toast-error: oklch(0.6 0.18 25);
   --toast-warning: oklch(0.75 0.15 85);
-  --toast-info: var(--theme-primary);
+  --toast-info: var(--theme-accent);
 }
 
 /* 3. 整体容器精致化 */
 .Toastify__toast {
   padding: 14px 18px;
-  border: 1px solid oklch(from var(--theme-text-main) l c h / 0.08);
+  border: 1px solid oklch(from var(--theme-fg) l c h / 0.08);
   box-shadow:
-    0 12px 30px -10px oklch(from var(--theme-text-main) l c h / 0.1),
-    0 4px 10px -5px oklch(from var(--theme-text-main) l c h / 0.05);
+    0 12px 30px -10px oklch(from var(--theme-fg) l c h / 0.1),
+    0 4px 10px -5px oklch(from var(--theme-fg) l c h / 0.05);
 }
 
 /* 4. Lucide 图标高阶处理 */
@@ -75,7 +75,7 @@
 
 /* 6. 关闭按钮优化 */
 .Toastify__close-button--light {
-  color: var(--theme-text-main);
+  color: var(--theme-fg);
   opacity: 0.3;
   transition: opacity 0.2s ease;
 }

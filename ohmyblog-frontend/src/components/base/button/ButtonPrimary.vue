@@ -38,14 +38,14 @@ const btnClass = computed(() => {
     props.disabled || props.loading
       ? // 加载或者禁用状态样式
         `
-            bg-primary-active              /* 使用激活状态的主色调 */
+            bg-accent-active               /* 使用激活状态的主色调 */
             cursor-not-allowed             /* 禁用光标，表示不可点击 */
             opacity-80                     /* 80%透明度，视觉上表示禁用 */
         `
       : // 正常交互状态样式
         `
-            bg-primary                     /* 使用主色调背景 */
-            hover:bg-primary-hover         /* 悬停时使用主色调的悬停变体 */
+            bg-accent                      /* 使用主色调背景 */
+            hover:bg-accent-hover          /* 悬停时使用主色调的悬停变体 */
             active:scale-95                /* 点击时轻微缩小(95%)，提供触觉反馈 */
         `;
 

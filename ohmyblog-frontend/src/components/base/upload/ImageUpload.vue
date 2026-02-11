@@ -80,7 +80,7 @@ defineExpose({
         width,
         height,
         roundedClass,
-        'border-2 border-dashed border-border-subtle flex items-center justify-center bg-bg-secondary/50 overflow-hidden relative group transition-colors',
+        'border-2 border-dashed border-border-subtle flex items-center justify-center bg-bg-muted/50 overflow-hidden relative group transition-colors',
         loading
           ? 'cursor-not-allowed'
           : 'cursor-pointer hover:border-primary/50',
@@ -99,11 +99,11 @@ defineExpose({
       <!-- 默认内容 (图标 + 说明文字) -->
       <div v-else class="flex flex-col items-center gap-2 p-2">
         <slot name="icon">
-          <Picture size-class="w-8 h-8 text-text-icon opacity-40" />
+          <Picture size-class="w-8 h-8 text-fg-subtle opacity-40" />
         </slot>
         <p
           v-if="description"
-          class="text-[10px] text-text-icon opacity-60 text-center leading-tight"
+          class="text-[10px] text-fg-subtle opacity-60 text-center leading-tight"
         >
           {{ description }}
         </p>
@@ -122,7 +122,7 @@ defineExpose({
         v-if="loading"
         class="absolute inset-0 flex items-center justify-center bg-bg-card/60"
       >
-        <Loading size-class="w-6 h-6 text-primary" />
+        <Loading size-class="w-6 h-6 text-accent" />
       </div>
     </div>
   </div>

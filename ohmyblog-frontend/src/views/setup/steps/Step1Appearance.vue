@@ -39,7 +39,7 @@ const handleNext = () => {
     @next="handleNext"
   >
     <!-- 1. 语言选择 -->
-    <div class="flex flex-col gap-3 text-text-icon">
+    <div class="flex flex-col gap-3 text-fg-subtle">
       <label class="text-sm font-bold uppercase tracking-wider">
         {{ t("views.setup.steps.step1.settings.language") }}
       </label>
@@ -62,7 +62,7 @@ const handleNext = () => {
 
     <!-- 2. 主题模式 (明/暗) -->
     <div class="flex flex-col gap-3">
-      <label class="text-sm font-bold text-text-icon uppercase tracking-wider">
+      <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider">
         {{ t("views.setup.steps.step1.settings.theme") }}
       </label>
       <div class="grid grid-cols-3 gap-3">
@@ -88,23 +88,23 @@ const handleNext = () => {
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <label
-          class="text-sm font-bold text-text-icon uppercase tracking-wider"
+          class="text-sm font-bold text-fg-subtle uppercase tracking-wider"
         >
           {{ t("views.setup.steps.step1.settings.color") }}
         </label>
         <!-- 当前颜色预览小块 -->
         <div
-          class="flex items-center gap-2 bg-bg-secondary px-2 py-1 rounded-md"
+          class="flex items-center gap-2 bg-bg-muted px-2 py-1 rounded-md"
         >
           <div
             class="w-3 h-3 rounded-full"
             :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }"
           ></div>
-          <span class="text-xs text-text-main">{{ currentHue }}</span>
+          <span class="text-xs text-fg">{{ currentHue }}</span>
         </div>
       </div>
 
-      <div class="h-12 bg-bg-secondary rounded-xl flex items-center px-4">
+      <div class="h-12 bg-bg-muted rounded-xl flex items-center px-4">
         <ColorSlider v-model="currentHue" />
       </div>
     </div>

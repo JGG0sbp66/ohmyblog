@@ -99,7 +99,7 @@ const handleNext = () => {
 
     <!-- 站点图标上传 -->
     <div class="space-y-2">
-      <label class="block text-sm font-medium text-text-main pb-1">
+      <label class="block text-sm font-medium text-fg pb-1">
         {{ t("views.setup.steps.step2.siteIcon.label") }}
       </label>
       <div class="flex items-start gap-5">
@@ -136,10 +136,10 @@ const handleNext = () => {
           </div>
 
           <div class="mt-3 space-y-1">
-            <p class="text-[11px] text-text-icon leading-relaxed">
+            <p class="text-[11px] text-fg-subtle leading-relaxed">
               {{ t("views.setup.steps.step2.siteIcon.help1") }}
             </p>
-            <p class="text-[11px] text-text-icon leading-relaxed">
+            <p class="text-[11px] text-fg-subtle leading-relaxed">
               {{ t("views.setup.steps.step2.siteIcon.help2") }}
             </p>
           </div>
