@@ -36,7 +36,6 @@ const layoutClass = computed(
 /* 外观样式 */
 const appearanceClass = `
   rounded-lg                       /* 大圆角 */
-  transition-[background-color,border-color,transform,scale,opacity] duration-200 ease-in-out  /* 避免 text color 过渡导致闪烁 */
   relative overflow-hidden         /* 相对定位，隐藏溢出内容 */
   bg-transparent                   /* 透明背景 */
 `;
@@ -48,7 +47,6 @@ const beforeClass = `
   before:top-0 before:left-0       /* 从左上角开始 */
   before:w-full before:h-full      /* 占满整个按钮 */
   before:rounded-lg                /* 与按钮相同的圆角 */
-  before:transition-[background-color,opacity,transform,scale] before:duration-200 before:ease-in-out  /* 伪元素过渡效果，避免颜色插值 */
   before:bg-bg-muted               /* 使用主题中的次要背景色 */
   before:opacity-0 before:scale-85 /* 初始状态：完全透明且缩小为85% */
 `;

@@ -35,7 +35,7 @@ const progressWidth = computed(() => {
     <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden">
       <!-- 实际进度填充 -->
       <div
-        class="h-full bg-accent transition-[width] duration-200"
+        class="h-full bg-accent"
         :style="{ width: progressWidth }"
       ></div>
     </div>

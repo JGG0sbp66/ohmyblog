@@ -24,9 +24,6 @@ flex items-center justify-between
 
 /* 3. 背景与边框 */
 bg-bg-card rounded-b-2xl shadow-sm
-
-/* 4. 动画 */
-transition-theme
 `;
 </script>
 <template>

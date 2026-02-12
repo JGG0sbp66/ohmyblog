@@ -104,10 +104,10 @@
   *,
   ::after,
   ::before {
-    /* 保留主题切换的“视觉过渡”，但去掉文字 color 的过渡，避免黑白闪烁 */
+    /* 统一的全局过渡：200ms，包含常用属性 */
     transition-property:
-      background-color, border-color, fill, stroke, stop-color, opacity,
-      stop-opacity;
+      color, background-color, border-color, fill, stroke, stop-color, opacity,
+      stop-opacity, transform, scale, box-shadow, width;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 200ms;
   }
@@ -119,11 +119,11 @@ body {
 }
 
 @layer utilities {
-  .transition-theme {
-    transition-property:
-      background-color, border-color, fill, stroke, stop-color, opacity,
-      stop-opacity, transform, box-shadow;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+  /* 禁用文字颜色过渡的工具类（主题切换时使用，避免黑白闪烁） */
+  .no-color-transition,
+  .no-color-transition *,
+  .no-color-transition ::before,
+  .no-color-transition ::after {
+    transition-property: background-color, border-color, fill, stroke, stop-color, opacity, stop-opacity, transform, scale, box-shadow, width !important;
   }
 }

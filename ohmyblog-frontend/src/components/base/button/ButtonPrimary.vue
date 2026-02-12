@@ -30,7 +30,6 @@ const btnClass = computed(() => {
         font-bold text-white              /* 粗体，白色文字 */
         leading-tight                     /* 紧凑行高 */
         rounded-lg                        /* 大圆角 */
-        transition-theme                  /* 主题相关属性200ms过渡动画（不含文字颜色） */
     `;
 
   // 状态样式 - 根据当前状态动态变化的样式
