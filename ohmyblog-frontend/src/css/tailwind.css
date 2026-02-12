@@ -92,17 +92,6 @@
 @layer base {
   *,
   ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    border-color: var(
-      --color-gray-200,
-      currentColor
-    ); /* 默认边框色处理，防止过渡时闪烁 */
-  }
-
-  *,
-  ::after,
   ::before {
     /* 统一的全局过渡：200ms，包含常用属性 */
     transition-property:
@@ -124,6 +113,8 @@ body {
   .no-color-transition *,
   .no-color-transition ::before,
   .no-color-transition ::after {
-    transition-property: background-color, border-color, fill, stroke, stop-color, opacity, stop-opacity, transform, scale, box-shadow, width !important;
+    transition-property:
+      background-color, border-color, fill, stroke, stop-color, opacity,
+      stop-opacity, transform, scale, box-shadow, width !important;
   }
 }
