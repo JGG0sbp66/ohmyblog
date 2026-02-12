@@ -71,9 +71,7 @@ const hasMr = computed(() =>
   props.text === "" && props.hasSlot ? "" : "mr-3",
 );
 const isActiveClass = computed(() =>
-  props.isActive
-    ? "before:opacity-100 before:scale-100 !text-fg-subtle"
-    : "",
+  props.isActive ? "before:opacity-100 before:scale-100 !text-fg-subtle" : "",
 );
 </script>
 
