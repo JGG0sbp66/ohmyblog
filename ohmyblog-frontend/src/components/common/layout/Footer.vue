@@ -13,7 +13,7 @@ const currentYear = new Date().getFullYear();
 
 <template>
   <footer class="w-full bg-bg">
-    <div class="w-2/3 mx-auto border-t border-text-main/5"></div>
+    <div class="w-2/3 mx-auto border-t border-fg-muted/10"></div>
 
     <div class="max-w-250 mx-auto py-4 px-6">
       <div class="flex flex-col items-center gap-1" v-auto-animate>
