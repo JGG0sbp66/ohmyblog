@@ -31,12 +31,12 @@ defineEmits(["next"]); // 定义“下一步”点击事件
   <div class="relative p-8 flex flex-col gap-8">
     <!-- 头部区域：包含标题和副标题/描述 -->
     <div class="flex flex-col gap-2">
-      <h2 class="text-2xl font-bold text-text-main">
+      <h2 class="text-2xl font-bold text-fg">
         <slot name="title">{{ title }}</slot>
       </h2>
       <p
         v-if="description || $slots.description"
-        class="text-text-icon text-sm"
+        class="text-fg-subtle text-sm"
       >
         <slot name="description">{{ description }}</slot>
       </p>

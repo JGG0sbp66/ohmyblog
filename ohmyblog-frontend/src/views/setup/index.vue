@@ -32,7 +32,7 @@ const CurrentStepComponent = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-bg-primary overflow-x-hidden">
+  <div class="min-h-screen flex flex-col bg-bg overflow-x-hidden">
     <!-- main 撑满除 Footer 外的所有高度 -->
     <main class="flex-1 flex flex-col p-4 md:p-8 gap-6 md:gap-10">
       <!-- 进度条区域：内部间距由 main 的 gap 控制 -->

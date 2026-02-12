@@ -21,17 +21,13 @@ const modelValue = defineModel<boolean>({ default: false });
 </script>
 
 <template>
-  <div
-    class="flex items-center justify-between rounded-2xl bg-bg-secondary/50 p-5"
-  >
+  <div class="flex items-center justify-between rounded-2xl bg-bg-muted/50 p-5">
     <div class="flex-1 pr-4">
-      <h3
-        class="flex items-center gap-2 text-base font-semibold text-text-main"
-      >
+      <h3 class="flex items-center gap-2 text-base font-semibold text-fg">
         {{ title }}
         <BaseTag v-if="tag" size="sm">{{ tag }}</BaseTag>
       </h3>
-      <p class="mt-1 text-sm text-text-secondary leading-relaxed">
+      <p class="mt-1 text-sm text-fg-muted leading-relaxed">
         {{ description }}
       </p>
     </div>

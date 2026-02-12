@@ -91,7 +91,15 @@ export function useTheme() {
    * @param mode 主题模式 (light | dark | auto)
    */
   const setTheme = (mode: ThemeMode) => {
+    // 临时禁用文字颜色过渡，避免深浅模式切换时的黑白闪烁
+    // 但保留背景色、边框等的过渡效果
+    document.documentElement.classList.add("no-color-transition");
     colorMode.value = mode;
+
+    // 等待 DOM 更新后，移除禁用类
+    setTimeout(() => {
+      document.documentElement.classList.remove("no-color-transition");
+    }, 50);
   };
 
   /**

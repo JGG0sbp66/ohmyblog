@@ -83,7 +83,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           @change="(file) => onFileChange('avatar', file)"
         >
           <template #icon>
-            <User size-class="w-12 h-12 text-text-icon/30" />
+            <User size-class="w-12 h-12 text-fg-subtle/30" />
           </template>
         </ImageUpload>
       </div>
@@ -92,10 +92,10 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
       <div class="flex-1 flex flex-col gap-5 text-center md:text-left">
         <!-- 1. 标题与描述 -->
         <div class="space-y-1.5 pt-1">
-          <h3 class="text-lg font-bold text-text-main">
+          <h3 class="text-lg font-bold text-fg">
             {{ t("views.setup.steps.step4.avatar.label") }}
           </h3>
-          <p class="text-xs text-text-secondary leading-relaxed">
+          <p class="text-xs text-fg-muted leading-relaxed">
             {{ t("views.setup.steps.step4.avatar.description") }}
           </p>
         </div>
@@ -126,7 +126,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         </div>
 
         <!-- 3. 辅助说明 -->
-        <p class="text-[11px] text-text-icon/80 font-medium">
+        <p class="text-[11px] text-fg-subtle/80 font-medium">
           {{ t("views.setup.steps.step4.avatar.help") }}
         </p>
       </div>
@@ -137,10 +137,10 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
       <!-- 第一行：标题和按钮 -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div class="space-y-1 text-center md:text-left">
-          <h3 class="text-lg font-bold text-text-main">
+          <h3 class="text-lg font-bold text-fg">
             {{ t("views.setup.steps.step4.hero.label") }}
           </h3>
-          <p class="text-xs text-text-secondary">
+          <p class="text-xs text-fg-muted">
             {{ t("views.setup.steps.step4.hero.description") }}
           </p>
         </div>
@@ -171,8 +171,8 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         >
           <template #icon>
             <div class="flex flex-col items-center gap-3">
-              <PanelTop size-class="w-10 h-10 text-text-icon/30" />
-              <p class="text-xs text-text-icon/60">
+              <PanelTop size-class="w-10 h-10 text-fg-subtle/30" />
+              <p class="text-xs text-fg-subtle/60">
                 {{ t("views.setup.steps.step4.hero.recommend") }}
               </p>
             </div>
@@ -182,7 +182,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
 
       <!-- 第三行：格式说明与状态 -->
       <div class="flex items-center justify-between min-h-6">
-        <p class="text-[11px] text-text-icon/80 font-medium text-left">
+        <p class="text-[11px] text-fg-subtle/80 font-medium text-left">
           {{ t("views.setup.steps.step4.hero.format") }}
         </p>
 

@@ -12,14 +12,14 @@ const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-  <footer class="w-full bg-bg-page">
-    <div class="w-2/3 mx-auto border-t border-text-main/5"></div>
+  <footer class="w-full bg-bg">
+    <div class="w-2/3 mx-auto border-t border-fg-muted/10"></div>
 
     <div class="max-w-250 mx-auto py-4 px-6">
       <div class="flex flex-col items-center gap-1" v-auto-animate>
         <!-- 版权与驱动信息 -->
         <div
-          class="transition-all duration-200 flex flex-col items-center gap-1.5 text-sm text-text-secondary text-center"
+          class="flex flex-col items-center gap-1.5 text-sm text-fg-muted text-center"
         >
           <div
             class="flex items-center flex-wrap justify-center leading-relaxed"
@@ -28,7 +28,7 @@ const currentYear = new Date().getFullYear();
             <ButtonSecondary
               :text="siteInfo.title || 'ohmyblog'"
               fit
-              class="h-7! font-medium text-text-icon/60! transition-all duration-200"
+              class="h-7! font-medium text-fg-subtle/60!"
             />
 
             <span v-if="siteInfo.footer">
@@ -47,7 +47,7 @@ const currentYear = new Date().getFullYear();
           <ButtonSecondary
             :text="siteInfo.icp"
             fit
-            class="h-7! text-[10px]! text-text-icon/60! font-normal! transition-all duration-200"
+            class="h-7! text-[10px]! text-fg-subtle/60! font-normal!"
           />
         </a>
       </div>

@@ -79,32 +79,24 @@ onMounted(() => {
     <defs>
       <!-- 主色调渐变：引用主题主色 -->
       <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
-        <stop offset="0%" stop-color="var(--theme-primary)" />
+        <stop offset="0%" stop-color="var(--theme-accent)" />
         <!-- 这里的第二个点可以稍微透明一点或者使用主色 -->
         <stop
           offset="100%"
-          stop-color="var(--theme-primary)"
+          stop-color="var(--theme-accent)"
           stop-opacity="0.6"
         />
       </linearGradient>
 
       <!-- 次要装饰渐变：引用文本或图标色 -->
       <linearGradient id="g2" x1="0" x2="1" y1="1" y2="0">
-        <stop
-          offset="0%"
-          stop-color="var(--theme-text-main)"
-          stop-opacity="0.2"
-        />
-        <stop
-          offset="100%"
-          stop-color="var(--theme-text-main)"
-          stop-opacity="0.05"
-        />
+        <stop offset="0%" stop-color="var(--theme-fg)" stop-opacity="0.2" />
+        <stop offset="100%" stop-color="var(--theme-fg)" stop-opacity="0.05" />
       </linearGradient>
     </defs>
 
     <!-- 背景装饰：引用页面背景色 -->
-    <rect x="0" y="0" width="600" height="400" fill="var(--theme-bg-page)" />
+    <rect x="0" y="0" width="600" height="400" fill="var(--theme-bg)" />
 
     <!-- 装饰圆圈 -->
     <circle cx="520" cy="80" r="60" fill="url(#g1)" opacity="0.2" />
@@ -118,7 +110,7 @@ onMounted(() => {
         height="220"
         rx="16"
         fill="var(--theme-bg-card)"
-        stroke="var(--theme-bg-secondary)"
+        stroke="var(--theme-bg-muted)"
         stroke-width="1"
       />
 
@@ -127,7 +119,7 @@ onMounted(() => {
         x="180"
         y="85"
         font-size="18"
-        fill="var(--theme-text-icon)"
+        fill="var(--theme-fg-subtle)"
         font-weight="400"
         text-anchor="middle"
       >
@@ -135,7 +127,7 @@ onMounted(() => {
         <tspan
           class="cursor"
           :style="{ visibility: isTyping1 ? 'visible' : 'hidden' }"
-          fill="var(--theme-primary)"
+          fill="var(--theme-accent)"
         >
           |
         </tspan>
@@ -146,7 +138,7 @@ onMounted(() => {
         x="180"
         y="120"
         font-size="32"
-        fill="var(--theme-primary)"
+        fill="var(--theme-accent)"
         font-weight="700"
         text-anchor="middle"
       >
@@ -154,7 +146,7 @@ onMounted(() => {
         <tspan
           class="cursor"
           :style="{ visibility: isTyping2 ? 'visible' : 'hidden' }"
-          fill="var(--theme-primary)"
+          fill="var(--theme-accent)"
         >
           |
         </tspan>
@@ -165,7 +157,7 @@ onMounted(() => {
         x="180"
         y="155"
         font-size="16"
-        fill="var(--theme-text-main)"
+        fill="var(--theme-fg)"
         font-weight="500"
         text-anchor="middle"
       >
@@ -173,7 +165,7 @@ onMounted(() => {
         <tspan
           class="cursor"
           :style="{ visibility: isTyping3 ? 'visible' : 'hidden' }"
-          fill="var(--theme-primary)"
+          fill="var(--theme-accent)"
         >
           |
         </tspan>
@@ -186,7 +178,7 @@ onMounted(() => {
         width="120"
         height="36"
         rx="8"
-        fill="var(--theme-primary)"
+        fill="var(--theme-accent)"
         opacity="0.9"
       />
     </g>

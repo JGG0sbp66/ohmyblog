@@ -37,11 +37,11 @@ const handleToggle = (event: Event) => {
     />
     <!-- 背景槽 -->
     <div
-      class="h-7 w-12 rounded-full bg-text-icon/20 transition-all duration-300 peer-checked:bg-primary"
+      class="h-7 w-12 rounded-full bg-fg-subtle/20 peer-checked:bg-accent"
     ></div>
     <!-- 滑块小球 -->
     <div
-      class="absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow-md transition-all duration-300 peer-checked:translate-x-5"
+      class="absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow-md peer-checked:translate-x-5"
     ></div>
   </label>
 </template>
