@@ -14,12 +14,12 @@ defineProps<Props>();
     <!-- 触发图标 -->
     <QuestionIcon
       sizeClass="w-3.5 h-3.5"
-      class="text-fg-soft cursor-help hover:text-accent transition-colors"
+      class="text-fg-soft cursor-help hover:text-accent"
     />
 
     <!-- Tooltip 弹窗内容 -->
     <div
-      class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 pointer-events-none opacity-0 group-hover:opacity-100 transition-all duration-200 z-50"
+      class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 pointer-events-none opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-200 ease-in-out z-50"
     >
       <!-- 气泡主体 -->
       <div

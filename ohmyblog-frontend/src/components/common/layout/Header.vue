@@ -26,7 +26,7 @@ flex items-center justify-between
 bg-bg-card rounded-b-2xl shadow-sm
 
 /* 4. 动画 */
-transition-all duration-200 ease-in-out
+transition-theme
 `;
 </script>
 <template>

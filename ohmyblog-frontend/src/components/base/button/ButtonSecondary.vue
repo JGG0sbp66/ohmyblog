@@ -74,7 +74,7 @@ const hasMr = computed(() =>
 );
 const isActiveClass = computed(() =>
   props.isActive
-    ? "before:opacity-100 before:scale-100 !text-fg-subtle transition-all duration-200"
+    ? "before:opacity-100 before:scale-100 !text-fg-subtle"
     : "",
 );
 </script>

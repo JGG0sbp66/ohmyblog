@@ -44,7 +44,7 @@ const classes = computed(() => {
   return [
     typeClasses[props.type],
     sizeClasses[props.size],
-    "rounded-full flex items-center gap-1 font-medium transition-all duration-300 w-fit shrink-0",
+    "rounded-full flex items-center gap-1 font-medium transition-theme w-fit shrink-0",
   ];
 });
 </script>

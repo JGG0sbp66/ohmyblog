@@ -87,7 +87,7 @@ defineExpose({ validate });
 
     <!-- Input Wrapper -->
     <div
-      class="w-full bg-bg-muted py-3 px-4 rounded-xl text-fg border border-transparent transition-all flex items-center"
+      class="w-full bg-bg-muted py-3 px-4 rounded-xl text-fg border border-transparent transition-theme flex items-center"
       :class="[
         readonly
           ? 'opacity-60 cursor-not-allowed'
