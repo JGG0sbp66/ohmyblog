@@ -130,6 +130,15 @@
             "recommend": "Recommended 16:9 ratio · Width ≥ 1920px",
             "format": "Support common image formats · Max 5MB"
           }
+        },
+        "step5": {
+          "title": "Email Notifications",
+          "description": "Configure SMTP service to enable your blog to send email notifications.",
+          "smtp": {
+            "title": "Enable SMTP",
+            "description": "Enable this to configure email server for sending comment notifications, system messages, etc.",
+            "tag": "Optional"
+          }
         }
       }
     }

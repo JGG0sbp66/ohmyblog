@@ -31,6 +31,9 @@ export const useSetupStore = defineStore("setup", () => {
   // 状态：是否启用个性化
   const isPersonalized = ref(false);
 
+  // 状态：是否启用 SMTP
+  const isSMTPEnabled = ref(false);
+
   function next() {
     if (currentStep.value < totalSteps) currentStep.value++;
   }
@@ -46,6 +49,7 @@ export const useSetupStore = defineStore("setup", () => {
     isAdminRegistered,
     adminForm,
     isPersonalized,
+    isSMTPEnabled,
     next,
     prev,
   };
