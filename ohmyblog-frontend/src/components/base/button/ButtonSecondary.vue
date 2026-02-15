@@ -2,16 +2,19 @@
 <script lang="ts" setup>
 import { computed, useSlots } from "vue";
 
-// 获取插槽实例，用于自动检测是否传入了 slot 内容
 const slots = useSlots();
 
-/* TODO: 存在的一些问题, 以及修改的期望
-2. 默认内容宽度，只有需要撑满时才加 block
-4. 合并零散 class：把静态样式收敛成一个常量，只保留少量动态 computed
-5. 去掉重复/冲突动画类（如 transition-all 与局部 transition 混用）
-6. 统一激活态与 hover 态规则，避免 isActive 里重复覆盖太多 class
-7. 补充注释，明确按钮 API（variant/size/full）和默认行为
-*/
+/**
+ * ButtonSecondary - 次要按钮组件
+ *
+ * Props:
+ * - isActive: 是否处于激活状态（默认 false）
+ * - text: 按钮文本，可选
+ * - fit: 是否自适应宽度（默认 false，占满容器宽度）
+ *
+ * 插槽:
+ * - default: 图标或其他内容，通常放在文本左侧
+ */
 const props = withDefaults(
   defineProps<{
     isActive?: boolean;
@@ -21,78 +24,65 @@ const props = withDefaults(
   { isActive: false, text: "", fit: false },
 );
 
-/* 基础按钮样式类 - 使用 Tailwind CSS 工具类 */
-
-/* 布局相关 */
-const layoutClass = computed(
-  () => `
-  flex items-center justify-center  /* 弹性盒子，内容居中 */
-  ${props.fit ? "w-fit" : "w-full"} min-h-full px-2 py-1.5       /* 宽度模式与间距 */
-  leading-tight                     /* 紧凑行高 */
-`,
-);
-
-/* 外观样式 */
-const appearanceClass = `
-  rounded-lg                       /* 大圆角 */
-  relative overflow-hidden         /* 相对定位，隐藏溢出内容 */
-  bg-transparent                   /* 透明背景 */
-`;
-
-/* ::before 伪元素 - 用于创建悬停效果层 */
-const beforeClass = `
-  before:content-['']              /* 必须设置content才能显示伪元素 */
-  before:absolute                  /* 绝对定位覆盖按钮 */
-  before:top-0 before:left-0       /* 从左上角开始 */
-  before:w-full before:h-full      /* 占满整个按钮 */
-  before:rounded-lg                /* 与按钮相同的圆角 */
-  before:bg-bg-muted               /* 使用主题中的次要背景色 */
-  before:opacity-0 before:scale-85 /* 初始状态：完全透明且缩小为85% */
-`;
-
-/* 悬停状态效果 */
-const hoverClass = `
-  hover:before:opacity-100         /* 悬停时伪元素完全不透明 */
-  hover:before:scale-100           /* 悬停时伪元素恢复正常大小 */
-`;
-
-/* 交互反馈 */
-const interactionClass = `
-  text-fg                          /* 默认使用主文字颜色 */
-  hover:text-fg-subtle             /* 悬停时使用主题中的图标文字颜色 */
-  active:scale-85                  /* 点击时轻微缩小，提供点击反馈 */
-  active:opacity-80                /* 点击时降低不透明度，提供点击反馈 */
-`;
-
-const contentClass = "relative z-10 pointer-events-none";
-
-// 自动检测是否有默认插槽内容（通常用于图标）
+// 检测是否有插槽内容
 const hasSlot = computed(() => !!slots.default);
 
-// 动态计算右边距：只有当同时存在 slot 和 text 时才添加间距
-const hasMr = computed(() =>
-  props.text === "" && hasSlot.value ? "" : "mr-3",
-);
-const isActiveClass = computed(() =>
-  props.isActive ? "before:opacity-100 before:scale-100 !text-fg-subtle" : "",
-);
+// 静态基础样式
+const baseClass = `
+  flex items-center justify-center
+  min-h-full px-2 py-1.5
+  leading-tight
+  rounded-lg
+  relative overflow-hidden
+  bg-transparent
+  before:content-['']
+  before:absolute before:top-0 before:left-0
+  before:w-full before:h-full
+  before:rounded-lg
+  before:bg-bg-muted
+`;
+
+// 动态样式 - 根据 props 计算
+const dynamicClass = computed(() => {
+  const classes = [];
+
+  // 宽度模式
+  classes.push(props.fit ? "w-fit" : "w-full");
+
+  // 激活状态或默认状态
+  if (props.isActive) {
+    // 激活态：背景层显示，文字高亮
+    classes.push("before:opacity-100 before:scale-100", "text-fg-subtle");
+  } else {
+    // 默认态：背景层隐藏，hover 时显示
+    classes.push(
+      "before:opacity-0 before:scale-85",
+      "text-fg",
+      "hover:before:opacity-100 hover:before:scale-100",
+      "hover:text-fg-subtle",
+    );
+  }
+
+  // 点击反馈
+  classes.push("active:scale-85 active:opacity-80");
+
+  return classes.join(" ");
+});
+
+// 内容容器样式
+const contentClass = "relative z-10 pointer-events-none";
+
+// 图标间距：只有同时存在 slot 和 text 时才添加
+const iconSpacing = computed(() => (hasSlot.value && props.text ? "mr-2" : ""));
 </script>
 
 <template>
-  <button
-    type="button"
-    :class="[
-      layoutClass,
-      appearanceClass,
-      beforeClass,
-      hoverClass,
-      interactionClass,
-      isActiveClass,
-    ]"
-  >
-    <span v-if="hasSlot" :class="[hasMr, contentClass]">
+  <button type="button" :class="[baseClass, dynamicClass]">
+    <span v-if="hasSlot" :class="[contentClass, iconSpacing]">
       <slot></slot>
     </span>
-    <span v-if="props.text" :class="contentClass">{{ props.text }}</span>
+    <span v-if="props.text" :class="contentClass">
+      {{ props.text }}
+    </span>
   </button>
 </template>
