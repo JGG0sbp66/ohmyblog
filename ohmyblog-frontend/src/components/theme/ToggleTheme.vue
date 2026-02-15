@@ -38,15 +38,13 @@ const isActive = (value: string) => {
     </template>
 
     <template #content>
-      <div
-        v-for="option in themeOptions"
-        :key="option.value"
-        class="flex flex-col mt-0.5 mb-0.5"
-      >
+      <div class="flex flex-col gap-1">
         <ButtonSecondary
+          v-for="option in themeOptions"
+          :key="option.value"
           @click="setTheme(option.value)"
           :text="option.label"
-          class="w-full p-2 justify-start px-3"
+          class="w-full py-2.5 px-4 justify-start"
           :isActive="isActive(option.value)"
         >
           <ThemePicker :theme="option.value" />

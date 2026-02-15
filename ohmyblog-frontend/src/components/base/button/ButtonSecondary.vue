@@ -68,7 +68,7 @@ const dynamicClass = computed(() => {
 const contentClass = "relative z-10 pointer-events-none";
 
 // 图标间距：只有同时存在 slot 和 text 时才添加
-const iconSpacing = computed(() => (hasSlot.value && props.text ? "mr-2" : ""));
+const iconSpacing = computed(() => (hasSlot.value && props.text ? "mr-3" : ""));
 </script>
 
 <template>
