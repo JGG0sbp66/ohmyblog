@@ -121,7 +121,7 @@ const handleNext = () => {
               type="button"
               class="text-sm"
               @click="handleIconClick"
-              :disabled="uploading"
+              :loading="uploading"
               :text="
                 getButtonText(
                   'views.setup.steps.step2.siteIcon',
