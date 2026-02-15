@@ -3,6 +3,18 @@
 import { computed } from "vue";
 import Loading from "@/components/icon/Loading.vue";
 
+/**
+ * ButtonPrimary - 主要按钮组件
+ *
+ * Props:
+ * - loading: 是否处于加载状态（默认 false）
+ * - disabled: 是否禁用（默认 false）
+ * - text: 按钮文本（默认 "请输入文本"）
+ * - full: 是否占满容器宽度（默认 false，自适应内容宽度）
+ *
+ * 插槽:
+ * - default: 加载状态时的图标，默认使用 Loading 组件
+ */
 const props = withDefaults(
   defineProps<{
     loading?: boolean;
@@ -18,43 +30,40 @@ const props = withDefaults(
   },
 );
 
-/**
- * 按钮动态样式计算属性
- * 根据组件的状态（如加载状态）返回对应的CSS类名
- */
-const btnClass = computed(() => {
-  // 基础样式 - 所有状态下都应用的公共样式
-  const base = `
-        flex items-center justify-center flex-nowrap whitespace-nowrap /* 弹性布局，强制单行显示 */
-        ${props.full ? "w-full" : "w-fit"} px-4 py-2                  /* 宽度模式与间距 */
-        font-bold text-white              /* 粗体，白色文字 */
-        leading-tight                     /* 紧凑行高 */
-        rounded-lg                        /* 大圆角 */
-    `;
+// 静态基础样式 - 所有状态下都应用的公共样式
+const baseClass = `
+  flex items-center justify-center flex-nowrap whitespace-nowrap
+  px-4 py-2
+  font-bold text-white
+  leading-tight
+  rounded-lg
+`;
 
-  // 状态样式 - 根据当前状态动态变化的样式
-  const state =
-    props.disabled || props.loading
-      ? // 加载或者禁用状态样式
-        `
-            bg-accent-active               /* 使用激活状态的主色调 */
-            cursor-not-allowed             /* 禁用光标，表示不可点击 */
-            opacity-80                     /* 80%透明度，视觉上表示禁用 */
-        `
-      : // 正常交互状态样式
-        `
-            bg-accent                      /* 使用主色调背景 */
-            hover:bg-accent-hover          /* 悬停时使用主色调的悬停变体 */
-            active:scale-95                /* 点击时轻微缩小(95%)，提供触觉反馈 */
-        `;
+// 动态样式 - 根据 props 计算
+const dynamicClass = computed(() => {
+  const classes = [];
 
-  // 合并基础样式和状态样式
-  return `${base} ${state}`;
+  // 宽度模式
+  classes.push(props.full ? "w-full" : "w-fit");
+
+  // 状态样式
+  if (props.disabled || props.loading) {
+    // 加载或禁用状态
+    classes.push("bg-accent-active", "cursor-not-allowed", "opacity-80");
+  } else {
+    // 正常交互状态
+    classes.push("bg-accent", "hover:bg-accent-hover", "active:scale-95");
+  }
+
+  return classes.join(" ");
 });
 </script>
 
 <template>
-  <button :disabled="props.disabled || props.loading" :class="btnClass">
+  <button
+    :disabled="props.disabled || props.loading"
+    :class="[baseClass, dynamicClass]"
+  >
     <!-- Loading 图标插槽 -->
     <span
       v-if="props.loading"
