@@ -33,6 +33,7 @@ const baseClass = `
   rounded-lg
   relative overflow-hidden
   bg-transparent
+  cursor-pointer
   before:content-['']
   before:absolute before:top-0 before:left-0
   before:w-full before:h-full

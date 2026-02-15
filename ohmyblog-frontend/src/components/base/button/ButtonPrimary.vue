@@ -34,6 +34,7 @@ const baseClass = `
   font-bold text-white
   leading-tight
   rounded-lg
+  cursor-pointer
 `;
 
 // 动态样式 - 根据 props 计算
