@@ -150,7 +150,7 @@
             },
             "username": {
               "label": "SMTP 用户名",
-              "placeholder": "例如：your-email@example.com"
+              "placeholder": "例如：your-email{'@'}example.com"
             },
             "password": {
               "label": "SMTP 密码",
@@ -162,7 +162,7 @@
             },
             "senderEmail": {
               "label": "发件人邮箱",
-              "placeholder": "例如：no-reply@example.com"
+              "placeholder": "例如：no-reply{'@'}example.com"
             },
             "senderName": {
               "label": "发件人名称",
@@ -190,7 +190,8 @@
       }
     },
     "next": "下一步",
-    "prev": "上一步"
+    "prev": "上一步",
+    "finish": "完成"
   },
   "stores": {
     "setup": {

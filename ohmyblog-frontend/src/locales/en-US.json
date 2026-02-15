@@ -150,7 +150,7 @@
             },
             "username": {
               "label": "SMTP Username",
-              "placeholder": "e.g., your-email@example.com"
+              "placeholder": "e.g., your-email{'@'}example.com"
             },
             "password": {
               "label": "SMTP Password",
@@ -162,7 +162,7 @@
             },
             "senderEmail": {
               "label": "Sender Email",
-              "placeholder": "e.g., no-reply@example.com"
+              "placeholder": "e.g., no-reply{'@'}example.com"
             },
             "senderName": {
               "label": "Sender Name",
@@ -190,7 +190,8 @@
       }
     },
     "next": "Next Step",
-    "prev": "Previous"
+    "prev": "Previous",
+    "finish": "Finish"
   },
   "stores": {
     "setup": {
