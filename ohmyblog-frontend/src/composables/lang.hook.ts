@@ -82,7 +82,8 @@ export function useLang() {
 
   return {
     t: instance.t,
-    locale: instance.locale,
+    // 将 locale 转换为 LocaleType 类型，避免在使用时需要类型断言
+    locale: instance.locale as { value: LocaleType },
     setLocale,
     SUPPORTED_LOCALES,
   };

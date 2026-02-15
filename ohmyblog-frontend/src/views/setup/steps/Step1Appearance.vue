@@ -21,7 +21,7 @@ const handleNext = () => {
     const configValue: TAppearanceConfigUpsertDTO["configValue"] = {
       theme: colorMode.value,
       hue: currentHue.value,
-      language: locale.value as TAppearanceConfigUpsertDTO["configValue"]["language"],
+      language: locale.value,
     };
 
     return upsertConfig({
@@ -50,7 +50,7 @@ const handleNext = () => {
         <ButtonSecondary
           v-for="lang in SUPPORTED_LOCALES"
           :key="lang.value"
-          :isActive="locale === lang.value"
+          :isActive="locale.value === lang.value"
           class="w-full justify-center py-3"
           @click="setLocale(lang.value)"
         >
