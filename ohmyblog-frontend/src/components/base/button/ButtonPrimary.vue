@@ -9,8 +9,7 @@ import Loading from "@/components/icon/Loading.vue";
  * Props:
  * - loading: 是否处于加载状态（默认 false）
  * - disabled: 是否禁用（默认 false）
- * - text: 按钮文本（默认 "请输入文本"）
- * - full: 是否占满容器宽度（默认 false，自适应内容宽度）
+ * - text: 按钮文本（默认 ""）
  *
  * 插槽:
  * - default: 加载状态时的图标，默认使用 Loading 组件
@@ -20,20 +19,18 @@ const props = withDefaults(
     loading?: boolean;
     disabled?: boolean;
     text?: string;
-    full?: boolean;
   }>(),
   {
     loading: false,
     disabled: false,
-    text: "请输入文本",
-    full: false,
+    text: "",
   },
 );
 
 // 静态基础样式 - 所有状态下都应用的公共样式
 const baseClass = `
   flex items-center justify-center flex-nowrap whitespace-nowrap
-  px-4 py-2
+  w-fit px-4 py-2
   font-bold text-white
   leading-tight
   rounded-lg
@@ -42,9 +39,6 @@ const baseClass = `
 // 动态样式 - 根据 props 计算
 const dynamicClass = computed(() => {
   const classes = [];
-
-  // 宽度模式
-  classes.push(props.full ? "w-full" : "w-fit");
 
   // 状态样式
   if (props.disabled || props.loading) {

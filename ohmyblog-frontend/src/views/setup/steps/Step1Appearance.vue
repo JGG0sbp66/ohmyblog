@@ -48,9 +48,8 @@ const handleNext = () => {
           v-for="lang in SUPPORTED_LOCALES"
           :key="lang.value"
           :isActive="locale === lang.value"
-          class="justify-center py-3"
+          class="w-full justify-center py-3"
           @click="setLocale(lang.value)"
-          block
         >
           <div class="flex items-center gap-2">
             <LanguagePicker :language="lang.value" />
@@ -70,9 +69,8 @@ const handleNext = () => {
           v-for="mode in THEME_MODES"
           :key="mode"
           :isActive="colorMode === mode"
-          class="justify-center py-3"
+          class="w-full justify-center py-3"
           @click="setTheme(mode)"
-          block
         >
           <div class="flex items-center gap-2">
             <ThemePicker :theme="mode" />

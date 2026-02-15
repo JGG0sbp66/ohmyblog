@@ -37,7 +37,6 @@ defineEmits(["next"]);
       :class="['flex-1 py-2', showPrev ? '' : 'opacity-0 pointer-events-none']"
       @click="stepStore.prev()"
       :text="prevText || t('common.prev')"
-      block
     />
 
     <!-- 下一步按钮 -->
