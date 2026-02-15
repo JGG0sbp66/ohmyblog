@@ -8,13 +8,16 @@ import { useSetupStore } from "@/stores/setup.store";
 import { useSystemStore } from "@/stores/system.store";
 import { useSetupStep } from "@/composables/setup-step.hook";
 import { upsertConfig } from "@/api/config.api";
-import { vAutoAnimate } from "@formkit/auto-animate";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import type { TPersonalInfoConfigUpsertDTO } from "@server/dtos/config.dto";
 
 const { t } = useLang();
 const setupStore = useSetupStore();
 const systemStore = useSystemStore();
 const { isSubmitting, runStep } = useSetupStep();
+
+// 使用 auto-animate 自动处理子元素的显示/隐藏动画
+const [containerRef] = useAutoAnimate();
 
 const handleNext = () => {
   runStep(async () => {
@@ -44,7 +47,7 @@ const handleNext = () => {
     @next="handleNext"
   >
     <!-- 可变框容器 -->
-    <div class="flex flex-col gap-4" v-auto-animate>
+    <div ref="containerRef" class="flex flex-col gap-4">
       <ModuleItem
         v-model="setupStore.isPersonalized"
         :title="t('views.setup.steps.step4.personalization.title')"

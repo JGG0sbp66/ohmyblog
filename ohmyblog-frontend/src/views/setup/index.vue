@@ -5,7 +5,7 @@ import Footer from "@/components/common/layout/Footer.vue";
 import BaseProgress from "@/components/base/progress/BaseProgress.vue";
 import PersonalizationPreview from "./components/PersonalizationPreview.vue";
 
-import { vAutoAnimate } from "@formkit/auto-animate";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import { useSetupStore } from "@/stores/setup.store";
 import { useLang } from "@/composables/lang.hook";
 import { computed } from "vue";
@@ -31,10 +31,18 @@ const stepComponents = [
 const CurrentStepComponent = computed(() => {
   return stepComponents[stepStore.currentStep - 1];
 });
+
+// 使用 auto-animate 自动处理左侧展示区的组件切换动画
+const [leftSideRef] = useAutoAnimate();
+
+// 使用 auto-animate 自动处理右侧表单区的步骤切换动画
+const [rightSideRef] = useAutoAnimate();
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-bg overflow-x-hidden overflow-y-clip">
+  <div
+    class="min-h-screen flex flex-col bg-bg overflow-x-hidden overflow-y-clip"
+  >
     <!-- main 撑满除 Footer 外的所有高度 -->
     <main class="flex-1 flex flex-col p-4 md:p-8 gap-6 md:gap-10">
       <!-- 进度条区域：内部间距由 main 的 gap 控制 -->
@@ -50,7 +58,7 @@ const CurrentStepComponent = computed(() => {
       <div class="flex-1 flex items-center justify-center">
         <div class="w-full max-w-5xl flex items-center justify-center gap-12">
           <!-- 左侧：展示区 -->
-          <div v-auto-animate class="hidden lg:block w-full">
+          <div ref="leftSideRef" class="hidden lg:block w-full">
             <div
               v-if="stepStore.currentStep === 4 && stepStore.isPersonalized"
               class="bg-bg-card rounded-3xl shadow-xl p-6"
@@ -67,7 +75,7 @@ const CurrentStepComponent = computed(() => {
 
           <!-- 右侧：表单流程区 -->
           <div
-            v-auto-animate
+            ref="rightSideRef"
             class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl"
           >
             <component

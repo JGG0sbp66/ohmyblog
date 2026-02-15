@@ -3,12 +3,15 @@
 import { useSystemStore } from "@/stores/system.store";
 import { storeToRefs } from "pinia";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import { vAutoAnimate } from "@formkit/auto-animate";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 
 const systemStore = useSystemStore();
 const { siteInfo } = storeToRefs(systemStore);
 
 const currentYear = new Date().getFullYear();
+
+// 使用 auto-animate 自动处理备案信息的显示/隐藏动画
+const [footerContentRef] = useAutoAnimate();
 </script>
 
 <template>
@@ -16,7 +19,7 @@ const currentYear = new Date().getFullYear();
     <div class="w-2/3 mx-auto border-t border-fg-muted/10"></div>
 
     <div class="max-w-250 mx-auto py-4 px-6">
-      <div class="flex flex-col items-center gap-1" v-auto-animate>
+      <div ref="footerContentRef" class="flex flex-col items-center gap-1">
         <!-- 版权与驱动信息 -->
         <div
           class="flex flex-col items-center gap-1.5 text-sm text-fg-muted text-center"

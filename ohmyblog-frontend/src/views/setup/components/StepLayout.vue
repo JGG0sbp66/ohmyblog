@@ -1,5 +1,6 @@
 <!-- src/views/setup/components/StepLayout.vue -->
 <script setup lang="ts">
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import StepButton from "@/components/common/button/StepButton.vue";
 
 /**
@@ -23,6 +24,9 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 defineEmits(["next"]); // 定义"下一步"点击事件
+
+// 使用 auto-animate 自动处理内容区域的高度变化动画
+const [contentRef] = useAutoAnimate();
 </script>
 
 <template>
