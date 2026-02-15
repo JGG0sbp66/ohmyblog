@@ -9,22 +9,20 @@ interface Props {
   title: string; // 步骤标题
   description?: string; // 步骤描述信息
   loading?: boolean; // 下一步按钮的加载状态
-  showPrev?: boolean; // 是否显示“上一步”按钮
-  nextDisabled?: boolean; // 是否禁用“下一步”按钮
-  nextText?: string; // “下一步”按钮自定义文本
-  prevText?: string; // “上一步”按钮自定义文本
+  showPrev?: boolean; // 是否显示"上一步"按钮
+  nextText?: string; // "下一步"按钮自定义文本
+  prevText?: string; // "上一步"按钮自定义文本
 }
 
 const props = withDefaults(defineProps<Props>(), {
   description: "",
   loading: false,
   showPrev: true,
-  nextDisabled: false,
   nextText: "",
   prevText: "",
 });
 
-defineEmits(["next"]); // 定义“下一步”点击事件
+defineEmits(["next"]); // 定义"下一步"点击事件
 </script>
 
 <template>
@@ -51,7 +49,6 @@ defineEmits(["next"]); // 定义“下一步”点击事件
     <StepButton
       :loading="loading"
       :showPrev="showPrev"
-      :nextDisabled="nextDisabled"
       :nextText="nextText"
       :prevText="prevText"
       @next="$emit('next')"
