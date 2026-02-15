@@ -6,7 +6,6 @@ import { computed, useSlots } from "vue";
 const slots = useSlots();
 
 /* TODO: 存在的一些问题, 以及修改的期望
-1. button 增加 type="button"，避免在表单中误触发 submit
 2. 默认内容宽度，只有需要撑满时才加 block
 3. text 改为可选渲染：无文本时不输出第二个 <span>
 4. 合并零散 class：把静态样式收敛成一个常量，只保留少量动态 computed
@@ -82,6 +81,7 @@ const isActiveClass = computed(() =>
 
 <template>
   <button
+    type="button"
     :class="[
       layoutClass,
       appearanceClass,
