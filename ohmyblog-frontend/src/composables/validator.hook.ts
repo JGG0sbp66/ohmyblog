@@ -48,10 +48,14 @@ export function useValidator() {
     } = {},
   ) => {
     const { required, schema } = options;
-    const strValue = String(value ?? "").trim();
 
     // 1. 必填校验
-    if (required && !strValue) {
+    const isEmpty =
+      value === undefined ||
+      value === null ||
+      (typeof value === "string" && !value.trim());
+
+    if (required && isEmpty) {
       return {
         isValid: false,
         error: t("components.common.input.TipInput.required"),
@@ -60,17 +64,23 @@ export function useValidator() {
 
     // 2. Schema 校验
     if (schema) {
-      // A. 自定义格式校验 (解决 TypeBox 在浏览器端不直接校验 format 的问题)
-      if (schema.format && !validateByFormat(schema.format, strValue)) {
-        const errorKey = (schema as any).error || `invalid_${schema.format}`;
-        return {
-          isValid: false,
-          error: t(`common.validation.${errorKey}`),
-        };
+      // 字符串类型需要 trim，其他类型直接传入
+      const validateValue =
+        typeof value === "string" ? value.trim() : value;
+
+      // A. 自定义格式校验 (仅对字符串类型)
+      if (schema.format && typeof validateValue === "string") {
+        if (!validateByFormat(schema.format, validateValue)) {
+          const errorKey = (schema as any).error || `invalid_${schema.format}`;
+          return {
+            isValid: false,
+            error: t(`common.validation.${errorKey}`),
+          };
+        }
       }
 
       // B. TypeBox 基础校验 (过滤 "Unknown format" 警告/错误)
-      const errors = [...Value.Errors(schema, strValue)];
+      const errors = [...Value.Errors(schema, validateValue)];
       const realErrors = errors.filter(
         (err) => !err.message.includes("Unknown format"),
       );

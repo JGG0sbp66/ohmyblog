@@ -95,11 +95,62 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 	...ConfigMetaDTO,
 });
 
+// Step5：smtp 配置 DTO
+export const SMTPConfigUpsertDTO = t.Object({
+	configKey: t.Literal("smtp"),
+	configValue: t.Object({
+		enabled: t.Boolean({
+			description: "是否启用 SMTP",
+		}),
+		host: t.String({
+			minLength: 1,
+			maxLength: 255,
+			description: "SMTP 服务器地址",
+			error: "smtp.host_range",
+		}),
+		port: t.Number({
+			minimum: 1,
+			maximum: 65535,
+			description: "SMTP 端口",
+			error: "smtp.port_range",
+		}),
+		username: t.String({
+			minLength: 1,
+			maxLength: 255,
+			description: "SMTP 用户名",
+			error: "smtp.username_range",
+		}),
+		password: t.String({
+			minLength: 1,
+			maxLength: 255,
+			description: "SMTP 密码",
+			error: "smtp.password_range",
+		}),
+		senderEmail: t.Optional(
+			t.String({
+				format: "email",
+				maxLength: 255,
+				description: "发件人邮箱",
+				error: "smtp.sender_email_invalid",
+			}),
+		),
+		senderName: t.Optional(
+			t.String({
+				maxLength: 100,
+				description: "发件人名称",
+				error: "smtp.sender_name_range",
+			}),
+		),
+	}),
+	...ConfigMetaDTO,
+});
+
 // 创建或更新配置 DTO
 export const ConfigUpsertDTO = t.Union([
 	AppearanceConfigUpsertDTO,
 	SiteInfoConfigUpsertDTO,
 	PersonalInfoConfigUpsertDTO,
+	SMTPConfigUpsertDTO,
 ]);
 
 export type TAppearanceConfigUpsertDTO = Static<
@@ -109,4 +160,5 @@ export type TSiteInfoConfigUpsertDTO = Static<typeof SiteInfoConfigUpsertDTO>;
 export type TPersonalInfoConfigUpsertDTO = Static<
 	typeof PersonalInfoConfigUpsertDTO
 >;
+export type TSMTPConfigUpsertDTO = Static<typeof SMTPConfigUpsertDTO>;
 export type TConfigUpsertDTO = Static<typeof ConfigUpsertDTO>;

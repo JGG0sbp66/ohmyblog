@@ -4,14 +4,17 @@ import TypingBrand from "@/components/icon/TypingBrand.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 import BaseProgress from "@/components/base/progress/BaseProgress.vue";
 import PersonalizationPreview from "./components/PersonalizationPreview.vue";
+import SMTPForm from "./components/SMTPForm.vue";
 
 import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import { useSetupStore } from "@/stores/setup.store";
 import { useLang } from "@/composables/lang.hook";
 import { computed } from "vue";
+import { useMediaQuery } from "@vueuse/core";
 
 const { t } = useLang();
 const stepStore = useSetupStore();
+const isDesktop = useMediaQuery("(min-width: 1024px)");
 
 // 引入步骤组件
 import Step1Appearance from "@/views/setup/steps/Step1Appearance.vue";
@@ -64,6 +67,12 @@ const [rightSideRef] = useAutoAnimate();
               class="bg-bg-card rounded-3xl shadow-xl p-6"
             >
               <PersonalizationPreview />
+            </div>
+            <div
+              v-else-if="stepStore.currentStep === 5 && stepStore.isSMTPEnabled && isDesktop"
+              class="bg-bg-card rounded-3xl shadow-xl p-6"
+            >
+              <SMTPForm />
             </div>
             <TypingBrand
               v-else

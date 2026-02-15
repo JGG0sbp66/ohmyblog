@@ -138,6 +138,36 @@
             "title": "启用 SMTP",
             "description": "开启后可以配置邮件服务器，用于发送评论通知、系统消息等。",
             "tag": "可选"
+          },
+          "form": {
+            "host": {
+              "label": "SMTP 服务器地址",
+              "placeholder": "例如：smtp.gmail.com"
+            },
+            "port": {
+              "label": "端口",
+              "placeholder": "例如：587"
+            },
+            "username": {
+              "label": "SMTP 用户名",
+              "placeholder": "例如：your-email@example.com"
+            },
+            "password": {
+              "label": "SMTP 密码",
+              "placeholder": "请输入 SMTP 密码或授权码"
+            },
+            "advanced": {
+              "show": "显示高级选项",
+              "hide": "收起高级选项"
+            },
+            "senderEmail": {
+              "label": "发件人邮箱",
+              "placeholder": "例如：no-reply@example.com"
+            },
+            "senderName": {
+              "label": "发件人名称",
+              "placeholder": "例如：ohmyblog Bot"
+            }
           }
         }
       }
@@ -149,6 +179,14 @@
         "username_range": "用户名长度需在3-50位之间",
         "email_invalid": "请输入有效的电子邮箱地址",
         "password_range": "密码长度需在6-50位之间"
+      },
+      "smtp": {
+        "host_range": "SMTP 服务器地址不能为空且不能超过255个字符",
+        "port_range": "端口必须是 1-65535 的整数",
+        "username_range": "SMTP 用户名不能为空且不能超过255个字符",
+        "password_range": "SMTP 密码不能为空且不能超过255个字符",
+        "sender_email_invalid": "请输入有效的发件人邮箱",
+        "sender_name_range": "发件人名称长度不能超过100个字符"
       }
     },
     "next": "下一步",
