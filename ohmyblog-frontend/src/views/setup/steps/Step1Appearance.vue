@@ -50,7 +50,7 @@ const handleNext = () => {
         <ButtonSecondary
           v-for="lang in SUPPORTED_LOCALES"
           :key="lang.value"
-          :isActive="locale.value === lang.value"
+          :isActive="locale === lang.value"
           class="w-full justify-center py-3"
           @click="setLocale(lang.value)"
         >

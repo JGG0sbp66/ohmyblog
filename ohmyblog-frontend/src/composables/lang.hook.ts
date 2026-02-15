@@ -1,6 +1,7 @@
 // src/composables/lang.hook.ts
 import { createI18n } from "vue-i18n";
 import { useStorage } from "@vueuse/core";
+import type { Ref } from "vue";
 import zhCN from "@/locales/zh-CN.json";
 import enUS from "@/locales/en-US.json";
 
@@ -82,8 +83,7 @@ export function useLang() {
 
   return {
     t: instance.t,
-    // 将 locale 转换为 LocaleType 类型，避免在使用时需要类型断言
-    locale: instance.locale as { value: LocaleType },
+    locale: instance.locale as Ref<LocaleType>,
     setLocale,
     SUPPORTED_LOCALES,
   };
