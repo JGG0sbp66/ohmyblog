@@ -7,7 +7,6 @@ const slots = useSlots();
 
 /* TODO: 存在的一些问题, 以及修改的期望
 2. 默认内容宽度，只有需要撑满时才加 block
-3. text 改为可选渲染：无文本时不输出第二个 <span>
 4. 合并零散 class：把静态样式收敛成一个常量，只保留少量动态 computed
 5. 去掉重复/冲突动画类（如 transition-all 与局部 transition 混用）
 6. 统一激活态与 hover 态规则，避免 isActive 里重复覆盖太多 class
@@ -94,6 +93,6 @@ const isActiveClass = computed(() =>
     <span v-if="hasSlot" :class="[hasMr, contentClass]">
       <slot></slot>
     </span>
-    <span :class="contentClass">{{ props.text }}</span>
+    <span v-if="props.text" :class="contentClass">{{ props.text }}</span>
   </button>
 </template>
