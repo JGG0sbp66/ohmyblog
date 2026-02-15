@@ -18,12 +18,14 @@ import Step1Appearance from "@/views/setup/steps/Step1Appearance.vue";
 import Step2Info from "@/views/setup/steps/Step2Info.vue";
 import Step3Admin from "@/views/setup/steps/Step3Admin.vue";
 import Step4Personalization from "@/views/setup/steps/Step4Personalization.vue";
+import Step5SMTP from "@/views/setup/steps/Step5SMTP.vue";
 
 const stepComponents = [
   Step1Appearance,
   Step2Info,
   Step3Admin,
   Step4Personalization,
+  Step5SMTP,
 ];
 
 const CurrentStepComponent = computed(() => {
@@ -32,7 +34,7 @@ const CurrentStepComponent = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-bg overflow-x-hidden">
+  <div class="min-h-screen flex flex-col bg-bg overflow-x-hidden overflow-y-clip">
     <!-- main 撑满除 Footer 外的所有高度 -->
     <main class="flex-1 flex flex-col p-4 md:p-8 gap-6 md:gap-10">
       <!-- 进度条区域：内部间距由 main 的 gap 控制 -->
