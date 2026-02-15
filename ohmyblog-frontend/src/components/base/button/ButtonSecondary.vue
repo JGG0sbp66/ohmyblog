@@ -10,7 +10,7 @@ const slots = useSlots();
  * Props:
  * - isActive: 是否处于激活状态（默认 false）
  * - text: 按钮文本，可选
- * - fit: 是否自适应宽度（默认 false，占满容器宽度）
+ * - block: 是否占满容器宽度（默认 false，自适应内容宽度）
  *
  * 插槽:
  * - default: 图标或其他内容，通常放在文本左侧
@@ -19,9 +19,9 @@ const props = withDefaults(
   defineProps<{
     isActive?: boolean;
     text?: string;
-    fit?: boolean;
+    block?: boolean;
   }>(),
-  { isActive: false, text: "", fit: false },
+  { isActive: false, text: "", block: false },
 );
 
 // 检测是否有插槽内容
@@ -47,7 +47,7 @@ const dynamicClass = computed(() => {
   const classes = [];
 
   // 宽度模式
-  classes.push(props.fit ? "w-fit" : "w-full");
+  classes.push(props.block ? "w-full" : "w-fit");
 
   // 激活状态或默认状态
   if (props.isActive) {

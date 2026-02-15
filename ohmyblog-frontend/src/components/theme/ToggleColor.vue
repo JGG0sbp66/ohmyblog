@@ -15,7 +15,7 @@ const { currentHue } = useTheme();
     placement="-left-20"
   >
     <template #trigger="{ active }">
-      <ButtonSecondary :isActive="active">
+      <ButtonSecondary :isActive="active" block>
         <ColorPicker />
       </ButtonSecondary>
     </template>

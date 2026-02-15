@@ -27,7 +27,7 @@ const isActive = (value: string) => {
   <DropButton placement="-left-10">
     <template #trigger="{ active }">
       <!-- 点击触发循环切换 -->
-      <ButtonSecondary :isActive="active" @click="cycleTheme()">
+      <ButtonSecondary :isActive="active" @click="cycleTheme()" block>
         <!-- 传入当前的模式名称 -->
         <ThemePicker :theme="colorMode" />
       </ButtonSecondary>
@@ -44,6 +44,7 @@ const isActive = (value: string) => {
           :text="option.label"
           class="p-2 justify-start px-3"
           :isActive="isActive(option.value)"
+          block
         >
           <ThemePicker :theme="option.value" />
         </ButtonSecondary>
