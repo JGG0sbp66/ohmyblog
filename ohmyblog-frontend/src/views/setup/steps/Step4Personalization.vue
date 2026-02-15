@@ -9,6 +9,7 @@ import { useSystemStore } from "@/stores/system.store";
 import { useSetupStep } from "@/composables/setup-step.hook";
 import { upsertConfig } from "@/api/config.api";
 import { vAutoAnimate } from "@formkit/auto-animate";
+import type { TPersonalInfoConfigUpsertDTO } from "@server/dtos/config.dto";
 
 const { t } = useLang();
 const setupStore = useSetupStore();
@@ -17,6 +18,10 @@ const { isSubmitting, runStep } = useSetupStep();
 
 const handleNext = () => {
   runStep(async () => {
+    const configValue: TPersonalInfoConfigUpsertDTO["configValue"] = {
+      ...systemStore.personalInfo,
+    };
+
     /**
      * 将个性化配置（如首页头像、Hero横幅URL）持久化到系统配置表 (config)。
      * 并且 user 表中的 avatar_url 字段已经通过 /upload/avatar 接口同步更新。
@@ -24,7 +29,7 @@ const handleNext = () => {
      */
     return upsertConfig({
       configKey: "personal_info",
-      configValue: systemStore.personalInfo,
+      configValue,
       description: "个性化配置（头像、首页横幅）",
     });
   });
