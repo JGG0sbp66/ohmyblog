@@ -101,10 +101,7 @@ class UserDao {
 	 * @param avatarUrl 头像访问路径
 	 */
 	async updateAvatarUrl(uuid: string, avatarUrl: string) {
-		await db
-			.update(user)
-			.set({ avatarUrl })
-			.where(eq(user.uuid, uuid));
+		await db.update(user).set({ avatarUrl }).where(eq(user.uuid, uuid));
 	}
 }
 
