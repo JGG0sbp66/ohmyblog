@@ -20,7 +20,7 @@ const switchLanguage = (value: LocaleType) => {
 <template>
   <DropButton :contentClass="'min-w-32 p-2'" placement="-left-20">
     <template #trigger="{ active }">
-      <ButtonSecondary :hasSlot="true" :isActive="active">
+      <ButtonSecondary :isActive="active">
         <LanguagePicker :language="'translate'" />
       </ButtonSecondary>
     </template>
@@ -36,7 +36,6 @@ const switchLanguage = (value: LocaleType) => {
           :text="value.label"
           class="p-2"
           :isActive="isActive(value.value)"
-          :hasSlot="true"
         >
           <LanguagePicker :language="value.value" />
         </ButtonSecondary>

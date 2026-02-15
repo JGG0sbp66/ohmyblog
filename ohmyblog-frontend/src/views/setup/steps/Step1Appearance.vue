@@ -48,7 +48,6 @@ const handleNext = () => {
           v-for="lang in SUPPORTED_LOCALES"
           :key="lang.value"
           :isActive="locale === lang.value"
-          :hasSlot="true"
           class="justify-center py-3"
           @click="setLocale(lang.value)"
         >
@@ -70,7 +69,6 @@ const handleNext = () => {
           v-for="mode in THEME_MODES"
           :key="mode"
           :isActive="colorMode === mode"
-          :hasSlot="true"
           class="justify-center py-3"
           @click="setTheme(mode)"
         >

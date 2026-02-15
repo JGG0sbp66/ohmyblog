@@ -1,25 +1,26 @@
 <!-- src/components/base/button/ButtonSecondary.vue -->
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, useSlots } from "vue";
+
+// 获取插槽实例，用于自动检测是否传入了 slot 内容
+const slots = useSlots();
 
 /* TODO: 存在的一些问题, 以及修改的期望
 1. button 增加 type="button"，避免在表单中误触发 submit
 2. 默认内容宽度，只有需要撑满时才加 block
-3. 删除 hasSlot prop，改为组件内部用 useSlots() 自动判断是否有插槽
-4. text 改为可选渲染：无文本时不输出第二个 <span>
-5. 合并零散 class：把静态样式收敛成一个常量，只保留少量动态 computed
-6. 去掉重复/冲突动画类（如 transition-all 与局部 transition 混用）
-7. 统一激活态与 hover 态规则，避免 isActive 里重复覆盖太多 class
-8. 补充注释，明确按钮 API（variant/size/full）和默认行为
+3. text 改为可选渲染：无文本时不输出第二个 <span>
+4. 合并零散 class：把静态样式收敛成一个常量，只保留少量动态 computed
+5. 去掉重复/冲突动画类（如 transition-all 与局部 transition 混用）
+6. 统一激活态与 hover 态规则，避免 isActive 里重复覆盖太多 class
+7. 补充注释，明确按钮 API（variant/size/full）和默认行为
 */
 const props = withDefaults(
   defineProps<{
-    hasSlot?: boolean;
     isActive?: boolean;
     text?: string;
     fit?: boolean;
   }>(),
-  { hasSlot: false, isActive: false, text: "", fit: false },
+  { isActive: false, text: "", fit: false },
 );
 
 /* 基础按钮样式类 - 使用 Tailwind CSS 工具类 */
@@ -67,8 +68,12 @@ const interactionClass = `
 
 const contentClass = "relative z-10 pointer-events-none";
 
+// 自动检测是否有默认插槽内容（通常用于图标）
+const hasSlot = computed(() => !!slots.default);
+
+// 动态计算右边距：只有当同时存在 slot 和 text 时才添加间距
 const hasMr = computed(() =>
-  props.text === "" && props.hasSlot ? "" : "mr-3",
+  props.text === "" && hasSlot.value ? "" : "mr-3",
 );
 const isActiveClass = computed(() =>
   props.isActive ? "before:opacity-100 before:scale-100 !text-fg-subtle" : "",
@@ -86,7 +91,7 @@ const isActiveClass = computed(() =>
       isActiveClass,
     ]"
   >
-    <span v-if="props.hasSlot" :class="[hasMr, contentClass]">
+    <span v-if="hasSlot" :class="[hasMr, contentClass]">
       <slot></slot>
     </span>
     <span :class="contentClass">{{ props.text }}</span>
