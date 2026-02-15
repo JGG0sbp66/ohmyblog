@@ -65,8 +65,7 @@ export function useValidator() {
     // 2. Schema 校验
     if (schema) {
       // 字符串类型需要 trim，其他类型直接传入
-      const validateValue =
-        typeof value === "string" ? value.trim() : value;
+      const validateValue = typeof value === "string" ? value.trim() : value;
 
       // A. 自定义格式校验 (仅对字符串类型)
       if (schema.format && typeof validateValue === "string") {

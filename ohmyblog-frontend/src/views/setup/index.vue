@@ -69,7 +69,11 @@ const [rightSideRef] = useAutoAnimate();
               <PersonalizationPreview />
             </div>
             <div
-              v-else-if="stepStore.currentStep === 5 && stepStore.isSMTPEnabled && isDesktop"
+              v-else-if="
+                stepStore.currentStep === 5 &&
+                stepStore.isSMTPEnabled &&
+                isDesktop
+              "
               class="bg-bg-card rounded-3xl shadow-xl p-6"
             >
               <SMTPForm />

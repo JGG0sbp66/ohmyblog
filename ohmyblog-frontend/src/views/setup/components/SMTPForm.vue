@@ -108,22 +108,31 @@ defineExpose({ validate });
             ? t('views.setup.steps.step5.form.advanced.hide')
             : t('views.setup.steps.step5.form.advanced.show')
         "
-        @click="setupStore.isSMTPAdvancedExpanded = !setupStore.isSMTPAdvancedExpanded"
+        @click="
+          setupStore.isSMTPAdvancedExpanded = !setupStore.isSMTPAdvancedExpanded
+        "
       >
         <AdvancedToggle :expanded="setupStore.isSMTPAdvancedExpanded" />
       </ButtonSecondary>
 
       <!-- 高级字段仅在展开时渲染：与“展开即必填”的校验策略保持一致 -->
       <div ref="advancedContentRef">
-        <div v-if="setupStore.isSMTPAdvancedExpanded" class="flex flex-col gap-4 mt-3">
+        <div
+          v-if="setupStore.isSMTPAdvancedExpanded"
+          class="flex flex-col gap-4 mt-3"
+        >
           <!-- 展开时必填，收起时不要求 -->
           <TipInput
             ref="senderEmailRef"
             v-model="setupStore.smtpForm.senderEmail"
             type="email"
             :label="t('views.setup.steps.step5.form.senderEmail.label')"
-            :placeholder="t('views.setup.steps.step5.form.senderEmail.placeholder')"
-            :schema="SMTPConfigUpsertDTO.properties.configValue.properties.senderEmail"
+            :placeholder="
+              t('views.setup.steps.step5.form.senderEmail.placeholder')
+            "
+            :schema="
+              SMTPConfigUpsertDTO.properties.configValue.properties.senderEmail
+            "
             :required="setupStore.isSMTPAdvancedExpanded"
           />
 
@@ -132,8 +141,12 @@ defineExpose({ validate });
             ref="senderNameRef"
             v-model="setupStore.smtpForm.senderName"
             :label="t('views.setup.steps.step5.form.senderName.label')"
-            :placeholder="t('views.setup.steps.step5.form.senderName.placeholder')"
-            :schema="SMTPConfigUpsertDTO.properties.configValue.properties.senderName"
+            :placeholder="
+              t('views.setup.steps.step5.form.senderName.placeholder')
+            "
+            :schema="
+              SMTPConfigUpsertDTO.properties.configValue.properties.senderName
+            "
             :required="setupStore.isSMTPAdvancedExpanded"
           />
         </div>
