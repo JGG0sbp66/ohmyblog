@@ -28,18 +28,12 @@ const props = withDefaults(
 );
 
 // 静态基础样式 - 所有状态下都应用的公共样式
-/**
- * TODO: bug fix
- * 1. 目前发现，应该不能直接在baseClass这里添加 cursor-pointer，因为当我点击进入加载状态的时候，按道理应该是禁用，但是目前表现依然是点击指针
- * 2. 当前感觉加载或禁用状态的样子几乎和正常交互状态没啥区别，后面再看看
- */
 const baseClass = `
   flex items-center justify-center flex-nowrap whitespace-nowrap
   w-fit px-4 py-2
   font-bold text-white
   leading-tight
   rounded-lg
-  cursor-pointer
 `;
 
 // 动态样式 - 根据 props 计算
@@ -48,11 +42,11 @@ const dynamicClass = computed(() => {
 
   // 状态样式
   if (props.disabled || props.loading) {
-    // 加载或禁用状态
-    classes.push("bg-accent-active", "cursor-not-allowed", "opacity-80");
+    // 加载或禁用状态：大幅降低透明度，增加视觉区分度
+    classes.push("bg-accent", "cursor-not-allowed", "opacity-50", "grayscale-[0.3]");
   } else {
     // 正常交互状态
-    classes.push("bg-accent", "hover:bg-accent-hover", "active:scale-85");
+    classes.push("bg-accent", "hover:bg-accent-hover", "active:scale-85", "cursor-pointer");
   }
 
   return classes.join(" ");
