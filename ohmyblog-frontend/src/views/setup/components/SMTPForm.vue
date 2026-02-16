@@ -4,6 +4,7 @@ import { onMounted, onBeforeUnmount, ref } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import AdvancedToggle from "@/components/icon/AdvancedToggle.vue";
+import SMTPTestButton from "./SMTPTestButton.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStore } from "@/stores/setup.store";
 import { type Validatable } from "@/composables/setup-step.hook";
@@ -14,7 +15,7 @@ const { t } = useLang();
 const setupStore = useSetupStore();
 const [advancedContentRef] = useAutoAnimate();
 
-// 四个输入框对应的可校验引用（由 TipInput 暴露 validate）
+// 输入框对应的可校验引用（由 TipInput 暴露 validate）
 const hostRef = ref<Validatable | null>(null);
 const portRef = ref<Validatable | null>(null);
 const usernameRef = ref<Validatable | null>(null);
@@ -60,6 +61,9 @@ defineExpose({ validate });
 
 <template>
   <div class="flex flex-col gap-4">
+    <!-- 测试按钮和状态显示 -->
+    <SMTPTestButton />
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <TipInput
         ref="hostRef"
