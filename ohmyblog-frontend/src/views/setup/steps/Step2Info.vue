@@ -34,6 +34,8 @@ const {
 } = useImageUpload();
 
 const titleInputRef = ref<Validatable | null>(null);
+const footerInputRef = ref<Validatable | null>(null);
+const icpInputRef = ref<Validatable | null>(null);
 
 /**
  * 响应图标文件选择变更
@@ -68,7 +70,7 @@ const handleNext = () => {
         description: "站点基本信息（标题、图标、页脚、备案号）",
       });
     },
-    { validate: [titleInputRef.value] },
+    { validate: [titleInputRef.value, footerInputRef.value, icpInputRef.value] },
   );
 };
 </script>
@@ -92,6 +94,7 @@ const handleNext = () => {
 
     <!-- 页脚版权 -->
     <TipInput
+      ref="footerInputRef"
       v-model="systemStore.siteInfo.footer"
       :label="t('views.setup.steps.step2.footer.label')"
       :placeholder="t('views.setup.steps.step2.footer.placeholder')"
@@ -101,6 +104,7 @@ const handleNext = () => {
 
     <!-- 备案号 -->
     <TipInput
+      ref="icpInputRef"
       v-model="systemStore.siteInfo.icp"
       :label="t('views.setup.steps.step2.icp.label')"
       :placeholder="t('views.setup.steps.step2.icp.placeholder')"
