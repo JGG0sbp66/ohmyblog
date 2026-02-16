@@ -62,7 +62,7 @@ defineExpose({ validate });
 
 <template>
   <div class="flex flex-col gap-4">
-    <!-- 测试按钮和状态显示（带动画） -->
+    <!-- 测试按钮和状态显示（自动动画） -->
     <div ref="testButtonContainerRef">
       <SMTPTestButton />
     </div>
