@@ -33,16 +33,9 @@ const handleNext = () => {
         return { message: "保存成功" };
       }
 
-      // 构建配置对象，过滤空字符串字段
       const configValue: TSMTPConfigUpsertDTO["configValue"] = {
         enabled: setupStore.isSMTPEnabled,
-        host: setupStore.smtpForm.host,
-        port: setupStore.smtpForm.port,
-        username: setupStore.smtpForm.username,
-        password: setupStore.smtpForm.password,
-        // 只在有值时才包含高级字段
-        ...(setupStore.smtpForm.senderEmail && { senderEmail: setupStore.smtpForm.senderEmail }),
-        ...(setupStore.smtpForm.senderName && { senderName: setupStore.smtpForm.senderName }),
+        ...setupStore.smtpForm,
       };
 
       return upsertConfig({
