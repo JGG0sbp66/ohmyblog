@@ -238,7 +238,9 @@
       "未登录或会话已过期": "未登录或会话已过期",
       "请上传 1MB 以内的有效图片": "请上传 1MB 以内的有效图片",
       "请上传 5MB 以内的有效图片": "请上传 5MB 以内的有效图片",
-      "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片"
+      "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片",
+      "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP 连接失败：用户名无效",
+      "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP 连接失败：认证凭据（密码或授权码）无效"
     },
     "success": {
       "config": {
