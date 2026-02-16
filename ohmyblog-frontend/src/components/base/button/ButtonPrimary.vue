@@ -28,6 +28,11 @@ const props = withDefaults(
 );
 
 // 静态基础样式 - 所有状态下都应用的公共样式
+/**
+ * TODO: bug fix
+ * 1. 目前发现，应该不能直接在baseClass这里添加 cursor-pointer，因为当我点击进入加载状态的时候，按道理应该是禁用，但是目前表现依然是点击指针
+ * 2. 当前感觉加载或禁用状态的样子几乎和正常交互状态没啥区别，后面再看看
+ */
 const baseClass = `
   flex items-center justify-center flex-nowrap whitespace-nowrap
   w-fit px-4 py-2
@@ -60,15 +65,39 @@ const dynamicClass = computed(() => {
     :class="[baseClass, dynamicClass]"
   >
     <!-- Loading 图标插槽 -->
-    <span
-      v-if="props.loading"
-      class="mr-2 shrink-0 flex items-center justify-center"
-    >
-      <slot>
-        <Loading />
-      </slot>
-    </span>
+    <Transition name="fade-width">
+      <span
+        v-if="props.loading"
+        class="shrink-0 flex items-center justify-center overflow-hidden whitespace-nowrap"
+      >
+        <span class="mr-2 flex items-center justify-center">
+          <slot>
+            <Loading />
+          </slot>
+        </span>
+      </span>
+    </Transition>
 
     <span class="truncate">{{ props.text }}</span>
   </button>
 </template>
+
+<style scoped>
+/* 加载状态宽度与透明度过渡 */
+.fade-width-enter-active,
+.fade-width-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-width-enter-from,
+.fade-width-leave-to {
+  max-width: 0;
+  opacity: 0;
+}
+
+.fade-width-enter-to,
+.fade-width-leave-from {
+  max-width: 100px; /* 设置一个足够大的值以容纳图标和间距 */
+  opacity: 1;
+}
+</style>
