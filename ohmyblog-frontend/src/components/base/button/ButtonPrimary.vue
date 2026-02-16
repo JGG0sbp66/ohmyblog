@@ -47,7 +47,7 @@ const dynamicClass = computed(() => {
     classes.push("bg-accent-active", "cursor-not-allowed", "opacity-80");
   } else {
     // 正常交互状态
-    classes.push("bg-accent", "hover:bg-accent-hover", "active:scale-95");
+    classes.push("bg-accent", "hover:bg-accent-hover", "active:scale-85");
   }
 
   return classes.join(" ");
