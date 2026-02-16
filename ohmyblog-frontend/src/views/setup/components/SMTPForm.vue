@@ -14,6 +14,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/vue";
 const { t } = useLang();
 const setupStore = useSetupStore();
 const [advancedContentRef] = useAutoAnimate();
+const [testButtonContainerRef] = useAutoAnimate(); // 测试按钮的动画容器
 
 // 输入框对应的可校验引用（由 TipInput 暴露 validate）
 const hostRef = ref<Validatable | null>(null);
@@ -61,8 +62,10 @@ defineExpose({ validate });
 
 <template>
   <div class="flex flex-col gap-4">
-    <!-- 测试按钮和状态显示 -->
-    <SMTPTestButton />
+    <!-- 测试按钮和状态显示（带动画） -->
+    <div ref="testButtonContainerRef">
+      <SMTPTestButton />
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <TipInput
