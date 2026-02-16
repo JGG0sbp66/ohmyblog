@@ -180,6 +180,21 @@
         "email_invalid": "请输入有效的电子邮箱地址",
         "password_range": "密码长度需在6-50位之间"
       },
+      "appearance": {
+        "theme_invalid": "主题模式仅支持 light/dark/auto",
+        "hue_range": "主题色相必须为 0-360 之间的数字",
+        "language_invalid": "界面语言仅支持 zh-CN/en-US"
+      },
+      "site_info": {
+        "title_range": "站点标题不能为空且不能超过100个字符",
+        "favicon_range": "站点图标 URL 长度不能超过500个字符",
+        "footer_range": "页脚信息长度不能超过255个字符",
+        "icp_range": "备案号长度不能超过100个字符"
+      },
+      "personal_info": {
+        "avatar_range": "头像 URL 长度不能超过500个字符",
+        "hero_range": "首页横幅 URL 长度不能超过500个字符"
+      },
       "smtp": {
         "host_range": "SMTP 服务器地址不能为空且不能超过255个字符",
         "port_range": "端口必须是 1-65535 的整数",
@@ -187,6 +202,9 @@
         "password_range": "SMTP 密码不能为空且不能超过255个字符",
         "sender_email_invalid": "请输入有效的发件人邮箱",
         "sender_name_range": "发件人名称长度不能超过100个字符"
+      },
+      "config": {
+        "description_range": "配置描述长度不能超过255个字符"
       }
     },
     "next": "下一步",

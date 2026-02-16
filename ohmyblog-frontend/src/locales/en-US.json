@@ -180,6 +180,21 @@
         "email_invalid": "Please enter a valid email address",
         "password_range": "Password must be between 6-50 characters"
       },
+      "appearance": {
+        "theme_invalid": "Theme mode must be light/dark/auto",
+        "hue_range": "Hue must be a number between 0 and 360",
+        "language_invalid": "Language must be zh-CN or en-US"
+      },
+      "site_info": {
+        "title_range": "Site title is required and must be under 100 characters",
+        "favicon_range": "Favicon URL must be under 500 characters",
+        "footer_range": "Footer text must be under 255 characters",
+        "icp_range": "ICP number must be under 100 characters"
+      },
+      "personal_info": {
+        "avatar_range": "Avatar URL must be under 500 characters",
+        "hero_range": "Hero banner URL must be under 500 characters"
+      },
       "smtp": {
         "host_range": "SMTP host is required and must be under 255 characters",
         "port_range": "Port must be an integer between 1 and 65535",
@@ -187,6 +202,9 @@
         "password_range": "SMTP password is required and must be under 255 characters",
         "sender_email_invalid": "Please enter a valid sender email",
         "sender_name_range": "Sender name must be under 100 characters"
+      },
+      "config": {
+        "description_range": "Description must be under 255 characters"
       }
     },
     "next": "Next Step",
