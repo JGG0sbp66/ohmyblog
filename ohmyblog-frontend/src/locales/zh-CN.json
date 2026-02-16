@@ -139,6 +139,11 @@
             "description": "开启后可以配置邮件服务器，用于发送评论通知、系统消息等。",
             "tag": "可选"
           },
+          "test": {
+            "button": "测试连接",
+            "success": "连接成功",
+            "error": "连接失败"
+          },
           "form": {
             "host": {
               "label": "SMTP 服务器地址",
@@ -180,6 +185,21 @@
         "email_invalid": "请输入有效的电子邮箱地址",
         "password_range": "密码长度需在6-50位之间"
       },
+      "appearance": {
+        "theme_invalid": "主题模式仅支持 light/dark/auto",
+        "hue_range": "主题色相必须为 0-360 之间的数字",
+        "language_invalid": "界面语言仅支持 zh-CN/en-US"
+      },
+      "site_info": {
+        "title_range": "站点标题不能为空且不能超过100个字符",
+        "favicon_range": "站点图标 URL 长度不能超过500个字符",
+        "footer_range": "页脚信息长度不能超过255个字符",
+        "icp_range": "备案号长度不能超过100个字符"
+      },
+      "personal_info": {
+        "avatar_range": "头像 URL 长度不能超过500个字符",
+        "hero_range": "首页横幅 URL 长度不能超过500个字符"
+      },
       "smtp": {
         "host_range": "SMTP 服务器地址不能为空且不能超过255个字符",
         "port_range": "端口必须是 1-65535 的整数",
@@ -187,6 +207,9 @@
         "password_range": "SMTP 密码不能为空且不能超过255个字符",
         "sender_email_invalid": "请输入有效的发件人邮箱",
         "sender_name_range": "发件人名称长度不能超过100个字符"
+      },
+      "config": {
+        "description_range": "配置描述长度不能超过255个字符"
       }
     },
     "next": "下一步",
@@ -215,7 +238,11 @@
       "未登录或会话已过期": "未登录或会话已过期",
       "请上传 1MB 以内的有效图片": "请上传 1MB 以内的有效图片",
       "请上传 5MB 以内的有效图片": "请上传 5MB 以内的有效图片",
-      "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片"
+      "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片",
+      "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP 连接失败：用户名无效",
+      "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP 连接失败：认证凭据（密码或授权码）无效",
+      "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP 连接失败：无法解析服务器地址 (DNS 错误)",
+      "SMTP 服务器连接失败: Connection timeout": "SMTP 连接失败：连接服务器超时"
     },
     "success": {
       "config": {

@@ -34,7 +34,6 @@ const baseClass = `
   font-bold text-white
   leading-tight
   rounded-lg
-  cursor-pointer
 `;
 
 // 动态样式 - 根据 props 计算
@@ -43,11 +42,11 @@ const dynamicClass = computed(() => {
 
   // 状态样式
   if (props.disabled || props.loading) {
-    // 加载或禁用状态
-    classes.push("bg-accent-active", "cursor-not-allowed", "opacity-80");
+    // 加载或禁用状态：大幅降低透明度，增加视觉区分度
+    classes.push("bg-accent", "cursor-not-allowed", "opacity-50", "grayscale-[0.3]");
   } else {
     // 正常交互状态
-    classes.push("bg-accent", "hover:bg-accent-hover", "active:scale-95");
+    classes.push("bg-accent", "hover:bg-accent-hover", "active:scale-85", "cursor-pointer");
   }
 
   return classes.join(" ");
@@ -60,15 +59,39 @@ const dynamicClass = computed(() => {
     :class="[baseClass, dynamicClass]"
   >
     <!-- Loading 图标插槽 -->
-    <span
-      v-if="props.loading"
-      class="mr-2 shrink-0 flex items-center justify-center"
-    >
-      <slot>
-        <Loading />
-      </slot>
-    </span>
+    <Transition name="fade-width">
+      <span
+        v-if="props.loading"
+        class="shrink-0 flex items-center justify-center overflow-hidden whitespace-nowrap"
+      >
+        <span class="mr-2 flex items-center justify-center">
+          <slot>
+            <Loading />
+          </slot>
+        </span>
+      </span>
+    </Transition>
 
     <span class="truncate">{{ props.text }}</span>
   </button>
 </template>
+
+<style scoped>
+/* 加载状态宽度与透明度过渡 */
+.fade-width-enter-active,
+.fade-width-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-width-enter-from,
+.fade-width-leave-to {
+  max-width: 0;
+  opacity: 0;
+}
+
+.fade-width-enter-to,
+.fade-width-leave-from {
+  max-width: 100px; /* 设置一个足够大的值以容纳图标和间距 */
+  opacity: 1;
+}
+</style>

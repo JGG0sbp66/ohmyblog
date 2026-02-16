@@ -27,14 +27,7 @@ onClickOutside(panelRef, (event) => {
 
 <template>
   <!-- 弹窗内容容器 -->
-  <Transition
-    enter-active-class="transition ease-out duration-200"
-    enter-from-class="opacity-0 translate-y-2"
-    enter-to-class="opacity-100 translate-y-0"
-    leave-active-class="transition ease-in duration-200"
-    leave-from-class="opacity-100 translate-y-0"
-    leave-to-class="opacity-0 translate-y-2"
-  >
+  <Transition name="pop">
     <div
       v-if="modelValue"
       ref="panelRef"
@@ -45,3 +38,19 @@ onClickOutside(panelRef, (event) => {
     </div>
   </Transition>
 </template>
+
+<style scoped>
+.pop-enter-active {
+  transition: all 0.2s ease-out;
+}
+
+.pop-leave-active {
+  transition: all 0.15s ease-in;
+}
+
+.pop-enter-from,
+.pop-leave-to {
+  opacity: 0;
+  transform: translateY(0.5rem);
+}
+</style>

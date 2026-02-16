@@ -6,7 +6,7 @@ const ConfigMetaDTO = {
 		t.String({
 			maxLength: 255,
 			description: "配置描述",
-			error: "配置描述长度不能超过255个字符",
+			error: "config.description_range",
 		}),
 	),
 	isPublic: t.Optional(
@@ -22,17 +22,17 @@ export const AppearanceConfigUpsertDTO = t.Object({
 	configValue: t.Object({
 		theme: t.Union([t.Literal("light"), t.Literal("dark"), t.Literal("auto")], {
 			description: "主题模式",
-			error: "主题模式仅支持 light/dark/auto",
+			error: "appearance.theme_invalid",
 		}),
 		hue: t.Number({
 			minimum: 0,
 			maximum: 360,
 			description: "主题色相",
-			error: "主题色相必须为 0-360 之间的数字",
+			error: "appearance.hue_range",
 		}),
 		language: t.Union([t.Literal("zh-CN"), t.Literal("en-US")], {
 			description: "界面语言",
-			error: "界面语言仅支持 zh-CN/en-US",
+			error: "appearance.language_invalid",
 		}),
 	}),
 	...ConfigMetaDTO,
@@ -46,27 +46,27 @@ export const SiteInfoConfigUpsertDTO = t.Object({
 			minLength: 1,
 			maxLength: 100,
 			description: "站点标题",
-			error: "站点标题不能为空且不能超过100个字符",
+			error: "site_info.title_range",
 		}),
 		favicon: t.Optional(
 			t.String({
 				maxLength: 500,
 				description: "站点图标 URL",
-				error: "站点图标 URL 长度不能超过500个字符",
+				error: "site_info.favicon_range",
 			}),
 		),
 		footer: t.Optional(
 			t.String({
 				maxLength: 255,
 				description: "页脚信息",
-				error: "页脚信息长度不能超过255个字符",
+				error: "site_info.footer_range",
 			}),
 		),
 		icp: t.Optional(
 			t.String({
 				maxLength: 100,
 				description: "备案号",
-				error: "备案号长度不能超过100个字符",
+				error: "site_info.icp_range",
 			}),
 		),
 	}),
@@ -81,14 +81,14 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 			t.String({
 				maxLength: 500,
 				description: "头像 URL",
-				error: "头像 URL 长度不能超过500个字符",
+				error: "personal_info.avatar_range",
 			}),
 		),
 		hero: t.Optional(
 			t.String({
 				maxLength: 500,
 				description: "首页横幅 URL",
-				error: "首页横幅 URL 长度不能超过500个字符",
+				error: "personal_info.hero_range",
 			}),
 		),
 	}),

@@ -6,6 +6,7 @@ import { logPlugin } from "./plugins/logger.plugin.js";
 import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
 import { configRoute } from "./routes/config.route.js";
+import { emailRoute } from "./routes/email.route.js";
 import { healthRoute } from "./routes/health.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 
@@ -33,7 +34,12 @@ const app = new Elysia()
 	)
 	// 挂载路由
 	.group("/api", (app) =>
-		app.use(healthRoute).use(authRoute).use(configRoute).use(uploadRoute),
+		app
+			.use(healthRoute)
+			.use(authRoute)
+			.use(configRoute)
+			.use(emailRoute)
+			.use(uploadRoute),
 	)
 	// 启动服务
 	.listen(config.PORT as number);

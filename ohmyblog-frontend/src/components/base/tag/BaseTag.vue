@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import Check from "@/components/icon/Check.vue";
+import XCircle from "@/components/icon/XCircle.vue";
 
 /**
  * 基础标签/药丸组件
@@ -54,6 +55,7 @@ const classes = computed(() => {
     <!-- 图标插槽 -->
     <slot name="icon">
       <Check v-if="type === 'success'" size-class="w-3 h-3" />
+      <XCircle v-else-if="type === 'error'" size-class="w-3 h-3" />
     </slot>
     <!-- 默认文本插槽 -->
     <slot />
