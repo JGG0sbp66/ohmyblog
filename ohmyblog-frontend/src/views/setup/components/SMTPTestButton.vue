@@ -12,6 +12,7 @@ import { ref, computed } from "vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
+import { useToast } from "@/composables/toast.hook";
 import { useSetupStore } from "@/stores/setup.store";
 import { testSMTPConnection } from "@/api/email.api";
 
@@ -70,7 +71,8 @@ const handleTestConnection = async () => {
     testMessage.value = t("views.setup.steps.step5.test.success");
   } catch (error: any) {
     testStatus.value = "error";
-    testMessage.value = error?.message || t("views.setup.steps.step5.test.error");
+    testMessage.value = t("views.setup.steps.step5.test.error");
+    useToast.error(t(`api.errors.${error}`));
   }
 };
 </script>
