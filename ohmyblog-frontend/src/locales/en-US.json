@@ -139,6 +139,11 @@
             "description": "Enable this to configure email server for sending comment notifications, system messages, etc.",
             "tag": "Optional"
           },
+          "test": {
+            "button": "Test Connection",
+            "success": "Connection Successful",
+            "error": "Connection Failed"
+          },
           "form": {
             "host": {
               "label": "SMTP Host",
