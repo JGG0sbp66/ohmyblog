@@ -91,7 +91,6 @@ const handleTestConnection = async () => {
     <!-- 右侧：测试按钮 -->
     <ButtonPrimary
       :text="t('views.setup.steps.step5.test.button')"
-      :disabled="testStatus === 'testing'"
       :loading="testStatus === 'testing'"
       @click="handleTestConnection"
     />
