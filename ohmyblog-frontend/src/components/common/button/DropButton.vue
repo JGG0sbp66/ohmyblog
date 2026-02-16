@@ -11,7 +11,7 @@ interface Props {
 
 const {
   triggerClass = "w-11 h-11",
-  contentClass = "min-w-30 p-2",
+  contentClass = "min-w-36 p-2",
   placement = "left-0",
 } = defineProps<Props>();
 

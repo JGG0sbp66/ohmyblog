@@ -1,5 +1,5 @@
 // src/services/config.service.ts
-import { configDao, type NewConfig } from "../dao/config.dao";
+import { configDao, type NewConfig } from "../daos/config.dao";
 import type { TConfigUpsertDTO } from "../dtos/config.dto";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger.plugin";

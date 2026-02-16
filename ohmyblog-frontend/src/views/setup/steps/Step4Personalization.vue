@@ -8,15 +8,23 @@ import { useSetupStore } from "@/stores/setup.store";
 import { useSystemStore } from "@/stores/system.store";
 import { useSetupStep } from "@/composables/setup-step.hook";
 import { upsertConfig } from "@/api/config.api";
-import { vAutoAnimate } from "@formkit/auto-animate";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
+import type { TPersonalInfoConfigUpsertDTO } from "@server/dtos/config.dto";
 
 const { t } = useLang();
 const setupStore = useSetupStore();
 const systemStore = useSystemStore();
 const { isSubmitting, runStep } = useSetupStep();
 
+// 使用 auto-animate 自动处理子元素的显示/隐藏动画
+const [containerRef] = useAutoAnimate();
+
 const handleNext = () => {
   runStep(async () => {
+    const configValue: TPersonalInfoConfigUpsertDTO["configValue"] = {
+      ...systemStore.personalInfo,
+    };
+
     /**
      * 将个性化配置（如首页头像、Hero横幅URL）持久化到系统配置表 (config)。
      * 并且 user 表中的 avatar_url 字段已经通过 /upload/avatar 接口同步更新。
@@ -24,7 +32,7 @@ const handleNext = () => {
      */
     return upsertConfig({
       configKey: "personal_info",
-      configValue: systemStore.personalInfo,
+      configValue,
       description: "个性化配置（头像、首页横幅）",
     });
   });
@@ -39,7 +47,7 @@ const handleNext = () => {
     @next="handleNext"
   >
     <!-- 可变框容器 -->
-    <div class="flex flex-col gap-4" v-auto-animate>
+    <div ref="containerRef" class="flex flex-col gap-4">
       <ModuleItem
         v-model="setupStore.isPersonalized"
         :title="t('views.setup.steps.step4.personalization.title')"

@@ -1,4 +1,5 @@
-import { userDao } from "../dao/user.dao";
+// src/services/auth.service.ts
+import { userDao } from "../daos/user.dao";
 import { BusinessError } from "../plugins/errors";
 import { systemLogger } from "../plugins/logger.plugin";
 

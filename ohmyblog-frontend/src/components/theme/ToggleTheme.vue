@@ -27,24 +27,25 @@ const isActive = (value: string) => {
   <DropButton placement="-left-10">
     <template #trigger="{ active }">
       <!-- 点击触发循环切换 -->
-      <ButtonSecondary :hasSlot="true" :isActive="active" @click="cycleTheme()">
+      <ButtonSecondary
+        :isActive="active"
+        @click="cycleTheme()"
+        class="w-full h-full"
+      >
         <!-- 传入当前的模式名称 -->
         <ThemePicker :theme="colorMode" />
       </ButtonSecondary>
     </template>
 
     <template #content>
-      <div
-        v-for="option in themeOptions"
-        :key="option.value"
-        class="flex flex-col mt-0.5 mb-0.5"
-      >
+      <div class="flex flex-col gap-1">
         <ButtonSecondary
+          v-for="option in themeOptions"
+          :key="option.value"
           @click="setTheme(option.value)"
           :text="option.label"
-          class="p-2 justify-start px-3"
+          class="w-full py-2.5 px-4 justify-start"
           :isActive="isActive(option.value)"
-          :hasSlot="true"
         >
           <ThemePicker :theme="option.value" />
         </ButtonSecondary>

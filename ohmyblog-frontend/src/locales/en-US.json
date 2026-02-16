@@ -130,6 +130,45 @@
             "recommend": "Recommended 16:9 ratio · Width ≥ 1920px",
             "format": "Support common image formats · Max 5MB"
           }
+        },
+        "step5": {
+          "title": "Email Notifications",
+          "description": "Configure SMTP service to enable your blog to send email notifications.",
+          "smtp": {
+            "title": "Enable SMTP",
+            "description": "Enable this to configure email server for sending comment notifications, system messages, etc.",
+            "tag": "Optional"
+          },
+          "form": {
+            "host": {
+              "label": "SMTP Host",
+              "placeholder": "e.g., smtp.gmail.com"
+            },
+            "port": {
+              "label": "Port",
+              "placeholder": "e.g., 587"
+            },
+            "username": {
+              "label": "SMTP Username",
+              "placeholder": "e.g., your-email{'@'}example.com"
+            },
+            "password": {
+              "label": "SMTP Password",
+              "placeholder": "Enter SMTP password or app password"
+            },
+            "advanced": {
+              "show": "Show Advanced Options",
+              "hide": "Collapse advanced options"
+            },
+            "senderEmail": {
+              "label": "Sender Email",
+              "placeholder": "e.g., no-reply{'@'}example.com"
+            },
+            "senderName": {
+              "label": "Sender Name",
+              "placeholder": "e.g., ohmyblog Bot"
+            }
+          }
         }
       }
     }
@@ -140,10 +179,19 @@
         "username_range": "Username must be between 3-50 characters",
         "email_invalid": "Please enter a valid email address",
         "password_range": "Password must be between 6-50 characters"
+      },
+      "smtp": {
+        "host_range": "SMTP host is required and must be under 255 characters",
+        "port_range": "Port must be an integer between 1 and 65535",
+        "username_range": "SMTP username is required and must be under 255 characters",
+        "password_range": "SMTP password is required and must be under 255 characters",
+        "sender_email_invalid": "Please enter a valid sender email",
+        "sender_name_range": "Sender name must be under 100 characters"
       }
     },
     "next": "Next Step",
-    "prev": "Previous"
+    "prev": "Previous",
+    "finish": "Finish"
   },
   "stores": {
     "setup": {

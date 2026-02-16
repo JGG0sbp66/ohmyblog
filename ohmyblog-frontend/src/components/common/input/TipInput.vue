@@ -3,7 +3,7 @@
 import { ref, computed } from "vue";
 import type { TSchema } from "@sinclair/typebox";
 import { useVModel } from "@vueuse/core";
-import { vAutoAnimate } from "@formkit/auto-animate";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import { useValidator } from "@/composables/validator.hook";
 import BaseTooltip from "@/components/base/pop/BaseTooltip.vue";
 
@@ -66,12 +66,15 @@ const handleBlur = () => {
   emit("blur");
 };
 
+// 使用 auto-animate 自动处理错误提示的显示/隐藏动画
+const [errorContainerRef] = useAutoAnimate();
+
 /** 暴露接口给父组件，支持外部手动触发校验 */
 defineExpose({ validate });
 </script>
 
 <template>
-  <div class="flex flex-col w-full text-left" v-auto-animate>
+  <div class="flex flex-col w-full text-left">
     <!-- Label 区域 -->
     <div v-if="label" class="flex items-center gap-1.5 mb-1.5 px-1">
       <label
@@ -106,11 +109,14 @@ defineExpose({ validate });
       />
     </div>
 
-    <p
-      v-if="displayError"
-      class="text-[11px] text-red-500 mt-1 px-1 leading-tight"
-    >
-      {{ displayError }}
-    </p>
+    <!-- 错误提示区域 -->
+    <div ref="errorContainerRef">
+      <p
+        v-if="displayError"
+        class="mt-1.5 px-1 text-[11px] text-red-500 leading-tight"
+      >
+        {{ displayError }}
+      </p>
+    </div>
   </div>
 </template>

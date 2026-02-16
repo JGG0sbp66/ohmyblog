@@ -36,9 +36,13 @@ bg-bg-card rounded-b-2xl shadow-sm
 
       <!-- 中间导航栏区域 -->
       <nav class="flex items-center gap-2">
-        <div class="h-11" v-for="item in navItems" :key="item.name">
-          <ButtonSecondary :text="item.label" class="px-4"> </ButtonSecondary>
-        </div>
+        <ButtonSecondary
+          v-for="item in navItems"
+          :key="item.name"
+          :text="item.label"
+          class="h-11 px-4"
+        >
+        </ButtonSecondary>
       </nav>
 
       <!-- 右侧按钮区域 -->

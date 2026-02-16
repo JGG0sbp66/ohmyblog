@@ -18,25 +18,22 @@ const switchLanguage = (value: LocaleType) => {
 </script>
 
 <template>
-  <DropButton :contentClass="'min-w-32 p-2'" placement="-left-20">
+  <DropButton :contentClass="'min-w-36 p-2'" placement="-left-22">
     <template #trigger="{ active }">
-      <ButtonSecondary :hasSlot="true" :isActive="active">
+      <ButtonSecondary :isActive="active" class="w-full h-full">
         <LanguagePicker :language="'translate'" />
       </ButtonSecondary>
     </template>
 
     <template #content>
-      <div
-        v-for="value in SUPPORTED_LOCALES"
-        :key="value.label"
-        class="flex flex-col mt-0.5 mb-0.5"
-      >
+      <div class="flex flex-col gap-1">
         <ButtonSecondary
+          v-for="value in SUPPORTED_LOCALES"
+          :key="value.label"
           @click="switchLanguage(value.value)"
           :text="value.label"
-          class="p-2"
+          class="w-full py-2.5 px-4 justify-start"
           :isActive="isActive(value.value)"
-          :hasSlot="true"
         >
           <LanguagePicker :language="value.value" />
         </ButtonSecondary>

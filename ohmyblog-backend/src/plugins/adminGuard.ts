@@ -1,5 +1,5 @@
 // src/plugins/adminGuard.ts
-import { userDao } from "../dao/user.dao";
+import { userDao } from "../daos/user.dao";
 import { createRoleGuard } from "./auth.plugin";
 
 let hasAdminCache: boolean | null = null;

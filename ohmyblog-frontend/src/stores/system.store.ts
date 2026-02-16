@@ -100,8 +100,9 @@ export const useSystemStore = defineStore("system", () => {
    * @returns 返回最新的初始化状态
    */
   async function checkStatus(forceRefresh = false) {
-    // 如果已经初始化过且不强制刷新, 直接返回缓存的状态
-    if (initialized.value !== null && !forceRefresh) {
+    // 仅当已确认初始化为 true 时使用缓存。
+    // initialized=false 可能在 setup 完成后很快变为 true，需重新请求避免路由守卫读到旧值。
+    if (initialized.value === true && !forceRefresh) {
       return initialized.value;
     }
 

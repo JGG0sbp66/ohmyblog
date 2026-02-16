@@ -9,6 +9,7 @@ import ColorSlider from "@/components/base/slider/ColorSlider.vue";
 import StepLayout from "../components/StepLayout.vue";
 import { useSetupStep } from "@/composables/setup-step.hook";
 import { upsertConfig } from "@/api/config.api";
+import type { TAppearanceConfigUpsertDTO } from "@server/dtos/config.dto";
 
 const { t, locale, setLocale, SUPPORTED_LOCALES } = useLang();
 const { currentHue, colorMode, setTheme, THEME_MODES } = useTheme();
@@ -17,13 +18,15 @@ const { isSubmitting, runStep } = useSetupStep();
 
 const handleNext = () => {
   runStep(async () => {
+    const configValue: TAppearanceConfigUpsertDTO["configValue"] = {
+      theme: colorMode.value,
+      hue: currentHue.value,
+      language: locale.value,
+    };
+
     return upsertConfig({
       configKey: "appearance",
-      configValue: {
-        theme: colorMode.value,
-        hue: currentHue.value,
-        language: locale.value,
-      },
+      configValue,
       description: "外观设置（主题颜色、色相、语言）",
     });
   });
@@ -48,8 +51,7 @@ const handleNext = () => {
           v-for="lang in SUPPORTED_LOCALES"
           :key="lang.value"
           :isActive="locale === lang.value"
-          :hasSlot="true"
-          class="justify-center py-3"
+          class="w-full justify-center py-3"
           @click="setLocale(lang.value)"
         >
           <div class="flex items-center gap-2">
@@ -70,8 +72,7 @@ const handleNext = () => {
           v-for="mode in THEME_MODES"
           :key="mode"
           :isActive="colorMode === mode"
-          :hasSlot="true"
-          class="justify-center py-3"
+          class="w-full justify-center py-3"
           @click="setTheme(mode)"
         >
           <div class="flex items-center gap-2">

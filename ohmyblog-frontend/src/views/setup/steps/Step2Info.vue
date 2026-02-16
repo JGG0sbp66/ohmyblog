@@ -12,6 +12,10 @@ import { uploadFavicon } from "@/api/upload.api";
 import { useSystemStore } from "@/stores/system.store";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
+import {
+  SiteInfoConfigUpsertDTO,
+  type TSiteInfoConfigUpsertDTO,
+} from "@server/dtos/config.dto";
 
 const { t } = useLang();
 const { isSubmitting, runStep } = useSetupStep();
@@ -54,9 +58,13 @@ const handleFileChange = (file: File) => {
 const handleNext = () => {
   runStep(
     async () => {
+      const configValue: TSiteInfoConfigUpsertDTO["configValue"] = {
+        ...systemStore.siteInfo,
+      };
+
       return upsertConfig({
         configKey: "site_info",
-        configValue: systemStore.siteInfo,
+        configValue,
         description: "站点基本信息（标题、图标、页脚、备案号）",
       });
     },
@@ -78,6 +86,7 @@ const handleNext = () => {
       v-model="systemStore.siteInfo.title"
       :label="t('views.setup.steps.step2.siteTitle.label')"
       :placeholder="t('views.setup.steps.step2.siteTitle.placeholder')"
+      :schema="SiteInfoConfigUpsertDTO.properties.configValue.properties.title"
       required
     />
 
@@ -87,6 +96,7 @@ const handleNext = () => {
       :label="t('views.setup.steps.step2.footer.label')"
       :placeholder="t('views.setup.steps.step2.footer.placeholder')"
       :hint="t('views.setup.steps.step2.footer.hint')"
+      :schema="SiteInfoConfigUpsertDTO.properties.configValue.properties.footer"
     />
 
     <!-- 备案号 -->
@@ -95,6 +105,7 @@ const handleNext = () => {
       :label="t('views.setup.steps.step2.icp.label')"
       :placeholder="t('views.setup.steps.step2.icp.placeholder')"
       :hint="t('views.setup.steps.step2.icp.hint')"
+      :schema="SiteInfoConfigUpsertDTO.properties.configValue.properties.icp"
     />
 
     <!-- 站点图标上传 -->
@@ -121,7 +132,7 @@ const handleNext = () => {
               type="button"
               class="text-sm"
               @click="handleIconClick"
-              :disabled="uploading"
+              :loading="uploading"
               :text="
                 getButtonText(
                   'views.setup.steps.step2.siteIcon',
