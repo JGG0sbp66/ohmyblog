@@ -240,7 +240,9 @@
       "请上传 5MB 以内的有效图片": "请上传 5MB 以内的有效图片",
       "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片",
       "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP 连接失败：用户名无效",
-      "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP 连接失败：认证凭据（密码或授权码）无效"
+      "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP 连接失败：认证凭据（密码或授权码）无效",
+      "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP 连接失败：无法解析服务器地址 (DNS 错误)",
+      "SMTP 服务器连接失败: Connection timeout": "SMTP 连接失败：连接服务器超时"
     },
     "success": {
       "config": {

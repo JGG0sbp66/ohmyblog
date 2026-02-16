@@ -240,7 +240,9 @@
       "请上传 5MB 以内的有效图片": "Please upload a valid image under 5MB.",
       "请上传 2MB 以内的有效图片": "Please upload a valid image under 2MB.",
       "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP connection failed: Invalid username",
-      "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP connection failed: Authentication credentials (password or auth code) invalid"
+      "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP connection failed: Authentication credentials (password or auth code) invalid",
+      "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP connection failed: Hostname not found (DNS error)",
+      "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout"
     },
     "success": {
       "config": {
