@@ -73,7 +73,7 @@
           "footer": {
             "label": "页脚版权信息",
             "placeholder": "YourName. All rights reserved.",
-            "hint": "支持字符串，将显示在页面最底部"
+            "hint": "将显示在网站每个页面的最底部，通常用于版权声明"
           },
           "icp": {
             "label": "备案号",

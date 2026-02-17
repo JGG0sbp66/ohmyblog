@@ -73,7 +73,7 @@
           "footer": {
             "label": "Footer Copyright",
             "placeholder": "YourName. All rights reserved.",
-            "hint": "Supports strings, will be displayed at the very bottom of the page"
+            "hint": "Displayed at the bottom of every page, typically used for copyright notices"
           },
           "icp": {
             "label": "ICP Filing Number",
