@@ -1,9 +1,5 @@
 <!--
 TODO: Header 组件优化清单
-2. [功能] 添加路由导航功能
-   - 引入 useRouter 实现导航按钮点击跳转
-   - 为每个导航项绑定 @click 事件
-
 3. [功能] 实现当前路由高亮
    - 引入 useRoute 获取当前路由
    - 为激活的导航项添加视觉反馈(如背景色、文字颜色)
@@ -32,15 +28,22 @@ import ToggleColor from "@/components/theme/ToggleColor.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import HeaderSearch from "@/components/base/search/HeaderSearch.vue";
 import { useLang } from "@/composables/lang.hook";
+import { useRouter } from "vue-router";
 import { computed } from "vue";
 
 const { t } = useLang();
+const router = useRouter();
 
+// TODO: 目前还没开发“归档”和“关于”页面，暂时使用show页面作为占位符，后续开发完毕后再替换
 const navItems = computed(() => [
   { name: "home", label: t("components.common.layout.Header.nav.home") },
-  { name: "archive", label: t("components.common.layout.Header.nav.archive") },
-  { name: "about", label: t("components.common.layout.Header.nav.about") },
+  { name: "show", label: t("components.common.layout.Header.nav.archive") }, // TODO: 将路由名改为 archive
+  { name: "show", label: t("components.common.layout.Header.nav.about") }, // TODO: 将路由名改为 about
 ]);
+
+const handleNavClick = (routeName: string) => {
+  router.push({ name: routeName });
+};
 </script>
 <template>
   <header>
@@ -58,6 +61,7 @@ const navItems = computed(() => [
           :key="item.name"
           :text="item.label"
           class="h-11 px-4"
+          @click="handleNavClick(item.name)"
         >
         </ButtonSecondary>
       </nav>
