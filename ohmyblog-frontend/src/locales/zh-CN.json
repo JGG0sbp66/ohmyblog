@@ -59,7 +59,8 @@
           "description": "这些信息将展示在浏览器标签页和页面底部。",
           "siteTitle": {
             "label": "站点标题",
-            "placeholder": "例如：我的个人博客"
+            "placeholder": "例如：我的个人博客",
+            "hint": "显示在浏览器标签页和搜索引擎结果中，是网站的名称"
           },
           "siteIcon": {
             "label": "站点图标",
