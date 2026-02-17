@@ -1,6 +1,6 @@
-<!-- src/components/icon/XCircle.vue -->
+<!-- src/components/icon/tag/Check.vue -->
 <script setup lang="ts">
-import { XCircle } from "lucide-vue-next";
+import { Check } from "lucide-vue-next";
 const props = withDefaults(
   defineProps<{
     sizeClass?: string;
@@ -12,5 +12,5 @@ const props = withDefaults(
 </script>
 
 <template>
-  <XCircle :class="props.sizeClass" />
+  <Check :class="props.sizeClass" />
 </template>
