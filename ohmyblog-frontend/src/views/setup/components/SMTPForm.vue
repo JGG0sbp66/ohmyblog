@@ -1,4 +1,4 @@
-<!-- src/views/setup/components/SMTPForm.vue -->
+﻿<!-- src/views/setup/components/SMTPForm.vue -->
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
@@ -34,8 +34,8 @@ const validate = () => {
   ].every((res) => res === true);
 
   // 高级字段策略：
-  // - 展开高级选项：senderEmail / senderName 视为必填并参与校验
-  // - 收起高级选项：跳过高级字段校验
+  // - 展开时参与校验（格式校验，但不强制必填）
+  // - 收起时跳过校验（因为未渲染，ref 为 null）
   const senderEmailValid = setupStore.isSMTPAdvancedExpanded
     ? (senderEmailRef.value?.validate?.() ?? false)
     : true;
@@ -103,6 +103,7 @@ defineExpose({ validate });
       type="password"
       :label="t('views.setup.steps.step5.form.password.label')"
       :placeholder="t('views.setup.steps.step5.form.password.placeholder')"
+      :hint="t('views.setup.steps.step5.form.password.hint')"
       :schema="SMTPConfigUpsertDTO.properties.configValue.properties.password"
       required
     />
@@ -122,13 +123,13 @@ defineExpose({ validate });
         <AdvancedToggle :expanded="setupStore.isSMTPAdvancedExpanded" />
       </ButtonSecondary>
 
-      <!-- 高级字段仅在展开时渲染：与“展开即必填”的校验策略保持一致 -->
+      <!-- 高级字段仅在展开时渲染 -->
       <div ref="advancedContentRef">
         <div
           v-if="setupStore.isSMTPAdvancedExpanded"
           class="flex flex-col gap-4 mt-3"
         >
-          <!-- 展开时必填，收起时不要求 -->
+          <!-- 可选字段：不填写时使用默认值 -->
           <TipInput
             ref="senderEmailRef"
             v-model="setupStore.smtpForm.senderEmail"
@@ -137,13 +138,13 @@ defineExpose({ validate });
             :placeholder="
               t('views.setup.steps.step5.form.senderEmail.placeholder')
             "
+            :hint="t('views.setup.steps.step5.form.senderEmail.hint')"
             :schema="
               SMTPConfigUpsertDTO.properties.configValue.properties.senderEmail
             "
-            :required="setupStore.isSMTPAdvancedExpanded"
           />
 
-          <!-- 展开时必填，收起时不要求 -->
+          <!-- 可选字段：不填写时使用默认值 -->
           <TipInput
             ref="senderNameRef"
             v-model="setupStore.smtpForm.senderName"
@@ -151,10 +152,10 @@ defineExpose({ validate });
             :placeholder="
               t('views.setup.steps.step5.form.senderName.placeholder')
             "
+            :hint="t('views.setup.steps.step5.form.senderName.hint')"
             :schema="
               SMTPConfigUpsertDTO.properties.configValue.properties.senderName
             "
-            :required="setupStore.isSMTPAdvancedExpanded"
           />
         </div>
       </div>

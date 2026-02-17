@@ -161,7 +161,8 @@
             },
             "password": {
               "label": "SMTP 密码",
-              "placeholder": "请输入 SMTP 密码或授权码"
+              "placeholder": "请输入 SMTP 密码或授权码",
+              "hint": "部分邮件服务商（如 Gmail、QQ 邮箱）需要使用专用授权码，而非登录密码"
             },
             "advanced": {
               "show": "显示高级选项",
@@ -169,11 +170,13 @@
             },
             "senderEmail": {
               "label": "发件人邮箱",
-              "placeholder": "例如：no-reply{'@'}example.com"
+              "placeholder": "例如：no-reply{'@'}example.com",
+              "hint": "不填写时默认使用 SMTP 用户名，适用于自定义域名邮件服务（如 Resend）"
             },
             "senderName": {
               "label": "发件人名称",
-              "placeholder": "例如：ohmyblog Bot"
+              "placeholder": "例如：ohmyblog Bot",
+              "hint": "不填写时邮件中只显示邮箱地址，填写后显示为「名称 <邮箱>」格式"
             }
           }
         }

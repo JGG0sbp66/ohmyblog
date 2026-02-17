@@ -161,7 +161,8 @@
             },
             "password": {
               "label": "SMTP Password",
-              "placeholder": "Enter SMTP password or app password"
+              "placeholder": "Enter SMTP password or app password",
+              "hint": "Some email providers (e.g., Gmail, Outlook) require an app-specific password instead of your login password"
             },
             "advanced": {
               "show": "Show Advanced Options",
@@ -169,11 +170,13 @@
             },
             "senderEmail": {
               "label": "Sender Email",
-              "placeholder": "e.g., no-reply{'@'}example.com"
+              "placeholder": "e.g., no-reply{'@'}example.com",
+              "hint": "Defaults to SMTP username if not specified, useful for custom domain email services (e.g., Resend)"
             },
             "senderName": {
               "label": "Sender Name",
-              "placeholder": "e.g., ohmyblog Bot"
+              "placeholder": "e.g., ohmyblog Bot",
+              "hint": "If not specified, only email address is shown; when filled, displays as 'Name <email>' format"
             }
           }
         }
