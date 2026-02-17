@@ -59,7 +59,8 @@
           "description": "This information will be displayed on the browser tab and at the bottom of the page.",
           "siteTitle": {
             "label": "Site Title",
-            "placeholder": "e.g., My Personal Blog"
+            "placeholder": "e.g., My Personal Blog",
+            "hint": "Displayed in browser tabs and search results, this is your website's name"
           },
           "siteIcon": {
             "label": "Site Icon",
@@ -73,7 +74,7 @@
           "footer": {
             "label": "Footer Copyright",
             "placeholder": "YourName. All rights reserved.",
-            "hint": "Supports strings, will be displayed at the very bottom of the page"
+            "hint": "Displayed at the bottom of every page, typically used for copyright notices"
           },
           "icp": {
             "label": "ICP Filing Number",
@@ -90,7 +91,8 @@
           },
           "email": {
             "label": "Email Address",
-            "placeholder": "e.g., admin{'@'}example.com"
+            "placeholder": "e.g., admin{'@'}example.com",
+            "hint": "After configuring SMTP, the system may send notifications to this email"
           },
           "password": {
             "label": "Password",
@@ -159,7 +161,8 @@
             },
             "password": {
               "label": "SMTP Password",
-              "placeholder": "Enter SMTP password or app password"
+              "placeholder": "Enter SMTP password or app password",
+              "hint": "Some email providers (e.g., Gmail, Outlook) require an app-specific password instead of your login password"
             },
             "advanced": {
               "show": "Show Advanced Options",
@@ -167,11 +170,13 @@
             },
             "senderEmail": {
               "label": "Sender Email",
-              "placeholder": "e.g., no-reply{'@'}example.com"
+              "placeholder": "e.g., no-reply{'@'}example.com",
+              "hint": "Defaults to SMTP username if not specified, useful for custom domain email services (e.g., Resend)"
             },
             "senderName": {
               "label": "Sender Name",
-              "placeholder": "e.g., ohmyblog Bot"
+              "placeholder": "e.g., ohmyblog Bot",
+              "hint": "If not specified, only email address is shown; when filled, displays as 'Name <email>' format"
             }
           }
         }

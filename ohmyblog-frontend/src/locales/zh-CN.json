@@ -59,7 +59,8 @@
           "description": "这些信息将展示在浏览器标签页和页面底部。",
           "siteTitle": {
             "label": "站点标题",
-            "placeholder": "例如：我的个人博客"
+            "placeholder": "例如：我的个人博客",
+            "hint": "显示在浏览器标签页和搜索引擎结果中，是网站的名称"
           },
           "siteIcon": {
             "label": "站点图标",
@@ -73,7 +74,7 @@
           "footer": {
             "label": "页脚版权信息",
             "placeholder": "YourName. All rights reserved.",
-            "hint": "支持字符串，将显示在页面最底部"
+            "hint": "将显示在网站每个页面的最底部，通常用于版权声明"
           },
           "icp": {
             "label": "备案号",
@@ -90,7 +91,8 @@
           },
           "email": {
             "label": "电子邮箱",
-            "placeholder": "例如：admin{'@'}example.com"
+            "placeholder": "例如：admin{'@'}example.com",
+            "hint": "配置 SMTP 后，系统可能会向此邮箱发送通知"
           },
           "password": {
             "label": "密码",
@@ -159,7 +161,8 @@
             },
             "password": {
               "label": "SMTP 密码",
-              "placeholder": "请输入 SMTP 密码或授权码"
+              "placeholder": "请输入 SMTP 密码或授权码",
+              "hint": "部分邮件服务商（如 Gmail、QQ 邮箱）需要使用专用授权码，而非登录密码"
             },
             "advanced": {
               "show": "显示高级选项",
@@ -167,11 +170,13 @@
             },
             "senderEmail": {
               "label": "发件人邮箱",
-              "placeholder": "例如：no-reply{'@'}example.com"
+              "placeholder": "例如：no-reply{'@'}example.com",
+              "hint": "不填写时默认使用 SMTP 用户名，适用于自定义域名邮件服务（如 Resend）"
             },
             "senderName": {
               "label": "发件人名称",
-              "placeholder": "例如：ohmyblog Bot"
+              "placeholder": "例如：ohmyblog Bot",
+              "hint": "不填写时邮件中只显示邮箱地址，填写后显示为「名称 <邮箱>」格式"
             }
           }
         }

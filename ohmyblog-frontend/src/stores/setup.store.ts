@@ -84,7 +84,6 @@ export const useSetupStore = defineStore("setup", () => {
    *
    * 用途：
    * - 控制 senderEmail / senderName 两个高级字段的显示。
-   * - 决定高级字段是否必填（展开时必填，收起时不校验）。
    * - 放在 store 中以跨布局保持状态，避免桌面/移动端切换时被重置。
    */
   const isSMTPAdvancedExpanded = ref(false);

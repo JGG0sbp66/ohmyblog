@@ -88,6 +88,7 @@ const handleNext = () => {
       v-model="systemStore.siteInfo.title"
       :label="t('views.setup.steps.step2.siteTitle.label')"
       :placeholder="t('views.setup.steps.step2.siteTitle.placeholder')"
+      :hint="t('views.setup.steps.step2.siteTitle.hint')"
       :schema="SiteInfoConfigUpsertDTO.properties.configValue.properties.title"
       required
     />

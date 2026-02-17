@@ -1,8 +1,8 @@
 <!-- src/components/base/tag/BaseTag.vue -->
 <script setup lang="ts">
 import { computed } from "vue";
-import Check from "@/components/icon/Check.vue";
-import XCircle from "@/components/icon/XCircle.vue";
+import Check from "@/components/icon/tag/Check.vue";
+import XCircle from "@/components/icon/tag/XCircle.vue";
 
 /**
  * 基础标签/药丸组件
