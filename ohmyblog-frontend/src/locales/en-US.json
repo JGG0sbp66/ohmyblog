@@ -90,7 +90,8 @@
           },
           "email": {
             "label": "Email Address",
-            "placeholder": "e.g., admin{'@'}example.com"
+            "placeholder": "e.g., admin{'@'}example.com",
+            "hint": "After configuring SMTP, the system may send notifications to this email"
           },
           "password": {
             "label": "Password",

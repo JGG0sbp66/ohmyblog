@@ -100,6 +100,7 @@ const handleNext = () => {
       type="email"
       :label="t('views.setup.steps.step3.email.label')"
       :placeholder="t('views.setup.steps.step3.email.placeholder')"
+      :hint="t('views.setup.steps.step3.email.hint')"
       :schema="RegisterDTO.properties.email"
       :readonly="stepStore.isAdminRegistered"
       required

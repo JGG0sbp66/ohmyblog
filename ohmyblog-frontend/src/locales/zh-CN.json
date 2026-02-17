@@ -90,7 +90,8 @@
           },
           "email": {
             "label": "电子邮箱",
-            "placeholder": "例如：admin{'@'}example.com"
+            "placeholder": "例如：admin{'@'}example.com",
+            "hint": "配置 SMTP 后，系统可能会向此邮箱发送通知"
           },
           "password": {
             "label": "密码",
