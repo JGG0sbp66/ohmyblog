@@ -13,8 +13,9 @@ import { useAutoAnimate } from "@formkit/auto-animate/vue";
 
 const { t } = useLang();
 const setupStore = useSetupStore();
+// 动画容器 refs（通过模板引用自动绑定，TypeScript 可能报未使用警告但实际有效）
 const [advancedContentRef] = useAutoAnimate();
-const [testButtonContainerRef] = useAutoAnimate(); // 测试按钮的动画容器
+const [testButtonContainerRef] = useAutoAnimate();
 
 // 输入框对应的可校验引用（由 TipInput 暴露 validate）
 const hostRef = ref<Validatable | null>(null);
