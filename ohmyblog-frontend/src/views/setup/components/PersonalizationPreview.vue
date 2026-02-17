@@ -8,7 +8,6 @@ import { uploadAvatar, uploadHero } from "@/api/upload.api";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
-import Check from "@/components/icon/Check.vue";
 import User from "@/components/icon/User.vue";
 import PanelTop from "@/components/icon/PanelTop.vue";
 
@@ -118,9 +117,6 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
             v-if="systemStore.personalInfo.avatar && !avatarLoading"
             type="success"
           >
-            <template #icon>
-              <Check size-class="w-3 h-3" />
-            </template>
             {{ t("views.setup.steps.step4.avatar.success") }}
           </BaseTag>
         </div>
@@ -190,9 +186,6 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           v-if="systemStore.personalInfo.hero && !heroLoading"
           type="success"
         >
-          <template #icon>
-            <Check size-class="w-3 h-3" />
-          </template>
           {{ t("views.setup.steps.step4.hero.success") }}
         </BaseTag>
       </div>
