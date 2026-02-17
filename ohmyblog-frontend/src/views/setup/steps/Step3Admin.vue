@@ -134,7 +134,6 @@ const handleNext = () => {
     <BaseTag
       v-if="stepStore.isAdminRegistered"
       type="success"
-      size="sm"
       class="absolute top-8 right-8"
     >
       {{ t("views.setup.steps.step3.alreadyRegistered") }}

@@ -82,10 +82,10 @@ const handleTestConnection = async () => {
   <div v-if="canShowTest" class="flex items-center justify-between gap-3">
     <!-- 左侧：测试结果标签 -->
     <div class="flex items-center gap-2">
-      <BaseTag v-if="testStatus === 'success'" type="success" size="sm">
+      <BaseTag v-if="testStatus === 'success'" type="success">
         {{ testMessage }}
       </BaseTag>
-      <BaseTag v-else-if="testStatus === 'error'" type="error" size="sm">
+      <BaseTag v-else-if="testStatus === 'error'" type="error">
         {{ testMessage }}
       </BaseTag>
     </div>
