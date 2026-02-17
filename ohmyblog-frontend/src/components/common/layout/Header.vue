@@ -1,21 +1,17 @@
 <!--
 TODO: Header 组件优化清单
-4. [响应式] 移动端适配优化
+1. [响应式/后期再考虑，需要实现] 移动端适配优化
    - 小屏幕(<768px)时隐藏导航栏,显示汉堡菜单
    - 实现移动端侧边栏导航
 
-5. [无障碍] 提升可访问性
+2. [无障碍/后期再考虑，可选] 提升可访问性
    - 为 header 添加 aria-label="主导航"
    - 为导航按钮添加 aria-current="page" 标识当前页
    - 确保键盘导航支持
 
-6. [性能] 考虑添加 sticky 定位
+3. [性能/后期再说，可以参考https://fuwari.vercel.app/] 考虑添加 sticky 定位
    - 评估是否需要滚动时固定在顶部
    - 添加滚动时的背景模糊效果
-
-7. [体验] 搜索功能增强
-   - 添加搜索快捷键提示(如 Cmd+K)
-   - 考虑搜索结果预览
 -->
 <script lang="ts" setup>
 import ToggleLanguage from "@/components/theme/ToggleLanguage.vue";
