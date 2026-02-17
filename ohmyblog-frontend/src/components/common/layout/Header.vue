@@ -1,3 +1,30 @@
+<!--
+TODO: Header 组件优化清单
+2. [功能] 添加路由导航功能
+   - 引入 useRouter 实现导航按钮点击跳转
+   - 为每个导航项绑定 @click 事件
+
+3. [功能] 实现当前路由高亮
+   - 引入 useRoute 获取当前路由
+   - 为激活的导航项添加视觉反馈(如背景色、文字颜色)
+
+4. [响应式] 移动端适配优化
+   - 小屏幕(<768px)时隐藏导航栏,显示汉堡菜单
+   - 实现移动端侧边栏导航
+
+5. [无障碍] 提升可访问性
+   - 为 header 添加 aria-label="主导航"
+   - 为导航按钮添加 aria-current="page" 标识当前页
+   - 确保键盘导航支持
+
+6. [性能] 考虑添加 sticky 定位
+   - 评估是否需要滚动时固定在顶部
+   - 添加滚动时的背景模糊效果
+
+7. [体验] 搜索功能增强
+   - 添加搜索快捷键提示(如 Cmd+K)
+   - 考虑搜索结果预览
+-->
 <script lang="ts" setup>
 import ToggleLanguage from "@/components/theme/ToggleLanguage.vue";
 import ToggleTheme from "@/components/theme/ToggleTheme.vue";
@@ -14,21 +41,11 @@ const navItems = computed(() => [
   { name: "archive", label: t("components.common.layout.Header.nav.archive") },
   { name: "about", label: t("components.common.layout.Header.nav.about") },
 ]);
-
-const headerClass = `
-/* 1. 核心尺寸与居中 */
-w-full md:max-w-[1200px] md:w-[95%] mx-auto h-18
-
-/* 2. 内部布局 */
-flex items-center justify-between
-
-/* 3. 背景与边框 */
-bg-bg-card rounded-b-2xl shadow-sm
-`;
 </script>
 <template>
   <header>
-    <div :class="headerClass">
+    <!-- 核心尺寸与居中 | 内部布局 | 背景与边框 -->
+    <div class="w-full md:max-w-[1200px] md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm">
       <!-- 左侧搜索区域 -->
       <div class="ml-4">
         <HeaderSearch />
