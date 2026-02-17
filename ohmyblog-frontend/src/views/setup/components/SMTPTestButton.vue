@@ -9,6 +9,7 @@
  * 3. 点击按钮测试 SMTP 连接，显示测试结果（成功/失败）
  */
 import { ref, computed } from "vue";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
@@ -18,6 +19,9 @@ import { testSMTPConnection } from "@/api/email.api";
 
 const { t } = useLang();
 const setupStore = useSetupStore();
+
+/** 使用 auto-animate 自动处理测试结果的显示/隐藏动画 */
+const [parent] = useAutoAnimate();
 
 /**
  * 测试状态
@@ -81,7 +85,7 @@ const handleTestConnection = async () => {
   <!-- 只有当必填字段都填写后才显示整个测试区域 -->
   <div v-if="canShowTest" class="flex items-center justify-between gap-3">
     <!-- 左侧：测试结果标签 -->
-    <div class="flex items-center gap-2">
+    <div ref="parent" class="flex items-center gap-2">
       <BaseTag v-if="testStatus === 'success'" type="success">
         {{ testMessage }}
       </BaseTag>
