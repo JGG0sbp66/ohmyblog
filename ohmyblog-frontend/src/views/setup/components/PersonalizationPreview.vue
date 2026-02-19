@@ -8,8 +8,8 @@ import { uploadAvatar, uploadHero } from "@/api/upload.api";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
-import User from "@/components/icon/User.vue";
-import PanelTop from "@/components/icon/PanelTop.vue";
+import User from "@/components/icon/common/User.vue";
+import PanelTop from "@/components/icon/ui/PanelTop.vue";
 
 const { t } = useLang();
 const systemStore = useSystemStore();

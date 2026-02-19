@@ -1,7 +1,7 @@
 <!-- src/components/base/button/ButtonPrimary.vue -->
 <script lang="ts" setup>
 import { computed } from "vue";
-import Loading from "@/components/icon/Loading.vue";
+import Loading from "@/components/icon/common/Loading.vue";
 
 /**
  * ButtonPrimary - 主要按钮组件
@@ -43,10 +43,20 @@ const dynamicClass = computed(() => {
   // 状态样式
   if (props.disabled || props.loading) {
     // 加载或禁用状态：大幅降低透明度，增加视觉区分度
-    classes.push("bg-accent", "cursor-not-allowed", "opacity-50", "grayscale-[0.3]");
+    classes.push(
+      "bg-accent",
+      "cursor-not-allowed",
+      "opacity-50",
+      "grayscale-[0.3]",
+    );
   } else {
     // 正常交互状态
-    classes.push("bg-accent", "hover:bg-accent-hover", "active:scale-85", "cursor-pointer");
+    classes.push(
+      "bg-accent",
+      "hover:bg-accent-hover",
+      "active:scale-85",
+      "cursor-pointer",
+    );
   }
 
   return classes.join(" ");

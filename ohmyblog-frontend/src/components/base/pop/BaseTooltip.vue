@@ -1,6 +1,6 @@
 <!-- src/components/base/BaseTooltip.vue -->
 <script setup lang="ts">
-import QuestionIcon from "@/components/icon/Question.vue";
+import QuestionIcon from "@/components/icon/common/Question.vue";
 
 interface Props {
   content: string;

@@ -3,7 +3,7 @@
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import AdvancedToggle from "@/components/icon/AdvancedToggle.vue";
+import AdvancedToggle from "@/components/icon/ui/AdvancedToggle.vue";
 import SMTPTestButton from "./SMTPTestButton.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStore } from "@/stores/setup.store";

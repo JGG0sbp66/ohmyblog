@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Search from "@/components/icon/Search.vue";
+import Search from "@/components/icon/common/Search.vue";
 import ButtonSecondary from "../button/ButtonSecondary.vue";
 </script>
 
