@@ -54,6 +54,7 @@ const { port } = app.server;
 const protocol = "http";
 const baseUrl = `${protocol}://localhost:${port}`;
 
+console.log(`\n🚀 Server started in \x1b[33m${config.NODE_ENV}\x1b[0m mode`);
 console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`); // 青色链接
 console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`); // 青色链接
 console.log(`\nReady to accept requests...\n`);

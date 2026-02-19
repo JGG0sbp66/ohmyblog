@@ -22,6 +22,11 @@ type ConfigItem = {
 // 1. 配置定义中心
 // =================================================================
 const configDef = {
+	NODE_ENV: {
+		desc: "运行环境 (development | production)",
+		schema: z.enum(["development", "production"]),
+		default: "development",
+	},
 	PORT: {
 		desc: "端口",
 		schema: z.coerce.number(),
@@ -104,7 +109,8 @@ async function initConfig() {
 }
 
 const loadedEnv = await initConfig();
-const mergedEnv = { ...process.env, ...loadedEnv };
+// 命令行环境变量优先级更高（process.env 覆盖 .env 文件）
+const mergedEnv = { ...loadedEnv, ...process.env };
 
 // =================================================================
 // 3. 构建 Schema

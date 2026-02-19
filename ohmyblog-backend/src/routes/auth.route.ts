@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { config } from "../env";
 import { LoginDTO, RegisterDTO } from "../dtos/auth.dto";
 import { authPlugin } from "../plugins/auth.plugin";
 import { authService } from "../services/auth.service";
@@ -48,10 +49,10 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 					cookie.auth_token.set({
 						value: token,
 						httpOnly: true,
-						secure: process.env.NODE_ENV === "production",
+						secure: config.NODE_ENV === "production",
 						maxAge: 7 * 86400,
 						path: "/",
-						sameSite: "lax",
+						sameSite: config.NODE_ENV === "production" ? "strict" : "lax",
 					});
 
 					return {
