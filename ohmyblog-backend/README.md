@@ -1,4 +1,4 @@
-# OhMyBlog 后端
+# ohmyblog 后端
 
 基于 Bun + Elysia 构建的博客系统后端 API。
 
