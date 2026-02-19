@@ -27,8 +27,8 @@ const app = new Elysia()
 	.use(logPlugin)
 	.use(responsePlugin)
 	.use(
+		// 静态文件服务：提供上传的图片、头像、图标等资源访问
 		staticPlugin({
-			// TODO: 接口文档关于读取静态文件的描述还非常简略，需要更新
 			assets: UPLOADS_DIR,
 			prefix: "/api/uploads",
 		}),
