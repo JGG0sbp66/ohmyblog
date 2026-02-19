@@ -11,9 +11,10 @@ import { healthRoute } from "./routes/health.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 
 const app = new Elysia()
-	// OpenAPI 插件
+	// OpenAPI 插件（生产环境禁用）
 	.use(
 		openapi({
+			enabled: config.NODE_ENV !== "production",
 			documentation: {
 				info: {
 					title: "ohmyblog API",
@@ -26,8 +27,8 @@ const app = new Elysia()
 	.use(logPlugin)
 	.use(responsePlugin)
 	.use(
+		// 静态文件服务：提供上传的图片、头像、图标等资源访问
 		staticPlugin({
-			// TODO: 接口文档关于读取静态文件的描述还非常简略，需要更新
 			assets: UPLOADS_DIR,
 			prefix: "/api/uploads",
 		}),
@@ -42,7 +43,7 @@ const app = new Elysia()
 			.use(uploadRoute),
 	)
 	// 启动服务
-	.listen(config.PORT as number);
+	.listen(config.PORT);
 
 export type App = typeof app;
 
@@ -54,6 +55,9 @@ const { port } = app.server;
 const protocol = "http";
 const baseUrl = `${protocol}://localhost:${port}`;
 
-console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`); // 青色链接
-console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`); // 青色链接
+console.log(`\n🚀 Server started in \x1b[33m${config.NODE_ENV}\x1b[0m mode`);
+console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`);
+if (config.NODE_ENV !== "production") {
+	console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`);
+}
 console.log(`\nReady to accept requests...\n`);

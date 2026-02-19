@@ -11,33 +11,32 @@ import {
 } from "./constants";
 import { systemLogger } from "./plugins/logger.plugin";
 
-type ConfigItem = {
-	desc: string;
-	schema: z.ZodTypeAny;
-	default?: unknown;
-	autoGen?: () => unknown;
-};
+// =================================================================
+// 1. 配置定义中心（同时用于生成 .env 和类型推断）
+// =================================================================
+const configSchema = {
+	NODE_ENV: z.enum(["development", "production"]).default("development"),
+	PORT: z.coerce.number().default(3000),
+	JWT_SECRET: z.string(),
+	JWT_EXP: z.string().default("7d"),
+} as const;
 
-// =================================================================
-// 1. 配置定义中心
-// =================================================================
-const configDef = {
-	PORT: {
-		desc: "端口",
-		schema: z.coerce.number(),
-		default: 3000,
-	},
-	JWT_SECRET: {
-		desc: "JWT 签名密钥 (自动生成强密码)",
-		schema: z.string(),
-		autoGen: () => randomBytes(32).toString("hex"),
-	},
-	JWT_EXP: {
-		desc: "Token 过期时间",
-		schema: z.string(),
-		default: "7d",
-	},
-};
+// 配置描述（用于生成 .env 文件的注释）
+const configDesc = {
+	NODE_ENV: "运行环境 (development | production)",
+	PORT: "端口",
+	JWT_SECRET: "JWT 签名密钥 (自动生成强密码)",
+	JWT_EXP:
+		"Token 过期时间 (支持格式: 7d=7天, 24h=24小时, 60m=60分钟, 3600s=3600秒)",
+} as const;
+
+// 默认值映射（用于生成 .env 文件）
+const configDefaults = {
+	NODE_ENV: "development",
+	PORT: "3000",
+	JWT_SECRET: () => randomBytes(32).toString("hex"), // 函数表示自动生成
+	JWT_EXP: "7d",
+} as const;
 
 // =================================================================
 // 2. 自动化引擎 & 目录初始化
@@ -69,20 +68,23 @@ async function initConfig() {
 	const envMap: Record<string, string> = {};
 
 	if (!(await file.exists())) {
-		// 使用 Logger 替代 console
 		systemLogger.warn(`⚙️  检测到 data/.env 不存在，正在自动生成...`);
 
 		let fileContent = `# Auto-generated config\n`;
 
-		for (const [key, value] of Object.entries(configDef)) {
-			const def = value as ConfigItem;
+		for (const key of Object.keys(configSchema)) {
+			const desc = configDesc[key as keyof typeof configDesc];
+			const defaultValue = configDefaults[key as keyof typeof configDefaults];
 
-			const val = def.autoGen ? def.autoGen() : (def.default ?? "");
+			// 获取值：如果是函数则调用，否则直接使用
+			const val =
+				typeof defaultValue === "function" ? defaultValue() : defaultValue;
 
 			envMap[key] = String(val);
-			fileContent += `\n# ${def.desc}\n${key}=${val}\n`;
+			fileContent += `\n# ${desc}\n${key}=${val}\n`;
 
-			if (def.autoGen) {
+			// 如果是自动生成的，记录日志
+			if (typeof defaultValue === "function") {
 				systemLogger.info(
 					`🔑 已自动生成安全配置 [${key}]: \x1b[36m${val}\x1b[0m`,
 				);
@@ -97,28 +99,19 @@ async function initConfig() {
 			const [k, ...v] = line.trim().split("=");
 			if (k && !k.startsWith("#")) envMap[k] = v.join("=").trim();
 		});
-		// systemLogger.debug(`✅ 已加载配置文件`);
 	}
 
 	return envMap;
 }
 
 const loadedEnv = await initConfig();
-const mergedEnv = { ...process.env, ...loadedEnv };
+// 命令行环境变量优先级更高（process.env 覆盖 .env 文件）
+const mergedEnv = { ...loadedEnv, ...process.env };
 
 // =================================================================
-// 3. 构建 Schema
+// 3. 构建 Schema 并导出类型安全的 config
 // =================================================================
-const schemaShape: Record<string, z.ZodTypeAny> = {};
-for (const [key, value] of Object.entries(configDef)) {
-	const def = value as ConfigItem;
-	if (def.default !== undefined) {
-		schemaShape[key] = def.schema.default(def.default);
-	} else {
-		schemaShape[key] = def.schema;
-	}
-}
-const envSchema = z.object(schemaShape);
+const envSchema = z.object(configSchema);
 
 const parsed = envSchema.safeParse(mergedEnv);
 

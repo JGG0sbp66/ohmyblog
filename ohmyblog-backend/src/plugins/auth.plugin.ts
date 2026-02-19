@@ -13,7 +13,8 @@ export type JwtUserPayload = {
 // JWT 配置
 export const jwtConfig = {
 	name: "jwt",
-	secret: config.JWT_SECRET as string,
+	secret: config.JWT_SECRET, // JWT 签名密钥
+	exp: config.JWT_EXP, // JWT 过期时间
 	schema: t.Object({
 		uuid: t.String(),
 		role: t.String(),
