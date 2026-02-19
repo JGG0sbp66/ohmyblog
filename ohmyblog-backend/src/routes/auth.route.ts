@@ -1,6 +1,6 @@
 import { Elysia } from "elysia";
-import { config } from "../env";
 import { LoginDTO, RegisterDTO } from "../dtos/auth.dto";
+import { config } from "../env";
 import { authPlugin } from "../plugins/auth.plugin";
 import { authService } from "../services/auth.service";
 
