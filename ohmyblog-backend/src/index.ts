@@ -11,9 +11,10 @@ import { healthRoute } from "./routes/health.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 
 const app = new Elysia()
-	// OpenAPI 插件
+	// OpenAPI 插件（生产环境禁用）
 	.use(
 		openapi({
+			enabled: config.NODE_ENV !== "production",
 			documentation: {
 				info: {
 					title: "ohmyblog API",
@@ -55,6 +56,8 @@ const protocol = "http";
 const baseUrl = `${protocol}://localhost:${port}`;
 
 console.log(`\n🚀 Server started in \x1b[33m${config.NODE_ENV}\x1b[0m mode`);
-console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`); // 青色链接
-console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`); // 青色链接
+console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`);
+if (config.NODE_ENV !== "production") {
+	console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`);
+}
 console.log(`\nReady to accept requests...\n`);
