@@ -99,7 +99,7 @@ const api = treaty<App>('http://localhost:3000')
 
 ## 项目结构
 
-```
+```text
 src/
 ├── assets/          # 静态资源
 ├── components/      # Vue 组件
