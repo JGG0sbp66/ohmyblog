@@ -76,11 +76,11 @@ bun run format
 
 ```typescript
 // 通过别名引用后端类型
-import type { App } from '@server/app'
-import type { TRegisterDTO } from '@server/dtos'
+import type { App } from "@server/app";
+import type { TRegisterDTO } from "@server/dtos";
 
 // Eden Treaty 提供完整的类型推导
-const api = treaty<App>('http://localhost:3000')
+const api = treaty<App>("http://localhost:3000");
 ```
 
 ### 路径别名
