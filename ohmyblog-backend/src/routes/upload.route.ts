@@ -7,7 +7,6 @@ import {
 } from "../dtos/upload.dto";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 import { authPlugin } from "../plugins/auth.plugin";
-import { BusinessError } from "../plugins/errors";
 import { uploadService } from "../services/upload.service";
 
 export const uploadRoute = new Elysia({ name: "uploadRoute" })
@@ -67,11 +66,7 @@ export const uploadRoute = new Elysia({ name: "uploadRoute" })
 			.post(
 				"/avatar",
 				async ({ body: { avatar }, user }) => {
-					if (!user?.uuid) {
-						throw new BusinessError("未登录或会话已过期", { status: 401 });
-					}
-
-					const result = await uploadService.uploadAvatar(avatar, user.uuid);
+					const result = await uploadService.uploadAvatar(avatar, user!.uuid);
 
 					return {
 						message: "头像上传成功",
