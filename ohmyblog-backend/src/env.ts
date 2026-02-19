@@ -26,7 +26,8 @@ const configDesc = {
 	NODE_ENV: "运行环境 (development | production)",
 	PORT: "端口",
 	JWT_SECRET: "JWT 签名密钥 (自动生成强密码)",
-	JWT_EXP: "Token 过期时间 (支持格式: 7d=7天, 24h=24小时, 60m=60分钟, 3600s=3600秒)",
+	JWT_EXP:
+		"Token 过期时间 (支持格式: 7d=7天, 24h=24小时, 60m=60分钟, 3600s=3600秒)",
 } as const;
 
 // 默认值映射（用于生成 .env 文件）
