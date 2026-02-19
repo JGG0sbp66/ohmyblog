@@ -1,4 +1,4 @@
-<!-- src/components/icon/User.vue -->
+<!-- src/components/icon/common/User.vue -->
 <script setup lang="ts">
 import { RiUserLine } from "@remixicon/vue";
 const props = withDefaults(

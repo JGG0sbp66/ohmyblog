@@ -1,4 +1,4 @@
-<!-- src/components/icon/PanelTop.vue -->
+<!-- src/components/icon/ui/PanelTop.vue -->
 <script setup lang="ts">
 import { RiGalleryFill } from "@remixicon/vue";
 const props = withDefaults(

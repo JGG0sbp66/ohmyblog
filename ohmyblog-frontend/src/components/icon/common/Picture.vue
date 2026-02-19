@@ -1,4 +1,4 @@
-<!-- src/components/icon/Picture.vue -->
+<!-- src/components/icon/common/Picture.vue -->
 <script setup lang="ts">
 import { RiImageAddFill } from "@remixicon/vue";
 const props = withDefaults(

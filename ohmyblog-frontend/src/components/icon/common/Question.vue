@@ -1,4 +1,4 @@
-<!-- src/components/icon/Question.vue -->
+<!-- src/components/icon/common/Question.vue -->
 <script setup lang="ts">
 import { CircleQuestionMark } from "lucide-vue-next";
 const props = withDefaults(
