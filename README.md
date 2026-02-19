@@ -4,7 +4,7 @@
 
 ## 项目结构
 
-```
+```text
 ohmyblog-refactor/
 ├── ohmyblog-backend/    # 后端 API 服务
 └── ohmyblog-frontend/   # 前端 Web 应用
