@@ -70,7 +70,9 @@ const handleNext = () => {
         description: "站点基本信息（标题、图标、页脚、备案号）",
       });
     },
-    { validate: [titleInputRef.value, footerInputRef.value, icpInputRef.value] },
+    {
+      validate: [titleInputRef.value, footerInputRef.value, icpInputRef.value],
+    },
   );
 };
 </script>

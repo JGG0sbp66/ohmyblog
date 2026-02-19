@@ -2,7 +2,7 @@
 <script setup lang="ts">
 /**
  * SMTP 连接测试按钮组件
- * 
+ *
  * 功能：
  * 1. 监听 store 中的 SMTP 表单数据
  * 2. 当必填字段（host/port/username/password）都填写后显示测试按钮
