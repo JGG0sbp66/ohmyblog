@@ -25,7 +25,7 @@ bun install
 bun run dev
 ```
 
-服务器将在 http://localhost:3000 启动。
+服务器将在 <http://localhost:3000> 启动。
 
 ### 生产环境运行
 
@@ -96,4 +96,4 @@ Biome 的静态分析无法理解这种运行时保证，因此会误报警告�
 
 ## API 文档
 
-启动服务器后，访问 http://localhost:3000/openapi 查看 OpenAPI 文档。
+启动服务器后，访问 <http://localhost:3000/openapi> 查看 OpenAPI 文档。
