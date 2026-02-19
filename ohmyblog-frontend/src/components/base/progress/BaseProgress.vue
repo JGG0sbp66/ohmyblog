@@ -1,3 +1,4 @@
+<!-- src/components/base/progress/BaseProgress.vue -->
 <script setup lang="ts">
 import { computed } from "vue";
 import { useLang } from "@/composables/lang.hook";

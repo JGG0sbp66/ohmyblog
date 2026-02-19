@@ -1,3 +1,4 @@
+<!-- src/views/main/pages/home/index.vue -->
 <script lang="ts" setup>
 import MainLayout from "../../components/MainLayout.vue";
 </script>

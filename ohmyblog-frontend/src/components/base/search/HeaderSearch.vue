@@ -1,3 +1,4 @@
+<!-- src/components/base/search/HeaderSearch.vue -->
 <script lang="ts" setup>
 import Search from "@/components/icon/common/Search.vue";
 import ButtonSecondary from "../button/ButtonSecondary.vue";

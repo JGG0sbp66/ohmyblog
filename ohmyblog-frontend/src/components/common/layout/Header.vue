@@ -1,3 +1,4 @@
+<!-- src/components/common/layout/Header.vue -->
 <!--
 TODO: Header 组件优化清单
 1. [响应式/后期再考虑，需要实现] 移动端适配优化
