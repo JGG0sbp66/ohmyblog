@@ -43,7 +43,7 @@ const app = new Elysia()
 			.use(uploadRoute),
 	)
 	// 启动服务
-	.listen(config.PORT as number);
+	.listen(config.PORT);
 
 export type App = typeof app;
 
