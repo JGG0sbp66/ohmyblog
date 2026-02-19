@@ -1,4 +1,5 @@
 <!-- src/views/main/pages/home/index.vue -->
+<!-- TODO: 后续考虑是否将 main 改为嵌套路由结构（类似 admin），使用 /main 作为父路由，home 等页面作为子路由 -->
 <script lang="ts" setup>
 import MainLayout from "../../components/MainLayout.vue";
 </script>
