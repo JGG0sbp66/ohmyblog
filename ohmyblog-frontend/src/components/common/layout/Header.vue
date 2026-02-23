@@ -29,11 +29,11 @@ const { t } = useLang();
 const router = useRouter();
 const route = useRoute();
 
-// TODO: 目前还没开发“归档”和“关于”页面，暂时使用show页面作为占位符，后续开发完毕后再替换
+// TODO: 目前还没开发“归档”和“关于”页面，暂时作为占位符
 const navItems = computed(() => [
   { name: "home", label: t("components.common.layout.Header.nav.home") },
-  { name: "show", label: t("components.common.layout.Header.nav.archive") }, // TODO: 将路由名改为 archive
-  { name: "show", label: t("components.common.layout.Header.nav.about") }, // TODO: 将路由名改为 about
+  { name: "archive", label: t("components.common.layout.Header.nav.archive") },
+  { name: "about", label: t("components.common.layout.Header.nav.about") },
 ]);
 
 const handleNavClick = (routeName: string) => {
