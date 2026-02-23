@@ -6,17 +6,25 @@ const routes = [
   {
     path: "/setup",
     name: "setup",
-    component: () => import("@/views/setup/index.vue"),
+    component: () => import("@/views/setup/Setup.page.vue"),
   },
   {
     path: "/",
     name: "home",
-    component: () => import("@/views/main/pages/home/index.vue"),
+    component: () => import("@/views/main/pages/Home.page.vue"),
   },
+  // Admin 后台管理路由
   {
-    path: "/show",
-    name: "show",
-    component: () => import("@/views/show/index.vue"),
+    path: "/admin",
+    component: () => import("@/views/admin/components/AdminLayout.vue"),
+    children: [
+      {
+        // TODO: 当访问"admin/" 和 "admin/dashboard" 都能访问到 Dashboard 页面
+        path: "",
+        name: "dashboard",
+        component: () => import("@/views/admin/pages/Dashboard.page.vue"),
+      },
+    ],
   },
 ];
 
