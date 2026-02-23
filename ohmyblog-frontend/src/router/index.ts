@@ -3,25 +3,33 @@ import { createRouter, createWebHistory } from "vue-router";
 import { useSystemStore } from "@/stores/system.store";
 
 const routes = [
+  // 初始化安装路由
   {
     path: "/setup",
     name: "setup",
     component: () => import("@/views/setup/Setup.page.vue"),
   },
+  // 前台展示业务路由
   {
     path: "/",
-    name: "home",
-    component: () => import("@/views/main/pages/Home.page.vue"),
-  },
-  {
-    path: "/archive",
-    name: "archive",
-    component: () => import("@/views/main/pages/Archive.page.vue"),
-  },
-  {
-    path: "/about",
-    name: "about",
-    component: () => import("@/views/main/pages/About.page.vue"),
+    component: () => import("@/views/main/components/MainLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "home",
+        component: () => import("@/views/main/pages/Home.page.vue"),
+      },
+      {
+        path: "archive",
+        name: "archive",
+        component: () => import("@/views/main/pages/Archive.page.vue"),
+      },
+      {
+        path: "about",
+        name: "about",
+        component: () => import("@/views/main/pages/About.page.vue"),
+      },
+    ],
   },
   // Admin 后台管理路由
   {
