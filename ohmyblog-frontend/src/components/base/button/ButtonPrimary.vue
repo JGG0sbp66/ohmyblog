@@ -54,7 +54,7 @@ const dynamicClass = computed(() => {
     classes.push(
       "bg-accent",
       "hover:bg-accent-hover",
-      "active:scale-85",
+      "active:scale-90",
       "cursor-pointer",
     );
   }
