@@ -17,6 +17,7 @@ const routes = [
       {
         path: "",
         name: "home",
+        alias: "home",
         component: () => import("@/views/main/pages/Home.page.vue"),
       },
       {
@@ -37,9 +38,9 @@ const routes = [
     component: () => import("@/views/admin/components/AdminLayout.vue"),
     children: [
       {
-        // TODO: 当访问"admin/" 和 "admin/dashboard" 都能访问到 Dashboard 页面
         path: "",
         name: "dashboard",
+        alias: "dashboard",
         component: () => import("@/views/admin/pages/Dashboard.page.vue"),
       },
     ],
