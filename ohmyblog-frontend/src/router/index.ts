@@ -13,6 +13,16 @@ const routes = [
     name: "home",
     component: () => import("@/views/main/pages/Home.page.vue"),
   },
+  {
+    path: "/archive",
+    name: "archive",
+    component: () => import("@/views/main/pages/Archive.page.vue"),
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: () => import("@/views/main/pages/About.page.vue"),
+  },
   // Admin 后台管理路由
   {
     path: "/admin",
