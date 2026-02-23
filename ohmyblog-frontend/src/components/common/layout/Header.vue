@@ -20,6 +20,7 @@ import ToggleTheme from "@/components/theme/ToggleTheme.vue";
 import ToggleColor from "@/components/theme/ToggleColor.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import HeaderSearch from "@/components/base/search/HeaderSearch.vue";
+import SettingsButton from "@/components/common/button/SettingsButton.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useRouter, useRoute } from "vue-router";
 import { computed } from "vue";
@@ -68,6 +69,7 @@ const handleNavClick = (routeName: string) => {
         <ToggleColor />
         <ToggleTheme />
         <ToggleLanguage />
+        <SettingsButton />
       </div>
     </div>
   </header>
