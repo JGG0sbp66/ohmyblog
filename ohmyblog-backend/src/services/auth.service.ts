@@ -86,6 +86,29 @@ class AuthService {
 		this.logger.info({ userId: user.uuid }, "用户登录成功");
 		return user;
 	}
+
+	/**
+	 * 获取当前用户信息 (及状态校验)
+	 * @param uuid 用户唯一标识
+	 * @returns 精简后的用户信息
+	 */
+	async getMe(uuid: string) {
+		const user = await userDao.findById(uuid);
+		if (!user) {
+			throw new BusinessError("用户账户不存在", { status: 404 });
+		}
+
+		if (user.status === "banned") {
+			throw new BusinessError("账户已被封禁", { status: 403 });
+		}
+
+		return {
+			uuid: user.uuid,
+			username: user.username,
+			role: user.role,
+			avatar: user.avatarUrl,
+		};
+	}
 }
 
 export const authService = new AuthService();
