@@ -1,4 +1,5 @@
 <!-- src/views/main/pages/Home.page.vue -->
+<!-- TODO: 开发正式的首页内容，目前仅为占位符 -->
 <!-- TODO: 后续考虑是否将 main 改为嵌套路由结构（类似 admin），使用 /main 作为父路由，home 等页面作为子路由 -->
 <script lang="ts" setup>
 import MainLayout from "../components/MainLayout.vue";

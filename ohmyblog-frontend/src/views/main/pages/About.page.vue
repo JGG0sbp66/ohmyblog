@@ -1,4 +1,5 @@
 <!-- src/views/main/pages/About.page.vue -->
+<!-- TODO: 开发正式的关于页面，目前仅为占位符 -->
 <script setup lang="ts">
 import MainLayout from "../components/MainLayout.vue";
 </script>

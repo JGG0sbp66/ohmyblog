@@ -1,4 +1,5 @@
 <!-- src/views/main/pages/Archive.page.vue -->
+<!-- TODO: 开发正式的归档页面，目前仅为占位符 -->
 <script setup lang="ts">
 import MainLayout from "../components/MainLayout.vue";
 </script>
