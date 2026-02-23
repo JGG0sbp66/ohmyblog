@@ -1,8 +1,7 @@
 <!-- src/views/admin/pages/Dashboard.page.vue -->
 <script setup lang="ts">
 /**
- * TODO:
- * 后台管理仪表盘（开发中）
+ * // TODO: 后台管理仪表盘（开发中）
  * 目前仅作为占位页面，提供返回首页的简单跳转
  */
 import { useRouter } from 'vue-router';
