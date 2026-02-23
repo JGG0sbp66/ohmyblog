@@ -6,8 +6,10 @@ import MainLayout from "../components/MainLayout.vue";
 
 <template>
   <MainLayout>
-    <div class="container mx-auto px-4 py-8">
-      <h1 class="text-3xl font-bold">Welcome to OhMyBlog</h1>
+    <div class="flex items-center justify-center min-h-[50vh]">
+      <h1 class="text-4xl font-bold opacity-20 select-none">
+        这里是home页面占位符，正在开发中
+      </h1>
     </div>
   </MainLayout>
 </template>
