@@ -1,8 +1,8 @@
 <!-- src/components/base/upload/ImageUpload.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
-import Picture from "@/components/icon/Picture.vue";
-import Loading from "@/components/icon/Loading.vue";
+import Picture from "@/components/icon/common/Picture.vue";
+import Loading from "@/components/icon/common/Loading.vue";
 
 /**
  * 通用图片上传预览组件

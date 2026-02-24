@@ -1,4 +1,4 @@
-<!-- src/views/setup/index.vue -->
+<!-- src/views/setup/Setup.page.vue -->
 <script setup lang="ts">
 import TypingBrand from "@/components/icon/TypingBrand.vue";
 import Footer from "@/components/common/layout/Footer.vue";

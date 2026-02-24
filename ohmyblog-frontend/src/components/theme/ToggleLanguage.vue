@@ -1,3 +1,4 @@
+<!-- src/components/theme/ToggleLanguage.vue -->
 <script lang="ts" setup>
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import LanguagePicker from "../icon/theme/LanguagePicker.vue";

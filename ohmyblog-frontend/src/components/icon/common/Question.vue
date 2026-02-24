@@ -1,6 +1,6 @@
-<!-- src/components/icon/User.vue -->
+<!-- src/components/icon/common/Question.vue -->
 <script setup lang="ts">
-import { RiUserLine } from "@remixicon/vue";
+import { CircleQuestionMark } from "lucide-vue-next";
 const props = withDefaults(
   defineProps<{
     sizeClass?: string;
@@ -12,5 +12,5 @@ const props = withDefaults(
 </script>
 
 <template>
-  <RiUserLine :class="props.sizeClass" />
+  <CircleQuestionMark :class="props.sizeClass" />
 </template>

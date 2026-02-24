@@ -1,4 +1,4 @@
-<!-- src/views/setup/components/StepButton.vue -->
+<!-- src/components/common/button/StepButton.vue -->
 <script setup lang="ts">
 import { useLang } from "@/composables/lang.hook";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";

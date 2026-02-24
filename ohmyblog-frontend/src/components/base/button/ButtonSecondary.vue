@@ -52,7 +52,7 @@ const dynamicClass = computed(() => {
   } else {
     // 默认态：背景层隐藏，hover 时显示
     classes.push(
-      "before:opacity-0 before:scale-85",
+      "before:opacity-0 before:scale-90",
       "text-fg",
       "hover:before:opacity-100 hover:before:scale-100",
       "hover:text-fg-subtle",
@@ -60,7 +60,7 @@ const dynamicClass = computed(() => {
   }
 
   // 点击反馈
-  classes.push("active:scale-85 active:opacity-80");
+  classes.push("active:scale-90 active:opacity-80");
 
   return classes.join(" ");
 });

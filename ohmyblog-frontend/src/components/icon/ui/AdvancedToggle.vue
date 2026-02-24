@@ -1,4 +1,4 @@
-<!-- src/components/icon/AdvancedToggle.vue -->
+<!-- src/components/icon/ui/AdvancedToggle.vue -->
 <script setup lang="ts">
 import { ChevronDown } from "lucide-vue-next";
 

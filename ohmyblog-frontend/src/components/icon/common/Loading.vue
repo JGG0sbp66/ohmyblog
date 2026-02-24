@@ -1,4 +1,4 @@
-<!-- src/components/icon/Loading.vue -->
+<!-- src/components/icon/common/Loading.vue -->
 <script lang="ts" setup>
 const props = withDefaults(
   defineProps<{

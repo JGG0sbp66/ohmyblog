@@ -2,6 +2,7 @@ import { Elysia } from "elysia";
 import { LoginDTO, RegisterDTO } from "../dtos/auth.dto";
 import { config } from "../env";
 import { authPlugin } from "../plugins/auth.plugin";
+import { BusinessError } from "../plugins/errors";
 import { authService } from "../services/auth.service";
 
 export const authRoute = new Elysia({ name: "authRoute" }).group(
@@ -68,6 +69,20 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				{
 					detail: { summary: "用户登录" },
 					body: LoginDTO,
+				},
+			)
+			// === 获取当前用户信息 ===
+			.get(
+				"/me",
+				async ({ user }) => {
+					if (!user) {
+						throw new BusinessError("未登录或会话已过期", { status: 401 });
+					}
+
+					return await authService.getMe(user.uuid);
+				},
+				{
+					detail: { summary: "获取当前登录用户信息" },
 				},
 			)
 			// === 登出接口 ===

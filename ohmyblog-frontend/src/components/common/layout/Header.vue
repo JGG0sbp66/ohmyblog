@@ -1,3 +1,4 @@
+<!-- src/components/common/layout/Header.vue -->
 <!--
 TODO: Header 组件优化清单
 1. [响应式/后期再考虑，需要实现] 移动端适配优化
@@ -19,6 +20,7 @@ import ToggleTheme from "@/components/theme/ToggleTheme.vue";
 import ToggleColor from "@/components/theme/ToggleColor.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import HeaderSearch from "@/components/base/search/HeaderSearch.vue";
+import SettingsButton from "@/components/common/button/SettingsButton.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useRouter, useRoute } from "vue-router";
 import { computed } from "vue";
@@ -27,11 +29,11 @@ const { t } = useLang();
 const router = useRouter();
 const route = useRoute();
 
-// TODO: 目前还没开发“归档”和“关于”页面，暂时使用show页面作为占位符，后续开发完毕后再替换
+// TODO: 目前还没开发“归档”和“关于”页面，暂时作为占位符
 const navItems = computed(() => [
   { name: "home", label: t("components.common.layout.Header.nav.home") },
-  { name: "show", label: t("components.common.layout.Header.nav.archive") }, // TODO: 将路由名改为 archive
-  { name: "show", label: t("components.common.layout.Header.nav.about") }, // TODO: 将路由名改为 about
+  { name: "archive", label: t("components.common.layout.Header.nav.archive") },
+  { name: "about", label: t("components.common.layout.Header.nav.about") },
 ]);
 
 const handleNavClick = (routeName: string) => {
@@ -41,7 +43,9 @@ const handleNavClick = (routeName: string) => {
 <template>
   <header>
     <!-- 核心尺寸与居中 | 内部布局 | 背景与边框 -->
-    <div class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm">
+    <div
+      class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm"
+    >
       <!-- 左侧搜索区域 -->
       <div class="ml-4">
         <HeaderSearch />
@@ -65,6 +69,7 @@ const handleNavClick = (routeName: string) => {
         <ToggleColor />
         <ToggleTheme />
         <ToggleLanguage />
+        <SettingsButton />
       </div>
     </div>
   </header>
