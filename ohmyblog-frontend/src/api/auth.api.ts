@@ -23,3 +23,11 @@ export const login = (data: TLoginDTO) => {
 export const logout = () => {
   return unwrap(api.api.auth.logout.post());
 };
+
+/**
+ * GET /api/auth/me
+ * 获取当前登录用户
+ */
+export const getMe = () => {
+  return unwrap(api.api.auth.me.get());
+};
