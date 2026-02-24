@@ -2,12 +2,17 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useTheme } from "@/composables/theme.hook";
+import { useAuthStore } from "@/stores/auth.store";
 import { useSystemStore } from "@/stores/system.store";
 
 const { initThemeConfig } = useTheme();
+const authStore = useAuthStore();
 const systemStore = useSystemStore();
 
 onMounted(() => {
+  // 初始化登录态与角色信息
+  void authStore.fetchMe();
+
   // 初始化主题配置，从服务器同步外观设置
   initThemeConfig();
 
