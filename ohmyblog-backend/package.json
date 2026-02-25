@@ -17,7 +17,7 @@
 		"build:linux": "bun run scripts/build.ts linux",
 		"build:mac": "bun run scripts/build.ts mac",
 		"build:all": "bun run scripts/build.ts all",
-		"docker:build": "bun run build:linux && docker build -t ohmyblog-backend -f scripts/Dockerfile ."
+		"docker": "docker build -t ohmyblog-backend -f scripts/Dockerfile ."
 	},
 	"dependencies": {
 		"@bogeychan/elysia-logger": "^0.1.10",
