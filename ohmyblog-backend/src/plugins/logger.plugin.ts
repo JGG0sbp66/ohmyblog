@@ -4,6 +4,8 @@ import { pino } from "pino";
 import { LOGS_DIR } from "../constants";
 import { BusinessError } from "./errors";
 
+const isDevelopment = Bun.env.NODE_ENV !== "production";
+
 const logConfig = {
 	level: "info",
 	hooks: {
@@ -31,16 +33,19 @@ const logConfig = {
 	},
 	transport: {
 		targets: [
-			// TODO: 这里要读取env，判断是否是开发环境，如果是开发环境，才使用这个，如果是生产环境，则不应该使用这段
-			// === 目标 1: 控制台输出 (开发用) ===
-			{
-				target: "pino-pretty",
-				options: {
-					colorize: true,
-					translateTime: "SYS:standard",
-					ignore: "pid,hostname",
-				},
-			},
+			// === 目标 1: 控制台输出 (仅开发环境) ===
+			...(isDevelopment
+				? [
+						{
+							target: "pino-pretty",
+							options: {
+								colorize: true,
+								translateTime: "SYS:standard",
+								ignore: "pid,hostname",
+							},
+						},
+					]
+				: []),
 			// === 目标 2: 文件输出 (只记录错误) ===
 			{
 				target: "pino/file",
