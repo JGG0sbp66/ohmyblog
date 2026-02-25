@@ -2,12 +2,12 @@
 
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import sharp from "sharp";
+import { transform } from "bun-image-turbo";
 
 export const ImageService = {
 	/**
 	 * 优化并保存图片
-	 * 自动处理图片旋转、格式转换（图标转 PNG，普通图片转 WebP）并确保目标目录存在
+	 * 自动处理图片格式转换（图标转 PNG，普通图片转 WebP）并确保目标目录存在
 	 *
 	 * @param file 原始文件 (File 对象)
 	 * @param targetPath 目标物理路径 (支持相对或绝对路径)
@@ -25,17 +25,30 @@ export const ImageService = {
 		const absolutePath = path.resolve(targetPath);
 		await mkdir(path.dirname(absolutePath), { recursive: true });
 
-		const pipeline = sharp(buffer).rotate();
+		let processed: Uint8Array;
 
 		if (isIcon) {
-			await pipeline
-				.resize(128, 128, { fit: "inside", withoutEnlargement: true })
-				.png()
-				.toFile(absolutePath);
+			processed = await transform(buffer, {
+				resize: {
+					width: 128,
+					height: 128,
+					fit: "inside",
+				},
+				output: {
+					format: "png",
+				},
+			});
 		} else {
 			// 如果是博客普通图片：统一转 WebP
-			await pipeline.webp({ quality: 85 }).toFile(absolutePath);
+			processed = await transform(buffer, {
+				output: {
+					format: "webp",
+					webp: { quality: 85 },
+				},
+			});
 		}
+
+		await Bun.write(absolutePath, processed);
 
 		return absolutePath;
 	},
