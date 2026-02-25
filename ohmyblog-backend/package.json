@@ -12,7 +12,12 @@
 		"db:migrate": "drizzle-kit migrate --config=db/drizzle.config.ts",
 		"lint": "biome lint .",
 		"lint:fix": "biome check --write .",
-		"format": "biome format --write ."
+		"format": "biome format --write .",
+		"build:win": "bun run scripts/build.ts win",
+		"build:linux": "bun run scripts/build.ts linux",
+		"build:mac": "bun run scripts/build.ts mac",
+		"build:all": "bun run scripts/build.ts all",
+		"docker:build": "bun run build:linux && docker build -t ohmyblog-backend -f scripts/Dockerfile ."
 	},
 	"dependencies": {
 		"@bogeychan/elysia-logger": "^0.1.10",
@@ -20,11 +25,11 @@
 		"@elysiajs/openapi": "^1.4.14",
 		"@elysiajs/static": "^1.4.7",
 		"@paralleldrive/cuid2": "^3.3.0",
+		"bun-image-turbo": "^1.9.0",
 		"drizzle-orm": "^0.45.1",
 		"elysia": "^1.4.25",
 		"nodemailer": "^8.0.1",
 		"pino": "^10.3.1",
-		"sharp": "^0.34.5",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
