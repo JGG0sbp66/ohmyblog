@@ -2,10 +2,10 @@
 import { configDao, type NewConfig } from "../daos/config.dao";
 import type { TConfigUpsertDTO } from "../dtos/config.dto";
 import { BusinessError } from "../plugins/errors";
-import { systemLogger } from "../plugins/logger.plugin";
+import { logger } from "../plugins/logger.plugin";
 
 class ConfigService {
-	private logger = systemLogger.child({ module: "ConfigService" });
+	private logger = logger.withTag("ConfigService");
 
 	/**
 	 * 保存或更新配置, 存在则更新, 不存在则创建

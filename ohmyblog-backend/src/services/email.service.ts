@@ -2,10 +2,10 @@
 import nodemailer from "nodemailer";
 import type { TSMTPConfigUpsertDTO } from "../dtos/config.dto";
 import { BusinessError } from "../plugins/errors";
-import { systemLogger } from "../plugins/logger.plugin";
+import { logger } from "../plugins/logger.plugin";
 
 class EmailService {
-	private logger = systemLogger.child({ module: "EmailService" });
+	private logger = logger.withTag("EmailService");
 
 	/**
 	 * 测试 SMTP 服务器连接

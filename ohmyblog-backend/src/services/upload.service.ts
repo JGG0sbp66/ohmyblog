@@ -3,11 +3,11 @@ import { join } from "node:path";
 import { SYSTEM_UPLOADS_DIR } from "../constants";
 import { userDao } from "../daos/user.dao";
 import { BusinessError } from "../plugins/errors";
-import { systemLogger } from "../plugins/logger.plugin";
+import { logger } from "../plugins/logger.plugin";
 import { ImageService } from "./image.service";
 
 class UploadService {
-	private logger = systemLogger.child({ module: "UploadService" });
+	private logger = logger.withTag("UploadService");
 
 	/**
 	 * 上传并处理网站图标 (Favicon)

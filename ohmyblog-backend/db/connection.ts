@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { DB_PATH } from "../src/constants";
-import { systemLogger } from "../src/plugins/logger.plugin";
+import { logger } from "../src/plugins/logger.plugin";
 import * as schema from "./schema";
 
 // 1. 路径定义
@@ -17,7 +17,7 @@ export const db = drizzle(sqlite, { schema, logger: true });
 // 顶层 await 确保程序启动前表结构已经就绪
 try {
 	await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
-	systemLogger.info("✅ 数据库同步成功");
+	logger.info("✅ 数据库同步成功");
 } catch (error) {
-	systemLogger.error({ err: error }, "❌ 数据库同步失败");
+	logger.error({ err: error }, "❌ 数据库同步失败");
 }
