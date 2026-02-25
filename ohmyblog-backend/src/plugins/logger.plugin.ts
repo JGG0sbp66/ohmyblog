@@ -4,6 +4,16 @@ import { pino } from "pino";
 import { LOGS_DIR } from "../constants";
 import { BusinessError } from "./errors";
 
+/**
+ * TODO: 优化 Linux 下的日志传输方案
+ * 
+ * 现象：在 Linux 容器环境中使用 bun build --compile 打包后，Pino 的 Transport (Worker Threads)
+ * 寻找不到外部的 node_modules 导致 ModuleNotFound 错误。
+ * 
+ * 目前方案：在打包/生产环境下降级使用同步文件流 (fs.createWriteStream)，避开 Transport。
+ * 未来尝试：研究如何将 pino-pretty 或 pino/file 正确打包进单文件二进制，或升级 Bun 的相关支持。
+ */
+
 const isDevelopment = Bun.env.NODE_ENV !== "production";
 
 const logConfig = {
