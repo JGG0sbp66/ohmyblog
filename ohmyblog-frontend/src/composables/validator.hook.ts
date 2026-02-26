@@ -62,6 +62,11 @@ export function useValidator() {
       };
     }
 
+    // 对于非必填且内容为空的字段，直接视作校验通过，跳过后续 Schema 校验
+    if (!required && isEmpty) {
+      return { isValid: true, error: "" };
+    }
+
     // 2. Schema 校验
     if (schema) {
       // 字符串类型需要 trim，其他类型直接传入
