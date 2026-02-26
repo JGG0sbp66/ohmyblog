@@ -47,7 +47,7 @@ const [rightSideRef] = useAutoAnimate();
     class="min-h-screen flex flex-col bg-bg overflow-x-hidden overflow-y-clip"
   >
     <!-- main 撑满除 Footer 外的所有高度 -->
-    <main class="flex-1 flex flex-col p-4 md:p-8 gap-6 md:gap-10">
+    <main class="flex-1 flex flex-col p-8 gap-10">
       <!-- 进度条区域：内部间距由 main 的 gap 控制 -->
       <div class="w-full max-w-5xl mx-auto">
         <BaseProgress
