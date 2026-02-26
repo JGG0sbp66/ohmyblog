@@ -1,76 +1,108 @@
+import { appendFile } from "node:fs";
 import { join } from "node:path";
-import { logger } from "@bogeychan/elysia-logger";
-import { pino } from "pino";
+import { consola } from "consola";
+import Elysia from "elysia";
 import { LOGS_DIR } from "../constants";
-import { BusinessError } from "./errors";
 
 /**
- * TODO: 优化 Linux 下的日志传输方案
- * 
- * 现象：在 Linux 容器环境中使用 bun build --compile 打包后，Pino 的 Transport (Worker Threads)
- * 寻找不到外部的 node_modules 导致 ModuleNotFound 错误。
- * 
- * 目前方案：在打包/生产环境下降级使用同步文件流 (fs.createWriteStream)，避开 Transport。
- * 未来尝试：研究如何将 pino-pretty 或 pino/file 正确打包进单文件二进制，或升级 Bun 的相关支持。
+ * 全局日志实例，使用 consola 默认配置
  */
+export const logger = consola;
 
-const isDevelopment = Bun.env.NODE_ENV !== "production";
+/**
+ * 文件日志 Reporter
+ *
+ * 将 ERROR 和 FATAL 级别的日志持久化到 error.log 文件
+ *
+ */
+consola.addReporter({
+	log(logObj) {
+		// 过滤：只记录严重错误，忽略 info/warn/success 等
+		if (logObj.type !== "error" && logObj.type !== "fatal") return;
 
-const logConfig = {
-	level: "info",
-	hooks: {
-		/**
-		 * 业务可预期异常不写入 error 日志（silent）
-		 */
-		logMethod(args: unknown[], method: (...a: unknown[]) => void) {
-			const payload = args[0] as
-				| { err?: unknown; error?: unknown; code?: string }
-				| undefined;
-			const err: unknown = payload?.err ?? payload?.error ?? payload;
+		try {
+			// 1. 构建日志文件路径（例如：/app/logs/error.log）
+			const logFile = join(LOGS_DIR, "error.log");
 
-			// 1. 业务可预期异常且显式要求静默则不记录
-			if (err instanceof BusinessError && err.silent) {
-				return;
+			// 2. 生成 ISO 8601 格式的时间戳（例如：2026-02-25T14:30:45.123Z）
+			const timestamp = new Date().toISOString();
+
+			// 3. 提取标签（如果有的话，格式化为 [标签] ）
+			const tag = logObj.tag ? `[${logObj.tag}] ` : "";
+
+			// 4. 格式化日志内容
+			// 格式：[时间戳] [标签] 级别: JSON序列化的参数
+			// 例如：[2026-02-25T14:30:45.123Z] [AuthService] ERROR: ["数据库错误",{"message":"...","stack":"..."}]
+			const content = `[${timestamp}] ${tag}${logObj.type.toUpperCase()}: ${JSON.stringify(
+				logObj.args,
+				// 自定义序列化器：特殊处理 Error 对象
+				// 因为 JSON.stringify(new Error("xxx")) 会返回 "{}"，丢失错误信息
+				// 这里手动提取 message 和 stack，保留完整的错误堆栈
+				(_, v: unknown) =>
+					v instanceof Error ? { message: v.message, stack: v.stack } : v,
+			)}\n`;
+
+			// 5. 异步追加到文件末尾（不覆盖历史日志，不阻塞主线程）
+			appendFile(logFile, content, (err) => {
+				if (err && process.env.NODE_ENV === "development") {
+					console.warn("Failed to write error log:", err);
+				}
+			});
+		} catch (err) {
+			// 只有同步代码（如 JSON.stringify 或 join）抛出的错误会在这里捕获
+			if (process.env.NODE_ENV === "development") {
+				console.warn("Log formatting error:", err);
 			}
-
-			// 2. 框架抛出的验证错误和解析错误（400类客户端错误）不计入 error.log
-			if (payload?.code === "VALIDATION" || payload?.code === "PARSE") {
-				return;
-			}
-
-			method.apply(this, args);
-		},
+		}
 	},
-	transport: {
-		targets: [
-			// === 目标 1: 控制台输出 (仅开发环境) ===
-			...(isDevelopment
-				? [
-						{
-							target: "pino-pretty",
-							options: {
-								colorize: true,
-								translateTime: "SYS:standard",
-								ignore: "pid,hostname",
-							},
-						},
-					]
-				: []),
-			// === 目标 2: 文件输出 (只记录错误) ===
-			{
-				target: "pino/file",
-				level: "error",
-				options: {
-					destination: join(LOGS_DIR, "error.log"),
-					mkdir: true,
-				},
-			},
-		],
-	},
-};
+});
 
-// 单独配置实例，当非http请求时也能使用
-export const systemLogger = pino(logConfig);
+/**
+ * 使用 WeakMap 存储每个请求的开始时间。
+ * 当 Request 对象因请求结束被垃圾回收时，这里对应的 entry 会自动清理，避免内存泄漏。
+ */
+const requestTimings = new WeakMap<Request, number>();
 
-// Elysia 日志插件
-export const logPlugin = logger({ ...logConfig });
+/**
+ * Elysia 请求日志插件
+ * 记录每个 HTTP 请求的方法、路径、状态码和响应时间
+ */
+export const logPlugin = new Elysia({ name: "logPlugin" })
+	// 阶段 1：请求到达时，记录高精度起始时间戳
+	.onRequest(({ request }) => {
+		requestTimings.set(request, performance.now());
+	})
+	// 阶段 2：请求处理完成（但在发送响应前）
+	.onAfterHandle({ as: "global" }, ({ request, set, path }) => {
+		const startTime = requestTimings.get(request);
+		// 计算耗时：当前时间 - 起始时间
+		const duration = startTime
+			? ` (${(performance.now() - startTime).toFixed(2)}ms)`
+			: "";
+		
+		// 获取状态码，如果没设则默认为 200
+		const status = Number(set.status) || 200;
+		const msg = `${request.method} ${path} -> ${status}${duration}`;
+
+		// 根据状态码区分日志级别：400 及以上显示为警告(黄色)，以下显示为成功(绿色)
+		if (status >= 400) {
+			logger.warn(msg);
+		} else {
+			logger.success(msg);
+		}
+
+		// 处理完毕，手动清理 Map 中的引用，虽然 WeakMap 会自动回收，但手动删除更即时
+		requestTimings.delete(request);
+	})
+	// 阶段 3：如果处理过程中发生代码错误（如 500 错误）
+	.onError({ as: "global" }, ({ request, error, code, path }) => {
+		// 记录详细的错误信息，包括错误堆栈
+		logger.error({
+			message: `${request.method} ${path}`,
+			code,
+			error,
+		});
+
+		// 错误发生后也需要清理时间戳记录
+		requestTimings.delete(request);
+	});
