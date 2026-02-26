@@ -6,10 +6,6 @@ LABEL git-commit=$GIT_COMMIT
 
 WORKDIR /app
 
-# 环境变量设置为 production 以确保编译行为正确
-# TODO: 实测发现，依然是“Server started in development mode”
-ENV NODE_ENV=production
-
 # 复制依赖定义并安装
 COPY package.json ./
 RUN bun install --frozen-lockfile
@@ -30,6 +26,9 @@ FROM alpine:latest
 ARG GIT_COMMIT=unknown
 ENV GIT_COMMIT=$GIT_COMMIT
 LABEL git-commit=$GIT_COMMIT
+
+# 设置运行时环境变量，确保应用以生产模式运行
+ENV NODE_ENV=production
 
 WORKDIR /app
 
