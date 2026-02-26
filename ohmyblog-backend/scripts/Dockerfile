@@ -42,12 +42,9 @@ RUN apk add --no-cache \
 
 # 从构建阶段复制编译好的资源
 # 仅复制必要的二进制文件、native 模块和迁移文件，忽略 README 和 sourcemaps
-COPY --from=builder /app/scripts/dist/linux-musl/ohmyblog /app/
+COPY --from=builder --chmod=755 /app/scripts/dist/linux-musl/ohmyblog /app/
 COPY --from=builder /app/scripts/dist/linux-musl/image-turbo.linux-x64-musl.node /app/
 COPY --from=builder /app/scripts/dist/linux-musl/db/ /app/db/
-
-# 设置程序执行权限
-RUN chmod +x /app/ohmyblog
 
 # 定义数据挂载点
 VOLUME ["/app/data"]
