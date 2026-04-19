@@ -52,7 +52,7 @@ const isItemActive = (item: (typeof menuItems.value)[0]) => {
     @mouseenter="isExpanded = true"
     @mouseleave="isExpanded = false"
     :class="[
-      'bg-bg-card rounded-r-3xl shadow-sm py-6 flex flex-col items-start transition-all duration-300',
+      'bg-bg-card rounded-r-3xl shadow-sm py-6 flex flex-col items-start transition-all duration-300 animate-fade-in animate-delay-50',
       isExpanded ? 'w-48' : 'w-20',
     ]"
   >
