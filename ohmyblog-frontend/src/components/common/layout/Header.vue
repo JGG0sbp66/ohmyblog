@@ -41,7 +41,7 @@ const handleNavClick = (routeName: string) => {
 };
 </script>
 <template>
-  <header>
+  <header class="animate-fade-in">
     <!-- 核心尺寸与居中 | 内部布局 | 背景与边框 -->
     <div
       class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm"
