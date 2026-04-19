@@ -33,6 +33,12 @@ const routes = [
       },
     ],
   },
+  // Admin 登录路由
+  {
+    path: "/admin/login",
+    name: "login",
+    component: () => import("@/views/admin/pages/Login.page.vue"),
+  },
   // Admin 后台管理路由
   {
     path: "/admin",
@@ -81,7 +87,7 @@ router.beforeEach(async (to) => {
     }
 
     if (!authStore.isAdmin) {
-      return { name: "home" };
+      return { name: "login" };
     }
   }
 
