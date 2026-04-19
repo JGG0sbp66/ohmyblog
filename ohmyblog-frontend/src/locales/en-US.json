@@ -42,6 +42,24 @@
     }
   },
   "views": {
+    "login": {
+      "brand": {
+        "line1": "Hey there",
+        "line2": "Ready to create?",
+        "line3": "Let's pick up where you left off"
+      },
+      "title": "Welcome back",
+      "description": "Sign in to manage your blog",
+      "identifier": {
+        "label": "Username or Email",
+        "placeholder": "Enter your username or email"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password"
+      },
+      "submit": "Sign In"
+    },
     "setup": {
       "steps": {
         "step1": {

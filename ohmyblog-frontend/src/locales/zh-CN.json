@@ -42,6 +42,24 @@
     }
   },
   "views": {
+    "login": {
+      "brand": {
+        "line1": "嘿,好久不见",
+        "line2": "准备好了吗",
+        "line3": "让我们继续创作"
+      },
+      "title": "欢迎回来",
+      "description": "登录后继续管理你的博客",
+      "identifier": {
+        "label": "用户名或邮箱",
+        "placeholder": "请输入用户名或邮箱"
+      },
+      "password": {
+        "label": "密码",
+        "placeholder": "请输入密码"
+      },
+      "submit": "登录"
+    },
     "setup": {
       "steps": {
         "step1": {
