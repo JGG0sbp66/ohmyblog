@@ -43,12 +43,12 @@ const routes = [
   {
     path: "/admin",
     meta: { requiresAdmin: true },
+    redirect: { name: "dashboard" },
     component: () => import("@/views/admin/components/layout/AdminLayout.vue"),
     children: [
       {
-        path: "",
+        path: "dashboard",
         name: "dashboard",
-        alias: "dashboard",
         component: () => import("@/views/admin/pages/Dashboard.page.vue"),
       },
     ],
