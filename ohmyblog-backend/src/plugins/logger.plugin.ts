@@ -79,7 +79,7 @@ export const logPlugin = new Elysia({ name: "logPlugin" })
 		const duration = startTime
 			? ` (${(performance.now() - startTime).toFixed(2)}ms)`
 			: "";
-		
+
 		// 获取状态码，如果没设则默认为 200
 		const status = Number(set.status) || 200;
 		const msg = `${request.method} ${path} -> ${status}${duration}`;

@@ -2,7 +2,7 @@
 
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-import { transform } from "bun-image-turbo";
+import { transform } from "imgkit";
 
 export const ImageService = {
 	/**
