@@ -15,7 +15,9 @@ import AdminHeader from "./AdminHeader.vue";
       <AdminSidebar />
 
       <!-- 主内容区 -->
-      <main class="flex-1 p-6 overflow-y-auto">
+      <main
+        class="flex-1 p-6 overflow-y-auto animate-fade-in animate-delay-150"
+      >
         <router-view />
       </main>
     </div>
