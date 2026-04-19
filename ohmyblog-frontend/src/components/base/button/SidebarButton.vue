@@ -33,8 +33,8 @@ const props = withDefaults(
 
 // 静态基础样式
 const baseClass = `
-  h-14 flex items-center
-  rounded-2xl
+  h-12 flex items-center
+  rounded-xl
   transition-all duration-300
   overflow-hidden
   relative
@@ -42,7 +42,7 @@ const baseClass = `
   before:content-['']
   before:absolute before:top-0 before:left-0
   before:w-full before:h-full
-  before:rounded-2xl
+  before:rounded-xl
   before:bg-bg-muted
 `;
 
@@ -54,7 +54,7 @@ const dynamicClass = computed(() => {
   if (props.isExpanded) {
     classes.push("w-full px-4");
   } else {
-    classes.push("w-14 px-0");
+    classes.push("w-12 px-0");
   }
 
   // 激活状态或默认状态
@@ -81,7 +81,7 @@ const dynamicClass = computed(() => {
 const contentClass = "relative z-10 pointer-events-none";
 
 // 图标容器 - 固定宽度，始终居中
-const iconContainerClass = "w-14 flex items-center justify-center shrink-0";
+const iconContainerClass = "w-12 flex items-center justify-center shrink-0";
 </script>
 
 <template>
