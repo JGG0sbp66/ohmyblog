@@ -10,6 +10,16 @@
           }
         }
       },
+      "admin": {
+        "AdminSidebar": {
+          "nav": {
+            "dashboard": "Dashboard",
+            "posts": "Write",
+            "emails": "Emails",
+            "settings": "Settings"
+          }
+        }
+      },
       "input": {
         "TipInput": {
           "required": "This field cannot be empty"

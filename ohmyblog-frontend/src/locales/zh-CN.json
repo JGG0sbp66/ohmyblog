@@ -10,6 +10,16 @@
           }
         }
       },
+      "admin": {
+        "AdminSidebar": {
+          "nav": {
+            "dashboard": "仪表盘",
+            "posts": "写文章",
+            "emails": "邮件",
+            "settings": "设置"
+          }
+        }
+      },
       "input": {
         "TipInput": {
           "required": "此项不能为空"
