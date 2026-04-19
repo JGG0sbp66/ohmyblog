@@ -62,23 +62,23 @@ async function build(platform: Platform) {
 	await mkdir(join(distDir, "db"), { recursive: true });
 	await cp(drizzleSource, drizzleDest, { recursive: true });
 
-	// 4. 复制 bun-image-turbo 的 native 二进制文件
-	console.log(`   Copying native modules for bun-image-turbo...`);
+	// 4. 复制 imgkit 的 native 二进制文件
+	console.log(`   Copying native modules for imgkit...`);
 	const nativeConfigs = {
 		win: {
-			pkg: "bun-image-turbo-win32-x64-msvc",
+			pkg: "imgkit-windows-x64",
 			file: "image-turbo.win32-x64-msvc.node",
 		},
 		linux: {
-			pkg: "bun-image-turbo-linux-x64-gnu",
+			pkg: "imgkit-linux-x64-gnu",
 			file: "image-turbo.linux-x64-gnu.node",
 		},
 		"linux-musl": {
-			pkg: "bun-image-turbo-linux-x64-musl",
+			pkg: "imgkit-linux-x64-musl",
 			file: "image-turbo.linux-x64-musl.node",
 		},
 		mac: {
-			pkg: "bun-image-turbo-darwin-arm64",
+			pkg: "imgkit-darwin-arm64",
 			file: "image-turbo.darwin-arm64.node",
 		},
 	};
