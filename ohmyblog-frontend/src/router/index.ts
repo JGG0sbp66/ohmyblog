@@ -51,6 +51,21 @@ const routes = [
         name: "dashboard",
         component: () => import("@/views/admin/pages/Dashboard.page.vue"),
       },
+      {
+        path: "posts",
+        name: "posts",
+        component: () => import("@/views/admin/pages/PostNew.page.vue"),
+      },
+      {
+        path: "emails",
+        name: "emails",
+        component: () => import("@/views/admin/pages/Emails.page.vue"),
+      },
+      {
+        path: "settings",
+        name: "settings",
+        component: () => import("@/views/admin/pages/Settings.page.vue"),
+      },
     ],
   },
 ];
