@@ -80,7 +80,7 @@ const handleLogin = async () => {
         >
           <div class="flex flex-col gap-6">
             <!-- 标题 -->
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 animate-fade-in">
               <h1 class="text-2xl font-bold text-fg">
                 {{ t("views.login.title") }}
               </h1>
@@ -92,28 +92,34 @@ const handleLogin = async () => {
             <!-- 表单 -->
             <form @submit.prevent="handleLogin" class="flex flex-col gap-6">
               <!-- 用户名/邮箱 -->
-              <TipInput
-                ref="identifierRef"
-                v-model="form.identifier"
-                :label="t('views.login.identifier.label')"
-                :placeholder="t('views.login.identifier.placeholder')"
-                :schema="LoginDTO.properties.identifier"
-                required
-              />
+              <div class="animate-fade-in animate-delay-50">
+                <TipInput
+                  ref="identifierRef"
+                  v-model="form.identifier"
+                  :label="t('views.login.identifier.label')"
+                  :placeholder="t('views.login.identifier.placeholder')"
+                  :schema="LoginDTO.properties.identifier"
+                  required
+                />
+              </div>
 
               <!-- 密码 -->
-              <TipInput
-                ref="passwordRef"
-                v-model="form.password"
-                type="password"
-                :label="t('views.login.password.label')"
-                :placeholder="t('views.login.password.placeholder')"
-                :schema="LoginDTO.properties.password"
-                required
-              />
+              <div class="animate-fade-in animate-delay-100">
+                <TipInput
+                  ref="passwordRef"
+                  v-model="form.password"
+                  type="password"
+                  :label="t('views.login.password.label')"
+                  :placeholder="t('views.login.password.placeholder')"
+                  :schema="LoginDTO.properties.password"
+                  required
+                />
+              </div>
 
               <!-- 登录按钮 -->
-              <div class="flex justify-end pt-4 gap-48">
+              <div
+                class="flex justify-end pt-4 gap-48 animate-fade-in animate-delay-150"
+              >
                 <div class="flex-1"></div>
                 <ButtonPrimary
                   :text="t('views.login.submit')"
