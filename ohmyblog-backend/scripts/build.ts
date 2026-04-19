@@ -52,7 +52,7 @@ async function build(platform: Platform) {
 			outfile: join(distDir, exeName),
 		},
 		minify: true,
-		sourcemap: "linked",
+		sourcemap: "none", // 生产环境不需要 sourcemap
 	});
 
 	// 3. 复制 db/drizzle 目录（包含迁移 SQL 文件）
