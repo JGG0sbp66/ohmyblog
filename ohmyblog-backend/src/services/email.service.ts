@@ -32,11 +32,11 @@ class EmailService {
 			});
 
 			// 验证 SMTP 连接和认证信息
+			// 注意：此验证仅测试服务器连接和账号认证是否可用，不验证发件人地址 (senderEmail) 的有效性。
+			// 对于 QQ/Gmail 等个人邮箱服务商，如果 senderEmail 与 username 不一致，
+			// 虽然此处验证能通过，但实际发送邮件时可能会报 501 错误。
+			// 建议：个人邮箱留空 senderEmail 或填写与 username 相同的地址；域名邮件服务（如 Resend）无此限制。
 			await transporter.verify();
-
-			// TODO: 后续考虑增加发件人地址 (senderEmail) 的真实性检查。
-			// 对于 QQ/Gmail 等公共服务商，如果 auth.user 与 senderEmail 不一致，虽然 verify() 能过，
-			// 但真正 sendMail() 时会报 501 错误。后续需要修改验证逻辑。
 
 			this.logger.info({ host: smtpConfig.host }, "SMTP 连接测试成功");
 			return { message: "SMTP 服务器连接成功" };
