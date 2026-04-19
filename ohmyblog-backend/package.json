@@ -24,10 +24,10 @@
 		"@elysiajs/openapi": "^1.4.14",
 		"@elysiajs/static": "^1.4.7",
 		"@paralleldrive/cuid2": "^3.3.0",
-		"bun-image-turbo": "^1.9.0",
 		"consola": "^3.4.2",
 		"drizzle-orm": "^0.45.1",
 		"elysia": "^1.4.25",
+		"imgkit": "^2.2.1",
 		"nodemailer": "^8.0.1",
 		"zod": "^4.3.6"
 	},

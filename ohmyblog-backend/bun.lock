@@ -9,10 +9,10 @@
         "@elysiajs/openapi": "^1.4.14",
         "@elysiajs/static": "^1.4.7",
         "@paralleldrive/cuid2": "^3.3.0",
-        "bun-image-turbo": "^1.9.0",
         "consola": "^3.4.2",
         "drizzle-orm": "^0.45.1",
         "elysia": "^1.4.25",
+        "imgkit": "^2.2.1",
         "nodemailer": "^8.0.1",
         "zod": "^4.3.6",
       },
@@ -168,22 +168,6 @@
 
     "buffer-from": ["buffer-from@1.1.2", "https://registry.npmmirror.com/buffer-from/-/buffer-from-1.1.2.tgz", {}, "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ=="],
 
-    "bun-image-turbo": ["bun-image-turbo@1.9.0", "https://registry.npmmirror.com/bun-image-turbo/-/bun-image-turbo-1.9.0.tgz", { "optionalDependencies": { "bun-image-turbo-darwin-arm64": "1.9.0", "bun-image-turbo-darwin-x64": "1.9.0", "bun-image-turbo-linux-arm64-gnu": "1.9.0", "bun-image-turbo-linux-x64-gnu": "1.9.0", "bun-image-turbo-linux-x64-musl": "1.9.0", "bun-image-turbo-win32-arm64-msvc": "1.9.0", "bun-image-turbo-win32-x64-msvc": "1.9.0" } }, "sha512-RybnrBL6mIswFad2ByFmZTGvpJILUadymSizq22UGpF8WGVBy/tne8FxdvggM6WjA5SyW7aSiXB/XghVIeF7cA=="],
-
-    "bun-image-turbo-darwin-arm64": ["bun-image-turbo-darwin-arm64@1.9.0", "https://registry.npmmirror.com/bun-image-turbo-darwin-arm64/-/bun-image-turbo-darwin-arm64-1.9.0.tgz", { "os": "darwin", "cpu": "arm64" }, "sha512-iX7h5xakesyQ3xrE1IddogRvdjLRSHottYH9BJCYnxobGhCpN8HXv+vpOZeyG/3bHuhcQRYqQHXo96xW6cs4gw=="],
-
-    "bun-image-turbo-darwin-x64": ["bun-image-turbo-darwin-x64@1.9.0", "https://registry.npmmirror.com/bun-image-turbo-darwin-x64/-/bun-image-turbo-darwin-x64-1.9.0.tgz", { "os": "darwin", "cpu": "x64" }, "sha512-YE6krnlh3KWu0nw1eh/ywql1+kApkZpiwfDx/FfkhLIokBJYMwUjie9q9HPRkpjyoQGPbB8pxNAkJyi1IyOw1w=="],
-
-    "bun-image-turbo-linux-arm64-gnu": ["bun-image-turbo-linux-arm64-gnu@1.9.0", "https://registry.npmmirror.com/bun-image-turbo-linux-arm64-gnu/-/bun-image-turbo-linux-arm64-gnu-1.9.0.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-cP0Hfa+DadeSrnIO1H+X4Zz0Pmlj9x2QnxFcah/ann6Cc7mfiHWaeussjDD1VHvAwLK/h52/x/MYkwn83veuog=="],
-
-    "bun-image-turbo-linux-x64-gnu": ["bun-image-turbo-linux-x64-gnu@1.9.0", "https://registry.npmmirror.com/bun-image-turbo-linux-x64-gnu/-/bun-image-turbo-linux-x64-gnu-1.9.0.tgz", { "os": "linux", "cpu": "x64" }, "sha512-qkq7pFTifVbcNq/u/lYRDihldQBsc2gBIoZPmaJpUuiNMJ9rGXIqGpV637v8WCikDh8LCXRTN0n40rXXY53+Xw=="],
-
-    "bun-image-turbo-linux-x64-musl": ["bun-image-turbo-linux-x64-musl@1.9.0", "https://registry.npmmirror.com/bun-image-turbo-linux-x64-musl/-/bun-image-turbo-linux-x64-musl-1.9.0.tgz", { "os": "linux", "cpu": "x64" }, "sha512-rtQuNGea+e29JBIF63wwSFJbHYwc6jnFODse/LOA3e3zWR2tYIRnfWPZEUYe7N4ypurnJ76zFU0KhwWNY2gHmg=="],
-
-    "bun-image-turbo-win32-arm64-msvc": ["bun-image-turbo-win32-arm64-msvc@1.9.0", "https://registry.npmmirror.com/bun-image-turbo-win32-arm64-msvc/-/bun-image-turbo-win32-arm64-msvc-1.9.0.tgz", { "os": "win32", "cpu": "arm64" }, "sha512-ObS1o1CpdMcPTq42OBTlPKJdwIEZ0bdmDAyPGPhqr7/OKaskopLrE71IndiUmXK6cGfd/VDjUjbX+fLuX6OTmw=="],
-
-    "bun-image-turbo-win32-x64-msvc": ["bun-image-turbo-win32-x64-msvc@1.9.0", "https://registry.npmmirror.com/bun-image-turbo-win32-x64-msvc/-/bun-image-turbo-win32-x64-msvc-1.9.0.tgz", { "os": "win32", "cpu": "x64" }, "sha512-lnqXoUENbG4lODvgIvegZtrCJur3t/JssYfpsH032mk8VCLejHWr46aEZmfCbb9wTeR0t72OOsTAbG/nMsHADA=="],
-
     "bun-types": ["bun-types@1.3.9", "https://registry.npmmirror.com/bun-types/-/bun-types-1.3.9.tgz", { "dependencies": { "@types/node": "*" } }, "sha512-+UBWWOakIP4Tswh0Bt0QD0alpTY8cb5hvgiYeWCMet9YukHbzuruIEeXC2D7nMJPB12kbh8C7XJykSexEqGKJg=="],
 
     "chownr": ["chownr@1.1.4", "https://registry.npmmirror.com/chownr/-/chownr-1.1.4.tgz", {}, "sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg=="],
@@ -239,6 +223,22 @@
     "github-from-package": ["github-from-package@0.0.0", "https://registry.npmmirror.com/github-from-package/-/github-from-package-0.0.0.tgz", {}, "sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw=="],
 
     "ieee754": ["ieee754@1.2.1", "https://registry.npmmirror.com/ieee754/-/ieee754-1.2.1.tgz", {}, "sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA=="],
+
+    "imgkit": ["imgkit@2.2.1", "https://registry.npmmirror.com/imgkit/-/imgkit-2.2.1.tgz", { "optionalDependencies": { "imgkit-darwin-arm64": "2.2.1", "imgkit-darwin-x64": "2.2.1", "imgkit-linux-arm64-gnu": "2.2.1", "imgkit-linux-x64-gnu": "2.2.1", "imgkit-linux-x64-musl": "2.2.1", "imgkit-windows-arm64": "2.2.1", "imgkit-windows-x64": "2.2.1" }, "bin": { "imgkit-build": "dist/bin/imgkit-build.js" } }, "sha512-t+EqDBZYBr7kBBoTnbbOZQAgFC9W+64GsMgGlf8T1rdOXuE2IgyCLt9rvp4r0GWJlLBKzi/LuH8U/ZJwv1MGAA=="],
+
+    "imgkit-darwin-arm64": ["imgkit-darwin-arm64@2.2.1", "https://registry.npmmirror.com/imgkit-darwin-arm64/-/imgkit-darwin-arm64-2.2.1.tgz", { "os": "darwin", "cpu": "arm64" }, "sha512-pzFQZEnTUbKUqLAdX4pRcxhcBeD2E0GzFIomLU01tl7yS+pQ64NXMlnCY4xGu1/kwihTCOO6A4t9T1Jtb6UZOg=="],
+
+    "imgkit-darwin-x64": ["imgkit-darwin-x64@2.2.1", "https://registry.npmmirror.com/imgkit-darwin-x64/-/imgkit-darwin-x64-2.2.1.tgz", { "os": "darwin", "cpu": "x64" }, "sha512-uaYmLeXPhvkdv+ASHAbQTswLQ+T0tOgsTG4iAeMR4xw1WbAWM3IvLQCTggC/0b3OQyjJEwQz5+k/AXyAGUYR1g=="],
+
+    "imgkit-linux-arm64-gnu": ["imgkit-linux-arm64-gnu@2.2.1", "https://registry.npmmirror.com/imgkit-linux-arm64-gnu/-/imgkit-linux-arm64-gnu-2.2.1.tgz", { "os": "linux", "cpu": "arm64" }, "sha512-c9YEsAn3pWmPHMwpbkMnyoydmuIB56eZ5sIiCELP3CXv24Ton0ExjbPToSTNooK9EtW4lUdMHibfFwhqpgdooQ=="],
+
+    "imgkit-linux-x64-gnu": ["imgkit-linux-x64-gnu@2.2.1", "https://registry.npmmirror.com/imgkit-linux-x64-gnu/-/imgkit-linux-x64-gnu-2.2.1.tgz", { "os": "linux", "cpu": "x64" }, "sha512-Pm5X7Ikl57hCh+GLgrRYohF5kO4iJrmXRApwPIRhmkuh8rc5Xe6hS0nKeiZUBved14fDA3ZBDR0FJwHZn6S5wQ=="],
+
+    "imgkit-linux-x64-musl": ["imgkit-linux-x64-musl@2.2.1", "https://registry.npmmirror.com/imgkit-linux-x64-musl/-/imgkit-linux-x64-musl-2.2.1.tgz", { "os": "linux", "cpu": "x64" }, "sha512-a9qCjpWZGcBOFNv4Ze678103ikih95jR1n7NDW7M8Ry5ZlFqnFwxrZrsUhx5/aTGHJgDu9EJlGddHobh19Rzaw=="],
+
+    "imgkit-windows-arm64": ["imgkit-windows-arm64@2.2.1", "https://registry.npmmirror.com/imgkit-windows-arm64/-/imgkit-windows-arm64-2.2.1.tgz", { "os": "win32", "cpu": "arm64" }, "sha512-uPDo3zCiPNHFkzdT9895No0dp9KZFd2g5i17IiNdBMYYia8WdiThR+PKxKZS9mdLPD4dyWAFmEMlRZXxeQYhvw=="],
+
+    "imgkit-windows-x64": ["imgkit-windows-x64@2.2.1", "https://registry.npmmirror.com/imgkit-windows-x64/-/imgkit-windows-x64-2.2.1.tgz", { "os": "win32", "cpu": "x64" }, "sha512-eQ/mGUPgDz7kJaCpPF78sJcIPWWpO+PJJ6BpveTA0qXIDU93BTpSA5Q+cMT264qQZdpyhAg3KWE4anRLUdy4hw=="],
 
     "inherits": ["inherits@2.0.4", "https://registry.npmmirror.com/inherits/-/inherits-2.0.4.tgz", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
 
