@@ -48,8 +48,8 @@ const [rightSideRef] = useAutoAnimate();
   >
     <!-- main 撑满除 Footer 外的所有高度 -->
     <main class="flex-1 flex flex-col p-8 gap-10">
-      <!-- 进度条区域：内部间距由 main 的 gap 控制 -->
-      <div class="w-full max-w-5xl mx-auto">
+      <!-- 进度条区域：添加简单淡入动画 -->
+      <div class="w-full max-w-5xl mx-auto animate-fade-in">
         <BaseProgress
           :currentStep="stepStore.currentStep"
           :totalSteps="stepStore.totalSteps"
@@ -60,8 +60,11 @@ const [rightSideRef] = useAutoAnimate();
       <!-- 初始化/表单核心区域：使用 flex-1 占据所有剩余高度 -->
       <div class="flex-1 flex items-center justify-center">
         <div class="w-full max-w-5xl flex items-center justify-center gap-12">
-          <!-- 左侧：展示区 -->
-          <div ref="leftSideRef" class="hidden lg:block w-full">
+          <!-- 左侧：展示区 - 添加简单淡入动画和延迟 -->
+          <div
+            ref="leftSideRef"
+            class="hidden lg:block w-full animate-fade-in animate-delay-100"
+          >
             <div
               v-if="stepStore.currentStep === 4 && stepStore.isPersonalized"
               class="bg-bg-card rounded-3xl shadow-xl p-6"
@@ -86,10 +89,10 @@ const [rightSideRef] = useAutoAnimate();
             />
           </div>
 
-          <!-- 右侧：表单流程区 -->
+          <!-- 右侧：表单流程区 - 添加简单淡入动画和延迟 -->
           <div
             ref="rightSideRef"
-            class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl"
+            class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl animate-fade-in animate-delay-200"
           >
             <component
               :is="CurrentStepComponent"
@@ -100,7 +103,7 @@ const [rightSideRef] = useAutoAnimate();
       </div>
     </main>
 
-    <!-- 底部版权信息 -->
-    <Footer></Footer>
+    <!-- 底部版权信息 - 添加简单淡入动画 -->
+    <Footer class="animate-fade-in animate-delay-100"></Footer>
   </div>
 </template>

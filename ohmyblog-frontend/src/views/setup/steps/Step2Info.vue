@@ -85,38 +85,48 @@ const handleNext = () => {
     @next="handleNext"
   >
     <!-- 站点名称 -->
-    <TipInput
-      ref="titleInputRef"
-      v-model="systemStore.siteInfo.title"
-      :label="t('views.setup.steps.step2.siteTitle.label')"
-      :placeholder="t('views.setup.steps.step2.siteTitle.placeholder')"
-      :hint="t('views.setup.steps.step2.siteTitle.hint')"
-      :schema="SiteInfoConfigUpsertDTO.properties.configValue.properties.title"
-      required
-    />
+    <div class="animate-fade-in">
+      <TipInput
+        ref="titleInputRef"
+        v-model="systemStore.siteInfo.title"
+        :label="t('views.setup.steps.step2.siteTitle.label')"
+        :placeholder="t('views.setup.steps.step2.siteTitle.placeholder')"
+        :hint="t('views.setup.steps.step2.siteTitle.hint')"
+        :schema="
+          SiteInfoConfigUpsertDTO.properties.configValue.properties.title
+        "
+        required
+      />
+    </div>
 
     <!-- 页脚版权 -->
-    <TipInput
-      ref="footerInputRef"
-      v-model="systemStore.siteInfo.footer"
-      :label="t('views.setup.steps.step2.footer.label')"
-      :placeholder="t('views.setup.steps.step2.footer.placeholder')"
-      :hint="t('views.setup.steps.step2.footer.hint')"
-      :schema="SiteInfoConfigUpsertDTO.properties.configValue.properties.footer"
-    />
+    <div class="animate-fade-in animate-delay-100">
+      <TipInput
+        ref="footerInputRef"
+        v-model="systemStore.siteInfo.footer"
+        :label="t('views.setup.steps.step2.footer.label')"
+        :placeholder="t('views.setup.steps.step2.footer.placeholder')"
+        :hint="t('views.setup.steps.step2.footer.hint')"
+        :schema="
+          SiteInfoConfigUpsertDTO.properties.configValue.properties.footer
+        "
+      />
+    </div>
 
     <!-- 备案号 -->
-    <TipInput
-      ref="icpInputRef"
-      v-model="systemStore.siteInfo.icp"
-      :label="t('views.setup.steps.step2.icp.label')"
-      :placeholder="t('views.setup.steps.step2.icp.placeholder')"
-      :hint="t('views.setup.steps.step2.icp.hint')"
-      :schema="SiteInfoConfigUpsertDTO.properties.configValue.properties.icp"
-    />
+    <div class="animate-fade-in animate-delay-200">
+      <TipInput
+        ref="icpInputRef"
+        v-model="systemStore.siteInfo.icp"
+        :label="t('views.setup.steps.step2.icp.label')"
+        :placeholder="t('views.setup.steps.step2.icp.placeholder')"
+        :hint="t('views.setup.steps.step2.icp.hint')"
+        :schema="SiteInfoConfigUpsertDTO.properties.configValue.properties.icp"
+      />
+    </div>
 
     <!-- 站点图标上传 -->
-    <div class="space-y-2">
+    <div class="space-y-2 animate-fade-in animate-delay-300">
       <label class="block text-sm font-medium text-fg pb-1">
         {{ t("views.setup.steps.step2.siteIcon.label") }}
       </label>
