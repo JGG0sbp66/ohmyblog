@@ -11,7 +11,7 @@ COPY package.json ./
 RUN bun install --frozen-lockfile
 
 # 强制安装 musl 版本的 native 模块，以便在 builder (glibc) 中编译出 alpine 兼容包
-RUN bun add bun-image-turbo-linux-x64-musl
+RUN bun add imgkit-linux-x64-musl
 
 # 复制源代码及构建脚本
 COPY . .
