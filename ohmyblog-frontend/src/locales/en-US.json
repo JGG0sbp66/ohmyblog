@@ -18,11 +18,29 @@
             "emails": "Emails",
             "settings": "Settings"
           }
+        },
+        "AdminHeader": {
+          "pages": {
+            "dashboard": "Dashboard",
+            "posts": "Posts",
+            "emails": "Emails",
+            "settings": "Settings",
+            "default": "Admin"
+          },
+          "actions": {
+            "goHome": "Go to Home"
+          }
         }
       },
       "input": {
         "TipInput": {
           "required": "This field cannot be empty"
+        }
+      },
+      "button": {
+        "NotificationButton": {
+          "title": "Notifications",
+          "empty": "No notifications"
         }
       }
     },

@@ -18,11 +18,29 @@
             "emails": "邮件",
             "settings": "设置"
           }
+        },
+        "AdminHeader": {
+          "pages": {
+            "dashboard": "仪表盘",
+            "posts": "文章管理",
+            "emails": "邮件管理",
+            "settings": "系统设置",
+            "default": "管理后台"
+          },
+          "actions": {
+            "goHome": "返回首页"
+          }
         }
       },
       "input": {
         "TipInput": {
           "required": "此项不能为空"
+        }
+      },
+      "button": {
+        "NotificationButton": {
+          "title": "通知",
+          "empty": "暂无通知"
         }
       }
     },
