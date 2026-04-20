@@ -35,8 +35,8 @@ async function handleLogout() {
     const success = await authStore.logout();
     if (success) {
       isModalOpen.value = false;
-      // 跳转到登录页
-      router.push({ name: "login" });
+      // 跳转到首页
+      router.push({ name: "home" });
     }
   } finally {
     isLoggingOut.value = false;
