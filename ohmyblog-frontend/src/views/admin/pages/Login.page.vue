@@ -3,7 +3,9 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
+import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import TypingBrand from "@/components/icon/TypingBrand.vue";
+import ArrowLeft from "@/components/icon/ui/ArrowLeft.vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { login } from "@/api/auth.api";
 import { LoginDTO } from "@server/dtos/auth.dto";
@@ -62,73 +64,90 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-bg">
-    <main class="flex-1 flex items-center justify-center p-8">
-      <div class="w-full max-w-5xl flex items-center justify-center gap-12">
-        <!-- 左侧：品牌展示 -->
-        <div class="hidden lg:block w-full animate-fade-in">
-          <TypingBrand
-            :line1="t('views.login.brand.line1')"
-            :line2="t('views.login.brand.line2')"
-            :line3="t('views.login.brand.line3')"
-          />
-        </div>
+  <div
+    class="min-h-screen flex flex-col bg-bg overflow-x-hidden overflow-y-clip"
+  >
+    <!-- main 撑满除 Footer 外的所有高度 -->
+    <main class="flex-1 flex flex-col p-8 gap-10">
+      <!-- 核心区域：使用 flex-1 占据所有剩余高度 -->
+      <div class="flex-1 flex items-center justify-center">
+        <div class="w-full max-w-5xl flex items-center justify-center gap-12">
+          <!-- 左侧：品牌展示 -->
+          <div class="hidden lg:block w-full animate-fade-in">
+            <TypingBrand
+              :line1="t('views.login.brand.line1')"
+              :line2="t('views.login.brand.line2')"
+              :line3="t('views.login.brand.line3')"
+            />
+          </div>
 
-        <!-- 右侧：登录表单 -->
-        <div
-          class="w-full max-w-md bg-bg-card rounded-3xl shadow-xl p-8 animate-fade-in animate-delay-100"
-        >
-          <div class="flex flex-col gap-6">
-            <!-- 标题 -->
-            <div class="flex flex-col gap-2 animate-fade-in">
-              <h1 class="text-2xl font-bold text-fg">
-                {{ t("views.login.title") }}
-              </h1>
-              <p class="text-fg-subtle text-sm">
-                {{ t("views.login.description") }}
-              </p>
+          <!-- 右侧：登录表单 -->
+          <div
+            class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl p-8 animate-fade-in animate-delay-100"
+          >
+            <div class="flex flex-col gap-6">
+              <!-- 标题 -->
+              <div class="flex flex-col gap-2 animate-fade-in">
+                <h1 class="text-2xl font-bold text-fg">
+                  {{ t("views.login.title") }}
+                </h1>
+                <p class="text-fg-subtle text-sm">
+                  {{ t("views.login.description") }}
+                </p>
+              </div>
+
+              <!-- 表单 -->
+              <form @submit.prevent="handleLogin" class="flex flex-col gap-6">
+                <!-- 用户名/邮箱 -->
+                <div class="animate-fade-in animate-delay-50">
+                  <TipInput
+                    ref="identifierRef"
+                    v-model="form.identifier"
+                    :label="t('views.login.identifier.label')"
+                    :placeholder="t('views.login.identifier.placeholder')"
+                    :schema="LoginDTO.properties.identifier"
+                    required
+                  />
+                </div>
+
+                <!-- 密码 -->
+                <div class="animate-fade-in animate-delay-100">
+                  <TipInput
+                    ref="passwordRef"
+                    v-model="form.password"
+                    type="password"
+                    :label="t('views.login.password.label')"
+                    :placeholder="t('views.login.password.placeholder')"
+                    :schema="LoginDTO.properties.password"
+                    required
+                  />
+                </div>
+
+                <!-- 登录按钮 -->
+                <div class="pt-4 animate-fade-in animate-delay-150">
+                  <ButtonPrimary
+                    :text="t('views.login.submit')"
+                    :loading="isSubmitting"
+                    :disabled="isSubmitting"
+                    class="w-full py-2"
+                  />
+                </div>
+
+                <!-- 分割线 -->
+                <div class="border-t border-fg-muted/15"></div>
+
+                <!-- 返回首页按钮 -->
+                <div class="animate-fade-in animate-delay-200">
+                  <ButtonSecondary
+                    :text="t('views.login.backToHome')"
+                    @click="router.push({ name: 'home' })"
+                    class="w-full px-4! py-2!"
+                  >
+                    <ArrowLeft />
+                  </ButtonSecondary>
+                </div>
+              </form>
             </div>
-
-            <!-- 表单 -->
-            <form @submit.prevent="handleLogin" class="flex flex-col gap-6">
-              <!-- 用户名/邮箱 -->
-              <div class="animate-fade-in animate-delay-50">
-                <TipInput
-                  ref="identifierRef"
-                  v-model="form.identifier"
-                  :label="t('views.login.identifier.label')"
-                  :placeholder="t('views.login.identifier.placeholder')"
-                  :schema="LoginDTO.properties.identifier"
-                  required
-                />
-              </div>
-
-              <!-- 密码 -->
-              <div class="animate-fade-in animate-delay-100">
-                <TipInput
-                  ref="passwordRef"
-                  v-model="form.password"
-                  type="password"
-                  :label="t('views.login.password.label')"
-                  :placeholder="t('views.login.password.placeholder')"
-                  :schema="LoginDTO.properties.password"
-                  required
-                />
-              </div>
-
-              <!-- 登录按钮 -->
-              <div
-                class="flex justify-end pt-4 gap-48 animate-fade-in animate-delay-150"
-              >
-                <div class="flex-1"></div>
-                <ButtonPrimary
-                  :text="t('views.login.submit')"
-                  :loading="isSubmitting"
-                  :disabled="isSubmitting"
-                  class="flex-1 py-2"
-                />
-              </div>
-            </form>
           </div>
         </div>
       </div>
