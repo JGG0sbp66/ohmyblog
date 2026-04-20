@@ -5,6 +5,7 @@ import { useRouter, useRoute } from "vue-router";
 import { LayoutDashboard, PenLine, Mail, Settings } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import SidebarButton from "@/components/base/button/SidebarButton.vue";
+import AdminUserInfo from "../user/AdminUserInfo.vue";
 
 const isExpanded = ref(false);
 const router = useRouter();
@@ -66,7 +67,7 @@ const isItemActive = (item: MenuItem) => {
       isExpanded ? 'w-48' : 'w-20',
     ]"
   >
-    <nav class="flex flex-col gap-3 w-full px-3">
+    <nav class="flex flex-col gap-3 w-full px-3 flex-1">
       <template v-for="(group, groupIndex) in menuGroups" :key="groupIndex">
         <div class="flex flex-col gap-3">
           <SidebarButton
@@ -86,5 +87,8 @@ const isItemActive = (item: MenuItem) => {
         ></div>
       </template>
     </nav>
+
+    <!-- 管理员信息区域 -->
+    <AdminUserInfo :isExpanded="isExpanded" />
   </aside>
 </template>
