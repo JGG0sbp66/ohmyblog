@@ -86,7 +86,8 @@
         "label": "Password",
         "placeholder": "Enter your password"
       },
-      "submit": "Sign In"
+      "submit": "Sign In",
+      "backToHome": "Back to Home"
     },
     "setup": {
       "steps": {

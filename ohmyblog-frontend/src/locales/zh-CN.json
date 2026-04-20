@@ -86,7 +86,8 @@
         "label": "密码",
         "placeholder": "请输入密码"
       },
-      "submit": "登录"
+      "submit": "登录",
+      "backToHome": "返回首页"
     },
     "setup": {
       "steps": {
