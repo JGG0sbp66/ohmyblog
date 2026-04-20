@@ -17,6 +17,9 @@
             "posts": "写文章",
             "emails": "邮件",
             "settings": "设置"
+          },
+          "user": {
+            "logout": "点击退出登录"
           }
         },
         "AdminHeader": {

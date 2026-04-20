@@ -17,6 +17,9 @@
             "posts": "Write",
             "emails": "Emails",
             "settings": "Settings"
+          },
+          "user": {
+            "logout": "Click to logout"
           }
         },
         "AdminHeader": {
