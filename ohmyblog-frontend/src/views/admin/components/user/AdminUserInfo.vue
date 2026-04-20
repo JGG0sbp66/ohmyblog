@@ -4,6 +4,7 @@ import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useLang } from "@/composables/lang.hook";
 import { useAuthStore } from "@/stores/auth.store";
+import { useSystemStore } from "@/stores/system.store";
 import UserIcon from "@/components/icon/common/User.vue";
 import BaseModal from "@/components/base/pop/BaseModal.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
@@ -21,6 +22,7 @@ const props = withDefaults(
 
 const { t } = useLang();
 const authStore = useAuthStore();
+const systemStore = useSystemStore();
 const router = useRouter();
 
 // 弹窗状态
@@ -88,6 +90,9 @@ const contentClass = "relative z-10 pointer-events-none";
 
 // 头像容器 - 固定宽度，始终居中
 const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
+
+// 使用系统配置中的头像（即初始化/个性化设置中上传的管理员头像）
+const adminAvatar = computed(() => systemStore.personalInfo.avatar);
 </script>
 
 <template>
@@ -108,8 +113,8 @@ const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
           ]"
         >
           <img
-            v-if="authStore.user?.avatar"
-            :src="authStore.user.avatar"
+            v-if="adminAvatar"
+            :src="adminAvatar"
             :alt="authStore.user?.username"
             class="w-full h-full object-cover"
           />
