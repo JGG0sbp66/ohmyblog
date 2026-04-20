@@ -1,9 +1,14 @@
 <!-- src/views/admin/components/user/AdminUserInfo.vue -->
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useLang } from "@/composables/lang.hook";
 import { useAuthStore } from "@/stores/auth.store";
 import UserIcon from "@/components/icon/common/User.vue";
+import BaseModal from "@/components/base/pop/BaseModal.vue";
+import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
+import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
+import { TriangleAlert, Info } from "lucide-vue-next";
 
 const props = withDefaults(
   defineProps<{
@@ -16,6 +21,27 @@ const props = withDefaults(
 
 const { t } = useLang();
 const authStore = useAuthStore();
+const router = useRouter();
+
+// 弹窗状态
+const isModalOpen = ref(false);
+// 退出登录加载状态
+const isLoggingOut = ref(false);
+
+// 处理退出登录
+async function handleLogout() {
+  isLoggingOut.value = true;
+  try {
+    const success = await authStore.logout();
+    if (success) {
+      isModalOpen.value = false;
+      // 跳转到登录页
+      router.push({ name: "login" });
+    }
+  } finally {
+    isLoggingOut.value = false;
+  }
+}
 
 // 静态基础样式 - 参考 SidebarButton
 const baseClass = `
@@ -71,6 +97,7 @@ const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
       type="button"
       :class="[baseClass, dynamicClass]"
       :title="authStore.user?.username"
+      @click="isModalOpen = true"
     >
       <!-- 头像容器 - 固定宽度保证头像位置不变 -->
       <div :class="avatarContainerClass">
@@ -105,6 +132,44 @@ const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
         </div>
       </Transition>
     </button>
+
+    <!-- 用户信息弹窗 -->
+    <BaseModal v-model="isModalOpen" maxWidth="max-w-lg">
+      <template #header>
+        <div class="flex items-center gap-2">
+          <TriangleAlert class="w-5 h-5 text-red-500" />
+          <h2 class="text-xl font-bold text-fg">
+            {{ t("components.common.admin.AdminSidebar.user.modal.title") }}
+          </h2>
+        </div>
+      </template>
+
+      <div class="space-y-3">
+        <p class="text-fg text-sm">
+          {{ t("components.common.admin.AdminSidebar.user.modal.question") }}
+        </p>
+        <div class="flex items-center gap-1 text-red-500">
+          <Info class="w-3.5 h-3.5 shrink-0" />
+          <p class="text-xs">
+            {{ t("components.common.admin.AdminSidebar.user.modal.warning") }}
+          </p>
+        </div>
+      </div>
+
+      <template #footer>
+        <ButtonSecondary
+          :text="t('components.common.admin.AdminSidebar.user.modal.cancel')"
+          @click="isModalOpen = false"
+          class="min-w-24 py-2"
+        />
+        <ButtonPrimary
+          :text="t('components.common.admin.AdminSidebar.user.modal.confirm')"
+          :loading="isLoggingOut"
+          @click="handleLogout"
+          class="min-w-24 py-2"
+        />
+      </template>
+    </BaseModal>
   </div>
 </template>
 
