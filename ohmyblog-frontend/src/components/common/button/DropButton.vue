@@ -39,7 +39,10 @@ const hidePop = () => {
     </div>
 
     <!-- 桥接层：填充按钮和浮窗之间的间隙，防止鼠标移动时浮窗消失 -->
-    <div v-if="isShow" class="absolute h-6 w-screen top-11 left-0 z-50"></div>
+    <div
+      v-if="isShow"
+      class="absolute h-6 w-[500%] top-11 -left-[200%] z-50"
+    ></div>
 
     <BasePop
       v-model="isShow"
