@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
-import { getMe } from "@/api/auth.api";
+import { getMe, logout as logoutApi } from "@/api/auth.api";
 
 type TCurrentUser = Awaited<ReturnType<typeof getMe>>;
 
@@ -22,9 +22,21 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  // 退出登录
+  async function logout() {
+    try {
+      await logoutApi();
+      user.value = null;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   return {
     user,
     isAdmin,
     fetchMe,
+    logout,
   };
 });
