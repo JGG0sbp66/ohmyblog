@@ -19,7 +19,14 @@
             "settings": "设置"
           },
           "user": {
-            "logout": "点击退出登录"
+            "logout": "点击退出登录",
+            "modal": {
+              "title": "退出登录",
+              "question": "确认要退出登录吗？",
+              "warning": "退出后需要重新登录才能访问管理后台",
+              "cancel": "取消",
+              "confirm": "确认"
+            }
           }
         },
         "AdminHeader": {

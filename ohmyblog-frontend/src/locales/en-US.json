@@ -19,7 +19,14 @@
             "settings": "Settings"
           },
           "user": {
-            "logout": "Click to logout"
+            "logout": "Click to logout",
+            "modal": {
+              "title": "Logout",
+              "question": "Are you sure you want to logout?",
+              "warning": "You will need to login again to access the admin panel",
+              "cancel": "Cancel",
+              "confirm": "Confirm"
+            }
           }
         },
         "AdminHeader": {
