@@ -47,12 +47,12 @@ const handleNavClick = (routeName: string) => {
       class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm"
     >
       <!-- 左侧搜索区域 -->
-      <div class="ml-4">
+      <div class="ml-4 animate-fade-in">
         <HeaderSearch />
       </div>
 
       <!-- 中间导航栏区域 -->
-      <nav class="flex items-center gap-2">
+      <nav class="flex items-center gap-2 animate-fade-in animate-delay-50">
         <ButtonSecondary
           v-for="item in navItems"
           :key="item.name"
@@ -64,7 +64,7 @@ const handleNavClick = (routeName: string) => {
         </ButtonSecondary>
       </nav>
 
-      <!-- 右侧按钮区域 -->
+      <!-- 右侧按钮区域 - 不添加动画，避免影响下拉菜单交互 -->
       <div class="flex items-center mr-4 gap-2">
         <ToggleColor />
         <ToggleTheme />
