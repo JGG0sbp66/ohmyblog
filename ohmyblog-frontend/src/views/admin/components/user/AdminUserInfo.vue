@@ -91,17 +91,39 @@ const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
       </div>
 
       <!-- 用户信息 - 只在展开时显示 -->
-      <div
-        v-show="isExpanded"
-        :class="[contentClass, 'flex flex-col items-start']"
-      >
-        <span class="text-sm font-medium whitespace-nowrap">
-          {{ authStore.user?.username }}
-        </span>
-        <span class="text-xs text-fg-muted whitespace-nowrap">
-          {{ t("components.common.admin.AdminSidebar.user.logout") }}
-        </span>
-      </div>
+      <Transition name="fade">
+        <div
+          v-if="isExpanded"
+          :class="[contentClass, 'flex flex-col items-start']"
+        >
+          <span class="text-sm font-medium whitespace-nowrap">
+            {{ authStore.user?.username }}
+          </span>
+          <span class="text-xs text-fg-muted whitespace-nowrap">
+            {{ t("components.common.admin.AdminSidebar.user.logout") }}
+          </span>
+        </div>
+      </Transition>
     </button>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active {
+  transition: opacity 200ms;
+}
+
+.fade-leave-active {
+  transition: opacity 150ms;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+</style>

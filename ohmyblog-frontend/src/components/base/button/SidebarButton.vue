@@ -96,11 +96,33 @@ const iconContainerClass = "w-12 flex items-center justify-center shrink-0";
       />
     </div>
     <!-- 文本 - 只在展开时显示 -->
-    <span
-      v-show="isExpanded"
-      :class="[contentClass, 'font-medium whitespace-nowrap']"
-    >
-      {{ text }}
-    </span>
+    <Transition name="fade">
+      <span
+        v-if="isExpanded"
+        :class="[contentClass, 'font-medium whitespace-nowrap']"
+      >
+        {{ text }}
+      </span>
+    </Transition>
   </button>
 </template>
+
+<style scoped>
+.fade-enter-active {
+  transition: opacity 200ms;
+}
+
+.fade-leave-active {
+  transition: opacity 150ms;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+</style>
