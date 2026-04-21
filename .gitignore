@@ -53,6 +53,7 @@ __screenshots__/
 *.sln
 *.sw?
 .devcontainer/
+*.code-workspace
 
 # --- 压缩包 ---
 **/*.zip

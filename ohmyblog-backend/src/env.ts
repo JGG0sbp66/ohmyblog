@@ -9,7 +9,7 @@ import {
 	SYSTEM_UPLOADS_DIR,
 	UPLOADS_DIR,
 } from "./constants";
-import { systemLogger } from "./plugins/logger.plugin";
+import { logger } from "./plugins/logger.plugin";
 
 // =================================================================
 // 1. 配置定义中心（同时用于生成 .env 和类型推断）
@@ -45,18 +45,18 @@ const REQUIRED_DIRS = [DATA_DIR, UPLOADS_DIR, SYSTEM_UPLOADS_DIR, LOGS_DIR];
 
 for (const dir of REQUIRED_DIRS) {
 	if (!existsSync(dir)) {
-		systemLogger.info(`📂 目录 ${dir} 不存在，正在自动创建...`);
+		logger.info(`📂 目录 ${dir} 不存在，正在自动创建...`);
 		mkdirSync(dir, { recursive: true });
 	}
 }
 
 export {
 	DATA_DIR,
-	UPLOADS_DIR,
-	SYSTEM_UPLOADS_DIR,
-	LOGS_DIR,
-	ENV_PATH,
 	DB_PATH,
+	ENV_PATH,
+	LOGS_DIR,
+	SYSTEM_UPLOADS_DIR,
+	UPLOADS_DIR,
 };
 
 /**
@@ -68,7 +68,7 @@ async function initConfig() {
 	const envMap: Record<string, string> = {};
 
 	if (!(await file.exists())) {
-		systemLogger.warn(`⚙️  检测到 data/.env 不存在，正在自动生成...`);
+		logger.warn(`⚙️  检测到 data/.env 不存在，正在自动生成...`);
 
 		let fileContent = `# Auto-generated config\n`;
 
@@ -85,14 +85,12 @@ async function initConfig() {
 
 			// 如果是自动生成的，记录日志
 			if (typeof defaultValue === "function") {
-				systemLogger.info(
-					`🔑 已自动生成安全配置 [${key}]: \x1b[36m${val}\x1b[0m`,
-				);
+				logger.info(`🔑 已自动生成安全配置 [${key}]: \x1b[36m${val}\x1b[0m`);
 			}
 		}
 
 		await Bun.write(ENV_PATH, fileContent);
-		systemLogger.info(`✅ 配置文件已创建: ${ENV_PATH}`);
+		logger.info(`✅ 配置文件已创建: ${ENV_PATH}`);
 	} else {
 		const text = await file.text();
 		text.split("\n").forEach((line) => {
@@ -122,7 +120,7 @@ if (!parsed.success) {
 		code: issue.code,
 	}));
 	// 使用 Logger 记录严重错误
-	systemLogger.fatal({ err: errorDetails }, "❌ 配置校验失败，服务无法启动");
+	logger.fatal({ err: errorDetails }, "❌ 配置校验失败，服务无法启动");
 	setTimeout(() => process.exit(1), 100);
 }
 

@@ -33,17 +33,38 @@ const routes = [
       },
     ],
   },
+  // Admin 登录路由
+  {
+    path: "/admin/login",
+    name: "login",
+    component: () => import("@/views/admin/pages/Login.page.vue"),
+  },
   // Admin 后台管理路由
   {
     path: "/admin",
     meta: { requiresAdmin: true },
-    component: () => import("@/views/admin/components/AdminLayout.vue"),
+    redirect: { name: "dashboard" },
+    component: () => import("@/views/admin/components/layout/AdminLayout.vue"),
     children: [
       {
-        path: "",
+        path: "dashboard",
         name: "dashboard",
-        alias: "dashboard",
         component: () => import("@/views/admin/pages/Dashboard.page.vue"),
+      },
+      {
+        path: "posts",
+        name: "posts",
+        component: () => import("@/views/admin/pages/PostNew.page.vue"),
+      },
+      {
+        path: "emails",
+        name: "emails",
+        component: () => import("@/views/admin/pages/Emails.page.vue"),
+      },
+      {
+        path: "settings",
+        name: "settings",
+        component: () => import("@/views/admin/pages/Settings.page.vue"),
       },
     ],
   },
@@ -81,7 +102,7 @@ router.beforeEach(async (to) => {
     }
 
     if (!authStore.isAdmin) {
-      return { name: "home" };
+      return { name: "login" };
     }
   }
 

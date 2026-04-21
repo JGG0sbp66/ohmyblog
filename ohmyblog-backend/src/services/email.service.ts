@@ -2,10 +2,10 @@
 import nodemailer from "nodemailer";
 import type { TSMTPConfigUpsertDTO } from "../dtos/config.dto";
 import { BusinessError } from "../plugins/errors";
-import { systemLogger } from "../plugins/logger.plugin";
+import { logger } from "../plugins/logger.plugin";
 
 class EmailService {
-	private logger = systemLogger.child({ module: "EmailService" });
+	private logger = logger.withTag("EmailService");
 
 	/**
 	 * 测试 SMTP 服务器连接
@@ -32,6 +32,10 @@ class EmailService {
 			});
 
 			// 验证 SMTP 连接和认证信息
+			// 注意：此验证仅测试服务器连接和账号认证是否可用，不验证发件人地址 (senderEmail) 的有效性。
+			// 对于 QQ/Gmail 等个人邮箱服务商，如果 senderEmail 与 username 不一致，
+			// 虽然此处验证能通过，但实际发送邮件时可能会报 501 错误。
+			// 建议：个人邮箱留空 senderEmail 或填写与 username 相同的地址；域名邮件服务（如 Resend）无此限制。
 			await transporter.verify();
 
 			this.logger.info({ host: smtpConfig.host }, "SMTP 连接测试成功");

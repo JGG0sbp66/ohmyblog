@@ -38,6 +38,11 @@ const handleNext = () => {
         ...setupStore.smtpForm,
       };
 
+      // 移除未填写的可选高级参数。
+      // 注意：空字符串 "" 不符合后端 senderEmail 的 "email" 格式校验，会导致整个 Union 校验失败
+      if (!configValue.senderEmail) delete configValue.senderEmail;
+      if (!configValue.senderName) delete configValue.senderName;
+
       return upsertConfig({
         configKey: "smtp",
         configValue,

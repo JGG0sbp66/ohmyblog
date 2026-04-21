@@ -42,7 +42,7 @@ const handleNext = () => {
     @next="handleNext"
   >
     <!-- 1. 语言选择 -->
-    <div class="flex flex-col gap-3 text-fg-subtle">
+    <div class="flex flex-col gap-3 text-fg-subtle animate-fade-in">
       <label class="text-sm font-bold uppercase tracking-wider">
         {{ t("views.setup.steps.step1.settings.language") }}
       </label>
@@ -63,7 +63,7 @@ const handleNext = () => {
     </div>
 
     <!-- 2. 主题模式 (明/暗) -->
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 animate-fade-in animate-delay-50">
       <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider">
         {{ t("views.setup.steps.step1.settings.theme") }}
       </label>
@@ -86,7 +86,7 @@ const handleNext = () => {
     </div>
 
     <!-- 3. 主题色 (滑动条) -->
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 animate-fade-in animate-delay-100">
       <div class="flex items-center justify-between">
         <label
           class="text-sm font-bold text-fg-subtle uppercase tracking-wider"

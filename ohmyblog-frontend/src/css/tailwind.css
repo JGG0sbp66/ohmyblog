@@ -18,6 +18,9 @@
   --color-bg-muted: var(--theme-bg-muted);
   --color-bg-card: var(--theme-bg-card);
 
+  /* --- 边框色 --- */
+  --color-border: var(--theme-border);
+
   /* --- 文本色 --- */
   /* fg: 主文本；fg-muted: 次要文本；fg-subtle: 更弱的文字/图标色 */
   /* fg-soft: fg-subtle 的软化版，用于占位、提示等弱化场景 */
@@ -52,6 +55,9 @@
   --theme-bg-muted: oklch(0.95 0.03 var(--app-hue));
   --theme-bg-card: white;
 
+  /* --- 边框色 --- */
+  --theme-border: oklch(0.9 0.02 var(--app-hue));
+
   /* --- 文本色 --- */
   /* fg: 主文本；fg-muted: 次要文本；fg-subtle: 更弱的文字/图标色 */
   --theme-fg: oklch(0.2 0.03 var(--app-hue));
@@ -77,6 +83,9 @@
   --theme-bg: oklch(0.16 0.014 var(--app-hue));
   --theme-bg-muted: oklch(0.25 0.03 var(--app-hue));
   --theme-bg-card: oklch(0.2 0.02 var(--app-hue));
+
+  /* --- 边框色 --- */
+  --theme-border: oklch(0.3 0.03 var(--app-hue));
 
   /* --- 文本色 --- */
   /* fg: 主文本；fg-muted: 次要文本；fg-subtle: 更弱的文字/图标色 */
@@ -116,5 +125,40 @@ body {
     transition-property:
       background-color, border-color, fill, stroke, stop-color, opacity,
       stop-opacity, transform, scale, box-shadow, width !important;
+  }
+
+  /* 页面进入动画 - 简单淡入 */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 动画工具类 */
+  .animate-fade-in {
+    animation: fade-in 0.25s ease-out forwards;
+  }
+
+  /* 交错延迟 - 用于多个元素依次出现 */
+  .animate-delay-50 {
+    animation-delay: 50ms;
+  }
+
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-150 {
+    animation-delay: 150ms;
+  }
+
+  /* 初始状态 - 防止闪烁 */
+  .animate-fade-in {
+    opacity: 0;
   }
 }

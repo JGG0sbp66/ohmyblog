@@ -1,10 +1,10 @@
 // src/services/auth.service.ts
 import { userDao } from "../daos/user.dao";
 import { BusinessError } from "../plugins/errors";
-import { systemLogger } from "../plugins/logger.plugin";
+import { logger } from "../plugins/logger.plugin";
 
 class AuthService {
-	private logger = systemLogger.child({ module: "AuthService" });
+	private logger = logger.withTag("AuthService");
 
 	/**
 	 * 注册逻辑

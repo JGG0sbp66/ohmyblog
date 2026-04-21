@@ -1,9 +1,9 @@
 import { userDao } from "../daos/user.dao";
-import { systemLogger } from "../plugins/logger.plugin";
+import { logger } from "../plugins/logger.plugin";
 
 export class HealthService {
 	private commitHash: string = "unknown";
-	private logger = systemLogger.child({ module: "HealthService" });
+	private logger = logger.withTag("HealthService");
 
 	constructor() {
 		// 在服务初始化时就确定版本号，避免每次请求都去判断

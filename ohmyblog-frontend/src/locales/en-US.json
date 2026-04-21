@@ -10,9 +10,47 @@
           }
         }
       },
+      "admin": {
+        "AdminSidebar": {
+          "nav": {
+            "dashboard": "Dashboard",
+            "posts": "Write",
+            "emails": "Mailbox",
+            "settings": "Preferences"
+          },
+          "user": {
+            "logout": "Click to logout",
+            "modal": {
+              "title": "Logout",
+              "question": "Are you sure you want to logout?",
+              "warning": "You will need to login again to access the admin panel",
+              "cancel": "Cancel",
+              "confirm": "Confirm"
+            }
+          }
+        },
+        "AdminHeader": {
+          "pages": {
+            "dashboard": "Dashboard",
+            "posts": "Posts",
+            "emails": "Emails",
+            "settings": "Settings",
+            "default": "Admin"
+          },
+          "actions": {
+            "goHome": "Go to Home"
+          }
+        }
+      },
       "input": {
         "TipInput": {
           "required": "This field cannot be empty"
+        }
+      },
+      "button": {
+        "NotificationButton": {
+          "title": "Notifications",
+          "empty": "No notifications"
         }
       }
     },
@@ -42,6 +80,52 @@
     }
   },
   "views": {
+    "admin": {
+      "Settings": {
+        "nav": {
+          "appearance": "Appearance",
+          "site": "Site Info",
+          "admin": "Admin Info",
+          "smtp": "SMTP Settings"
+        },
+        "appearance": {
+          "title": "Appearance Settings",
+          "description": "Customize your website appearance by choosing your favorite theme color, hue, and interface language.",
+          "settings": {
+            "language": "Language",
+            "languageHint": "As the preview operates in an isolated environment, a quick reload is required for language changes. Theme and Hue settings sync in real-time.",
+            "theme": "Theme Mode",
+            "color": "Theme Hue"
+          },
+          "save": "Save Settings",
+          "preview": "Live Preview",
+          "viewport": {
+            "title": "Preview Device",
+            "desktop": "Desktop",
+            "mobile": "Mobile"
+          }
+        }
+      }
+    },
+    "login": {
+      "brand": {
+        "line1": "Hey there",
+        "line2": "Ready to create?",
+        "line3": "Let's pick up where you left off"
+      },
+      "title": "Welcome back",
+      "description": "Sign in to manage your blog",
+      "identifier": {
+        "label": "Username or Email",
+        "placeholder": "Enter your username or email"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password"
+      },
+      "submit": "Sign In",
+      "backToHome": "Back to Home"
+    },
     "setup": {
       "steps": {
         "step1": {
