@@ -1,9 +1,12 @@
 <!-- src/views/admin/components/settings/AppearancePreview.vue -->
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useLang } from "@/composables/lang.hook";
+import Loading from "@/components/icon/common/Loading.vue";
 
 const { t } = useI18n();
+const { locale } = useLang();
 
 // 预览地址，默认为首页
 const previewUrl = ref(window.location.origin + "/");
@@ -12,6 +15,18 @@ const isLoading = ref(true);
 const handleLoad = () => {
   isLoading.value = false;
 };
+
+// 监听语言变化，刷新 iframe
+watch(locale, () => {
+  isLoading.value = true;
+  // 通过重新赋值 src 触发 iframe 刷新
+  const currentUrl = previewUrl.value;
+  previewUrl.value = "";
+  // 稍微延迟一下确保 DOM 更新
+  setTimeout(() => {
+    previewUrl.value = currentUrl;
+  }, 50);
+});
 </script>
 
 <template>
@@ -23,14 +38,12 @@ const handleLoad = () => {
       v-if="isLoading"
       class="absolute inset-0 z-10 bg-bg-card flex flex-col items-center justify-center text-fg-dim"
     >
-      <div
-        class="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin mb-4"
-      ></div>
-      <p class="text-sm animate-pulse">Loading preview...</p>
+      <Loading size-class="w-10 h-10" color-class="text-accent" />
     </div>
 
     <!-- 预览 Iframe -->
     <iframe
+      v-if="previewUrl"
       :src="previewUrl"
       class="w-full h-full border-none transition-opacity duration-500"
       :class="{ 'opacity-0': isLoading, 'opacity-100': !isLoading }"
