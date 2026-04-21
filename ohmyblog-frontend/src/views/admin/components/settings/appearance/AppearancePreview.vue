@@ -87,7 +87,7 @@ watch(locale, () => {
       <!-- 预览容器：用于控制 iframe 的宽度 -->
       <div 
         class="h-full transition-all duration-500 ease-in-out origin-center relative"
-        :class="viewportMode === 'pc' ? 'w-full' : 'w-95 border-x-8 border-bg-muted rounded-[32px] shadow-2xl my-4 h-[90%] overflow-hidden'"
+        :class="viewportMode === 'pc' ? 'w-full' : 'w-95 border-x-8 border-bg-muted rounded-4xl shadow-2xl my-4 h-[90%] overflow-hidden'"
       >
         <!-- 预览 Iframe -->
         <iframe
