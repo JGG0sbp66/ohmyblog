@@ -96,7 +96,8 @@
             "theme": "Theme Mode",
             "color": "Theme Hue"
           },
-          "save": "Save Settings"
+          "save": "Save Settings",
+          "preview": "Live Preview"
         }
       }
     },
