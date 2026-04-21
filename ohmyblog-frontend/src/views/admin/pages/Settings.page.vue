@@ -1,15 +1,18 @@
 <!-- src/views/admin/pages/Settings.page.vue -->
 <!-- TODO: 实现设置页面功能 -->
 <script setup lang="ts">
-import { ref, markRaw } from "vue";
+import { ref, markRaw, computed } from "vue";
 import AppearanceSettings from "../components/settings/AppearanceSettings.vue";
 import SiteSettings from "../components/settings/SiteSettings.vue";
 import SettingsNav from "../components/settings/SettingsNav.vue";
+import { useLang } from "@/composables/lang.hook";
 
-const menuItems = [
-  { id: 'appearance', name: '外观设置', component: markRaw(AppearanceSettings) },
-  { id: 'site', name: '站点设置', component: markRaw(SiteSettings) },
-];
+const { t } = useLang();
+
+const menuItems = computed(() => [
+  { id: 'appearance', name: t('views.admin.Settings.nav.appearance'), component: markRaw(AppearanceSettings) },
+  { id: 'site', name: t('views.admin.Settings.nav.site'), component: markRaw(SiteSettings) },
+]);
 
 const activeTab = ref('appearance');
 </script>
