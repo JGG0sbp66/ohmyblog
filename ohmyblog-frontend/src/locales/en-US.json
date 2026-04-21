@@ -15,8 +15,8 @@
           "nav": {
             "dashboard": "Dashboard",
             "posts": "Write",
-            "emails": "Emails",
-            "settings": "Settings"
+            "emails": "Mailbox",
+            "settings": "Preferences"
           },
           "user": {
             "logout": "Click to logout",
@@ -80,6 +80,14 @@
     }
   },
   "views": {
+    "admin": {
+      "Settings": {
+        "nav": {
+          "appearance": "Appearance",
+          "site": "Site Info"
+        }
+      }
+    },
     "login": {
       "brand": {
         "line1": "Hey there",

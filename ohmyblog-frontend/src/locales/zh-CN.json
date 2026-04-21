@@ -15,8 +15,8 @@
           "nav": {
             "dashboard": "仪表盘",
             "posts": "写文章",
-            "emails": "邮件",
-            "settings": "设置"
+            "emails": "邮件内容",
+            "settings": "系统配置"
           },
           "user": {
             "logout": "点击退出登录",
@@ -80,6 +80,14 @@
     }
   },
   "views": {
+    "admin": {
+      "Settings": {
+        "nav": {
+          "appearance": "界面外观",
+          "site": "站点信息"
+        }
+      }
+    },
     "login": {
       "brand": {
         "line1": "嘿,好久不见",
