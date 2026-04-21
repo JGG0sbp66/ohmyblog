@@ -98,7 +98,12 @@
             "color": "主题色相"
           },
           "save": "保存设置",
-          "preview": "实时预览"
+          "preview": "实时预览",
+          "viewport": {
+            "title": "预览设备",
+            "desktop": "桌面端",
+            "mobile": "移动端"
+          }
         }
       }
     },

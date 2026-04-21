@@ -98,7 +98,12 @@
             "color": "Theme Hue"
           },
           "save": "Save Settings",
-          "preview": "Live Preview"
+          "preview": "Live Preview",
+          "viewport": {
+            "title": "Preview Device",
+            "desktop": "Desktop",
+            "mobile": "Mobile"
+          }
         }
       }
     },
