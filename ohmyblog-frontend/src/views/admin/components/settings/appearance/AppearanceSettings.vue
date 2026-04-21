@@ -19,11 +19,11 @@ const viewportMode = ref<'pc' | 'mobile'>('pc');
 
     <!-- 右侧容器 -->
     <div class="flex flex-col gap-6 shrink-0">
-      <!-- 设置卡片 -->
-      <AppearanceForm />
-
       <!-- 操控设备卡片 -->
       <ViewportSelector v-model="viewportMode" />
+
+      <!-- 设置卡片 -->
+      <AppearanceForm />
     </div>
   </div>
 </template>
