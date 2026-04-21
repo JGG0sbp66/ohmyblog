@@ -63,9 +63,7 @@ onUnmounted(() => {
     </Teleport>
 
     <!-- 主内容区 -->
-    <div
-      class="flex-1 bg-bg-card rounded-2xl p-8 shadow-sm border border-black/5 dark:border-white/5 overflow-y-auto"
-    >
+    <div class="flex-1 overflow-y-auto">
       <component :is="menuItems.find((i) => i.id === activeTab)?.component" />
     </div>
   </div>
