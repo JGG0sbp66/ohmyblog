@@ -63,8 +63,11 @@ onUnmounted(() => {
     </Teleport>
 
     <!-- 主内容区 -->
-    <div>
-      <component :is="menuItems.find((i) => i.id === activeTab)?.component" />
+    <div class="flex-1 min-h-0 flex flex-col">
+      <component
+        :is="menuItems.find((i) => i.id === activeTab)?.component"
+        class="flex-1"
+      />
     </div>
   </div>
 </template>

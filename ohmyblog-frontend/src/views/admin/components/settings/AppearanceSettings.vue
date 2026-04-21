@@ -5,7 +5,7 @@ import AppearanceForm from "./AppearanceForm.vue";
 </script>
 
 <template>
-  <div class="flex flex-col lg:flex-row gap-8 p-4 animate-fade-in">
+  <div class="flex flex-col lg:flex-row gap-8 p-4 animate-fade-in min-h-0 flex-1">
     <!-- 左侧预览卡片 -->
     <AppearancePreview />
 
