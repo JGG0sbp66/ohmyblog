@@ -12,13 +12,29 @@ import { useLang } from "@/composables/lang.hook";
 const { t } = useLang();
 
 const menuItems = computed(() => [
-  { id: 'appearance', name: t('views.admin.Settings.nav.appearance'), component: markRaw(AppearanceSettings) },
-  { id: 'site', name: t('views.admin.Settings.nav.site'), component: markRaw(SiteSettings) },
-  { id: 'admin', name: t('views.admin.Settings.nav.admin'), component: markRaw(AdminSettings) },
-  { id: 'smtp', name: t('views.admin.Settings.nav.smtp'), component: markRaw(SMTPSettings) },
+  {
+    id: "appearance",
+    name: t("views.admin.Settings.nav.appearance"),
+    component: markRaw(AppearanceSettings),
+  },
+  {
+    id: "site",
+    name: t("views.admin.Settings.nav.site"),
+    component: markRaw(SiteSettings),
+  },
+  {
+    id: "admin",
+    name: t("views.admin.Settings.nav.admin"),
+    component: markRaw(AdminSettings),
+  },
+  {
+    id: "smtp",
+    name: t("views.admin.Settings.nav.smtp"),
+    component: markRaw(SMTPSettings),
+  },
 ]);
 
-const activeTab = ref('appearance');
+const activeTab = ref("appearance");
 
 // HACK: 使用 isMounted 解决 Teleport 刷新时的竞态问题
 // 由于 AdminHeader 容器可能在 Settings 组件挂载时还未渲染完成，
@@ -47,11 +63,12 @@ onUnmounted(() => {
     </Teleport>
 
     <!-- 主内容区 -->
-    <div class="flex-1 bg-bg-card rounded-2xl p-8 shadow-sm border border-black/5 dark:border-white/5 overflow-y-auto">
-      <component :is="menuItems.find(i => i.id === activeTab)?.component" />
+    <div
+      class="flex-1 bg-bg-card rounded-2xl p-8 shadow-sm border border-black/5 dark:border-white/5 overflow-y-auto"
+    >
+      <component :is="menuItems.find((i) => i.id === activeTab)?.component" />
     </div>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
