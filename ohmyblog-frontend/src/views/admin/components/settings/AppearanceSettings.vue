@@ -1,10 +1,15 @@
 <!-- src/views/admin/components/settings/AppearanceSettings.vue -->
+<script setup lang="ts">
+import AppearancePreview from "./AppearancePreview.vue";
+import AppearanceForm from "./AppearanceForm.vue";
+</script>
+
 <template>
-  <div
-    class="flex flex-col items-center justify-center min-h-100 text-fg-dim animate-fade-in"
-  >
-    <div class="text-6xl mb-4 opacity-20">🎨</div>
-    <p class="text-xl font-medium">Appearance Settings</p>
-    <p class="mt-2 opacity-50 text-sm">Coming Soon</p>
+  <div class="flex flex-col lg:flex-row gap-8 p-4 animate-fade-in">
+    <!-- 左侧预览卡片 -->
+    <AppearancePreview />
+
+    <!-- 右侧设置卡片 -->
+    <AppearanceForm />
   </div>
 </template>
