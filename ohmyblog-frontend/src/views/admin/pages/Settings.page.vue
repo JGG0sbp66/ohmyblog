@@ -48,26 +48,10 @@ onUnmounted(() => {
 
     <!-- 主内容区 -->
     <div class="flex-1 bg-bg-card rounded-2xl p-8 shadow-sm border border-black/5 dark:border-white/5 overflow-y-auto">
-      <transition name="fade" mode="out-in">
-        <component :is="menuItems.find(i => i.id === activeTab)?.component" />
-      </transition>
+      <component :is="menuItems.find(i => i.id === activeTab)?.component" />
     </div>
   </div>
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.fade-enter-from {
-  opacity: 0;
-  transform: translateY(5px);
-}
-
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(-5px);
-}
 </style>
