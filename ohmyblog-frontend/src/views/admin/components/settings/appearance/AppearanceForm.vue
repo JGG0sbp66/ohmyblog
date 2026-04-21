@@ -49,7 +49,7 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="w-full lg:max-w-122 bg-bg-card rounded-3xl shadow-xl p-8 flex flex-col gap-8 h-fit">
+  <div class="w-full lg:w-120 bg-bg-card rounded-3xl shadow-xl p-8 flex flex-col gap-8 h-fit">
     <div class="flex flex-col gap-2">
       <h2 class="text-2xl font-bold text-fg">
         {{ t("views.admin.Settings.appearance.title") }}
