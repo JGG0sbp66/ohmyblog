@@ -109,7 +109,7 @@ const handleSave = async () => {
     </div>
 
     <!-- 3. 主题色 -->
-    <div class="flex flex-col gap-3 animate-fade-in animate-delay-100">
+    <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between">
         <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider">
           {{ t("views.admin.Settings.appearance.settings.color") }}
