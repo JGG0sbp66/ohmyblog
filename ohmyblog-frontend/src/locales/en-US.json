@@ -93,6 +93,7 @@
           "description": "Customize your website appearance by choosing your favorite theme color, hue, and interface language.",
           "settings": {
             "language": "Language",
+            "languageHint": "As the preview operates in an isolated environment, a quick reload is required for language changes. Theme and Hue settings sync in real-time.",
             "theme": "Theme Mode",
             "color": "Theme Hue"
           },
