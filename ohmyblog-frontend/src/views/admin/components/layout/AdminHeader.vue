@@ -36,7 +36,10 @@ const goToHome = () => {
       </div>
 
       <!-- 中间二级导航插槽 -->
-      <div id="admin-header-center" class="flex-1 flex justify-center mx-4"></div>
+      <div
+        id="admin-header-center"
+        class="flex-1 flex justify-center mx-4"
+      ></div>
 
       <!-- 右侧按钮组 - 不添加动画，避免影响下拉菜单交互 -->
       <div class="flex items-center gap-2 mr-4">
