@@ -12,6 +12,11 @@ const { locale } = useLang();
 const previewUrl = ref(window.location.origin + "/");
 const isLoading = ref(true);
 
+// 视口宽度：pc (100%) 或 mobile (400px)
+defineProps<{
+  viewportMode: 'pc' | 'mobile';
+}>();
+
 const handleLoad = () => {
   isLoading.value = false;
 };
@@ -31,7 +36,7 @@ watch(locale, () => {
 
 <template>
   <div
-    class="flex-1 min-h-125 lg:min-h-0 bg-bg-card rounded-3xl shadow-xl overflow-hidden relative group self-stretch flex flex-col"
+    class="flex-1 bg-bg-card rounded-3xl shadow-xl overflow-hidden relative group flex flex-col items-center justify-center transition-all duration-500 self-stretch"
   >
     <!-- 加载遮罩 -->
     <div
@@ -41,16 +46,22 @@ watch(locale, () => {
       <Loading size-class="w-10 h-10" color-class="text-accent" />
     </div>
 
-    <!-- 预览 Iframe -->
-    <iframe
-      v-if="previewUrl"
-      :src="previewUrl"
-      class="w-full h-full border-none transition-opacity duration-500"
-      :class="{ 'opacity-0': isLoading, 'opacity-100': !isLoading }"
-      @load="handleLoad"
-    ></iframe>
+    <!-- 预览容器：用于控制 iframe 的宽度 -->
+    <div 
+      class="h-full transition-all duration-500 ease-in-out origin-center"
+      :class="viewportMode === 'pc' ? 'w-full' : 'w-100 border-x-12 border-y-24 border-bg-muted rounded-[40px] shadow-2xl my-4'"
+    >
+      <!-- 预览 Iframe -->
+      <iframe
+        v-if="previewUrl"
+        :src="previewUrl"
+        class="w-full h-full border-none transition-opacity duration-500 bg-white"
+        :class="{ 'opacity-0': isLoading, 'opacity-100': !isLoading }"
+        @load="handleLoad"
+      ></iframe>
+    </div>
 
-    <!-- 覆盖层：防止 iframe 拦截鼠标事件，同时提示这是预览 -->
+    <!-- 覆盖层：防止 iframe 拦截鼠标事件 -->
     <div
       class="absolute inset-0 pointer-events-none border-4 border-transparent group-hover:border-accent/10 transition-colors rounded-3xl"
     >
