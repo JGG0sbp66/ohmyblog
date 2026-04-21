@@ -90,7 +90,12 @@
         },
         "appearance": {
           "title": "Appearance Settings",
-          "description": "Customize your website appearance",
+          "description": "Customize your website appearance by choosing your favorite theme color, hue, and interface language.",
+          "settings": {
+            "language": "Language",
+            "theme": "Theme Mode",
+            "color": "Theme Hue"
+          },
           "save": "Save Settings"
         }
       }
