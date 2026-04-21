@@ -2,7 +2,7 @@
 <!-- TODO: 实现设置页面功能 -->
 <script setup lang="ts">
 import { ref, markRaw, computed, onMounted, onUnmounted } from "vue";
-import AppearanceSettings from "../components/settings/AppearanceSettings.vue";
+import AppearanceSettings from "../components/settings/appearance/AppearanceSettings.vue";
 import SiteSettings from "../components/settings/SiteSettings.vue";
 import AdminSettings from "../components/settings/AdminSettings.vue";
 import SMTPSettings from "../components/settings/SMTPSettings.vue";
