@@ -4,6 +4,8 @@
 import { ref, markRaw, computed, onMounted, onUnmounted } from "vue";
 import AppearanceSettings from "../components/settings/AppearanceSettings.vue";
 import SiteSettings from "../components/settings/SiteSettings.vue";
+import AdminSettings from "../components/settings/AdminSettings.vue";
+import SMTPSettings from "../components/settings/SMTPSettings.vue";
 import SettingsNav from "../components/settings/SettingsNav.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -12,6 +14,8 @@ const { t } = useLang();
 const menuItems = computed(() => [
   { id: 'appearance', name: t('views.admin.Settings.nav.appearance'), component: markRaw(AppearanceSettings) },
   { id: 'site', name: t('views.admin.Settings.nav.site'), component: markRaw(SiteSettings) },
+  { id: 'admin', name: t('views.admin.Settings.nav.admin'), component: markRaw(AdminSettings) },
+  { id: 'smtp', name: t('views.admin.Settings.nav.smtp'), component: markRaw(SMTPSettings) },
 ]);
 
 const activeTab = ref('appearance');
