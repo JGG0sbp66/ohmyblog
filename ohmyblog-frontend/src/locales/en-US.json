@@ -84,7 +84,9 @@
       "Settings": {
         "nav": {
           "appearance": "Appearance",
-          "site": "Site Info"
+          "site": "Site Info",
+          "admin": "Admin Info",
+          "smtp": "SMTP Settings"
         }
       }
     },

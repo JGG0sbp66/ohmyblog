@@ -84,7 +84,9 @@
       "Settings": {
         "nav": {
           "appearance": "界面外观",
-          "site": "站点信息"
+          "site": "站点信息",
+          "admin": "管理员信息",
+          "smtp": "SMTP设置"
         }
       }
     },
