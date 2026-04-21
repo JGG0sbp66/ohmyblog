@@ -12,7 +12,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-  (e: 'update:activeTab', id: string): void;
+  (e: "update:activeTab", id: string): void;
 }>();
 </script>
 
