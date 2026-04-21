@@ -17,7 +17,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <div class="bg-bg-card rounded-3xl shadow-xl p-6 flex items-center justify-between animate-fade-in animate-delay-150">
+  <div class="bg-bg-card rounded-3xl shadow-xl p-6 flex items-center justify-between">
     <div class="flex flex-col">
       <span class="text-sm font-bold text-fg/80">{{ t('views.admin.Settings.appearance.viewport.title') }}</span>
       <span class="text-xs text-fg-subtle">Real-time device preview</span>

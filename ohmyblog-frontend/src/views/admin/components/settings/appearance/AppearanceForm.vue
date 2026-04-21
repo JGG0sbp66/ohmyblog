@@ -60,7 +60,7 @@ const handleSave = async () => {
     </div>
 
     <!-- 1. 语言选择 -->
-    <div class="flex flex-col gap-3 text-fg-subtle animate-fade-in">
+    <div class="flex flex-col gap-3 text-fg-subtle">
       <div class="flex items-center gap-2">
         <label class="text-sm font-bold uppercase tracking-wider">
           {{ t("views.admin.Settings.appearance.settings.language") }}
@@ -86,7 +86,7 @@ const handleSave = async () => {
     </div>
 
     <!-- 2. 主题模式 -->
-    <div class="flex flex-col gap-3 animate-fade-in animate-delay-50">
+    <div class="flex flex-col gap-3">
       <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider">
         {{ t("views.admin.Settings.appearance.settings.theme") }}
       </label>

@@ -20,10 +20,15 @@ const viewportMode = ref<'pc' | 'mobile'>('pc');
     <!-- 右侧容器 -->
     <div class="flex flex-col gap-6 shrink-0">
       <!-- 操控设备卡片 -->
-      <ViewportSelector v-model="viewportMode" />
+      <ViewportSelector 
+        v-model="viewportMode" 
+        class="animate-fade-in animate-delay-150"
+      />
 
       <!-- 设置卡片 -->
-      <AppearanceForm />
+      <AppearanceForm 
+        class="animate-fade-in animate-delay-300"
+      />
     </div>
   </div>
 </template>
