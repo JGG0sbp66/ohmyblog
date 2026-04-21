@@ -3,6 +3,7 @@
 import { ref } from "vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
+import BaseTooltip from "@/components/base/pop/BaseTooltip.vue";
 import LanguagePicker from "@/components/icon/theme/LanguagePicker.vue";
 import ThemePicker from "@/components/icon/theme/ThemePicker.vue";
 import ColorSlider from "@/components/base/slider/ColorSlider.vue";
@@ -60,9 +61,14 @@ const handleSave = async () => {
 
     <!-- 1. 语言选择 -->
     <div class="flex flex-col gap-3 text-fg-subtle animate-fade-in">
-      <label class="text-sm font-bold uppercase tracking-wider">
-        {{ t("views.admin.Settings.appearance.settings.language") }}
-      </label>
+      <div class="flex items-center gap-2">
+        <label class="text-sm font-bold uppercase tracking-wider">
+          {{ t("views.admin.Settings.appearance.settings.language") }}
+        </label>
+        <BaseTooltip
+          :content="t('views.admin.Settings.appearance.settings.languageHint')"
+        />
+      </div>
       <div class="grid grid-cols-2 gap-3">
         <ButtonSecondary
           v-for="lang in SUPPORTED_LOCALES"
