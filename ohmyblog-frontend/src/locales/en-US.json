@@ -87,6 +87,11 @@
           "site": "Site Info",
           "admin": "Admin Info",
           "smtp": "SMTP Settings"
+        },
+        "appearance": {
+          "title": "Appearance Settings",
+          "description": "Customize your website appearance",
+          "save": "Save Settings"
         }
       }
     },

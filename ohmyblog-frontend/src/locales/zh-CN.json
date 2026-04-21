@@ -87,6 +87,11 @@
           "site": "站点信息",
           "admin": "管理员信息",
           "smtp": "SMTP设置"
+        },
+        "appearance": {
+          "title": "外观设置",
+          "description": "自定义你的网站外观",
+          "save": "保存设置"
         }
       }
     },
