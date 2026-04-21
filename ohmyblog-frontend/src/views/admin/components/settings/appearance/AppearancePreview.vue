@@ -56,7 +56,7 @@ watch(locale, () => {
         </div>
         <!-- Tab 模拟 -->
         <div class="flex items-end h-full">
-          <div class="h-8 px-4 bg-bg-muted/80 border-x border-t border-border rounded-t-lg flex items-center gap-2 min-w-[140px] max-w-[220px]">
+          <div class="h-8 px-4 bg-bg-muted/80 border-x border-t border-border rounded-t-lg flex items-center gap-2 min-w-35 max-w-55">
             <div v-if="siteFavicon" class="w-4 h-4 rounded-sm overflow-hidden shrink-0">
               <img :src="siteFavicon" class="w-full h-full object-cover" />
             </div>
