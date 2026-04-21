@@ -1,6 +1,9 @@
 <!-- src/views/admin/components/settings/AppearancePreview.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 // 预览地址，默认为首页
 const previewUrl = ref(window.location.origin + "/");
@@ -39,9 +42,9 @@ const handleLoad = () => {
       class="absolute inset-0 pointer-events-none border-4 border-transparent group-hover:border-accent/10 transition-colors rounded-3xl"
     >
       <div
-        class="absolute top-4 right-4 bg-bg/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-fg-subtle border border-border shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+        class="absolute bottom-4 left-4 bg-bg/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-fg-subtle border border-border opacity-0 group-hover:opacity-100 transition-opacity"
       >
-        Live Preview
+        {{ t('views.admin.Settings.appearance.preview') }}
       </div>
     </div>
   </div>
