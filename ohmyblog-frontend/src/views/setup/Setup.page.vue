@@ -92,7 +92,7 @@ const [rightSideRef] = useAutoAnimate();
           <!-- 右侧：表单流程区 - 添加简单淡入动画和延迟 -->
           <div
             ref="rightSideRef"
-            class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl animate-fade-in animate-delay-100"
+            class="w-full max-w-2xl bg-bg-card rounded-3xl shadow-xl animate-fade-in animate-delay-100"
           >
             <component
               :is="CurrentStepComponent"
