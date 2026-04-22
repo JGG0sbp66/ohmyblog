@@ -89,15 +89,9 @@
           "smtp": "SMTP Settings"
         },
         "appearance": {
-          "title": "Appearance Settings",
-          "description": "Customize your website appearance by choosing your favorite theme color, hue, and interface language.",
           "settings": {
-            "language": "Language",
-            "languageHint": "As the preview operates in an isolated environment, a quick reload is required for language changes. Theme and Hue settings sync in real-time.",
-            "theme": "Theme Mode",
-            "color": "Theme Hue"
+            "languageHint": "As the preview operates in an isolated environment, a quick reload is required for language changes. Theme and Hue settings sync in real-time."
           },
-          "save": "Save Settings",
           "preview": "Live Preview",
           "viewport": {
             "title": "Preview Device",
@@ -303,7 +297,8 @@
     },
     "next": "Next Step",
     "prev": "Previous",
-    "finish": "Finish"
+    "finish": "Finish",
+    "save": "Save Settings"
   },
   "stores": {
     "setup": {
