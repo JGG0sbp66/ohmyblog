@@ -5,7 +5,7 @@ import { useRouter, useRoute } from "vue-router";
 import { LayoutDashboard, PenLine, Mail, Settings } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import SidebarButton from "@/components/base/button/SidebarButton.vue";
-import AdminUserInfo from "../user/AdminUserInfo.vue";
+import AdminUserInfo from "../AdminUserInfo.vue";
 
 const isExpanded = ref(false);
 const router = useRouter();
