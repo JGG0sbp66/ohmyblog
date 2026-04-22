@@ -2,10 +2,10 @@
 <!-- TODO: 实现设置页面功能 -->
 <script setup lang="ts">
 import { ref, markRaw, computed, onMounted, onUnmounted } from "vue";
-import AppearanceSettings from "../components/settings/appearance/AppearanceSettings.vue";
-import SiteSettings from "../components/settings/SiteSettings.vue";
-import AdminSettings from "../components/settings/AdminSettings.vue";
-import SMTPSettings from "../components/settings/SMTPSettings.vue";
+import AppearanceLayout from "../components/settings/layout/AppearanceLayout.vue";
+import SiteLayout from "../components/settings/layout/SiteLayout.vue";
+import AdminLayout from "../components/settings/layout/AdminLayout.vue";
+import SMTPLayout from "../components/settings/layout/SMTPLayout.vue";
 import SettingsNav from "../components/settings/SettingsNav.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -15,22 +15,22 @@ const menuItems = computed(() => [
   {
     id: "appearance",
     name: t("views.admin.Settings.nav.appearance"),
-    component: markRaw(AppearanceSettings),
+    component: markRaw(AppearanceLayout),
   },
   {
     id: "site",
     name: t("views.admin.Settings.nav.site"),
-    component: markRaw(SiteSettings),
+    component: markRaw(SiteLayout),
   },
   {
     id: "admin",
     name: t("views.admin.Settings.nav.admin"),
-    component: markRaw(AdminSettings),
+    component: markRaw(AdminLayout),
   },
   {
     id: "smtp",
     name: t("views.admin.Settings.nav.smtp"),
-    component: markRaw(SMTPSettings),
+    component: markRaw(SMTPLayout),
   },
 ]);
 
