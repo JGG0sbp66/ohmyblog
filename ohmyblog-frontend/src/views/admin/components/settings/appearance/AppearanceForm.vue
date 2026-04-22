@@ -50,15 +50,15 @@ const handleSave = async () => {
 
 <template>
   <SettingCard
-    :title="t('views.admin.Settings.appearance.title')"
-    :description="t('views.admin.Settings.appearance.description')"
+    :title="t('views.setup.steps.step1.title')"
+    :description="t('views.setup.steps.step1.description')"
     class="w-full lg:w-120 h-fit"
   >
     <!-- 1. 语言选择 -->
     <div class="flex flex-col gap-3 text-fg-subtle">
       <div class="flex items-center gap-2">
         <label class="text-sm font-bold uppercase tracking-wider">
-          {{ t("views.admin.Settings.appearance.settings.language") }}
+          {{ t("views.setup.steps.step1.settings.language") }}
         </label>
         <BaseTooltip
           :content="t('views.admin.Settings.appearance.settings.languageHint')"
@@ -70,7 +70,7 @@ const handleSave = async () => {
     <!-- 2. 主题模式 -->
     <div class="flex flex-col gap-3">
       <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider">
-        {{ t("views.admin.Settings.appearance.settings.theme") }}
+        {{ t("views.setup.steps.step1.settings.theme") }}
       </label>
       <ThemeModeSelector />
     </div>
@@ -81,7 +81,7 @@ const handleSave = async () => {
         <label
           class="text-sm font-bold text-fg-subtle uppercase tracking-wider"
         >
-          {{ t("views.admin.Settings.appearance.settings.color") }}
+          {{ t("views.setup.steps.step1.settings.color") }}
         </label>
       </template>
     </ThemeColorPicker>
@@ -93,7 +93,7 @@ const handleSave = async () => {
           class="w-full rounded-2xl text-base font-bold"
           :loading="isSubmitting"
           @click="handleSave"
-          :text="t('views.admin.Settings.appearance.save')"
+          :text="t('common.save')"
         />
       </div>
     </template>
