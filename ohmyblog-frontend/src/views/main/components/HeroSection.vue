@@ -54,11 +54,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- 直接使用 vh 单位，不设置 min-h -->
-  <section id="hero" class="w-full h-[65vh] overflow-hidden onload-animation">
+  <!-- 只在有 hero 图时才渲染整个 section -->
+  <section
+    v-if="heroImage"
+    id="hero"
+    class="w-full h-[65vh] overflow-hidden onload-animation"
+  >
     <!-- 使用 img 标签 + object-fit + Banner 动画 -->
     <img
-      v-if="heroImage"
       ref="heroRef"
       :src="heroImage"
       alt="Hero banner image"
@@ -66,13 +69,5 @@ onMounted(() => {
       loading="lazy"
       decoding="async"
     />
-
-    <!-- 无背景图时的占位背景 -->
-    <div
-      v-else
-      class="w-full h-full bg-linear-to-br from-accent/20 via-bg to-accent/10 flex items-center justify-center"
-    >
-      <p class="text-fg-muted text-lg">暂无 Hero 图片</p>
-    </div>
   </section>
 </template>
