@@ -21,7 +21,7 @@ const isLoading = ref(true);
 
 // 视口宽度：pc (100%) 或 mobile (400px)
 defineProps<{
-  viewportMode: 'pc' | 'mobile';
+  viewportMode: "pc" | "mobile";
 }>();
 
 const handleLoad = () => {
@@ -46,7 +46,9 @@ watch(locale, () => {
     class="flex-1 bg-bg-card rounded-3xl shadow-xl overflow-hidden relative group flex flex-col transition-all duration-500 self-stretch"
   >
     <!-- 浏览器模拟工具栏 -->
-    <div class="h-10 bg-bg-card border-b border-border flex items-center px-4 gap-4 shrink-0 justify-between">
+    <div
+      class="h-10 bg-bg-card border-b border-border flex items-center px-4 gap-4 shrink-0 justify-between"
+    >
       <div class="flex items-center gap-4 h-full">
         <!-- 三色点 -->
         <div class="flex gap-1.5 shrink-0">
@@ -56,26 +58,39 @@ watch(locale, () => {
         </div>
         <!-- Tab 模拟 -->
         <div class="flex items-end h-full">
-          <div class="h-8 px-4 bg-bg-muted/80 border-x border-t border-border rounded-t-lg flex items-center gap-2 min-w-35 max-w-55">
-            <div v-if="siteFavicon" class="w-4 h-4 rounded-sm overflow-hidden shrink-0">
+          <div
+            class="h-8 px-4 bg-bg-muted/80 border-x border-t border-border rounded-t-lg flex items-center gap-2 min-w-35 max-w-55"
+          >
+            <div
+              v-if="siteFavicon"
+              class="w-4 h-4 rounded-sm overflow-hidden shrink-0"
+            >
               <img :src="siteFavicon" class="w-full h-full object-cover" />
             </div>
-            <div v-else class="w-3 h-3 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+            <div
+              v-else
+              class="w-3 h-3 rounded-full bg-accent/20 flex items-center justify-center shrink-0"
+            >
               <div class="w-1.5 h-1.5 rounded-full bg-accent"></div>
             </div>
-            <span class="text-[11px] font-bold text-fg/70 truncate select-none">{{ siteTitle }}</span>
+            <span
+              class="text-[11px] font-bold text-fg/70 truncate select-none"
+              >{{ siteTitle }}</span
+            >
           </div>
         </div>
       </div>
 
       <!-- 右侧实时预览状态 -->
       <BaseTag type="info" size="xs">
-        {{ t('views.admin.Settings.appearance.preview') }}
+        {{ t("views.admin.Settings.appearance.preview") }}
       </BaseTag>
     </div>
 
     <!-- 主要内容区域 -->
-    <div class="flex-1 relative flex items-center justify-center min-h-0 bg-bg-muted/30">
+    <div
+      class="flex-1 relative flex items-center justify-center min-h-0 bg-bg-muted/30"
+    >
       <!-- 加载遮罩 -->
       <div
         v-if="isLoading"
@@ -85,9 +100,13 @@ watch(locale, () => {
       </div>
 
       <!-- 预览容器：用于控制 iframe 的宽度 -->
-      <div 
+      <div
         class="h-full transition-all duration-500 ease-in-out origin-center relative"
-        :class="viewportMode === 'pc' ? 'w-full' : 'w-95 border-x-8 border-bg-muted rounded-4xl shadow-2xl my-4 h-[90%] overflow-hidden'"
+        :class="
+          viewportMode === 'pc'
+            ? 'w-full'
+            : 'w-95 border-x-8 border-bg-muted rounded-4xl shadow-2xl my-4 h-[90%] overflow-hidden'
+        "
       >
         <!-- 预览 Iframe -->
         <iframe
