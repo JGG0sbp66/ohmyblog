@@ -52,24 +52,24 @@ const handleNavClick = (routeName: string) => {
       </div>
 
       <!-- 中间导航栏区域 -->
-      <nav class="flex items-center gap-2">
+      <nav class="flex items-center gap-2 stagger-container">
         <ButtonSecondary
           v-for="item in navItems"
           :key="item.name"
           :text="item.label"
           :isActive="route.name === item.name"
-          class="h-11 px-4"
+          class="h-11 px-4 onload-animation"
           @click="handleNavClick(item.name)"
         >
         </ButtonSecondary>
       </nav>
 
-      <!-- 右侧按钮区域 - 不添加动画，避免影响下拉菜单交互 -->
-      <div class="flex items-center mr-4 gap-2">
-        <ToggleColor />
-        <ToggleTheme />
-        <ToggleLanguage />
-        <SettingsButton />
+      <!-- 右侧按钮区域 -->
+      <div class="flex items-center mr-4 gap-2 stagger-container">
+        <ToggleColor class="onload-animation" />
+        <ToggleTheme class="onload-animation" />
+        <ToggleLanguage class="onload-animation" />
+        <SettingsButton class="onload-animation" />
       </div>
     </div>
   </header>
