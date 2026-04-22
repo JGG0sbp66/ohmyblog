@@ -1,0 +1,152 @@
+/* Fuwari 风格的页面加载动画 */
+
+/* ==================== CSS 变量定义 ==================== */
+:root {
+  /* 内容延迟时间 - 首次加载时使用 */
+  --content-delay: 150ms;
+}
+
+/* ==================== 关键帧动画 ==================== */
+
+/* 淡入上移动画 - 元素从下方淡入 */
+@keyframes fade-in-up {
+  0% {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ==================== 动画类 ==================== */
+
+/* 页面加载时的动画效果 */
+.onload-animation {
+  opacity: 0;
+  animation: 300ms fade-in-up;
+  animation-fill-mode: forwards;
+}
+
+/* ==================== 分层延迟 ==================== */
+
+/* 导航栏 - 最先出现 */
+#navbar,
+.navbar {
+  animation-delay: 0ms;
+}
+
+/* 侧边栏 - 第二个出现 */
+#sidebar,
+.sidebar {
+  animation-delay: 100ms;
+}
+
+/* 主内容区域 - 使用可配置的延迟 */
+#content-wrapper,
+.content-wrapper {
+  animation-delay: var(--content-delay);
+}
+
+/* 页脚 - 较晚出现 */
+#footer,
+.footer {
+  animation-delay: 250ms;
+}
+
+/* Hero 区域 - 稍晚出现 */
+#hero,
+.hero {
+  animation-delay: 200ms;
+}
+
+/* ==================== 列表项递增延迟 ==================== */
+
+/* 文章列表、卡片列表等的子元素依次出现 */
+.stagger-container > :nth-child(1) {
+  animation-delay: calc(var(--content-delay) + 0ms);
+}
+.stagger-container > :nth-child(2) {
+  animation-delay: calc(var(--content-delay) + 50ms);
+}
+.stagger-container > :nth-child(3) {
+  animation-delay: calc(var(--content-delay) + 100ms);
+}
+.stagger-container > :nth-child(4) {
+  animation-delay: calc(var(--content-delay) + 175ms);
+}
+.stagger-container > :nth-child(5) {
+  animation-delay: calc(var(--content-delay) + 250ms);
+}
+.stagger-container > :nth-child(6) {
+  animation-delay: calc(var(--content-delay) + 325ms);
+}
+.stagger-container > :nth-child(7) {
+  animation-delay: calc(var(--content-delay) + 400ms);
+}
+.stagger-container > :nth-child(8) {
+  animation-delay: calc(var(--content-delay) + 475ms);
+}
+
+/* ==================== Banner 动画 ==================== */
+
+/* Banner 初始状态 - 透明且放大 */
+.banner-initial {
+  opacity: 0;
+  transform: scale(1.05);
+  transition:
+    opacity 700ms ease-out,
+    transform 700ms ease-out;
+}
+
+/* Banner 显示状态 - 淡入并缩小到正常大小 */
+.banner-show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ==================== 工具类 ==================== */
+
+/* 快速淡入 - 用于简单场景 */
+.fade-in-fast {
+  animation: 200ms fade-in-up;
+  animation-fill-mode: forwards;
+  opacity: 0;
+}
+
+/* 慢速淡入 - 用于需要更柔和效果的场景 */
+.fade-in-slow {
+  animation: 500ms fade-in-up;
+  animation-fill-mode: forwards;
+  opacity: 0;
+}
+
+/* 自定义延迟工具类 */
+.delay-0 {
+  animation-delay: 0ms;
+}
+.delay-50 {
+  animation-delay: 50ms;
+}
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-150 {
+  animation-delay: 150ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-250 {
+  animation-delay: 250ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
