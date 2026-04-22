@@ -76,24 +76,15 @@ const handleSave = async () => {
     </div>
 
     <!-- 3. 主题色 -->
-    <div class="flex flex-col gap-3">
-      <div class="flex items-center justify-between">
+    <ThemeColorPicker>
+      <template #label>
         <label
           class="text-sm font-bold text-fg-subtle uppercase tracking-wider"
         >
           {{ t("views.admin.Settings.appearance.settings.color") }}
         </label>
-        <div class="flex items-center gap-2 bg-bg-muted px-2 py-1 rounded-md">
-          <div
-            class="w-3 h-3 rounded-full"
-            :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }"
-          ></div>
-          <span class="text-xs text-fg">{{ currentHue }}</span>
-        </div>
-      </div>
-
-      <ThemeColorPicker />
-    </div>
+      </template>
+    </ThemeColorPicker>
 
     <!-- 保存按钮 -->
     <template #footer>

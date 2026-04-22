@@ -57,24 +57,16 @@ const handleNext = () => {
     </div>
 
     <!-- 3. 主题色 (滑动条) -->
-    <div class="flex flex-col gap-3 animate-fade-in animate-delay-100">
-      <div class="flex items-center justify-between">
-        <label
-          class="text-sm font-bold text-fg-subtle uppercase tracking-wider"
-        >
-          {{ t("views.setup.steps.step1.settings.color") }}
-        </label>
-        <!-- 当前颜色预览小块 -->
-        <div class="flex items-center gap-2 bg-bg-muted px-2 py-1 rounded-md">
-          <div
-            class="w-3 h-3 rounded-full"
-            :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }"
-          ></div>
-          <span class="text-xs text-fg">{{ currentHue }}</span>
-        </div>
-      </div>
-
-      <ThemeColorPicker />
+    <div class="animate-fade-in animate-delay-100">
+      <ThemeColorPicker>
+        <template #label>
+          <label
+            class="text-sm font-bold text-fg-subtle uppercase tracking-wider"
+          >
+            {{ t("views.setup.steps.step1.settings.color") }}
+          </label>
+        </template>
+      </ThemeColorPicker>
     </div>
   </StepLayout>
 </template>
