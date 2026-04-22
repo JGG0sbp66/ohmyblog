@@ -29,7 +29,6 @@ const { t } = useLang();
 const router = useRouter();
 const route = useRoute();
 
-// TODO: 目前还没开发"归档"和"关于"页面，暂时作为占位符
 const navItems = computed(() => [
   { name: "home", label: t("components.common.layout.Header.nav.home") },
   { name: "archive", label: t("components.common.layout.Header.nav.archive") },
