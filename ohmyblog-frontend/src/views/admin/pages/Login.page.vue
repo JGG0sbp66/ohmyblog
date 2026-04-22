@@ -137,7 +137,7 @@ const handleLogin = async () => {
                 <div class="border-t border-fg-muted/15"></div>
 
                 <!-- 返回首页按钮 -->
-                <div class="animate-fade-in animate-delay-200">
+                <div class="animate-fade-in animate-delay-150">
                   <ButtonSecondary
                     :text="t('views.login.backToHome')"
                     @click="router.push({ name: 'home' })"

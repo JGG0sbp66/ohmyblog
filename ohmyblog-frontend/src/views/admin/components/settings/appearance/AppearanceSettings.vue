@@ -22,12 +22,12 @@ const viewportMode = ref<'pc' | 'mobile'>('pc');
       <!-- 操控设备卡片 -->
       <ViewportSelector 
         v-model="viewportMode" 
-        class="animate-fade-in animate-delay-150"
+        class="animate-fade-in animate-delay-100"
       />
 
       <!-- 设置卡片 -->
       <AppearanceForm 
-        class="animate-fade-in animate-delay-300"
+        class="animate-fade-in animate-delay-150"
       />
     </div>
   </div>
