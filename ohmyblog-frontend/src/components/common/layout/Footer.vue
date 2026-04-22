@@ -15,7 +15,7 @@ const [footerContentRef] = useAutoAnimate();
 </script>
 
 <template>
-  <footer class="w-full bg-bg">
+  <footer id="footer" class="w-full bg-bg onload-animation">
     <div class="w-2/3 mx-auto border-t border-fg-muted/10"></div>
 
     <div class="max-w-250 mx-auto py-4 px-6">

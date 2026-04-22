@@ -55,7 +55,7 @@ onMounted(() => {
 
 <template>
   <!-- 直接使用 vh 单位，不设置 min-h -->
-  <section class="w-full h-[65vh] overflow-hidden">
+  <section id="hero" class="w-full h-[65vh] overflow-hidden onload-animation">
     <!-- 使用 img 标签 + object-fit + Banner 动画 -->
     <img
       v-if="heroImage"
