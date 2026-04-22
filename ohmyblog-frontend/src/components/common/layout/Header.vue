@@ -29,7 +29,7 @@ const { t } = useLang();
 const router = useRouter();
 const route = useRoute();
 
-// TODO: 目前还没开发“归档”和“关于”页面，暂时作为占位符
+// TODO: 目前还没开发"归档"和"关于"页面，暂时作为占位符
 const navItems = computed(() => [
   { name: "home", label: t("components.common.layout.Header.nav.home") },
   { name: "archive", label: t("components.common.layout.Header.nav.archive") },
@@ -41,7 +41,7 @@ const handleNavClick = (routeName: string) => {
 };
 </script>
 <template>
-  <header>
+  <header class="fixed top-0 left-0 right-0 z-50">
     <!-- 核心尺寸与居中 | 内部布局 | 背景与边框 -->
     <div
       class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm"
