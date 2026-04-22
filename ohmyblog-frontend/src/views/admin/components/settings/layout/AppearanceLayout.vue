@@ -1,12 +1,10 @@
-<!-- src/views/admin/components/settings/AppearanceSettings.vue -->
+<!-- src/views/admin/components/settings/layout/AppearanceLayout.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
-import { useI18n } from "vue-i18n";
 import AppearancePreview from "../appearance/AppearancePreview.vue";
 import AppearanceForm from "../appearance/AppearanceForm.vue";
 import ViewportSelector from "../appearance/ViewportSelector.vue";
 
-const { t } = useI18n();
 const viewportMode = ref<"pc" | "mobile">("pc");
 </script>
 
