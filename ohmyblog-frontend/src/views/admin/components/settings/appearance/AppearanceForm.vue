@@ -1,6 +1,7 @@
 <!-- src/views/admin/components/settings/AppearanceForm.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
+import SettingCard from "@/components/base/card/SettingCard.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTooltip from "@/components/base/pop/BaseTooltip.vue";
@@ -34,7 +35,7 @@ const handleSave = async () => {
       configValue,
       description: "外观设置（主题颜色、色相、语言）",
     });
-    
+
     // 使用接口返回的 message 作为 Key 解析
     if (res?.message) {
       useToast.success(t(`api.success.config.${res.message}`));
@@ -49,16 +50,11 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="w-full lg:w-120 bg-bg-card rounded-3xl shadow-xl p-8 flex flex-col gap-8 h-fit">
-    <div class="flex flex-col gap-2">
-      <h2 class="text-2xl font-bold text-fg">
-        {{ t("views.admin.Settings.appearance.title") }}
-      </h2>
-      <p class="text-fg-subtle text-sm">
-        {{ t("views.admin.Settings.appearance.description") }}
-      </p>
-    </div>
-
+  <SettingCard
+    :title="t('views.admin.Settings.appearance.title')"
+    :description="t('views.admin.Settings.appearance.description')"
+    class="w-full lg:w-120 h-fit"
+  >
     <!-- 1. 语言选择 -->
     <div class="flex flex-col gap-3 text-fg-subtle">
       <div class="flex items-center gap-2">
@@ -111,7 +107,9 @@ const handleSave = async () => {
     <!-- 3. 主题色 -->
     <div class="flex flex-col gap-3">
       <div class="flex items-center justify-between">
-        <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider">
+        <label
+          class="text-sm font-bold text-fg-subtle uppercase tracking-wider"
+        >
           {{ t("views.admin.Settings.appearance.settings.color") }}
         </label>
         <div class="flex items-center gap-2 bg-bg-muted px-2 py-1 rounded-md">
@@ -129,13 +127,15 @@ const handleSave = async () => {
     </div>
 
     <!-- 保存按钮 -->
-    <div class="pt-4 mt-auto">
-      <ButtonPrimary
-        class="w-full rounded-2xl text-base font-bold"
-        :loading="isSubmitting"
-        @click="handleSave"
-        :text="t('views.admin.Settings.appearance.save')"
-      />
-    </div>
-  </div>
+    <template #footer>
+      <div class="pt-4">
+        <ButtonPrimary
+          class="w-full rounded-2xl text-base font-bold"
+          :loading="isSubmitting"
+          @click="handleSave"
+          :text="t('views.admin.Settings.appearance.save')"
+        />
+      </div>
+    </template>
+  </SettingCard>
 </template>

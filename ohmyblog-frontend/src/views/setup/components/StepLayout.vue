@@ -1,10 +1,11 @@
 <!-- src/views/setup/components/StepLayout.vue -->
 <script setup lang="ts">
-import { useAutoAnimate } from "@formkit/auto-animate/vue";
+import SettingCard from "@/components/base/card/SettingCard.vue";
 import StepButton from "@/components/common/button/StepButton.vue";
 
 /**
  * 步骤布局组件属性接口
+ * 基于 SettingCard，添加步骤导航功能
  */
 interface Props {
   title: string; // 步骤标题
@@ -24,38 +25,32 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 defineEmits(["next"]); // 定义"下一步"点击事件
-
-// 使用 auto-animate 自动处理内容区域的高度变化动画
-const [contentRef] = useAutoAnimate();
 </script>
 
 <template>
-  <div class="relative p-8 flex flex-col gap-8">
-    <!-- 头部区域：包含标题和副标题/描述 -->
-    <div class="flex flex-col gap-2">
-      <h2 class="text-2xl font-bold text-fg">
-        <slot name="title">{{ title }}</slot>
-      </h2>
-      <p
-        v-if="description || $slots.description"
-        class="text-fg-subtle text-sm"
-      >
-        <slot name="description">{{ description }}</slot>
-      </p>
-    </div>
+  <SettingCard :title="title" :description="description">
+    <!-- 透传标题插槽 -->
+    <template v-if="$slots.title" #title>
+      <slot name="title" />
+    </template>
 
-    <!-- 内容区域：放置步骤的核心表单或选择器 -->
-    <div class="flex flex-col gap-8">
-      <slot />
-    </div>
+    <!-- 透传描述插槽 -->
+    <template v-if="$slots.description" #description>
+      <slot name="description" />
+    </template>
 
-    <!-- 底部按钮区域：统一的导航控制 -->
-    <StepButton
-      :loading="loading"
-      :showPrev="showPrev"
-      :nextText="nextText"
-      :prevText="prevText"
-      @next="$emit('next')"
-    />
-  </div>
+    <!-- 内容区域 -->
+    <slot />
+
+    <!-- 底部按钮区域 -->
+    <template #footer>
+      <StepButton
+        :loading="loading"
+        :showPrev="showPrev"
+        :nextText="nextText"
+        :prevText="prevText"
+        @next="$emit('next')"
+      />
+    </template>
+  </SettingCard>
 </template>
