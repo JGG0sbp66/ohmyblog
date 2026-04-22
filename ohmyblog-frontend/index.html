@@ -16,59 +16,6 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
-
-    <!-- 在页面渲染前设置主题，避免白色闪烁 -->
-    <script>
-      (function () {
-        // 从 localStorage 读取用户设置（键名与 theme.hook.ts 中的 STORAGE_KEYS 保持一致）
-        const colorMode = localStorage.getItem("colorMode") || "auto";
-        const hue = localStorage.getItem("app-hue") || "250";
-
-        // 设置 CSS 变量
-        document.documentElement.style.setProperty("--app-hue", hue);
-
-        // 根据主题模式添加或移除 dark 类
-        if (colorMode === "dark") {
-          document.documentElement.classList.add("dark");
-        } else if (colorMode === "light") {
-          document.documentElement.classList.remove("dark");
-        } else if (colorMode === "auto") {
-          // 跟随系统设置
-          if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            document.documentElement.classList.add("dark");
-          } else {
-            document.documentElement.classList.remove("dark");
-          }
-        }
-      })();
-    </script>
-
-    <style>
-      /* 初始加载时的背景色，防止白色闪烁 */
-      html {
-        background-color: oklch(0.97 0.01 var(--app-hue, 250));
-        transition: background-color 0.3s ease;
-      }
-
-      html.dark {
-        background-color: oklch(0.16 0.014 var(--app-hue, 250));
-      }
-
-      /* 页面加载动画 */
-      body {
-        opacity: 0;
-        animation: fadeIn 0.3s ease-out forwards;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-    </style>
   </head>
   <body>
     <div id="app"></div>
