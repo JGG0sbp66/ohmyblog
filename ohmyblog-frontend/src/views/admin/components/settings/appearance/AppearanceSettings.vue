@@ -7,11 +7,13 @@ import AppearanceForm from "./AppearanceForm.vue";
 import ViewportSelector from "./ViewportSelector.vue";
 
 const { t } = useI18n();
-const viewportMode = ref<'pc' | 'mobile'>('pc');
+const viewportMode = ref<"pc" | "mobile">("pc");
 </script>
 
 <template>
-  <div class="flex flex-col lg:flex-row gap-8 p-4 animate-fade-in min-h-0 flex-1">
+  <div
+    class="flex flex-col lg:flex-row gap-8 p-4 animate-fade-in min-h-0 flex-1"
+  >
     <!-- 左侧预览卡片 -->
     <div class="flex-1 flex flex-col gap-6 min-h-0">
       <AppearancePreview :viewport-mode="viewportMode" />
@@ -20,15 +22,13 @@ const viewportMode = ref<'pc' | 'mobile'>('pc');
     <!-- 右侧容器 -->
     <div class="flex flex-col gap-6 shrink-0">
       <!-- 操控设备卡片 -->
-      <ViewportSelector 
-        v-model="viewportMode" 
+      <ViewportSelector
+        v-model="viewportMode"
         class="animate-fade-in animate-delay-100"
       />
 
       <!-- 设置卡片 -->
-      <AppearanceForm 
-        class="animate-fade-in animate-delay-150"
-      />
+      <AppearanceForm class="animate-fade-in animate-delay-150" />
     </div>
   </div>
 </template>
