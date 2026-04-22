@@ -85,7 +85,7 @@ const handleNext = () => {
     @next="handleNext"
   >
     <!-- 站点名称 -->
-    <div class="animate-fade-in">
+    <div class="onload-animation">
       <TipInput
         ref="titleInputRef"
         v-model="systemStore.siteInfo.title"
@@ -100,7 +100,7 @@ const handleNext = () => {
     </div>
 
     <!-- 页脚版权 -->
-    <div class="animate-fade-in animate-delay-50">
+    <div class="onload-animation delay-50">
       <TipInput
         ref="footerInputRef"
         v-model="systemStore.siteInfo.footer"
@@ -114,7 +114,7 @@ const handleNext = () => {
     </div>
 
     <!-- 备案号 -->
-    <div class="animate-fade-in animate-delay-100">
+    <div class="onload-animation delay-100">
       <TipInput
         ref="icpInputRef"
         v-model="systemStore.siteInfo.icp"
@@ -126,7 +126,7 @@ const handleNext = () => {
     </div>
 
     <!-- 站点图标上传 -->
-    <div class="space-y-2 animate-fade-in animate-delay-150">
+    <div class="space-y-2 onload-animation delay-150">
       <label class="block text-sm font-medium text-fg pb-1">
         {{ t("views.setup.steps.step2.siteIcon.label") }}
       </label>

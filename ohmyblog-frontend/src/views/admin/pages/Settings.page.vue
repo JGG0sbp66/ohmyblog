@@ -58,7 +58,7 @@ onUnmounted(() => {
       <SettingsNav
         :menu-items="menuItems"
         v-model:active-tab="activeTab"
-        class="animate-fade-in"
+        class="onload-animation"
       />
     </Teleport>
 

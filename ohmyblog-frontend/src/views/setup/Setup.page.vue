@@ -50,7 +50,7 @@ const [rightSideRef] = useAutoAnimate();
     <!-- main 撑满除 Footer 外的所有高度 -->
     <main class="flex-1 flex flex-col p-8 gap-10">
       <!-- 进度条区域：添加简单淡入动画 -->
-      <div class="w-full max-w-5xl mx-auto animate-fade-in">
+      <div class="w-full max-w-5xl mx-auto onload-animation">
         <BaseProgress
           :currentStep="stepStore.currentStep"
           :totalSteps="stepStore.totalSteps"
@@ -64,7 +64,7 @@ const [rightSideRef] = useAutoAnimate();
           <!-- 左侧：展示区 - 添加简单淡入动画和延迟 -->
           <div
             ref="leftSideRef"
-            class="hidden lg:block w-full animate-fade-in animate-delay-50"
+            class="hidden lg:block w-full onload-animation delay-50"
           >
             <BaseCard
               v-if="stepStore.currentStep === 4 && stepStore.isPersonalized"
@@ -93,7 +93,7 @@ const [rightSideRef] = useAutoAnimate();
           <!-- 右侧：表单流程区 - 添加简单淡入动画和延迟 -->
           <div
             ref="rightSideRef"
-            class="w-full max-w-2xl animate-fade-in animate-delay-100"
+            class="w-full max-w-2xl onload-animation delay-100"
           >
             <component
               :is="CurrentStepComponent"
@@ -105,6 +105,6 @@ const [rightSideRef] = useAutoAnimate();
     </main>
 
     <!-- 底部版权信息 - 添加简单淡入动画 -->
-    <Footer class="animate-fade-in animate-delay-50"></Footer>
+    <Footer class="onload-animation delay-50"></Footer>
   </div>
 </template>

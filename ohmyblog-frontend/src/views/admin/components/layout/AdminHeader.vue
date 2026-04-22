@@ -31,7 +31,7 @@ const goToHome = () => {
       class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm px-6"
     >
       <!-- 左侧页面名称 -->
-      <div class="flex items-center ml-4 animate-fade-in">
+      <div class="flex items-center ml-4 onload-animation">
         <h1 class="text-xl font-semibold text-fg">{{ currentPageName }}</h1>
       </div>
 

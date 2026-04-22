@@ -10,7 +10,7 @@ const viewportMode = ref<"pc" | "mobile">("pc");
 
 <template>
   <div
-    class="flex flex-col lg:flex-row gap-8 p-4 animate-fade-in min-h-0 flex-1"
+    class="flex flex-col lg:flex-row gap-8 p-4 onload-animation min-h-0 flex-1"
   >
     <!-- 左侧预览卡片 -->
     <div class="flex-1 flex flex-col gap-6 min-h-0">
@@ -22,11 +22,11 @@ const viewportMode = ref<"pc" | "mobile">("pc");
       <!-- 操控设备卡片 -->
       <ViewportSelector
         v-model="viewportMode"
-        class="animate-fade-in animate-delay-100"
+        class="onload-animation delay-100"
       />
 
       <!-- 设置卡片 -->
-      <AppearanceForm class="animate-fade-in animate-delay-150" />
+      <AppearanceForm class="onload-animation delay-150" />
     </div>
   </div>
 </template>
