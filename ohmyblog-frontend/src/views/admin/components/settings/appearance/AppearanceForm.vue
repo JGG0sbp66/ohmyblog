@@ -2,20 +2,19 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import SettingCard from "@/components/base/card/SettingCard.vue";
-import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTooltip from "@/components/base/pop/BaseTooltip.vue";
-import LanguagePicker from "@/components/icon/theme/LanguagePicker.vue";
-import ThemePicker from "@/components/icon/theme/ThemePicker.vue";
-import ColorSlider from "@/components/base/slider/ColorSlider.vue";
+import LanguageSelector from "@/views/setup/components/theme/LanguageSelector.vue";
+import ThemeModeSelector from "@/views/setup/components/theme/ThemeModeSelector.vue";
+import ThemeColorPicker from "@/views/setup/components/theme/ThemeColorPicker.vue";
 import { useTheme } from "@/composables/theme.hook";
 import { useLang } from "@/composables/lang.hook";
 import { upsertConfig } from "@/api/config.api";
 import { useToast } from "@/composables/toast.hook";
 import type { TAppearanceConfigUpsertDTO } from "@server/dtos/config.dto";
 
-const { t, locale, setLocale, SUPPORTED_LOCALES } = useLang();
-const { currentHue, colorMode, setTheme, THEME_MODES } = useTheme();
+const { t, locale } = useLang();
+const { currentHue, colorMode } = useTheme();
 
 const isSubmitting = ref(false);
 
@@ -65,20 +64,7 @@ const handleSave = async () => {
           :content="t('views.admin.Settings.appearance.settings.languageHint')"
         />
       </div>
-      <div class="grid grid-cols-2 gap-3">
-        <ButtonSecondary
-          v-for="lang in SUPPORTED_LOCALES"
-          :key="lang.value"
-          :isActive="locale === lang.value"
-          class="w-full justify-center py-3"
-          @click="setLocale(lang.value)"
-        >
-          <div class="flex items-center gap-2">
-            <LanguagePicker :language="lang.value" />
-            <span>{{ lang.label }}</span>
-          </div>
-        </ButtonSecondary>
-      </div>
+      <LanguageSelector />
     </div>
 
     <!-- 2. 主题模式 -->
@@ -86,22 +72,7 @@ const handleSave = async () => {
       <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider">
         {{ t("views.admin.Settings.appearance.settings.theme") }}
       </label>
-      <div class="grid grid-cols-3 gap-3">
-        <ButtonSecondary
-          v-for="mode in THEME_MODES"
-          :key="mode"
-          :isActive="colorMode === mode"
-          class="w-full justify-center py-3"
-          @click="setTheme(mode)"
-        >
-          <div class="flex items-center gap-2">
-            <ThemePicker :theme="mode" />
-            <span class="capitalize">{{
-              t(`components.theme.ToggleTheme.${mode}`)
-            }}</span>
-          </div>
-        </ButtonSecondary>
-      </div>
+      <ThemeModeSelector />
     </div>
 
     <!-- 3. 主题色 -->
@@ -121,9 +92,7 @@ const handleSave = async () => {
         </div>
       </div>
 
-      <div class="h-12 bg-bg-muted rounded-xl flex items-center px-4">
-        <ColorSlider v-model="currentHue" />
-      </div>
+      <ThemeColorPicker />
     </div>
 
     <!-- 保存按钮 -->
