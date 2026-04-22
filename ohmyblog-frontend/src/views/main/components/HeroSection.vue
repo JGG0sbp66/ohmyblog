@@ -31,24 +31,38 @@ TODO: Hero 组件功能增强清单
    - WebP 格式支持
 -->
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useSystemStore } from "@/stores/system.store";
 
 const systemStore = useSystemStore();
 
 // 从 store 获取背景图片
 const heroImage = computed(() => systemStore.personalInfo.hero);
+
+// Banner 动画控制
+const heroRef = ref<HTMLElement | null>(null);
+
+onMounted(() => {
+  // 页面加载后触发 Banner 动画
+  setTimeout(() => {
+    if (heroRef.value) {
+      heroRef.value.classList.remove("banner-initial");
+      heroRef.value.classList.add("banner-show");
+    }
+  }, 100);
+});
 </script>
 
 <template>
   <!-- 直接使用 vh 单位，不设置 min-h -->
   <section class="w-full h-[65vh] overflow-hidden">
-    <!-- 使用 img 标签 + object-fit -->
+    <!-- 使用 img 标签 + object-fit + Banner 动画 -->
     <img
       v-if="heroImage"
+      ref="heroRef"
       :src="heroImage"
       alt="Hero banner image"
-      class="w-full h-full object-cover object-center"
+      class="w-full h-full object-cover object-center banner-initial"
       loading="lazy"
       decoding="async"
     />
