@@ -1,6 +1,7 @@
 <!-- src/views/admin/components/settings/ViewportSelector.vue -->
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import BaseCard from "@/components/base/card/BaseCard.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import Monitor from "@/components/icon/ui/Monitor.vue";
 import Smartphone from "@/components/icon/ui/Smartphone.vue";
@@ -17,9 +18,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <div
-    class="bg-bg-card rounded-3xl shadow-xl p-6 flex items-center justify-between"
-  >
+  <BaseCard padding="sm" class="flex items-center justify-between">
     <div class="flex flex-col">
       <span class="text-sm font-bold text-fg/80">{{
         t("views.admin.Settings.appearance.viewport.title")
@@ -52,5 +51,5 @@ const { t } = useI18n();
         </div>
       </ButtonSecondary>
     </div>
-  </div>
+  </BaseCard>
 </template>

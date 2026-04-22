@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
+import BaseCard from "@/components/base/card/BaseCard.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import Loading from "@/components/icon/common/Loading.vue";
@@ -42,8 +43,9 @@ watch(locale, () => {
 </script>
 
 <template>
-  <div
-    class="flex-1 bg-bg-card rounded-3xl shadow-xl overflow-hidden relative group flex flex-col transition-all duration-500 self-stretch"
+  <BaseCard
+    padding="none"
+    class="flex-1 overflow-hidden relative group flex flex-col transition-all duration-500 self-stretch"
   >
     <!-- 浏览器模拟工具栏 -->
     <div
@@ -118,7 +120,7 @@ watch(locale, () => {
         ></iframe>
       </div>
     </div>
-  </div>
+  </BaseCard>
 </template>
 
 <style scoped>

@@ -3,6 +3,7 @@
 import TypingBrand from "@/components/icon/TypingBrand.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 import BaseProgress from "@/components/base/progress/BaseProgress.vue";
+import BaseCard from "@/components/base/card/BaseCard.vue";
 import PersonalizationPreview from "./components/PersonalizationPreview.vue";
 import SMTPForm from "./components/SMTPForm.vue";
 
@@ -65,22 +66,22 @@ const [rightSideRef] = useAutoAnimate();
             ref="leftSideRef"
             class="hidden lg:block w-full animate-fade-in animate-delay-50"
           >
-            <div
+            <BaseCard
               v-if="stepStore.currentStep === 4 && stepStore.isPersonalized"
-              class="bg-bg-card rounded-3xl shadow-xl p-6"
+              padding="sm"
             >
               <PersonalizationPreview />
-            </div>
-            <div
+            </BaseCard>
+            <BaseCard
               v-else-if="
                 stepStore.currentStep === 5 &&
                 stepStore.isSMTPEnabled &&
                 isDesktop
               "
-              class="bg-bg-card rounded-3xl shadow-xl p-6"
+              padding="sm"
             >
               <SMTPForm />
-            </div>
+            </BaseCard>
             <TypingBrand
               v-else
               :line1="t('components.icon.TypingBrand.line1')"
@@ -90,15 +91,16 @@ const [rightSideRef] = useAutoAnimate();
           </div>
 
           <!-- 右侧：表单流程区 - 添加简单淡入动画和延迟 -->
-          <div
+          <BaseCard
             ref="rightSideRef"
-            class="w-full max-w-2xl bg-bg-card rounded-3xl shadow-xl animate-fade-in animate-delay-100"
+            padding="none"
+            class="max-w-2xl animate-fade-in animate-delay-100"
           >
             <component
               :is="CurrentStepComponent"
               :key="stepStore.currentStep"
             />
-          </div>
+          </BaseCard>
         </div>
       </div>
     </main>

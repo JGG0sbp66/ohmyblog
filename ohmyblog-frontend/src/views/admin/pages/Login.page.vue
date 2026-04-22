@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import BaseCard from "@/components/base/card/BaseCard.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
@@ -82,9 +83,7 @@ const handleLogin = async () => {
           </div>
 
           <!-- 右侧：登录表单 -->
-          <div
-            class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl p-8 animate-fade-in animate-delay-100"
-          >
+          <BaseCard class="max-w-122 animate-fade-in animate-delay-100">
             <div class="flex flex-col gap-6">
               <!-- 标题 -->
               <div class="flex flex-col gap-2 animate-fade-in">
@@ -148,7 +147,7 @@ const handleLogin = async () => {
                 </div>
               </form>
             </div>
-          </div>
+          </BaseCard>
         </div>
       </div>
     </main>
