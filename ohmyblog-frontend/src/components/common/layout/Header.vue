@@ -41,18 +41,18 @@ const handleNavClick = (routeName: string) => {
 };
 </script>
 <template>
-  <header class="fixed top-0 left-0 right-0 z-50">
+  <header class="fixed top-0 left-0 right-0 z-50 onload-animation">
     <!-- 核心尺寸与居中 | 内部布局 | 背景与边框 -->
     <div
       class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm"
     >
       <!-- 左侧搜索区域 -->
-      <div class="ml-4 animate-fade-in">
+      <div class="ml-4">
         <HeaderSearch />
       </div>
 
       <!-- 中间导航栏区域 -->
-      <nav class="flex items-center gap-2 animate-fade-in animate-delay-50">
+      <nav class="flex items-center gap-2">
         <ButtonSecondary
           v-for="item in navItems"
           :key="item.name"
