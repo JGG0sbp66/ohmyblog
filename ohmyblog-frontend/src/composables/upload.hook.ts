@@ -42,13 +42,17 @@ export function useImageUpload() {
    */
   const handleUpload = async (
     file: File,
-    apiFn: (file: File) => Promise<{ url: string; message?: string }>,
+    apiFn: (file: File) => Promise<{ url: string; message?: string } | null>,
     onSuccess: (urlWithTimestamp: string) => void,
   ) => {
     try {
       loading.value = true;
       // 执行 API 请求，获取后端返回的数据
       const result = await apiFn(file);
+
+      if (!result?.url) {
+        throw new Error("EMPTY_UPLOAD_REPLY");
+      }
 
       // 自动为 URL 添加时间戳，绕过浏览器缓存
       const urlWithTimestamp = `${result.url}?t=${Date.now()}`;
