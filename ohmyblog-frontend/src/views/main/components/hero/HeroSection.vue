@@ -34,6 +34,7 @@ TODO: Hero 组件功能增强清单
 import { computed, onMounted, ref } from "vue";
 import { useSystemStore } from "@/stores/system.store";
 import HeroImageEditor from "./HeroImageEditor.vue";
+import HeroImageTransition from "./HeroImageTransition.vue";
 
 const systemStore = useSystemStore();
 
@@ -59,19 +60,23 @@ onMounted(() => {
   <section
     v-if="heroImage"
     id="hero"
-    class="w-full h-[65vh] overflow-hidden onload-animation relative"
+    class="relative h-[65vh] w-full overflow-hidden onload-animation"
   >
-    <!-- 使用 img 标签 + object-fit + Banner 动画 -->
-    <img
+    <!-- 使用专用的 Hero 过渡组件 -->
+    <HeroImageTransition
       ref="heroRef"
       :src="heroImage"
       alt="Hero banner image"
-      class="w-full h-full object-cover object-center banner-initial"
-      loading="lazy"
-      decoding="async"
+      className="banner-initial"
+      :duration="1000"
+      class="w-full h-full"
     />
 
     <!-- Hero 图片编辑按钮 -->
-    <HeroImageEditor />
+    <HeroImageEditor class="z-20" />
   </section>
 </template>
+
+<style scoped>
+</style>
+
