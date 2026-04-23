@@ -38,20 +38,23 @@ export function useImageUpload() {
    * 执行上传核心逻辑
    * @param file 待上传的文件
    * @param apiFn 对应的 API 调用函数 (如 uploadAvatar)
-   * @param onSuccess 上传成功后的回调 (通常用于更新 Store 中的 URL)
+   * @param onSuccess 上传成功后的回调，接收带时间戳的 URL (用于更新 Store)
    */
   const handleUpload = async (
     file: File,
-    apiFn: (file: File) => Promise<any>,
-    onSuccess: () => void,
+    apiFn: (file: File) => Promise<{ url: string; message?: string }>,
+    onSuccess: (urlWithTimestamp: string) => void,
   ) => {
     try {
       loading.value = true;
       // 执行 API 请求，获取后端返回的数据
       const result = await apiFn(file);
 
-      // 执行业务成功回调
-      onSuccess();
+      // 自动为 URL 添加时间戳，绕过浏览器缓存
+      const urlWithTimestamp = `${result.url}?t=${Date.now()}`;
+
+      // 执行业务成功回调，传入带时间戳的 URL
+      onSuccess(urlWithTimestamp);
 
       // 展示成功提示
       if (result?.message) {
