@@ -1,3 +1,9 @@
+<script setup lang="ts">
+defineProps<{
+  text: string;
+}>();
+</script>
+
 <template>
   <!-- 纯视觉容器：交互和语义由父组件透传 -->
   <div
@@ -12,7 +18,7 @@
       class="max-w-0 overflow-hidden whitespace-nowrap pl-0 text-[0.75rem] leading-none opacity-0 transition-all duration-200 group-hover:max-w-24 group-hover:pl-2 group-hover:opacity-100"
       aria-hidden="true"
     >
-      <slot></slot>
+      {{ text }}
     </span>
   </div>
 </template>
