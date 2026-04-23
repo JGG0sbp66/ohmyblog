@@ -45,15 +45,10 @@ const handleFileChange = (file: File) => {
   handleUpload(
     file,
     uploadFavicon, // 调用后端图标上传接口
-    () => {
-      /**
-       * 成功回调：同步全局 Store
-       * 约定路径：/api/uploads/system/favicon.png
-       * 附加时间戳 (?t=...) 用于绕过浏览器图片缓存，确保预览即时更新
-       */
-      systemStore.siteInfo.favicon = `/api/uploads/system/favicon.png?t=${Date.now()}`;
+    (url) => {
+      // handleUpload 已自动添加时间戳，直接赋值即可
+      systemStore.siteInfo.favicon = url;
     },
-    "api.success.config.保存成功", // 成功时的 i18n 提示 Key
   );
 };
 
@@ -85,7 +80,7 @@ const handleNext = () => {
     @next="handleNext"
   >
     <!-- 站点名称 -->
-    <div class="animate-fade-in">
+    <div class="onload-animation">
       <TipInput
         ref="titleInputRef"
         v-model="systemStore.siteInfo.title"
@@ -100,7 +95,7 @@ const handleNext = () => {
     </div>
 
     <!-- 页脚版权 -->
-    <div class="animate-fade-in animate-delay-50">
+    <div class="onload-animation delay-50">
       <TipInput
         ref="footerInputRef"
         v-model="systemStore.siteInfo.footer"
@@ -114,7 +109,7 @@ const handleNext = () => {
     </div>
 
     <!-- 备案号 -->
-    <div class="animate-fade-in animate-delay-100">
+    <div class="onload-animation delay-100">
       <TipInput
         ref="icpInputRef"
         v-model="systemStore.siteInfo.icp"
@@ -126,7 +121,7 @@ const handleNext = () => {
     </div>
 
     <!-- 站点图标上传 -->
-    <div class="space-y-2 animate-fade-in animate-delay-150">
+    <div class="space-y-2 onload-animation delay-150">
       <label class="block text-sm font-medium text-fg pb-1">
         {{ t("views.setup.steps.step2.siteIcon.label") }}
       </label>
@@ -159,7 +154,7 @@ const handleNext = () => {
             />
 
             <BaseTag v-if="systemStore.siteInfo.favicon" type="success">
-              {{ t("views.setup.steps.step2.siteIcon.success") }}
+              {{ t("views.setup.steps.step2.siteIcon.uploaded") }}
             </BaseTag>
           </div>
 

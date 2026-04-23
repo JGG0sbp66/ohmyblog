@@ -3,6 +3,7 @@
 import TypingBrand from "@/components/icon/TypingBrand.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 import BaseProgress from "@/components/base/progress/BaseProgress.vue";
+import BaseCard from "@/components/base/card/BaseCard.vue";
 import PersonalizationPreview from "./components/PersonalizationPreview.vue";
 import SMTPForm from "./components/SMTPForm.vue";
 
@@ -49,7 +50,7 @@ const [rightSideRef] = useAutoAnimate();
     <!-- main 撑满除 Footer 外的所有高度 -->
     <main class="flex-1 flex flex-col p-8 gap-10">
       <!-- 进度条区域：添加简单淡入动画 -->
-      <div class="w-full max-w-5xl mx-auto animate-fade-in">
+      <div class="w-full max-w-5xl mx-auto onload-animation">
         <BaseProgress
           :currentStep="stepStore.currentStep"
           :totalSteps="stepStore.totalSteps"
@@ -63,24 +64,24 @@ const [rightSideRef] = useAutoAnimate();
           <!-- 左侧：展示区 - 添加简单淡入动画和延迟 -->
           <div
             ref="leftSideRef"
-            class="hidden lg:block w-full animate-fade-in animate-delay-50"
+            class="hidden lg:block w-full onload-animation delay-50"
           >
-            <div
+            <BaseCard
               v-if="stepStore.currentStep === 4 && stepStore.isPersonalized"
-              class="bg-bg-card rounded-3xl shadow-xl p-6"
+              padding="sm"
             >
               <PersonalizationPreview />
-            </div>
-            <div
+            </BaseCard>
+            <BaseCard
               v-else-if="
                 stepStore.currentStep === 5 &&
                 stepStore.isSMTPEnabled &&
                 isDesktop
               "
-              class="bg-bg-card rounded-3xl shadow-xl p-6"
+              padding="sm"
             >
               <SMTPForm />
-            </div>
+            </BaseCard>
             <TypingBrand
               v-else
               :line1="t('components.icon.TypingBrand.line1')"
@@ -92,7 +93,7 @@ const [rightSideRef] = useAutoAnimate();
           <!-- 右侧：表单流程区 - 添加简单淡入动画和延迟 -->
           <div
             ref="rightSideRef"
-            class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl animate-fade-in animate-delay-100"
+            class="w-full max-w-2xl onload-animation delay-100"
           >
             <component
               :is="CurrentStepComponent"
@@ -104,6 +105,6 @@ const [rightSideRef] = useAutoAnimate();
     </main>
 
     <!-- 底部版权信息 - 添加简单淡入动画 -->
-    <Footer class="animate-fade-in animate-delay-50"></Footer>
+    <Footer class="onload-animation delay-50"></Footer>
   </div>
 </template>

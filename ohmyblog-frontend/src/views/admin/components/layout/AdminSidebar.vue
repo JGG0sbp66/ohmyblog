@@ -5,7 +5,7 @@ import { useRouter, useRoute } from "vue-router";
 import { LayoutDashboard, PenLine, Mail, Settings } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import SidebarButton from "@/components/base/button/SidebarButton.vue";
-import AdminUserInfo from "../user/AdminUserInfo.vue";
+import AdminUserInfo from "../AdminUserInfo.vue";
 
 const isExpanded = ref(false);
 const router = useRouter();
@@ -63,7 +63,7 @@ const isItemActive = (item: MenuItem) => {
     @mouseenter="isExpanded = true"
     @mouseleave="isExpanded = false"
     :class="[
-      'bg-bg-card rounded-r-3xl shadow-sm py-6 flex flex-col items-start animate-fade-in animate-delay-50',
+      'bg-bg-card rounded-r-3xl shadow-sm py-6 flex flex-col items-start onload-animation delay-50',
       isExpanded ? 'w-48' : 'w-20',
     ]"
   >

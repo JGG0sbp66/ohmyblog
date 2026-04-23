@@ -50,9 +50,9 @@ export function useSetupStep() {
       isSubmitting.value = true;
       const res = await action();
 
-      // 成功提示处理：如果接口返回了 message，默认尝试从 api.success.config 寻找翻译
+      // 成功提示处理：如果接口返回了 message，从 api.success 寻找翻译
       if (res?.message) {
-        useToast.success(t(`api.success.config.${res.message}`));
+        useToast.success(t(`api.success.${res.message}`));
       }
 
       // 自动跳转

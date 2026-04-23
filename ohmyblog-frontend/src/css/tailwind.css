@@ -126,39 +126,4 @@ body {
       background-color, border-color, fill, stroke, stop-color, opacity,
       stop-opacity, transform, scale, box-shadow, width !important;
   }
-
-  /* 页面进入动画 - 简单淡入 */
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* 动画工具类 */
-  .animate-fade-in {
-    animation: fade-in 0.25s ease-out forwards;
-  }
-
-  /* 交错延迟 - 用于多个元素依次出现 */
-  .animate-delay-50 {
-    animation-delay: 50ms;
-  }
-
-  .animate-delay-100 {
-    animation-delay: 100ms;
-  }
-
-  .animate-delay-150 {
-    animation-delay: 150ms;
-  }
-
-  /* 初始状态 - 防止闪烁 */
-  .animate-fade-in {
-    opacity: 0;
-  }
 }

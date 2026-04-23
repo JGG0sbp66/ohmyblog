@@ -22,13 +22,11 @@ const UPLOAD_CONFIGS = {
     api: uploadAvatar,
     storeKey: "avatar",
     fileName: "avatar",
-    msg: "views.setup.steps.step4.avatar.success",
   },
   hero: {
     api: uploadHero,
     storeKey: "hero",
     fileName: "hero",
-    msg: "views.setup.steps.step4.hero.success",
   },
 } as const;
 
@@ -49,17 +47,11 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
   const config = UPLOAD_CONFIGS[type];
   const hook = type === "avatar" ? avatar : hero;
 
-  hook.handleUpload(
-    file,
-    config.api,
-    () => {
-      // 动态更新 store 对应项
-      const info = systemStore.personalInfo as any;
-      info[config.storeKey] =
-        `/api/uploads/system/${config.fileName}.webp?t=${Date.now()}`;
-    },
-    config.msg,
-  );
+  hook.handleUpload(file, config.api, (url) => {
+    // handleUpload 已自动添加时间戳，直接赋值即可
+    const info = systemStore.personalInfo as any;
+    info[config.storeKey] = url;
+  });
 };
 </script>
 
@@ -117,7 +109,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
             v-if="systemStore.personalInfo.avatar && !avatarLoading"
             type="success"
           >
-            {{ t("views.setup.steps.step4.avatar.success") }}
+            {{ t("views.setup.steps.step4.avatar.uploaded") }}
           </BaseTag>
         </div>
 
@@ -186,7 +178,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           v-if="systemStore.personalInfo.hero && !heroLoading"
           type="success"
         >
-          {{ t("views.setup.steps.step4.hero.success") }}
+          {{ t("views.setup.steps.step4.hero.uploaded") }}
         </BaseTag>
       </div>
     </div>

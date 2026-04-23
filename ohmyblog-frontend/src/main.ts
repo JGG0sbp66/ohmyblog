@@ -9,6 +9,7 @@ import { toastConfig } from "@/composables/toast.hook";
 import Vue3Toastify from "vue3-toastify";
 
 import "./css/tailwind.css";
+import "./css/animations.css";
 import "./css/toast.css";
 
 const app = createApp(App);

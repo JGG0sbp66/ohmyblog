@@ -89,15 +89,9 @@
           "smtp": "SMTP Settings"
         },
         "appearance": {
-          "title": "Appearance Settings",
-          "description": "Customize your website appearance by choosing your favorite theme color, hue, and interface language.",
           "settings": {
-            "language": "Language",
-            "languageHint": "As the preview operates in an isolated environment, a quick reload is required for language changes. Theme and Hue settings sync in real-time.",
-            "theme": "Theme Mode",
-            "color": "Theme Hue"
+            "languageHint": "As the preview operates in an isolated environment, a quick reload is required for language changes. Theme and Hue settings sync in real-time."
           },
-          "save": "Save Settings",
           "preview": "Live Preview",
           "viewport": {
             "title": "Preview Device",
@@ -151,7 +145,7 @@
             "upload": "Upload Icon",
             "change": "Change Icon",
             "uploading": "Uploading",
-            "success": "Icon Uploaded",
+            "uploaded": "Icon Uploaded",
             "help1": "Recommended to use 256x256 or larger PNG/ICO files",
             "help2": "Maximum supported image size is 1MB"
           },
@@ -203,7 +197,7 @@
             "upload": "Upload Avatar",
             "change": "Change Avatar",
             "uploading": "Uploading",
-            "success": "Avatar Uploaded",
+            "uploaded": "Avatar Uploaded",
             "help": "Support common image formats · Max 2MB"
           },
           "hero": {
@@ -212,7 +206,7 @@
             "upload": "Upload Banner",
             "change": "Change Banner",
             "uploading": "Uploading",
-            "success": "Banner Uploaded",
+            "uploaded": "Banner Uploaded",
             "recommend": "Recommended 16:9 ratio · Width ≥ 1920px",
             "format": "Support common image formats · Max 5MB"
           }
@@ -303,7 +297,8 @@
     },
     "next": "Next Step",
     "prev": "Previous",
-    "finish": "Finish"
+    "finish": "Finish",
+    "save": "Save Settings"
   },
   "stores": {
     "setup": {
@@ -318,6 +313,7 @@
   },
   "api": {
     "errors": {
+      "EMPTY_UPLOAD_REPLY": "Abnormal server upload response",
       "Error": "Unable to connect to the backend service",
       "请求参数验证失败": "Request validation failed",
       "系统健康检查失败": "System health check failed",
@@ -334,10 +330,14 @@
       "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout"
     },
     "success": {
-      "config": {
-        "保存成功": "Settings saved successfully",
-        "登录成功": "Login successful"
-      }
+      "保存成功": "Settings saved successfully",
+      "获取成功": "Fetched successfully",
+      "注册成功": "Registration successful",
+      "登录成功": "Login successful",
+      "登出成功": "Logout successful",
+      "图标上传成功": "Icon uploaded successfully",
+      "横幅上传成功": "Banner uploaded successfully",
+      "头像上传成功": "Avatar uploaded successfully"
     }
   }
 }

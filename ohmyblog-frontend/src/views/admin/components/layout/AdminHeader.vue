@@ -31,7 +31,7 @@ const goToHome = () => {
       class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm px-6"
     >
       <!-- 左侧页面名称 -->
-      <div class="flex items-center ml-4 animate-fade-in">
+      <div class="flex items-center ml-4 onload-animation">
         <h1 class="text-xl font-semibold text-fg">{{ currentPageName }}</h1>
       </div>
 
@@ -41,10 +41,10 @@ const goToHome = () => {
         class="flex-1 flex justify-center mx-4"
       ></div>
 
-      <!-- 右侧按钮组 - 不添加动画，避免影响下拉菜单交互 -->
-      <div class="flex items-center gap-2 mr-4">
+      <!-- 右侧按钮组 -->
+      <div class="flex items-center gap-2 mr-4 stagger-container">
         <!-- 返回首页按钮 -->
-        <div class="w-11 h-11">
+        <div class="w-11 h-11 onload-animation">
           <ButtonSecondary
             @click="goToHome"
             :title="t('components.common.admin.AdminHeader.actions.goHome')"
@@ -55,7 +55,7 @@ const goToHome = () => {
         </div>
 
         <!-- 消息通知按钮 -->
-        <NotificationButton />
+        <NotificationButton class="onload-animation" />
       </div>
     </div>
   </header>

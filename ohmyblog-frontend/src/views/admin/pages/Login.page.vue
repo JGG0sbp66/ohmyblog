@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import BaseCard from "@/components/base/card/BaseCard.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
@@ -73,7 +74,7 @@ const handleLogin = async () => {
       <div class="flex-1 flex items-center justify-center">
         <div class="w-full max-w-5xl flex items-center justify-center gap-12">
           <!-- 左侧：品牌展示 -->
-          <div class="hidden lg:block w-full animate-fade-in">
+          <div class="hidden lg:block w-full onload-animation">
             <TypingBrand
               :line1="t('views.login.brand.line1')"
               :line2="t('views.login.brand.line2')"
@@ -82,12 +83,10 @@ const handleLogin = async () => {
           </div>
 
           <!-- 右侧：登录表单 -->
-          <div
-            class="w-full max-w-122 bg-bg-card rounded-3xl shadow-xl p-8 animate-fade-in animate-delay-100"
-          >
+          <BaseCard class="max-w-122 onload-animation delay-100">
             <div class="flex flex-col gap-6">
               <!-- 标题 -->
-              <div class="flex flex-col gap-2 animate-fade-in">
+              <div class="flex flex-col gap-2 onload-animation">
                 <h1 class="text-2xl font-bold text-fg">
                   {{ t("views.login.title") }}
                 </h1>
@@ -99,7 +98,7 @@ const handleLogin = async () => {
               <!-- 表单 -->
               <form @submit.prevent="handleLogin" class="flex flex-col gap-6">
                 <!-- 用户名/邮箱 -->
-                <div class="animate-fade-in animate-delay-50">
+                <div class="onload-animation delay-50">
                   <TipInput
                     ref="identifierRef"
                     v-model="form.identifier"
@@ -111,7 +110,7 @@ const handleLogin = async () => {
                 </div>
 
                 <!-- 密码 -->
-                <div class="animate-fade-in animate-delay-100">
+                <div class="onload-animation delay-100">
                   <TipInput
                     ref="passwordRef"
                     v-model="form.password"
@@ -124,7 +123,7 @@ const handleLogin = async () => {
                 </div>
 
                 <!-- 登录按钮 -->
-                <div class="pt-4 animate-fade-in animate-delay-150">
+                <div class="pt-4 onload-animation delay-150">
                   <ButtonPrimary
                     :text="t('views.login.submit')"
                     :loading="isSubmitting"
@@ -137,7 +136,7 @@ const handleLogin = async () => {
                 <div class="border-t border-fg-muted/15"></div>
 
                 <!-- 返回首页按钮 -->
-                <div class="animate-fade-in animate-delay-200">
+                <div class="onload-animation delay-150">
                   <ButtonSecondary
                     :text="t('views.login.backToHome')"
                     @click="router.push({ name: 'home' })"
@@ -148,7 +147,7 @@ const handleLogin = async () => {
                 </div>
               </form>
             </div>
-          </div>
+          </BaseCard>
         </div>
       </div>
     </main>

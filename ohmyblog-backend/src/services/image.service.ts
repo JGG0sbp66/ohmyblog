@@ -43,7 +43,7 @@ export const ImageService = {
 			processed = await transform(buffer, {
 				output: {
 					format: "webp",
-					webp: { quality: 85 },
+					webp: { quality: 75 },
 				},
 			});
 		}

@@ -3,7 +3,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="flex items-center justify-center min-h-[50vh] animate-fade-in">
+  <div class="flex items-center justify-center min-h-[50vh] onload-animation">
     <h1 class="text-4xl font-bold opacity-20 select-none">
       这里是archive页面占位符，正在开发中
     </h1>
