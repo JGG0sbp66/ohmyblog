@@ -39,25 +39,24 @@ export function useImageUpload() {
    * @param file 待上传的文件
    * @param apiFn 对应的 API 调用函数 (如 uploadAvatar)
    * @param onSuccess 上传成功后的回调 (通常用于更新 Store 中的 URL)
-   * @param successMsgKey 可选：成功时展示的 i18n 提示文本 Key
    */
   const handleUpload = async (
     file: File,
     apiFn: (file: File) => Promise<any>,
     onSuccess: () => void,
-    successMsgKey?: string,
   ) => {
     try {
       loading.value = true;
-      // 执行 API 请求
-      await apiFn(file);
+      // 执行 API 请求，获取后端返回的数据
+      const result = await apiFn(file);
 
       // 执行业务成功回调
       onSuccess();
 
-      // 展示成功提示
-      if (successMsgKey) {
-        useToast.success(t(successMsgKey));
+      // 自动从后端返回的 message 构建 i18n key
+      // 例如：后端返回 { message: "图标上传成功" } -> i18n key: api.success.upload.图标上传成功
+      if (result?.message) {
+        useToast.success(t(`api.success.upload.${result.message}`));
       }
     } catch (error: any) {
       // 这里的 error 可能是 string (unwrap 抛出) 或 Error 对象
