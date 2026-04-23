@@ -329,15 +329,14 @@
       "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout"
     },
     "success": {
-      "config": {
-        "保存成功": "Settings saved successfully",
-        "登录成功": "Login successful"
-      },
-      "upload": {
-        "图标上传成功": "Icon uploaded successfully",
-        "横幅上传成功": "Banner uploaded successfully",
-        "头像上传成功": "Avatar uploaded successfully"
-      }
+      "保存成功": "Settings saved successfully",
+      "获取成功": "Fetched successfully",
+      "注册成功": "Registration successful",
+      "登录成功": "Login successful",
+      "登出成功": "Logout successful",
+      "图标上传成功": "Icon uploaded successfully",
+      "横幅上传成功": "Banner uploaded successfully",
+      "头像上传成功": "Avatar uploaded successfully"
     }
   }
 }
