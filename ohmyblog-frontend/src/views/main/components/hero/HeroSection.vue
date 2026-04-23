@@ -33,6 +33,7 @@ TODO: Hero 组件功能增强清单
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useSystemStore } from "@/stores/system.store";
+import HeroImageEditor from "./HeroImageEditor.vue";
 
 const systemStore = useSystemStore();
 
@@ -58,7 +59,7 @@ onMounted(() => {
   <section
     v-if="heroImage"
     id="hero"
-    class="w-full h-[65vh] overflow-hidden onload-animation"
+    class="w-full h-[65vh] overflow-hidden onload-animation relative"
   >
     <!-- 使用 img 标签 + object-fit + Banner 动画 -->
     <img
@@ -69,5 +70,8 @@ onMounted(() => {
       loading="lazy"
       decoding="async"
     />
+
+    <!-- Hero 图片编辑按钮 -->
+    <HeroImageEditor />
   </section>
 </template>
