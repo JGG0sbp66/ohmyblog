@@ -3,6 +3,7 @@
 import { ref } from "vue";
 import ExpandButton from "@/components/common/button/ExpandButton.vue";
 import Picture from "@/components/icon/common/Picture.vue";
+import Loading from "@/components/icon/common/Loading.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useImageUpload } from "@/composables/upload.hook";
 import { uploadHero } from "@/api/upload.api";
@@ -56,7 +57,8 @@ const handleFileChange = (file: File) => {
   >
     <ExpandButton :text="t('views.setup.steps.step4.hero.change')">
       <template #icon-start>
-        <Picture />
+        <Loading v-if="uploading" />
+        <Picture v-else />
       </template>
     </ExpandButton>
   </button>
