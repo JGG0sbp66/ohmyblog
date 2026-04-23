@@ -53,7 +53,6 @@ const handleFileChange = (file: File) => {
        */
       systemStore.siteInfo.favicon = `/api/uploads/system/favicon.png?t=${Date.now()}`;
     },
-    "api.success.config.保存成功", // 成功时的 i18n 提示 Key
   );
 };
 
@@ -159,7 +158,7 @@ const handleNext = () => {
             />
 
             <BaseTag v-if="systemStore.siteInfo.favicon" type="success">
-              {{ t("views.setup.steps.step2.siteIcon.success") }}
+              {{ t("views.setup.steps.step2.siteIcon.uploaded") }}
             </BaseTag>
           </div>
 
