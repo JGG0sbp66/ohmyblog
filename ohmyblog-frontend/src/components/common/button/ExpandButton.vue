@@ -1,7 +1,7 @@
 <template>
   <!-- 纯视觉容器：交互和语义由父组件透传 -->
   <div
-    class="group inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white/75 transition-all duration-200 hover:w-28 hover:bg-black/70 active:bg-black/80"
+    class="group inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white/75 transition-all duration-200 hover:w-28 hover:bg-black/70 active:bg-black/80"
   >
     <!-- icon1：常态下显示 -->
     <span class="text-[1.25rem]" aria-hidden="true">
