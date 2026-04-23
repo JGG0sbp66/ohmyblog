@@ -145,7 +145,7 @@
             "upload": "Upload Icon",
             "change": "Change Icon",
             "uploading": "Uploading",
-            "success": "Icon Uploaded",
+            "uploaded": "Icon Uploaded",
             "help1": "Recommended to use 256x256 or larger PNG/ICO files",
             "help2": "Maximum supported image size is 1MB"
           },
@@ -197,7 +197,7 @@
             "upload": "Upload Avatar",
             "change": "Change Avatar",
             "uploading": "Uploading",
-            "success": "Avatar Uploaded",
+            "uploaded": "Avatar Uploaded",
             "help": "Support common image formats · Max 2MB"
           },
           "hero": {
@@ -206,7 +206,7 @@
             "upload": "Upload Banner",
             "change": "Change Banner",
             "uploading": "Uploading",
-            "success": "Banner Uploaded",
+            "uploaded": "Banner Uploaded",
             "recommend": "Recommended 16:9 ratio · Width ≥ 1920px",
             "format": "Support common image formats · Max 5MB"
           }
@@ -332,6 +332,11 @@
       "config": {
         "保存成功": "Settings saved successfully",
         "登录成功": "Login successful"
+      },
+      "upload": {
+        "图标上传成功": "Icon uploaded successfully",
+        "横幅上传成功": "Banner uploaded successfully",
+        "头像上传成功": "Avatar uploaded successfully"
       }
     }
   }
