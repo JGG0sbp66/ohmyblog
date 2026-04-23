@@ -47,11 +47,10 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
   const config = UPLOAD_CONFIGS[type];
   const hook = type === "avatar" ? avatar : hero;
 
-  hook.handleUpload(file, config.api, () => {
-    // 动态更新 store 对应项
+  hook.handleUpload(file, config.api, (url) => {
+    // handleUpload 已自动添加时间戳，直接赋值即可
     const info = systemStore.personalInfo as any;
-    info[config.storeKey] =
-      `/api/uploads/system/${config.fileName}.webp?t=${Date.now()}`;
+    info[config.storeKey] = url;
   });
 };
 </script>

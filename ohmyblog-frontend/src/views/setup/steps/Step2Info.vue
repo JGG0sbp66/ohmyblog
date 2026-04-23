@@ -45,13 +45,9 @@ const handleFileChange = (file: File) => {
   handleUpload(
     file,
     uploadFavicon, // 调用后端图标上传接口
-    () => {
-      /**
-       * 成功回调：同步全局 Store
-       * 约定路径：/api/uploads/system/favicon.png
-       * 附加时间戳 (?t=...) 用于绕过浏览器图片缓存，确保预览即时更新
-       */
-      systemStore.siteInfo.favicon = `/api/uploads/system/favicon.png?t=${Date.now()}`;
+    (url) => {
+      // handleUpload 已自动添加时间戳，直接赋值即可
+      systemStore.siteInfo.favicon = url;
     },
   );
 };
