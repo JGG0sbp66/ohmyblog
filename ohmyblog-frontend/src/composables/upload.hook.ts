@@ -53,10 +53,9 @@ export function useImageUpload() {
       // 执行业务成功回调
       onSuccess();
 
-      // 自动从后端返回的 message 构建 i18n key
-      // 例如：后端返回 { message: "图标上传成功" } -> i18n key: api.success.upload.图标上传成功
+      // 展示成功提示
       if (result?.message) {
-        useToast.success(t(`api.success.upload.${result.message}`));
+        useToast.success(t(`api.success.${result.message}`));
       }
     } catch (error: any) {
       // 这里的 error 可能是 string (unwrap 抛出) 或 Error 对象
