@@ -81,6 +81,8 @@
     "main": {
       "hero": {
         "titleEditor": {
+          "triggerText": "编辑首页主副标题",
+          "triggerAriaLabel": "编辑首页主副标题",
           "modalTitle": "首页主副标题编辑",
           "mainTitle": "主标题",
           "placeholder": "例如：欢迎来到我的小屋",

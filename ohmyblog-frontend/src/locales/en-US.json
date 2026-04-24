@@ -81,6 +81,8 @@
     "main": {
       "hero": {
         "titleEditor": {
+          "triggerText": "Edit Homepage Headline",
+          "triggerAriaLabel": "Edit homepage headline and typing subtitles",
           "modalTitle": "Homepage Headline Editor",
           "mainTitle": "Main Title",
           "placeholder": "For example: Welcome to my cozy corner",
