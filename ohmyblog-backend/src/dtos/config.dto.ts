@@ -91,6 +91,25 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 				error: "personal_info.hero_range",
 			}),
 		),
+		heroTitle: t.Optional(
+			t.String({
+				maxLength: 200,
+				description: "Hero 图主标题",
+				error: "personal_info.hero_title_range",
+			}),
+		),
+		heroSubtitles: t.Optional(
+			t.Array(
+				t.String({
+					maxLength: 300,
+					description: "Hero 图副标题内容",
+					error: "personal_info.hero_subtitle_range",
+				}),
+				{
+					description: "Hero 图副标题列表",
+				},
+			),
+		),
 	}),
 	...ConfigMetaDTO,
 });

@@ -24,6 +24,8 @@ export const useSystemStore = defineStore("system", () => {
   const personalInfo = ref({
     avatar: "",
     hero: "",
+    heroTitle: "",
+    heroSubtitles: [] as string[],
   });
 
   /**
