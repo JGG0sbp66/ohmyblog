@@ -13,41 +13,44 @@ const displayImage = ref(props.src);
 const prevImage = ref("");
 const isTransitioning = ref(false);
 
-watch(() => props.src, (newVal) => {
-  if (!newVal || newVal === displayImage.value) return;
+watch(
+  () => props.src,
+  (newVal) => {
+    if (!newVal || newVal === displayImage.value) return;
 
-  // 如果当前没图片，直接设置
-  if (!displayImage.value) {
-    displayImage.value = newVal;
-    return;
-  }
-
-  // 记录当前图片为旧图片
-  prevImage.value = displayImage.value;
-
-  // 预加载新图片
-  const img = new Image();
-  img.src = newVal;
-  
-  const finishTransition = () => {
-    requestAnimationFrame(() => {
-      isTransitioning.value = true;
+    // 如果当前没图片，直接设置
+    if (!displayImage.value) {
       displayImage.value = newVal;
+      return;
+    }
 
-      // 动画结束后清理
-      setTimeout(() => {
-        isTransitioning.value = false;
-        prevImage.value = "";
-      }, props.duration || 1000); 
-    });
-  };
+    // 记录当前图片为旧图片
+    prevImage.value = displayImage.value;
 
-  img.onload = finishTransition;
-  img.onerror = () => {
-    console.error("Failed to load image transition:", newVal);
-    finishTransition();
-  };
-});
+    // 预加载新图片
+    const img = new Image();
+    img.src = newVal;
+
+    const finishTransition = () => {
+      requestAnimationFrame(() => {
+        isTransitioning.value = true;
+        displayImage.value = newVal;
+
+        // 动画结束后清理
+        setTimeout(() => {
+          isTransitioning.value = false;
+          prevImage.value = "";
+        }, props.duration || 1000);
+      });
+    };
+
+    img.onload = finishTransition;
+    img.onerror = () => {
+      console.error("Failed to load image transition:", newVal);
+      finishTransition();
+    };
+  },
+);
 </script>
 
 <template>
@@ -75,7 +78,8 @@ watch(() => props.src, (newVal) => {
 <style scoped>
 .image-devouring {
   /* 使用变量控制时长，默认 1s */
-  animation: devour-effect v-bind('`${props.duration || 1000}ms`') cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: devour-effect v-bind("`${props.duration || 1000}ms`")
+    cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes devour-effect {
