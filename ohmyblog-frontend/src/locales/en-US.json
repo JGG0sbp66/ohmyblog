@@ -81,6 +81,7 @@
     "main": {
       "hero": {
         "titleEditor": {
+          "modalTitle": "Homepage Headline Editor",
           "mainTitle": "Main Title",
           "placeholder": "For example: Welcome to my cozy corner",
           "subtitles": {
