@@ -33,9 +33,9 @@ TODO: Hero 组件功能增强清单
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useSystemStore } from "@/stores/system.store";
-import HeroImageEditor from "./HeroImageEditor.vue";
-import HeroTitleEditor from "./HeroTitleEditor.vue";
-import HeroImageTransition from "./HeroImageTransition.vue";
+import HeroImageEditor from "./editors/HeroImageEditor.vue";
+import HeroTitleEditor from "./editors/title/HeroTitleEditor.vue";
+import HeroImageTransition from "./display/HeroImageTransition.vue";
 
 const systemStore = useSystemStore();
 
