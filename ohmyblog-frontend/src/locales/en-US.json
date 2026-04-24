@@ -23,8 +23,7 @@
             "modal": {
               "title": "Logout",
               "question": "Are you sure you want to logout?",
-              "warning": "You will need to login again to access the admin panel",
-              "confirm": "Confirm"
+              "warning": "You will need to login again to access the admin panel"
             }
           }
         },
@@ -313,6 +312,7 @@
     "next": "Next Step",
     "prev": "Previous",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "finish": "Finish",
     "save": "Save Settings"
   },

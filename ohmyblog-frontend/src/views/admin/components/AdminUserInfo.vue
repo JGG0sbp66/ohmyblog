@@ -168,7 +168,7 @@ const adminAvatar = computed(() => systemStore.personalInfo.avatar);
           class="min-w-24 py-2"
         />
         <ButtonPrimary
-          :text="t('components.common.admin.AdminSidebar.user.modal.confirm')"
+          :text="t('common.confirm')"
           :loading="isLoggingOut"
           @click="handleLogout"
           class="min-w-24 py-2"
