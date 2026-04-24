@@ -36,6 +36,7 @@ import { useSystemStore } from "@/stores/system.store";
 import HeroImageEditor from "./editors/HeroImageEditor.vue";
 import HeroTitleEditor from "./editors/HeroTitleEditor.vue";
 import HeroImageTransition from "./display/HeroImageTransition.vue";
+import HeroTitleDisplay from "./display/HeroTitleDisplay.vue";
 
 const systemStore = useSystemStore();
 
@@ -68,6 +69,9 @@ onMounted(() => {
       :duration="1000"
       class="w-full h-full"
     />
+
+    <!-- 标题显示层 -->
+    <HeroTitleDisplay />
 
     <div class="absolute bottom-6 right-6 z-20 flex items-center gap-3">
       <!-- Hero 图片编辑按钮 -->
