@@ -44,8 +44,23 @@ const pagedRows = computed(() => {
   }));
 });
 
-const addSubtitle = () => {
+const addSubtitle = async () => {
+  // TODO: 修复添加每页第二条数据时出现从上方飞入的动画问题
+  // 问题：当添加每一页的第二条数据时，新条目会从上方飞下来到正常位置
+  // 可能原因：auto-animate 在列表项数量变化时的动画计算问题
+  // 解决方向：
+  // 1. 考虑在添加时临时禁用 subtitleListRef 的动画
+  // 2. 或者调整 auto-animate 的配置选项
+  // 3. 或者检查 key 的生成逻辑是否导致动画异常
+
+  // 1. 执行新增
   systemStore.personalInfo.heroSubtitles = [...subtitles.value, ""];
+  // 2. 计算新增后的总页数
+  const newTotalPages = Math.ceil(subtitles.value.length / props.pageSize);
+  // 3. 如果新页数大于当前页，自动跳转到最后一页
+  if (newTotalPages > currentPage.value) {
+    await updatePage(newTotalPages);
+  }
 };
 
 const updateRow = (absoluteIndex: number, value: string) => {
@@ -55,10 +70,17 @@ const updateRow = (absoluteIndex: number, value: string) => {
   systemStore.personalInfo.heroSubtitles = next;
 };
 
-const removeRow = (absoluteIndex: number) => {
+const removeRow = async (absoluteIndex: number) => {
+  // 1. 执行删除
   const next = [...subtitles.value];
   next.splice(absoluteIndex, 1);
   systemStore.personalInfo.heroSubtitles = next;
+  // 2. 计算删除后的新总页数 (至少为1页)
+  const newTotalPages = Math.max(1, Math.ceil(next.length / props.pageSize));
+  // 3. 如果当前页码大于新的总页数，说明当前页码已经失效，跳转到新的最后一页
+  if (currentPage.value > newTotalPages) {
+    await updatePage(newTotalPages);
+  }
 };
 
 const updatePage = async (page: number) => {
