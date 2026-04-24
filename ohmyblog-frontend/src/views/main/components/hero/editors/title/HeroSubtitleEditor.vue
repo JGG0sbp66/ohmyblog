@@ -78,10 +78,17 @@ const updatePage = async (page: number) => {
           {{ t("views.main.hero.titleEditor.subtitles.title") }}
         </h3>
         <BaseTag type="info" size="sm">
-          {{ t("views.main.hero.titleEditor.subtitles.count", { count: subtitles.length }) }}
+          {{
+            t("views.main.hero.titleEditor.subtitles.count", {
+              count: subtitles.length,
+            })
+          }}
         </BaseTag>
       </div>
-      <ButtonSecondary :text="t('views.main.hero.titleEditor.subtitles.add')" @click="addSubtitle">
+      <ButtonSecondary
+        :text="t('views.main.hero.titleEditor.subtitles.add')"
+        @click="addSubtitle"
+      >
         <Add />
       </ButtonSecondary>
     </div>
@@ -108,8 +115,14 @@ const updatePage = async (page: number) => {
           <div class="flex items-start gap-3">
             <TipInput
               :model-value="row.value"
-              :placeholder="t('views.main.hero.titleEditor.subtitles.placeholder', { index: row.absoluteIndex + 1 })"
-              @update:modelValue="(value) => updateRow(row.absoluteIndex, String(value))"
+              :placeholder="
+                t('views.main.hero.titleEditor.subtitles.placeholder', {
+                  index: row.absoluteIndex + 1,
+                })
+              "
+              @update:modelValue="
+                (value) => updateRow(row.absoluteIndex, String(value))
+              "
             />
 
             <div class="h-11 w-11 shrink-0">

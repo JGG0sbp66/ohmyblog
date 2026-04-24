@@ -58,7 +58,9 @@ const handleSave = async () => {
     <template #header>
       <div class="flex items-center gap-2">
         <Heading sizeClass="w-5 h-5" class="text-accent" />
-        <h2 class="text-xl font-bold text-fg">{{ t("views.main.hero.titleEditor.modalTitle") }}</h2>
+        <h2 class="text-xl font-bold text-fg">
+          {{ t("views.main.hero.titleEditor.modalTitle") }}
+        </h2>
       </div>
     </template>
 

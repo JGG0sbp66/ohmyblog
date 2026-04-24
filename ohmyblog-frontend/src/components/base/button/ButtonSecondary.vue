@@ -49,7 +49,12 @@ const dynamicClass = computed(() => {
 
   // 禁用态：不响应 hover/active，保持弱化显示
   if (props.disabled) {
-    classes.push("before:opacity-0", "text-fg-muted", "opacity-50", "cursor-not-allowed");
+    classes.push(
+      "before:opacity-0",
+      "text-fg-muted",
+      "opacity-50",
+      "cursor-not-allowed",
+    );
     return classes.join(" ");
   }
 
@@ -81,7 +86,11 @@ const iconSpacing = computed(() => (hasSlot.value && props.text ? "mr-3" : ""));
 </script>
 
 <template>
-  <button type="button" :disabled="props.disabled" :class="[baseClass, dynamicClass]">
+  <button
+    type="button"
+    :disabled="props.disabled"
+    :class="[baseClass, dynamicClass]"
+  >
     <span v-if="hasSlot" :class="[contentClass, iconSpacing]">
       <slot></slot>
     </span>
