@@ -5,20 +5,33 @@ defineProps<{
 </script>
 
 <template>
-  <!-- 纯视觉容器：交互和语义由父组件透传 -->
+  <!-- 
+    1. w-fit: 宽度随内容自适应
+    2. min-w-9: 初始状态保持正圆
+    3. px-0: 初始无内边距，防止撑开
+  -->
   <div
-    class="group inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white/75 transition-all duration-200 hover:w-28 hover:bg-black/70 active:bg-black/80"
+    class="group inline-flex h-9 min-w-9 w-fit cursor-pointer items-center overflow-hidden rounded-full bg-black/60 text-white/75 transition-all duration-300 hover:bg-black/70 active:bg-black/80"
   >
-    <!-- icon1：常态下显示 -->
-    <span class="text-[1.25rem]" aria-hidden="true">
+    <!-- 图标容器：固定宽度，确保图标始终居中 -->
+    <div class="flex h-9 w-9 shrink-0 items-center justify-center">
       <slot name="icon-start"></slot>
-    </span>
-    <!-- hover 文案：常态收起，移入后在右侧展开 -->
-    <span
-      class="max-w-0 overflow-hidden whitespace-nowrap pl-0 text-[0.75rem] leading-none opacity-0 transition-all duration-200 group-hover:max-w-24 group-hover:pl-2 group-hover:opacity-100"
-      aria-hidden="true"
+    </div>
+
+    <!-- 
+      文字容器：使用 Grid 动画实现从 0fr 到 1fr 的平滑过渡
+    -->
+    <div
+      class="grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity,padding] duration-300 ease-out group-hover:grid-cols-[1fr] group-hover:pr-4 group-hover:opacity-100"
     >
-      {{ text }}
-    </span>
+      <!-- 内部必须包裹一层 overflow-hidden 的 div -->
+      <div class="overflow-hidden">
+        <span class="whitespace-nowrap text-[0.75rem] leading-none">
+          {{ text }}
+        </span>
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped></style>
