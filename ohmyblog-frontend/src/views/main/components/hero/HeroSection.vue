@@ -41,16 +41,13 @@ const systemStore = useSystemStore();
 // 从 store 获取背景图片
 const heroImage = computed(() => systemStore.personalInfo.hero);
 
-// Banner 动画控制
-const heroRef = ref<HTMLElement | null>(null);
+// Banner 动画控制 (声明式)
+const isBannerVisible = ref(false);
 
 onMounted(() => {
-  // 页面加载后触发 Banner 动画
+  // 页面加载后触发
   setTimeout(() => {
-    if (heroRef.value) {
-      heroRef.value.classList.remove("banner-initial");
-      heroRef.value.classList.add("banner-show");
-    }
+    isBannerVisible.value = true;
   }, 100);
 });
 </script>
@@ -64,10 +61,9 @@ onMounted(() => {
   >
     <!-- 使用专用的 Hero 过渡组件 -->
     <HeroImageTransition
-      ref="heroRef"
       :src="heroImage"
+      :show="isBannerVisible"
       alt="Hero banner image"
-      className="banner-initial"
       :duration="1000"
       class="w-full h-full"
     />

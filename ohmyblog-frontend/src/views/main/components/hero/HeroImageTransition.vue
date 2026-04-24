@@ -5,8 +5,8 @@ import { ref, watch } from "vue";
 const props = defineProps<{
   src: string;
   alt?: string;
-  className?: string;
   duration?: number; // 动画持续时间，单位 ms
+  show?: boolean;    // 控制显隐状态的类名切换
 }>();
 
 const displayImage = ref(props.src);
@@ -54,7 +54,10 @@ watch(
 </script>
 
 <template>
-  <div class="relative w-full h-full overflow-hidden">
+  <div
+    class="relative w-full h-full overflow-hidden"
+    :class="show ? 'banner-show' : 'banner-initial'"
+  >
     <!-- 旧图片层 -->
     <img
       v-if="isTransitioning && prevImage"
@@ -69,7 +72,7 @@ watch(
       :src="displayImage"
       :alt="alt"
       class="relative h-full w-full object-cover object-center z-10"
-      :class="[className, { 'image-devouring': isTransitioning }]"
+      :class="{ 'image-devouring': isTransitioning }"
       v-bind="$attrs"
     />
   </div>
