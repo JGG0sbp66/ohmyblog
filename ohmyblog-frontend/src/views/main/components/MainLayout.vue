@@ -9,8 +9,10 @@ import HeroSection from "@/views/main/components/hero/HeroSection.vue";
   <div class="min-h-screen flex flex-col">
     <Header />
     <HeroSection />
-    <main id="content-wrapper" class="flex-1 onload-animation">
-      <router-view />
+    <main id="content-wrapper" class="flex-1">
+      <div class="onload-animation">
+        <router-view />
+      </div>
     </main>
     <Footer />
   </div>
