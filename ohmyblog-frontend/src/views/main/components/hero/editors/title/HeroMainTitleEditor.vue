@@ -12,6 +12,7 @@ const { t } = useLang();
 
 // 主标题直接绑定到 store，输入即改内存态配置。
 const systemStore = useSystemStore();
+// 避免重复点击导致并发保存请求。
 const isSubmitting = ref(false);
 
 const handleSaveTitle = async () => {
@@ -22,6 +23,7 @@ const handleSaveTitle = async () => {
 
     const res = await upsertConfig({
       configKey: "personal_info",
+      // 共享 personal_info 配置，更新时保留其余字段。
       configValue: {
         ...systemStore.personalInfo,
         heroTitle: systemStore.personalInfo.heroTitle,
