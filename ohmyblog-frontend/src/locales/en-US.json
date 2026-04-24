@@ -84,7 +84,15 @@
       "hero": {
         "titleEditor": {
           "mainTitle": "Main Title",
-          "placeholder": "For example: Welcome to my cozy corner"
+          "placeholder": "For example: Welcome to my cozy corner",
+          "subtitles": {
+            "title": "Subtitles",
+            "count": "{count} total",
+            "add": "Add One",
+            "empty": "No subtitles yet. Click \"Add One\" to start.",
+            "placeholder": "Subtitle {index}",
+            "remove": "Delete"
+          }
         }
       }
     },

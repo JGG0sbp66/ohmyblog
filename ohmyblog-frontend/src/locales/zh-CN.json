@@ -84,7 +84,15 @@
       "hero": {
         "titleEditor": {
           "mainTitle": "主标题",
-          "placeholder": "例如：欢迎来到我的小屋"
+          "placeholder": "例如：欢迎来到我的小屋",
+          "subtitles": {
+            "title": "副标题",
+            "count": "共 {count} 条",
+            "add": "新增一条",
+            "empty": "还没有副标题，点击“新增一条”开始添加。",
+            "placeholder": "副标题 {index}",
+            "remove": "删除"
+          }
         }
       }
     },
