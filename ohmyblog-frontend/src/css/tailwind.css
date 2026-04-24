@@ -99,6 +99,11 @@
 
 /* 全局过渡效果 */
 @layer base {
+  html {
+    /* 预留滚动条空间，防止路由切换时页面宽度抖动 */
+    scrollbar-gutter: stable;
+  }
+
   *,
   ::after,
   ::before {
