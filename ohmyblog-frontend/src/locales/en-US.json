@@ -24,7 +24,6 @@
               "title": "Logout",
               "question": "Are you sure you want to logout?",
               "warning": "You will need to login again to access the admin panel",
-              "cancel": "Cancel",
               "confirm": "Confirm"
             }
           }
@@ -313,6 +312,7 @@
     },
     "next": "Next Step",
     "prev": "Previous",
+    "cancel": "Cancel",
     "finish": "Finish",
     "save": "Save Settings"
   },
