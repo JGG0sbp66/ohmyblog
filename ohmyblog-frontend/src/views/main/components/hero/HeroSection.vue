@@ -34,6 +34,7 @@ TODO: Hero 组件功能增强清单
 import { computed, onMounted, ref } from "vue";
 import { useSystemStore } from "@/stores/system.store";
 import HeroImageEditor from "./HeroImageEditor.vue";
+import HeroTitleEditor from "./HeroTitleEditor.vue";
 import HeroImageTransition from "./HeroImageTransition.vue";
 
 const systemStore = useSystemStore();
@@ -68,8 +69,12 @@ onMounted(() => {
       class="w-full h-full"
     />
 
-    <!-- Hero 图片编辑按钮 -->
-    <HeroImageEditor class="z-20" />
+    <div class="absolute bottom-6 right-6 z-20 flex items-center gap-3">
+      <!-- Hero 图片编辑按钮 -->
+      <HeroImageEditor />
+      <!-- Hero 标题编辑按钮 -->
+      <HeroTitleEditor />
+    </div>
   </section>
 </template>
 
