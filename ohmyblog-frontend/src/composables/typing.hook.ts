@@ -4,8 +4,9 @@ import { type Ref, ref, unref, watch } from "vue";
 /**
  * 打字机效果 Hook
  * @param speed 打字速度 (ms)
+ * @param backspaceSpeed 退格速度 (ms)
  */
-export function useTyping(speed = 50) {
+export function useTyping(speed = 50, backspaceSpeed = 30) {
   const displayText = ref("");
   const isTyping = ref(false);
   let currentAnimationId = 0;
@@ -68,6 +69,47 @@ export function useTyping(speed = 50) {
   };
 
   /**
+   * 执行退格动画
+   * @param delay 延迟开始时间 (ms)
+   */
+  const backspace = (delay = 0) => {
+    const id = ++currentAnimationId;
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        if (id !== currentAnimationId) {
+          resolve();
+          return;
+        }
+
+        if (!displayText.value) {
+          isTyping.value = false;
+          resolve();
+          return;
+        }
+
+        isTyping.value = true;
+
+        const interval = setInterval(() => {
+          if (id !== currentAnimationId) {
+            clearInterval(interval);
+            resolve();
+            return;
+          }
+
+          if (displayText.value.length > 0) {
+            displayText.value = displayText.value.slice(0, -1);
+          } else {
+            clearInterval(interval);
+            isTyping.value = false;
+            resolve();
+          }
+        }, backspaceSpeed);
+      }, delay);
+    });
+  };
+
+  /**
    * 重置文本
    */
   const reset = () => {
@@ -80,6 +122,7 @@ export function useTyping(speed = 50) {
     displayText,
     isTyping,
     type,
+    backspace,
     reset,
   };
 }
