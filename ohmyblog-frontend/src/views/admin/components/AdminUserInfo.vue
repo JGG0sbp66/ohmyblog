@@ -163,7 +163,7 @@ const adminAvatar = computed(() => systemStore.personalInfo.avatar);
 
       <template #footer>
         <ButtonSecondary
-          :text="t('components.common.admin.AdminSidebar.user.modal.cancel')"
+          :text="t('common.cancel')"
           @click="isModalOpen = false"
           class="min-w-24 py-2"
         />
