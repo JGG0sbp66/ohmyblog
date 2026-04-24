@@ -39,8 +39,13 @@ export const ImageService = {
 				},
 			});
 		} else {
-			// 如果是博客普通图片：统一转 WebP
+			// 如果是博客普通图片：统一转 WebP，并限制最大宽度以优化性能
+			// 使用 fit: "inside" 确保图片比例不变，仅在超过 1920px 时缩小
 			processed = await transform(buffer, {
+				resize: {
+					width: 1920,
+					fit: "inside",
+				},
 				output: {
 					format: "webp",
 					webp: { quality: 75 },

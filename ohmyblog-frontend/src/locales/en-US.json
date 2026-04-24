@@ -23,9 +23,7 @@
             "modal": {
               "title": "Logout",
               "question": "Are you sure you want to logout?",
-              "warning": "You will need to login again to access the admin panel",
-              "cancel": "Cancel",
-              "confirm": "Confirm"
+              "warning": "You will need to login again to access the admin panel"
             }
           }
         },
@@ -80,6 +78,25 @@
     }
   },
   "views": {
+    "main": {
+      "hero": {
+        "titleEditor": {
+          "triggerText": "Edit Homepage Headline",
+          "triggerAriaLabel": "Edit homepage headline and typing subtitles",
+          "modalTitle": "Homepage Headline Editor",
+          "mainTitle": "Main Title",
+          "placeholder": "For example: Welcome to my cozy corner",
+          "subtitles": {
+            "title": "Subtitles",
+            "count": "{count} total",
+            "add": "Add One",
+            "empty": "No subtitles yet. Click \"Add One\" to start.",
+            "placeholder": "Subtitle {index}",
+            "remove": "Delete"
+          }
+        }
+      }
+    },
     "admin": {
       "Settings": {
         "nav": {
@@ -297,6 +314,8 @@
     },
     "next": "Next Step",
     "prev": "Previous",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
     "finish": "Finish",
     "save": "Save Settings"
   },

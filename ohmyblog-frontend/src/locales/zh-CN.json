@@ -23,9 +23,7 @@
             "modal": {
               "title": "退出登录",
               "question": "确认要退出登录吗？",
-              "warning": "退出后需要重新登录才能访问管理后台",
-              "cancel": "取消",
-              "confirm": "确认"
+              "warning": "退出后需要重新登录才能访问管理后台"
             }
           }
         },
@@ -80,6 +78,25 @@
     }
   },
   "views": {
+    "main": {
+      "hero": {
+        "titleEditor": {
+          "triggerText": "编辑首页主副标题",
+          "triggerAriaLabel": "编辑首页主副标题",
+          "modalTitle": "首页主副标题编辑",
+          "mainTitle": "主标题",
+          "placeholder": "例如：欢迎来到我的小屋",
+          "subtitles": {
+            "title": "副标题",
+            "count": "共 {count} 条",
+            "add": "新增一条",
+            "empty": "还没有副标题，点击“新增一条”开始添加。",
+            "placeholder": "副标题 {index}",
+            "remove": "删除"
+          }
+        }
+      }
+    },
     "admin": {
       "Settings": {
         "nav": {
@@ -297,6 +314,8 @@
     },
     "next": "下一步",
     "prev": "上一步",
+    "cancel": "取消",
+    "confirm": "确认",
     "finish": "完成",
     "save": "保存设置"
   },

@@ -10,6 +10,7 @@ const slots = useSlots();
  * Props:
  * - isActive: 是否处于激活状态（默认 false）
  * - text: 按钮文本，可选
+ * - disabled: 是否禁用（默认 false）
  *
  * 插槽:
  * - default: 图标或其他内容，通常放在文本左侧
@@ -18,8 +19,9 @@ const props = withDefaults(
   defineProps<{
     isActive?: boolean;
     text?: string;
+    disabled?: boolean;
   }>(),
-  { isActive: false, text: "" },
+  { isActive: false, text: "", disabled: false },
 );
 
 // 检测是否有插槽内容
@@ -44,6 +46,17 @@ const baseClass = `
 // 动态样式 - 根据 props 计算
 const dynamicClass = computed(() => {
   const classes = [];
+
+  // 禁用态：不响应 hover/active，保持弱化显示
+  if (props.disabled) {
+    classes.push(
+      "before:opacity-0",
+      "text-fg-muted",
+      "opacity-50",
+      "cursor-not-allowed",
+    );
+    return classes.join(" ");
+  }
 
   // 激活状态或默认状态
   if (props.isActive) {
@@ -73,7 +86,11 @@ const iconSpacing = computed(() => (hasSlot.value && props.text ? "mr-3" : ""));
 </script>
 
 <template>
-  <button type="button" :class="[baseClass, dynamicClass]">
+  <button
+    type="button"
+    :disabled="props.disabled"
+    :class="[baseClass, dynamicClass]"
+  >
     <span v-if="hasSlot" :class="[contentClass, iconSpacing]">
       <slot></slot>
     </span>

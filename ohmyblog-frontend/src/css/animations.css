@@ -110,7 +110,7 @@
 
 /* 快速淡入 - 用于简单场景 */
 .fade-in-fast {
-  animation: 200ms fade-in-up;
+  animation: 100ms fade-in-up;
   animation-fill-mode: forwards;
   opacity: 0;
 }

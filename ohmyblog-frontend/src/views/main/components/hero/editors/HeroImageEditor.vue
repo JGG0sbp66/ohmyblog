@@ -1,4 +1,4 @@
-<!-- src/views/main/components/hero/HeroImageEditor.vue -->
+<!-- src/views/main/components/hero/editors/HeroImageEditor.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
 import ExpandButton from "@/components/common/button/ExpandButton.vue";
@@ -7,8 +7,10 @@ import Loading from "@/components/icon/common/Loading.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useImageUpload } from "@/composables/upload.hook";
 import { uploadHero } from "@/api/upload.api";
+import { upsertConfig } from "@/api/config.api";
 import { useSystemStore } from "@/stores/system.store";
 import { useLang } from "@/composables/lang.hook";
+import { useToast } from "@/composables/toast.hook";
 
 const { t } = useLang();
 const systemStore = useSystemStore();
@@ -30,8 +32,22 @@ const triggerUpload = () => {
  * 处理文件选择
  */
 const handleFileChange = (file: File) => {
-  handleUpload(file, uploadHero, (url) => {
+  handleUpload(file, uploadHero, async (url) => {
+    // 1. 更新全局 store 中的 hero 链接
     systemStore.personalInfo.hero = url;
+
+    // 2. 调用配置更新 API 同步到后端
+    try {
+      await upsertConfig({
+        configKey: "personal_info",
+        configValue: {
+          ...systemStore.personalInfo,
+          hero: url,
+        },
+      });
+    } catch (error) {
+      useToast.error(t("api.errors.获取个性化配置失败"));
+    }
   });
 };
 </script>
@@ -52,7 +68,7 @@ const handleFileChange = (file: File) => {
     type="button"
     @click="triggerUpload"
     :disabled="uploading"
-    class="absolute bottom-6 right-6 z-10"
+    class="z-10"
     :aria-label="t('views.setup.steps.step4.hero.change')"
   >
     <ExpandButton :text="t('views.setup.steps.step4.hero.change')">

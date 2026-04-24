@@ -33,24 +33,23 @@ TODO: Hero 组件功能增强清单
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useSystemStore } from "@/stores/system.store";
-import HeroImageEditor from "./HeroImageEditor.vue";
-import HeroImageTransition from "./HeroImageTransition.vue";
+import HeroImageEditor from "./editors/HeroImageEditor.vue";
+import HeroTitleEditor from "./editors/HeroTitleEditor.vue";
+import HeroImageTransition from "./display/HeroImageTransition.vue";
+import HeroTitleDisplay from "./display/HeroTitleDisplay.vue";
 
 const systemStore = useSystemStore();
 
 // 从 store 获取背景图片
 const heroImage = computed(() => systemStore.personalInfo.hero);
 
-// Banner 动画控制
-const heroRef = ref<HTMLElement | null>(null);
+// Banner 动画控制 (声明式)
+const isBannerVisible = ref(false);
 
 onMounted(() => {
-  // 页面加载后触发 Banner 动画
+  // 页面加载后触发
   setTimeout(() => {
-    if (heroRef.value) {
-      heroRef.value.classList.remove("banner-initial");
-      heroRef.value.classList.add("banner-show");
-    }
+    isBannerVisible.value = true;
   }, 100);
 });
 </script>
@@ -64,19 +63,23 @@ onMounted(() => {
   >
     <!-- 使用专用的 Hero 过渡组件 -->
     <HeroImageTransition
-      ref="heroRef"
       :src="heroImage"
+      :show="isBannerVisible"
       alt="Hero banner image"
-      className="banner-initial"
       :duration="1000"
       class="w-full h-full"
     />
 
-    <!-- Hero 图片编辑按钮 -->
-    <HeroImageEditor class="z-20" />
+    <!-- 标题显示层 -->
+    <HeroTitleDisplay />
+
+    <div class="absolute bottom-6 right-6 z-20 flex items-center gap-3">
+      <!-- Hero 图片编辑按钮 -->
+      <HeroImageEditor />
+      <!-- Hero 标题编辑按钮 -->
+      <HeroTitleEditor />
+    </div>
   </section>
 </template>
 
-<style scoped>
-</style>
-
+<style scoped></style>

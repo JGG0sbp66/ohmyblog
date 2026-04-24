@@ -15,10 +15,10 @@ import AdminHeader from "./AdminHeader.vue";
       <AdminSidebar />
 
       <!-- 主内容区 -->
-      <main
-        class="flex-1 p-6 flex flex-col min-h-0 overflow-hidden onload-animation delay-150"
-      >
-        <router-view />
+      <main class="flex-1 p-6 flex flex-col min-h-0 overflow-hidden">
+        <div class="onload-animation delay-150">
+          <router-view />
+        </div>
       </main>
     </div>
   </div>
