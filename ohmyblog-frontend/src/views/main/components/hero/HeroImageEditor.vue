@@ -68,7 +68,7 @@ const handleFileChange = (file: File) => {
     type="button"
     @click="triggerUpload"
     :disabled="uploading"
-    class="absolute bottom-6 right-6 z-10"
+    class="z-10"
     :aria-label="t('views.setup.steps.step4.hero.change')"
   >
     <ExpandButton :text="t('views.setup.steps.step4.hero.change')">
