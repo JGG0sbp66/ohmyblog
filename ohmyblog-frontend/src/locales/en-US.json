@@ -80,6 +80,14 @@
     }
   },
   "views": {
+    "main": {
+      "hero": {
+        "titleEditor": {
+          "mainTitle": "Main Title",
+          "placeholder": "For example: Welcome to my cozy corner"
+        }
+      }
+    },
     "admin": {
       "Settings": {
         "nav": {

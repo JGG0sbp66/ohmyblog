@@ -80,6 +80,14 @@
     }
   },
   "views": {
+    "main": {
+      "hero": {
+        "titleEditor": {
+          "mainTitle": "主标题",
+          "placeholder": "例如：欢迎来到我的小屋"
+        }
+      }
+    },
     "admin": {
       "Settings": {
         "nav": {
