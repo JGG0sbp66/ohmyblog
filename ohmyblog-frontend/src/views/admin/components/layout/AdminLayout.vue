@@ -15,7 +15,7 @@ import AdminHeader from "./AdminHeader.vue";
       <AdminSidebar />
 
       <!-- 主内容区 -->
-      <main class="flex-1 p-6 flex flex-col min-h-0 overflow-hidden">
+      <main class="flex-1 p-6 flex flex-col min-h-0">
         <div
           class="flex-1 flex flex-col min-h-0 onload-animation anim-delay-150"
         >
