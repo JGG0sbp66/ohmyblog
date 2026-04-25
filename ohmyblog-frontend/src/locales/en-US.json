@@ -117,6 +117,11 @@
             "desktop": "Desktop",
             "mobile": "Mobile"
           }
+        },
+        "site": {
+          "hero": {
+            "description": "Set the main title and subtitles displayed on the homepage, with support for automatic cycling."
+          }
         }
       }
     },
