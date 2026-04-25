@@ -95,7 +95,7 @@ const handleNext = () => {
     </div>
 
     <!-- 页脚版权 -->
-    <div class="onload-animation delay-50">
+    <div class="onload-animation anim-delay-50">
       <TipInput
         ref="footerInputRef"
         v-model="systemStore.siteInfo.footer"
@@ -109,7 +109,7 @@ const handleNext = () => {
     </div>
 
     <!-- 备案号 -->
-    <div class="onload-animation delay-100">
+    <div class="onload-animation anim-delay-100">
       <TipInput
         ref="icpInputRef"
         v-model="systemStore.siteInfo.icp"
@@ -121,7 +121,7 @@ const handleNext = () => {
     </div>
 
     <!-- 站点图标上传 -->
-    <div class="space-y-2 onload-animation delay-150">
+    <div class="space-y-2 onload-animation anim-delay-150">
       <label class="block text-sm font-medium text-fg pb-1">
         {{ t("views.setup.steps.step2.siteIcon.label") }}
       </label>

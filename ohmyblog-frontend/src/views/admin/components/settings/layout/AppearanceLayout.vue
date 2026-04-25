@@ -22,11 +22,11 @@ const viewportMode = ref<"pc" | "mobile">("pc");
       <!-- 操控设备卡片 -->
       <ViewportSelector
         v-model="viewportMode"
-        class="onload-animation delay-100"
+        class="onload-animation anim-delay-100"
       />
 
       <!-- 设置卡片 -->
-      <AppearanceForm class="onload-animation delay-150" />
+      <AppearanceForm class="onload-animation anim-delay-150" />
     </div>
   </div>
 </template>

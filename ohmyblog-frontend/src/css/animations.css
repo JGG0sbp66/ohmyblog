@@ -123,30 +123,30 @@
 }
 
 /* 自定义延迟工具类 */
-.delay-0 {
+.anim-delay-0 {
   animation-delay: 0ms;
 }
-.delay-50 {
+.anim-delay-50 {
   animation-delay: 50ms;
 }
-.delay-100 {
+.anim-delay-100 {
   animation-delay: 100ms;
 }
-.delay-150 {
+.anim-delay-150 {
   animation-delay: 150ms;
 }
-.delay-200 {
+.anim-delay-200 {
   animation-delay: 200ms;
 }
-.delay-250 {
+.anim-delay-250 {
   animation-delay: 250ms;
 }
-.delay-300 {
+.anim-delay-300 {
   animation-delay: 300ms;
 }
-.delay-400 {
+.anim-delay-400 {
   animation-delay: 400ms;
 }
-.delay-500 {
+.anim-delay-500 {
   animation-delay: 500ms;
 }
