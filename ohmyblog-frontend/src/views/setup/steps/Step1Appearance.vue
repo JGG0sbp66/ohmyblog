@@ -49,7 +49,7 @@ const handleNext = () => {
     </div>
 
     <!-- 2. 主题模式 (明/暗) -->
-    <div class="flex flex-col gap-3 onload-animation delay-50">
+    <div class="flex flex-col gap-3 onload-animation anim-delay-50">
       <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider">
         {{ t("views.setup.steps.step1.settings.theme") }}
       </label>
@@ -57,7 +57,7 @@ const handleNext = () => {
     </div>
 
     <!-- 3. 主题色 (滑动条) -->
-    <div class="onload-animation delay-100">
+    <div class="onload-animation anim-delay-100">
       <ThemeColorPicker>
         <template #label>
           <label

@@ -5,7 +5,7 @@ import AdminHeader from "./AdminHeader.vue";
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-bg">
+  <div class="h-screen flex flex-col bg-bg">
     <!-- 顶部栏 - 圆角卡片样式 -->
     <AdminHeader />
 
@@ -15,8 +15,10 @@ import AdminHeader from "./AdminHeader.vue";
       <AdminSidebar />
 
       <!-- 主内容区 -->
-      <main class="flex-1 p-6 flex flex-col min-h-0 overflow-hidden">
-        <div class="onload-animation delay-150">
+      <main class="flex-1 p-6 flex flex-col min-h-0">
+        <div
+          class="flex-1 flex flex-col min-h-0 onload-animation anim-delay-150"
+        >
           <router-view />
         </div>
       </main>

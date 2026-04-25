@@ -64,7 +64,7 @@ const [rightSideRef] = useAutoAnimate();
           <!-- 左侧：展示区 - 添加简单淡入动画和延迟 -->
           <div
             ref="leftSideRef"
-            class="hidden lg:block w-full onload-animation delay-50"
+            class="hidden lg:block w-full onload-animation anim-delay-50"
           >
             <BaseCard
               v-if="stepStore.currentStep === 4 && stepStore.isPersonalized"
@@ -93,7 +93,7 @@ const [rightSideRef] = useAutoAnimate();
           <!-- 右侧：表单流程区 - 添加简单淡入动画和延迟 -->
           <div
             ref="rightSideRef"
-            class="w-full max-w-2xl onload-animation delay-100"
+            class="w-full max-w-2xl onload-animation anim-delay-100"
           >
             <component
               :is="CurrentStepComponent"
@@ -105,6 +105,6 @@ const [rightSideRef] = useAutoAnimate();
     </main>
 
     <!-- 底部版权信息 - 添加简单淡入动画 -->
-    <Footer class="onload-animation delay-50"></Footer>
+    <Footer class="onload-animation anim-delay-50"></Footer>
   </div>
 </template>

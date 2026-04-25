@@ -78,7 +78,7 @@ defineExpose({ validate });
     <!-- Label 区域 -->
     <div v-if="label" class="flex items-center gap-1.5 mb-1.5 px-1">
       <label
-        class="text-xs font-bold text-fg-subtle uppercase tracking-wider select-none"
+        class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
       >
         {{ label }}
         <span v-if="required" class="text-red-500 ml-0.5">*</span>
@@ -92,10 +92,10 @@ defineExpose({ validate });
     <div
       class="w-full bg-bg-muted py-3 px-4 rounded-xl text-fg border border-transparent flex items-center"
       :class="[
-        readonly
-          ? 'opacity-60 cursor-not-allowed'
+        readonly ? 'opacity-60 cursor-not-allowed' : '',
+        displayError
+          ? 'ring-2 ring-red-500'
           : 'focus-within:ring-2 focus-within:ring-accent/30',
-        displayError ? 'ring-2 ring-red-500' : '',
       ]"
     >
       <input

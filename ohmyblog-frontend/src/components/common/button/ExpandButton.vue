@@ -11,7 +11,7 @@ defineProps<{
     3. px-0: 初始无内边距，防止撑开
   -->
   <div
-    class="group inline-flex h-9 min-w-9 w-fit cursor-pointer items-center overflow-hidden rounded-full bg-black/60 text-white/75 transition-all duration-300 hover:bg-black/70 active:bg-black/80"
+    class="group/expand inline-flex h-9 min-w-9 w-fit cursor-pointer items-center overflow-hidden rounded-full bg-black/60 text-white/75 transition-all duration-300 hover:bg-black/70 active:bg-black/80"
   >
     <!-- 图标容器：固定宽度，确保图标始终居中 -->
     <div class="flex h-9 w-9 shrink-0 items-center justify-center">
@@ -22,7 +22,7 @@ defineProps<{
       文字容器：使用 Grid 动画实现从 0fr 到 1fr 的平滑过渡
     -->
     <div
-      class="grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity,padding] duration-300 ease-out group-hover:grid-cols-[1fr] group-hover:pr-4 group-hover:opacity-100"
+      class="grid grid-cols-[0fr] opacity-0 transition-[grid-template-columns,opacity,padding] duration-300 ease-out group-hover/expand:grid-cols-[1fr] group-hover/expand:pr-4 group-hover/expand:opacity-100"
     >
       <!-- 内部必须包裹一层 overflow-hidden 的 div -->
       <div class="overflow-hidden">

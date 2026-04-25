@@ -50,6 +50,9 @@
           "title": "Notifications",
           "empty": "No notifications"
         }
+      },
+      "BrowserMockup": {
+        "preview": "Live Preview"
       }
     },
     "base": {
@@ -109,11 +112,19 @@
           "settings": {
             "languageHint": "As the preview operates in an isolated environment, a quick reload is required for language changes. Theme and Hue settings sync in real-time."
           },
-          "preview": "Live Preview",
           "viewport": {
             "title": "Preview Device",
             "desktop": "Desktop",
             "mobile": "Mobile"
+          }
+        },
+        "site": {
+          "siteInfo": {
+            "title": "Site Information",
+            "description": "Set your site name and icon, which will appear in the browser tab."
+          },
+          "hero": {
+            "description": "Set the main title and subtitles displayed on the homepage, with support for automatic cycling."
           }
         }
       }
