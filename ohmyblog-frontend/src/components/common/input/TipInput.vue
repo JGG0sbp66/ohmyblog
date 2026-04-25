@@ -92,10 +92,10 @@ defineExpose({ validate });
     <div
       class="w-full bg-bg-muted py-3 px-4 rounded-xl text-fg border border-transparent flex items-center"
       :class="[
-        readonly
-          ? 'opacity-60 cursor-not-allowed'
+        readonly ? 'opacity-60 cursor-not-allowed' : '',
+        displayError
+          ? 'ring-2 ring-red-500'
           : 'focus-within:ring-2 focus-within:ring-accent/30',
-        displayError ? 'ring-2 ring-red-500' : '',
       ]"
     >
       <input
