@@ -90,7 +90,7 @@ const removeRow = (id: string) => {
         <h3 class="text-xs font-bold tracking-widest text-fg-subtle uppercase">
           {{ t("views.main.hero.titleEditor.subtitles.title") }}
         </h3>
-        <BaseTag type="info" size="sm" class="font-mono">
+        <BaseTag type="info" size="sm">
           {{
             t("views.main.hero.titleEditor.subtitles.count", {
               count: items.length,
