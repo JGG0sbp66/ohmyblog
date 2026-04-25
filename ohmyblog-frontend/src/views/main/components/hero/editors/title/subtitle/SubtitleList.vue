@@ -3,6 +3,7 @@
   副标题列表展示组件，包含输入框、删除按钮及列表动画。
 -->
 <script setup lang="ts">
+import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import Trash from "@/components/icon/common/Trash.vue";
 import { useLang } from "@/composables/lang.hook";
@@ -31,7 +32,7 @@ defineEmits<{
     <TransitionGroup name="list" tag="div" class="relative flex flex-col gap-3">
       <div v-for="(row, index) in items" :key="row.id" class="relative">
         <div
-          class="flex items-center gap-3 rounded-xl bg-bg-card/40 p-1.5 transition-all duration-300 hover:bg-bg-card/80 hover:shadow-lg hover:shadow-black/5"
+          class="flex items-stretch gap-3 rounded-xl bg-bg-card/40 transition-all duration-300 hover:bg-bg-card/80 hover:shadow-lg hover:shadow-black/5"
         >
           <TipInput
             :model-value="row.value"
@@ -40,22 +41,25 @@ defineEmits<{
                 index: (currentPage - 1) * pageSize + index + 1,
               })
             "
-            class="bg-transparent! p-0! pl-3"
+            class="flex-1 h-11 bg-transparent! p-0! pl-3"
             @update:modelValue="(val) => $emit('update', row.id, String(val))"
           />
 
-          <button
-            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-fg-subtle/30 transition-all hover:bg-red-500/10 hover:text-red-500"
-            :title="t('views.main.hero.titleEditor.subtitles.remove')"
-            @click="$emit('remove', row.id)"
-          >
-            <Trash class="h-4 w-4" />
-          </button>
+          <div class="w-11 h-11">
+            <ButtonSecondary
+              class="w-full h-full text-fg-subtle/30 hover:text-red-500 hover:before:bg-red-500/10"
+              :title="t('views.main.hero.titleEditor.subtitles.remove')"
+              @click="$emit('remove', row.id)"
+            >
+              <Trash class="h-4 w-4" />
+            </ButtonSecondary>
+          </div>
         </div>
       </div>
     </TransitionGroup>
   </div>
 </template>
+
 
 <style scoped>
 /* 列表项动画 (Add/Remove) */
