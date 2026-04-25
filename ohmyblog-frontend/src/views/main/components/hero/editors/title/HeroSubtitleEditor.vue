@@ -96,7 +96,9 @@ const removeRow = (id: string) => {
 </script>
 
 <template>
-  <HeroTitleEditorLayout :title="t('views.main.hero.titleEditor.subtitles.title')">
+  <HeroTitleEditorLayout
+    :title="t('views.main.hero.titleEditor.subtitles.title')"
+  >
     <template #title-extra>
       <BaseTag type="info" size="sm">
         {{
@@ -161,7 +163,3 @@ const removeRow = (id: string) => {
   transform: translateY(-4px);
 }
 </style>
-
-
-
-

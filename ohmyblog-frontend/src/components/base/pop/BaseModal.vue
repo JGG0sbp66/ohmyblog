@@ -77,7 +77,7 @@ watch(
   () => props.modelValue,
   async (val) => {
     if (timer) clearTimeout(timer);
-    
+
     if (val) {
       isReadyToAnimate.value = false;
       currentHeight.value = "auto";
@@ -120,9 +120,13 @@ onUnmounted(() => {
             :class="[
               'bg-bg-card relative w-full rounded-2xl shadow-2xl overflow-hidden',
               maxWidth,
-              isReadyToAnimate ? 'transition-[height] duration-300 ease-out' : ''
+              isReadyToAnimate
+                ? 'transition-[height] duration-300 ease-out'
+                : '',
             ]"
-            :style="{ height: currentHeight !== 'auto' ? currentHeight : undefined }"
+            :style="{
+              height: currentHeight !== 'auto' ? currentHeight : undefined,
+            }"
           >
             <!-- 内部内容容器：被 ResizeObserver 监听以获取真实所需高度 -->
             <div ref="contentRef">
