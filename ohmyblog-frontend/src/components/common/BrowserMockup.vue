@@ -69,7 +69,7 @@ withDefaults(defineProps<Props>(), {
         size="xs"
         class="font-bold uppercase tracking-wider"
       >
-        {{ t("views.admin.Settings.appearance.preview") }}
+        {{ t("components.common.BrowserMockup.preview") }}
       </BaseTag>
     </div>
 
