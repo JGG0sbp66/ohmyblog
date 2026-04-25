@@ -14,11 +14,10 @@ const siteFavicon = computed(() => systemStore.siteInfo.favicon);
 </script>
 
 <template>
-  <BrowserMockup
-    :title="siteTitle"
-    :icon="siteFavicon"
-  >
-    <div class="w-full h-full overflow-y-auto overflow-x-hidden bg-bg custom-scrollbar flex flex-col">
+  <BrowserMockup :title="siteTitle" :icon="siteFavicon">
+    <div
+      class="w-full h-full overflow-y-auto overflow-x-hidden bg-bg custom-scrollbar flex flex-col"
+    >
       <HeroSection class="flex-1 h-auto! shrink-0" />
       <Footer class="shrink-0" />
     </div>

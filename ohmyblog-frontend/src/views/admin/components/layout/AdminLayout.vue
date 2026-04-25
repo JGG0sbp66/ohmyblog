@@ -16,7 +16,9 @@ import AdminHeader from "./AdminHeader.vue";
 
       <!-- 主内容区 -->
       <main class="flex-1 p-6 flex flex-col min-h-0 overflow-hidden">
-        <div class="flex-1 flex flex-col min-h-0 onload-animation anim-delay-150">
+        <div
+          class="flex-1 flex flex-col min-h-0 onload-animation anim-delay-150"
+        >
           <router-view />
         </div>
       </main>

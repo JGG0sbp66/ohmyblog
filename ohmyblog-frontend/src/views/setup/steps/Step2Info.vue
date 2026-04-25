@@ -123,7 +123,9 @@ const handleNext = () => {
     <!-- 站点图标上传 -->
     <div class="space-y-2 onload-animation anim-delay-150">
       <div class="flex items-center gap-1.5 mb-1.5 px-1">
-        <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none">
+        <label
+          class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
+        >
           {{ t("views.setup.steps.step2.siteIcon.label") }}
         </label>
       </div>

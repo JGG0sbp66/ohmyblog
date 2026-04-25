@@ -58,7 +58,9 @@ withDefaults(defineProps<Props>(), {
             >
               <div class="w-1.5 h-1.5 rounded-full bg-accent"></div>
             </div>
-            <span class="text-[11px] font-bold text-fg/70 truncate">{{ title }}</span>
+            <span class="text-[11px] font-bold text-fg/70 truncate">{{
+              title
+            }}</span>
           </div>
         </div>
       </div>
