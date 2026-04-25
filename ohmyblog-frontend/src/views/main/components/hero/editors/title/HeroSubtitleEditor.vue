@@ -107,7 +107,7 @@ const removeRow = (id: string) => {
       </ButtonSecondary>
     </div>
 
-    <div class="relative min-h-[100px]">
+    <div class="relative min-h-25">
       <!-- 空状态切换 -->
       <Transition name="fade" mode="out-in">
         <div
