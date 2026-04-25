@@ -87,7 +87,7 @@ const removeRow = (id: string) => {
   <div class="space-y-4">
     <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2">
-        <h3 class="text-xs font-bold tracking-widest text-fg-subtle uppercase">
+        <h3 class="text-sm font-bold tracking-widest text-fg-subtle uppercase">
           {{ t("views.main.hero.titleEditor.subtitles.title") }}
         </h3>
         <BaseTag type="info" size="sm">
