@@ -122,9 +122,11 @@ const handleNext = () => {
 
     <!-- 站点图标上传 -->
     <div class="space-y-2 onload-animation anim-delay-150">
-      <label class="block text-sm font-medium text-fg pb-1">
-        {{ t("views.setup.steps.step2.siteIcon.label") }}
-      </label>
+      <div class="flex items-center gap-1.5 mb-1.5 px-1">
+        <label class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none">
+          {{ t("views.setup.steps.step2.siteIcon.label") }}
+        </label>
+      </div>
       <div class="flex items-start gap-5">
         <!-- 预览区域 -->
         <div class="shrink-0">
@@ -159,10 +161,10 @@ const handleNext = () => {
           </div>
 
           <div class="mt-3 space-y-1">
-            <p class="text-[11px] text-fg-subtle leading-relaxed">
+            <p class="text-[11px] text-fg-muted leading-relaxed">
               {{ t("views.setup.steps.step2.siteIcon.help1") }}
             </p>
-            <p class="text-[11px] text-fg-subtle leading-relaxed">
+            <p class="text-[11px] text-fg-muted leading-relaxed">
               {{ t("views.setup.steps.step2.siteIcon.help2") }}
             </p>
           </div>
