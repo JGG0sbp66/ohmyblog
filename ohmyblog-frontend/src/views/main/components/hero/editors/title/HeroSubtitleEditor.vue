@@ -119,12 +119,12 @@ const removeRow = (id: string) => {
       </ButtonSecondary>
     </template>
 
-    <div class="min-h-25">
+    <div>
       <Transition name="fade" mode="out-in">
-        <SubtitleEmptyState v-if="items.length === 0" />
+        <SubtitleEmptyState v-if="items.length === 0" key="empty" />
         <SubtitleList
           v-else
-          :key="`page-${currentPage}`"
+          key="list"
           :items="pagedRows"
           :current-page="currentPage"
           :page-size="props.pageSize"
