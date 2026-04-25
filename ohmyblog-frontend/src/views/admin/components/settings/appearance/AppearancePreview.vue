@@ -46,7 +46,6 @@ watch(locale, () => {
     :title="siteTitle"
     :icon="siteFavicon"
     :viewport-mode="viewportMode"
-    :tag-text="t('views.admin.Settings.appearance.preview')"
   >
     <!-- 加载遮罩 -->
     <div
