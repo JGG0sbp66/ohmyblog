@@ -1,7 +1,7 @@
 <!-- src/components/base/pop/BaseModal.vue -->
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { onClickOutside, useMagicKeys } from "@vueuse/core";
+import { ref, watch, nextTick, onUnmounted } from "vue";
+import { onClickOutside, useMagicKeys, useResizeObserver } from "@vueuse/core";
 
 /**
  * Props 定义
@@ -57,6 +57,43 @@ watch(
     }
   },
 );
+
+/**
+ * 监听内部内容高度变化，实现弹窗整体高度的平滑过渡
+ */
+const contentRef = ref<HTMLElement | null>(null);
+const currentHeight = ref<string>("auto");
+const isReadyToAnimate = ref(false);
+let timer: ReturnType<typeof setTimeout> | null = null;
+
+useResizeObserver(contentRef, (entries) => {
+  if (!entries[0]) return;
+  const newHeight = entries[0].target.getBoundingClientRect().height;
+  currentHeight.value = `${newHeight}px`;
+});
+
+// 在弹窗刚打开时禁用过渡动画，避免从 0 变大的突兀感；打开后再启用高度过渡
+watch(
+  () => props.modelValue,
+  async (val) => {
+    if (timer) clearTimeout(timer);
+    
+    if (val) {
+      isReadyToAnimate.value = false;
+      currentHeight.value = "auto";
+      await nextTick();
+      timer = setTimeout(() => {
+        isReadyToAnimate.value = true;
+      }, 50);
+    } else {
+      isReadyToAnimate.value = false;
+    }
+  },
+);
+
+onUnmounted(() => {
+  if (timer) clearTimeout(timer);
+});
 </script>
 
 <template>
@@ -81,26 +118,31 @@ watch(
             v-if="modelValue"
             ref="modalRef"
             :class="[
-              'bg-bg-card relative w-full rounded-2xl shadow-2xl',
+              'bg-bg-card relative w-full rounded-2xl shadow-2xl overflow-hidden',
               maxWidth,
+              isReadyToAnimate ? 'transition-[height] duration-300 ease-out' : ''
             ]"
+            :style="{ height: currentHeight !== 'auto' ? currentHeight : undefined }"
           >
-            <!-- 头部插槽 -->
-            <div v-if="$slots.header" class="px-6 py-4">
-              <slot name="header" />
-            </div>
+            <!-- 内部内容容器：被 ResizeObserver 监听以获取真实所需高度 -->
+            <div ref="contentRef">
+              <!-- 头部插槽 -->
+              <div v-if="$slots.header" class="px-6 py-4">
+                <slot name="header" />
+              </div>
 
-            <!-- 内容插槽 -->
-            <div class="px-6 py-8 bg-bg-card">
-              <slot />
-            </div>
+              <!-- 内容插槽 -->
+              <div class="px-6 py-8">
+                <slot />
+              </div>
 
-            <!-- 底部插槽 -->
-            <div
-              v-if="$slots.footer"
-              class="px-6 py-4 flex items-center justify-end gap-3"
-            >
-              <slot name="footer" />
+              <!-- 底部插槽 -->
+              <div
+                v-if="$slots.footer"
+                class="px-6 py-4 flex items-center justify-end gap-3"
+              >
+                <slot name="footer" />
+              </div>
             </div>
           </div>
         </Transition>
