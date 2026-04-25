@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import SitePreview from "../site/SitePreview.vue";
 import HeroSettingsForm from "../site/HeroSettingsForm.vue";
-
+import SiteInfoForm from "../site/SiteInfoForm.vue";
 </script>
 
 <template>
@@ -13,7 +13,10 @@ import HeroSettingsForm from "../site/HeroSettingsForm.vue";
     </div>
 
     <!-- 右侧：配置表单区域 -->
-    <div class="flex flex-col gap-6 shrink-0 h-fit">
+    <div class="flex flex-col gap-6 shrink-0 h-full overflow-y-auto py-1 pr-1">
+      <!-- 站点信息表单 -->
+      <SiteInfoForm class="onload-animation anim-delay-50" />
+
       <!-- Hero 配置表单 -->
       <HeroSettingsForm class="onload-animation anim-delay-100" />
     </div>
