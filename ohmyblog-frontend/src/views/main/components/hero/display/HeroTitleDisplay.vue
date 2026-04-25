@@ -11,61 +11,61 @@ const heroTitle = computed(() => systemStore.personalInfo.heroTitle);
 const heroSubtitles = computed(() => systemStore.personalInfo.heroSubtitles);
 
 // 打字机效果
-const { displayText, type, backspace } = useTyping(80, 50);
+const { displayText, type, backspace, reset } = useTyping(80, 50);
 
 let currentIndex = 0;
-let animationLoop: number | null = null;
+let currentLoopId = 0;
 
 // 循环播放副标题
 async function playSubtitles() {
-  const subtitles = heroSubtitles.value;
+  const loopId = ++currentLoopId;
 
-  if (!subtitles || subtitles.length === 0) {
-    return;
+  // 内部辅助函数，检查当前循环是否仍然有效
+  const isValid = () => loopId === currentLoopId;
+
+  while (isValid()) {
+    const subtitles = heroSubtitles.value;
+
+    if (!subtitles || subtitles.length === 0) {
+      break;
+    }
+
+    // 1. 打字当前副标题
+    await type(subtitles[currentIndex], 0);
+    if (!isValid()) break;
+
+    // 2. 停顿 2 秒
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    if (!isValid()) break;
+
+    // 3. 退格
+    await backspace(0);
+    if (!isValid()) break;
+
+    // 4. 停顿 0.5 秒
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    if (!isValid()) break;
+
+    // 5. 切换到下一个副标题
+    currentIndex = (currentIndex + 1) % subtitles.length;
   }
-
-  // 打字当前副标题
-  await type(subtitles[currentIndex], 0);
-
-  // 停顿 2 秒
-  await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  // 退格
-  await backspace(0);
-
-  // 停顿 0.5 秒
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // 切换到下一个副标题
-  currentIndex = (currentIndex + 1) % subtitles.length;
-
-  // 继续循环
-  animationLoop = window.setTimeout(playSubtitles, 0);
 }
 
-// TODO: 修复副标题更新后动画异常的问题
-// 问题描述：当通过编辑器修改副标题并保存后，打字动画会出现异常（只展开几个字就收缩）
-// 临时解决方案：刷新页面可以恢复正常
-// 可能原因：
-// 1. watch 触发时，正在进行的异步动画（type/backspace）没有被正确取消
-// 2. 需要在 watch 中先调用 reset() 清空状态，再重新开始动画
-// 3. 可能需要在 useTyping hook 中添加一个 stop() 方法来强制停止所有进行中的动画
-// 4. 考虑使用 deep watch 或者监听数组的具体变化
 // 监听副标题变化，重新开始动画
 watch(
   heroSubtitles,
   (newSubtitles) => {
-    if (animationLoop) {
-      clearTimeout(animationLoop);
-      animationLoop = null;
-    }
+    // 增加 ID 以终止旧的 while 循环
+    currentLoopId++;
+    // 重置打字机状态（清空文本并停止 hook 内的 setInterval）
+    reset();
 
     if (newSubtitles && newSubtitles.length > 0) {
       currentIndex = 0;
       playSubtitles();
     }
   },
-  { immediate: false },
+  { immediate: false, deep: true },
 );
 
 onMounted(() => {
@@ -75,9 +75,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (animationLoop) {
-    clearTimeout(animationLoop);
-  }
+  currentLoopId++;
+  reset();
 });
 
 // 判断是否显示组件
