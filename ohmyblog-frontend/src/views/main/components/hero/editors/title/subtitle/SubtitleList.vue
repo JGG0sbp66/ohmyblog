@@ -32,7 +32,7 @@ defineEmits<{
     <TransitionGroup name="list" tag="div" class="relative flex flex-col gap-3">
       <div v-for="(row, index) in items" :key="row.id" class="relative">
         <div
-          class="flex items-stretch gap-3 rounded-xl bg-bg-card/40 transition-all duration-300 hover:bg-bg-card/80 hover:shadow-lg hover:shadow-black/5"
+          class="flex items-stretch gap-3 rounded-xl bg-bg-card/40 transition-all duration-300 hover:bg-bg-card/80"
         >
           <TipInput
             :model-value="row.value"
