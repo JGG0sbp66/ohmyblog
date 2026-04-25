@@ -5,7 +5,7 @@ import AdminHeader from "./AdminHeader.vue";
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-bg">
+  <div class="h-screen flex flex-col bg-bg">
     <!-- 顶部栏 - 圆角卡片样式 -->
     <AdminHeader />
 
