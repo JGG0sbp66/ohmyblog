@@ -14,7 +14,7 @@ const viewportMode = ref<"pc" | "mobile">("pc");
   >
     <!-- 左侧预览卡片 -->
     <div class="flex-1 flex flex-col gap-6 min-h-0">
-      <AppearancePreview :viewport-mode="viewportMode" />
+      <AppearancePreview :viewport-mode="viewportMode" class="flex-1" />
     </div>
 
     <!-- 右侧容器 -->
