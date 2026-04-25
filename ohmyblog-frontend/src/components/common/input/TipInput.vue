@@ -78,7 +78,7 @@ defineExpose({ validate });
     <!-- Label 区域 -->
     <div v-if="label" class="flex items-center gap-1.5 mb-1.5 px-1">
       <label
-        class="text-xs font-bold text-fg-subtle uppercase tracking-wider select-none"
+        class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
       >
         {{ label }}
         <span v-if="required" class="text-red-500 ml-0.5">*</span>
