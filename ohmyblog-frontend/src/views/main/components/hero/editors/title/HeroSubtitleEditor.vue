@@ -112,7 +112,7 @@ const removeRow = (id: string) => {
       <Transition name="fade" mode="out-in">
         <div
           v-if="items.length === 0"
-          class="rounded-2xl border-2 border-dashed border-fg-subtle/10 bg-fg-subtle/[0.02] px-4 py-10 text-center"
+          class="rounded-2xl border-2 border-dashed border-fg-subtle/10 bg-fg-subtle/2 px-4 py-10 text-center"
         >
           <div class="mb-2 flex justify-center opacity-20">
             <Trash class="h-8 w-8" />
@@ -144,7 +144,7 @@ const removeRow = (id: string) => {
                       index: (currentPage - 1) * props.pageSize + index + 1,
                     })
                   "
-                  class="!bg-transparent !p-0 pl-3"
+                  class="bg-transparent! p-0! pl-3"
                   @update:modelValue="(val) => updateRow(row.id, String(val))"
                 />
 
