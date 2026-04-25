@@ -6,14 +6,16 @@ import SiteInfoForm from "../site/SiteInfoForm.vue";
 </script>
 
 <template>
+
   <div class="flex flex-col lg:flex-row gap-8 onload-animation min-h-0 flex-1">
     <!-- 左侧：实时预览区域 -->
     <div class="flex-1 flex flex-col gap-6 min-h-0">
       <SitePreview class="flex-1" />
     </div>
 
+    <!-- TODO: 现在会导致底部对不齐了，因为有这个padding -->
     <!-- 右侧：配置表单区域 -->
-    <div class="flex flex-col gap-6 shrink-0 h-full overflow-y-auto py-1 pr-1">
+    <div class="flex flex-col gap-6 shrink-0 h-full overflow-y-auto pb-8 pl-3 pr-4">
       <!-- 站点信息表单 -->
       <SiteInfoForm class="onload-animation anim-delay-50" />
 
