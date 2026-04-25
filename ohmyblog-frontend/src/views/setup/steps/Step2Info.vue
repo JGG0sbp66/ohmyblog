@@ -2,16 +2,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
+import FaviconUpload from "@/components/common/upload/FaviconUpload.vue";
 import StepLayout from "../components/StepLayout.vue";
-import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStep, type Validatable } from "@/composables/setup-step.hook";
-import { useImageUpload } from "@/composables/upload.hook";
 import { upsertConfig } from "@/api/config.api";
-import { uploadFavicon } from "@/api/upload.api";
 import { useSystemStore } from "@/stores/system.store";
-import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
-import BaseTag from "@/components/base/tag/BaseTag.vue";
 import {
   SiteInfoConfigUpsertDTO,
   type TSiteInfoConfigUpsertDTO,
@@ -21,36 +17,9 @@ const { t } = useLang();
 const { isSubmitting, runStep } = useSetupStep();
 const systemStore = useSystemStore();
 
-/**
- * 站点图标（Favicon）上传管理
- * 使用通用上传 Hook 统一处理图标的选择、上传状态与成功反馈
- */
-const {
-  loading: uploading, // 当前图标是否正在上传
-  uploadRef: imageUploadRef, // 对 ImageUpload 组件实例的引用
-  trigger: handleIconClick, // 触发文件选择对话框
-  getButtonText, // 获取按钮文字
-  handleUpload, // 核心上传执行逻辑
-} = useImageUpload();
-
 const titleInputRef = ref<Validatable | null>(null);
 const footerInputRef = ref<Validatable | null>(null);
 const icpInputRef = ref<Validatable | null>(null);
-
-/**
- * 响应图标文件选择变更
- * @param file 选中的图标文件
- */
-const handleFileChange = (file: File) => {
-  handleUpload(
-    file,
-    uploadFavicon, // 调用后端图标上传接口
-    (url) => {
-      // handleUpload 已自动添加时间戳，直接赋值即可
-      systemStore.siteInfo.favicon = url;
-    },
-  );
-};
 
 const handleNext = () => {
   runStep(
@@ -121,57 +90,8 @@ const handleNext = () => {
     </div>
 
     <!-- 站点图标上传 -->
-    <div class="space-y-2 onload-animation anim-delay-150">
-      <div class="flex items-center gap-1.5 mb-1.5 px-1">
-        <label
-          class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
-        >
-          {{ t("views.setup.steps.step2.siteIcon.label") }}
-        </label>
-      </div>
-      <div class="flex items-start gap-5">
-        <!-- 预览区域 -->
-        <div class="shrink-0">
-          <ImageUpload
-            ref="imageUploadRef"
-            v-model="systemStore.siteInfo.favicon"
-            :loading="uploading"
-            accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,image/gif,image/apng,image/avif,image/x-icon,image/vnd.microsoft.icon,.ico"
-            @change="handleFileChange"
-          />
-        </div>
-
-        <!-- 按钮与说明 -->
-        <div class="flex-1 pt-1">
-          <div class="flex items-center gap-3">
-            <ButtonPrimary
-              type="button"
-              class="text-sm"
-              @click="handleIconClick"
-              :loading="uploading"
-              :text="
-                getButtonText(
-                  'views.setup.steps.step2.siteIcon',
-                  systemStore.siteInfo.favicon,
-                )
-              "
-            />
-
-            <BaseTag v-if="systemStore.siteInfo.favicon" type="success">
-              {{ t("views.setup.steps.step2.siteIcon.uploaded") }}
-            </BaseTag>
-          </div>
-
-          <div class="mt-3 space-y-1">
-            <p class="text-[11px] text-fg-muted leading-relaxed">
-              {{ t("views.setup.steps.step2.siteIcon.help1") }}
-            </p>
-            <p class="text-[11px] text-fg-muted leading-relaxed">
-              {{ t("views.setup.steps.step2.siteIcon.help2") }}
-            </p>
-          </div>
-        </div>
-      </div>
+    <div class="onload-animation anim-delay-150">
+      <FaviconUpload v-model="systemStore.siteInfo.favicon" />
     </div>
   </StepLayout>
 </template>
