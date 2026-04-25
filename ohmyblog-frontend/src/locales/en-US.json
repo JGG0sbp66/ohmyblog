@@ -119,6 +119,10 @@
           }
         },
         "site": {
+          "siteInfo": {
+            "title": "Site Information",
+            "description": "Set your site name and icon, which will appear in the browser tab."
+          },
           "hero": {
             "description": "Set the main title and subtitles displayed on the homepage, with support for automatic cycling."
           }
