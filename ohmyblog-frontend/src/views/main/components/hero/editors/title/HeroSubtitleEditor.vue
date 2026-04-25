@@ -119,20 +119,18 @@ const removeRow = (id: string) => {
       </ButtonSecondary>
     </template>
 
-    <div>
-      <Transition name="fade" mode="out-in">
-        <SubtitleEmptyState v-if="items.length === 0" key="empty" />
-        <SubtitleList
-          v-else
-          key="list"
-          :items="pagedRows"
-          :current-page="currentPage"
-          :page-size="props.pageSize"
-          @update="updateRow"
-          @remove="removeRow"
-        />
-      </Transition>
-    </div>
+    <Transition name="fade" mode="out-in">
+      <SubtitleEmptyState v-if="items.length === 0" key="empty" />
+      <SubtitleList
+        v-else
+        key="list"
+        :items="pagedRows"
+        :current-page="currentPage"
+        :page-size="props.pageSize"
+        @update="updateRow"
+        @remove="removeRow"
+      />
+    </Transition>
 
     <template #footer>
       <div v-if="items.length > props.pageSize" class="pt-2">
