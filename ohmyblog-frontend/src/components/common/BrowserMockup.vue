@@ -1,5 +1,10 @@
 <!-- src/components/common/BrowserMockup.vue -->
 <script setup lang="ts">
+import BaseTag from "@/components/base/tag/BaseTag.vue";
+import { useLang } from "@/composables/lang.hook";
+
+const { t } = useLang();
+
 /**
  * 浏览器外壳模拟组件
  * 用于各种预览场景，提供统一的 UI 装饰（如三色点、标签页等）
@@ -11,8 +16,6 @@ interface Props {
   icon?: string | null;
   /** 视口模式：pc (全宽) 或 mobile (窄屏带边框) */
   viewportMode?: "pc" | "mobile";
-  /** 右侧显示的标签文本 */
-  tagText?: string;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -24,7 +27,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <div
-    class="flex-1 bg-bg-card rounded-3xl shadow-xl overflow-hidden relative flex flex-col transition-all duration-500 self-stretch border border-border/50"
+    class="flex-1 bg-bg-card rounded-3xl shadow-xl overflow-hidden relative group flex flex-col transition-all duration-500 self-stretch border border-border/50"
   >
     <!-- 1. 浏览器模拟工具栏 -->
     <div
@@ -61,9 +64,13 @@ withDefaults(defineProps<Props>(), {
       </div>
 
       <!-- 右侧状态标签 -->
-      <div v-if="tagText" class="px-2 py-0.5 rounded-md bg-accent/10 text-accent text-[10px] font-bold uppercase tracking-wider">
-        {{ tagText }}
-      </div>
+      <BaseTag
+        type="primary"
+        size="xs"
+        class="font-bold uppercase tracking-wider"
+      >
+        {{ t("views.admin.Settings.appearance.preview") }}
+      </BaseTag>
     </div>
 
     <!-- 2. 主要内容区域 -->
