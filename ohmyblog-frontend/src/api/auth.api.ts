@@ -1,5 +1,9 @@
 import { api, unwrap } from "./client";
-import type { TLoginDTO, TRegisterDTO } from "@server/dtos/auth.dto";
+import type {
+  TLoginDTO,
+  TRegisterDTO,
+  TUpdateAccountDTO,
+} from "@server/dtos/auth.dto";
 
 /**
  * POST /api/auth/register
@@ -14,6 +18,14 @@ export const register = (data: TRegisterDTO) =>
  */
 export const login = (data: TLoginDTO) => {
   return unwrap(api.api.auth.login.post(data));
+};
+
+/**
+ * PATCH /api/auth/me
+ * 更新账号信息
+ */
+export const updateAccount = (data: TUpdateAccountDTO) => {
+  return unwrap(api.api.auth.me.patch(data));
 };
 
 /**

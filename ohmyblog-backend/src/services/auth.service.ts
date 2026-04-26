@@ -105,8 +105,40 @@ class AuthService {
 		return {
 			uuid: user.uuid,
 			username: user.username,
+			email: user.email,
 			role: user.role,
 		};
+	}
+
+	/**
+	 * 更新账号信息 (单用户系统简化逻辑)
+	 * @param uuid 用户唯一标识
+	 * @param data 待更新的账号信息
+	 */
+	async updateAccount(
+		uuid: string,
+		data: { username?: string; email?: string; password?: string },
+	) {
+		const updateData: {
+			username?: string;
+			email?: string;
+			passwordHash?: string;
+		} = {};
+
+		if (data.username) updateData.username = data.username;
+		if (data.email) updateData.email = data.email;
+		if (data.password) {
+			updateData.passwordHash = await Bun.password.hash(data.password);
+		}
+
+		// 如果没有需要更新的内容，直接返回
+		if (Object.keys(updateData).length === 0) {
+			return await userDao.findById(uuid);
+		}
+
+		const updatedUser = await userDao.update(uuid, updateData);
+		this.logger.info({ userId: uuid }, "账号信息更新成功");
+		return updatedUser;
 	}
 }
 

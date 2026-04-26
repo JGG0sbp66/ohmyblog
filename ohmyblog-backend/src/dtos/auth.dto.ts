@@ -35,5 +35,33 @@ export const LoginDTO = t.Object({
 	}),
 });
 
+// 3. 更新账号信息 DTO
+export const UpdateAccountDTO = t.Object({
+	username: t.Optional(
+		t.String({
+			minLength: 3,
+			maxLength: 50,
+			description: "用户名",
+			error: "auth.username_range",
+		}),
+	),
+	email: t.Optional(
+		t.String({
+			format: "email",
+			description: "邮箱",
+			error: "auth.email_invalid",
+		}),
+	),
+	password: t.Optional(
+		t.String({
+			minLength: 6,
+			maxLength: 50,
+			description: "新密码",
+			error: "auth.password_range",
+		}),
+	),
+});
+
 export type TRegisterDTO = Static<typeof RegisterDTO>;
 export type TLoginDTO = Static<typeof LoginDTO>;
+export type TUpdateAccountDTO = Static<typeof UpdateAccountDTO>;
