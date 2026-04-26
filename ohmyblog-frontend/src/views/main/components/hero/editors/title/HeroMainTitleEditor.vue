@@ -6,7 +6,6 @@
 import TipInput from "@/components/common/input/TipInput.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
-import HeroTitleEditorLayout from "./HeroTitleEditorLayout.vue";
 
 const { t } = useLang();
 
@@ -15,10 +14,9 @@ const systemStore = useSystemStore();
 </script>
 
 <template>
-  <HeroTitleEditorLayout :title="t('views.main.hero.titleEditor.mainTitle')">
-    <TipInput
-      v-model="systemStore.personalInfo.heroTitle"
-      :placeholder="t('views.main.hero.titleEditor.placeholder')"
-    />
-  </HeroTitleEditorLayout>
+  <TipInput
+    v-model="systemStore.personalInfo.heroTitle"
+    :label="t('views.main.hero.titleEditor.mainTitle')"
+    :placeholder="t('views.main.hero.titleEditor.placeholder')"
+  />
 </template>
