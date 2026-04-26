@@ -94,11 +94,12 @@ const handleSave = async () => {
     :description="t('views.admin.Settings.admin.account.description')"
   >
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-      <!-- 登录用户名 -->
+      <!-- 用户名 -->
       <TipInput
         :ref="setFormRef"
         v-model="form.username"
-        :label="t('views.admin.Settings.admin.account.username')"
+        :label="t('views.setup.steps.step3.username.label')"
+        :placeholder="t('views.setup.steps.step3.username.placeholder')"
         :schema="schema.username"
         required
       />
@@ -108,7 +109,9 @@ const handleSave = async () => {
         :ref="setFormRef"
         v-model="form.email"
         type="email"
-        :label="t('views.admin.Settings.admin.account.email')"
+        :label="t('views.setup.steps.step3.email.label')"
+        :placeholder="t('views.setup.steps.step3.email.placeholder')"
+        :hint="t('views.setup.steps.step3.email.hint')"
         :schema="schema.email"
         required
       />
@@ -118,7 +121,7 @@ const handleSave = async () => {
         :ref="setFormRef"
         v-model="form.password"
         type="password"
-        :label="t('views.admin.Settings.admin.account.password')"
+        :label="t('views.setup.steps.step3.password.label')"
         :placeholder="t('views.admin.Settings.admin.account.passwordPlaceholder')"
         :schema="schema.password"
       />
@@ -127,8 +130,8 @@ const handleSave = async () => {
       <TipInput
         v-model="form.confirmPassword"
         type="password"
-        :label="t('views.admin.Settings.admin.account.confirmPassword')"
-        :placeholder="t('views.admin.Settings.admin.account.confirmPasswordPlaceholder')"
+        :label="t('views.setup.steps.step3.confirm.label')"
+        :placeholder="t('views.setup.steps.step3.confirm.placeholder')"
       />
     </div>
 
