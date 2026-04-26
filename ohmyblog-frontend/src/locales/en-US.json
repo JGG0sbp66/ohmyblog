@@ -91,9 +91,7 @@
           "placeholder": "For example: Welcome to my cozy corner",
           "subtitles": {
             "title": "Subtitles",
-            "count": "{count} total",
             "add": "Add One",
-            "empty": "No subtitles yet. Click \"Add One\" to start.",
             "placeholder": "Subtitle {index}",
             "remove": "Delete"
           }
@@ -290,6 +288,10 @@
     }
   },
   "common": {
+    "list": {
+      "count": "{count} items",
+      "empty": "No data yet. Click the button above to add."
+    },
     "validation": {
       "auth": {
         "username_range": "Username must be between 3-50 characters",

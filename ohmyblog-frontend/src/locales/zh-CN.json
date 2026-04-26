@@ -91,9 +91,7 @@
           "placeholder": "例如：欢迎来到我的小屋",
           "subtitles": {
             "title": "副标题",
-            "count": "共 {count} 条",
             "add": "新增一条",
-            "empty": "还没有副标题，点击“新增一条”开始添加。",
             "placeholder": "副标题 {index}",
             "remove": "删除"
           }
@@ -290,6 +288,10 @@
     }
   },
   "common": {
+    "list": {
+      "count": "共 {count} 条",
+      "empty": "暂无数据，请点击上方按钮添加"
+    },
     "validation": {
       "auth": {
         "username_range": "用户名长度需在3-50位之间",
