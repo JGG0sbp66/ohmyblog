@@ -28,7 +28,11 @@ defineEmits<{
 </script>
 
 <template>
-  <TransitionGroup name="list" tag="div" class="relative flex flex-col gap-3">
+  <TransitionGroup
+    name="list-item-anim"
+    tag="div"
+    class="relative flex flex-col gap-3"
+  >
     <div v-for="(row, index) in items" :key="row.id" class="relative">
       <div
         class="flex items-stretch gap-3 rounded-xl bg-bg-card/40 transition-all duration-300 hover:bg-bg-card/80"
@@ -58,34 +62,4 @@ defineEmits<{
   </TransitionGroup>
 </template>
 
-<style scoped>
-/* 列表项动画 (Add/Remove) */
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.list-enter-from {
-  opacity: 0;
-  transform: scale(0.9) translateY(10px);
-  filter: blur(4px);
-}
-
-.list-leave-to {
-  opacity: 0;
-  transform: scale(0.9) translateX(20px);
-  filter: blur(4px);
-}
-
-/* 列表移动动画 */
-.list-move {
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* 离开时的绝对定位，确保平滑移动 */
-.list-leave-active {
-  position: absolute;
-  width: 100%;
-  z-index: 0;
-}
-</style>
+<style scoped></style>
