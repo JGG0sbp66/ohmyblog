@@ -4,6 +4,7 @@ import {
 	UploadAvatarDTO,
 	UploadHeroDTO,
 	UploadIconDTO,
+	UploadSocialIconDTO,
 } from "../dtos/upload.dto";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 import { authPlugin } from "../plugins/auth.plugin";
@@ -79,6 +80,29 @@ export const uploadRoute = new Elysia({ name: "uploadRoute" })
 					detail: {
 						summary: "上传管理员头像 (POST)",
 						description: "仅限管理员操作，上传后自动处理为 WebP 格式",
+					},
+				},
+			)
+			/**
+			 * POST /upload/social-icon
+			 * - 上传社交链接图标
+			 */
+			.post(
+				"/social-icon",
+				async ({ body: { icon, key } }) => {
+					const result = await uploadService.uploadSocialIcon(icon, key);
+
+					return {
+						message: "社交图标上传成功",
+						...result,
+					};
+				},
+				{
+					beforeHandle: ensureAdminIfExists,
+					body: UploadSocialIconDTO,
+					detail: {
+						summary: "上传社交链接图标 (POST)",
+						description: "仅限管理员操作，上传后自动处理为 PNG 格式",
 					},
 				},
 			),

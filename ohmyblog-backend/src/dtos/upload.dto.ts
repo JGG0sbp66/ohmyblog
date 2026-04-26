@@ -31,6 +31,22 @@ export const UploadHeroDTO = t.Object({
 	}),
 });
 
+// 社交链接图标 DTO
+export const UploadSocialIconDTO = t.Object({
+	key: t.String({
+		minLength: 1,
+		maxLength: 50,
+		description: "社交平台的唯一标识符 (用于作为图标文件名)",
+	}),
+	icon: t.File({
+		type: "image",
+		maxSize: "512k",
+		description: "社交图标文件，最大512KB",
+		error: "请上传 512KB 以内的有效图片",
+	}),
+});
+
 export type TUploadIconDTO = Static<typeof UploadIconDTO>;
 export type TUploadHeroDTO = Static<typeof UploadHeroDTO>;
 export type TUploadAvatarDTO = Static<typeof UploadAvatarDTO>;
+export type TUploadSocialIconDTO = Static<typeof UploadSocialIconDTO>;
