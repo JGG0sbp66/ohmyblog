@@ -36,15 +36,15 @@ const {
   // 数据源：Store 里的页脚链接原始数组
   initialSource: systemStore.siteInfo.footerLinks,
   pageSize: PAGE_SIZE,
-  // 转换：进入编辑器时注入 ID，出去同步时剔除 ID
-  mapToLocal: (link) => ({ id: "", ...link }),
-  mapToRemote: (item) => ({ name: item.name, url: item.url }),
-  // 同步：本地变化时即时更新 Store
+  // 转换：业务 Body 即为原始对象本身，Hook 会自动注入渲染所需的 ID
+  mapToLocal: (link) => link,
+  mapToRemote: (body) => body,
+  // 同步：本地变化时即时更新 Store (Hook 已自动剥离 ID)
   onSync: (newLinks) => {
     systemStore.siteInfo.footerLinks = newLinks;
   },
-  // 工厂：新增行时的默认数据结构
-  newItemFactory: () => ({ id: "", name: "", url: "" }),
+  // 工厂：新增行时的默认业务数据
+  newItemFactory: () => ({ name: "", url: "" }),
 });
 
 /**

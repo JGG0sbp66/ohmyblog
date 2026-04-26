@@ -39,15 +39,15 @@ const {
   // 数据源：Store 里的副标题原始字符串数组
   initialSource: systemStore.personalInfo.heroSubtitles,
   pageSize: props.pageSize,
-  // 转换：将字符串包装成带 ID 的对象，方便 TransitionGroup 渲染
-  mapToLocal: (value) => ({ id: "", value }),
-  // 还原：同步回 Store 时只保留字符串
-  mapToRemote: (item) => item.value,
+  // 转换：将原始字符串映射为业务 Body 对象，Hook 会自动在此基础上注入 ID
+  mapToLocal: (value) => ({ value }),
+  // 还原：同步回 Store 时只保留业务字符串
+  mapToRemote: (body) => body.value,
   onSync: (newValues) => {
     systemStore.personalInfo.heroSubtitles = newValues;
   },
-  // 工厂：新增行时的初始结构
-  newItemFactory: () => ({ id: "", value: "" }),
+  // 工厂：新增行时的初始业务数据
+  newItemFactory: () => ({ value: "" }),
 });
 
 /**
