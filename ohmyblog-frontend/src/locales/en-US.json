@@ -92,8 +92,7 @@
           "subtitles": {
             "title": "Subtitles",
             "add": "Add One",
-            "placeholder": "Subtitle {index}",
-            "remove": "Delete"
+            "placeholder": "Subtitle {index}"
           }
         }
       }
@@ -330,7 +329,8 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "finish": "Finish",
-    "save": "Save Settings"
+    "save": "Save Settings",
+    "delete": "Delete"
   },
   "stores": {
     "setup": {
