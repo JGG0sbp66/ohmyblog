@@ -122,6 +122,16 @@
           },
           "hero": {
             "description": "Set the main title and subtitles displayed on the homepage, with support for automatic cycling."
+          },
+          "footer": {
+            "title": "Footer Settings",
+            "description": "Configure the content displayed in the site footer.",
+            "links": {
+              "title": "Footer Links",
+              "add": "Add Link",
+              "namePlaceholder": "Name (e.g., GitHub)",
+              "urlPlaceholder": "URL (e.g., https://...)"
+            }
           }
         }
       }

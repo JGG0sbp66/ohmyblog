@@ -122,6 +122,16 @@
           },
           "hero": {
             "description": "设置首页显示的标题和副标题，支持多条副标题自动循环播放。"
+          },
+          "footer": {
+            "title": "页脚设置",
+            "description": "配置站点页脚显示内容",
+            "links": {
+              "title": "页脚链接",
+              "add": "添加链接",
+              "namePlaceholder": "名称 (如 GitHub)",
+              "urlPlaceholder": "地址 (如 https://...)"
+            }
           }
         }
       }
