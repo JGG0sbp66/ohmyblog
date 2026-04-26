@@ -2,12 +2,14 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useSystemStore } from "@/stores/system.store";
+import { useAuthStore } from "@/stores/auth.store";
 import HeroImageEditor from "./editors/HeroImageEditor.vue";
 import HeroTitleEditor from "./editors/HeroTitleEditor.vue";
 import HeroImageTransition from "./display/HeroImageTransition.vue";
 import HeroTitleDisplay from "./display/HeroTitleDisplay.vue";
 
 const systemStore = useSystemStore();
+const authStore = useAuthStore();
 
 // 从 store 获取背景图片
 const heroImage = computed(() => systemStore.personalInfo.hero);
@@ -42,7 +44,10 @@ onMounted(() => {
     <!-- 标题显示层 -->
     <HeroTitleDisplay />
 
-    <div class="absolute bottom-6 right-6 z-20 flex items-center gap-3">
+    <div
+      v-if="authStore.isAdmin"
+      class="absolute bottom-6 right-6 z-20 flex items-center gap-3"
+    >
       <!-- Hero 图片编辑按钮 -->
       <HeroImageEditor />
       <!-- Hero 标题编辑按钮 -->
