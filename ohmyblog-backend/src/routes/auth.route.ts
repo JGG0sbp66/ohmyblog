@@ -62,7 +62,6 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 							uuid: user.uuid,
 							username: user.username,
 							role: user.role,
-							avatar: user.avatarUrl,
 						},
 					};
 				},

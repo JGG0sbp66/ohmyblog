@@ -65,8 +65,8 @@ export const uploadRoute = new Elysia({ name: "uploadRoute" })
 			 */
 			.post(
 				"/avatar",
-				async ({ body: { avatar }, user }) => {
-					const result = await uploadService.uploadAvatar(avatar, user!.uuid);
+				async ({ body: { avatar } }) => {
+					const result = await uploadService.uploadAvatar(avatar);
 
 					return {
 						message: "头像上传成功",
