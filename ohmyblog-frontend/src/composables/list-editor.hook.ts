@@ -21,7 +21,7 @@ interface ListEditorOptions<T, R> {
  * 处理带 ID 的本地状态、分页计算、增删跳转以及数据同步
  */
 export function useListEditor<T extends { id: string }, R>(
-  options: ListEditorOptions<T, R>
+  options: ListEditorOptions<T, R>,
 ) {
   const {
     initialSource,
@@ -38,7 +38,7 @@ export function useListEditor<T extends { id: string }, R>(
   // 2. 分页逻辑
   const currentPage = ref(1);
   const totalPages = computed(() =>
-    Math.max(1, Math.ceil(items.value.length / pageSize))
+    Math.max(1, Math.ceil(items.value.length / pageSize)),
   );
 
   const pagedRows = computed(() => {
@@ -53,7 +53,7 @@ export function useListEditor<T extends { id: string }, R>(
     (newItems) => {
       onSync(newItems.map(mapToRemote));
     },
-    { deep: true }
+    { deep: true },
   );
 
   // 4. 操作方法
