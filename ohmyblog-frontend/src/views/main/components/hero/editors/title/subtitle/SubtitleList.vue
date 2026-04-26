@@ -34,9 +34,7 @@ defineEmits<{
     class="relative flex flex-col gap-3"
   >
     <div v-for="(row, index) in items" :key="row.id" class="relative">
-      <div
-        class="flex items-stretch gap-3 rounded-xl bg-bg-card/40 transition-all duration-300 hover:bg-bg-card/80"
-      >
+      <div class="flex items-start gap-3">
         <TipInput
           :model-value="row.value"
           :placeholder="
@@ -44,7 +42,7 @@ defineEmits<{
               index: (currentPage - 1) * pageSize + index + 1,
             })
           "
-          class="flex-1 h-11 bg-transparent! p-0! pl-3"
+          class="flex-1"
           @update:modelValue="(val) => $emit('update', row.id, String(val))"
         />
 
