@@ -94,15 +94,6 @@ class UserDao {
 			.set({ lastLoginAt: new Date() })
 			.where(eq(user.uuid, uuid));
 	}
-
-	/**
-	 * 更新头像 URL
-	 * @param uuid 用户唯一标识
-	 * @param avatarUrl 头像访问路径
-	 */
-	async updateAvatarUrl(uuid: string, avatarUrl: string) {
-		await db.update(user).set({ avatarUrl }).where(eq(user.uuid, uuid));
-	}
 }
 
 export const userDao = new UserDao();
