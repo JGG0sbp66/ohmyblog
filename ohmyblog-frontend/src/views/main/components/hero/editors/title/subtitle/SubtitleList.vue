@@ -3,9 +3,8 @@
   副标题列表展示组件，包含输入框、删除按钮及列表动画。
 -->
 <script setup lang="ts">
-import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
-import Trash from "@/components/icon/common/Trash.vue";
+import DeleteButton from "@/components/common/button/DeleteButton.vue";
 import { useLang } from "@/composables/lang.hook";
 
 const { t } = useLang();
@@ -46,15 +45,7 @@ defineEmits<{
           @update:modelValue="(val) => $emit('update', row.id, String(val))"
         />
 
-        <div class="w-11 h-11">
-          <ButtonSecondary
-            class="w-full h-full text-fg-subtle/30 hover:text-red-500 hover:before:bg-red-500/10"
-            :title="t('views.main.hero.titleEditor.subtitles.remove')"
-            @click="$emit('remove', row.id)"
-          >
-            <Trash class="h-4 w-4" />
-          </ButtonSecondary>
-        </div>
+        <DeleteButton @click="$emit('remove', row.id)" />
       </div>
     </div>
   </TransitionGroup>
