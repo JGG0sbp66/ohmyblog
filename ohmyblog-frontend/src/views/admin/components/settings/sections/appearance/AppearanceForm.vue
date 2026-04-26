@@ -88,9 +88,9 @@ const handleSave = async () => {
 
     <!-- 保存按钮 -->
     <template #footer>
-      <div class="pt-4">
+      <div class="flex justify-end pt-4">
         <ButtonPrimary
-          class="w-full rounded-2xl text-base font-bold"
+          class="min-w-32"
           :loading="isSubmitting"
           @click="handleSave"
           :text="t('common.save')"
