@@ -40,7 +40,7 @@ const emit = defineEmits<{
     <!-- 头部：标题、计数、操作按钮 -->
     <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2">
-        <h3 class="text-sm font-bold tracking-widest text-fg-subtle uppercase">
+        <h3 class="text-sm font-bold tracking-wider text-fg-subtle uppercase">
           {{ title }}
         </h3>
         <BaseTag v-if="count > 0" type="info" size="sm" class="px-2!">
