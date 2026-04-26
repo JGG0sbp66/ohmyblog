@@ -7,6 +7,7 @@ import { computed, ref, watch } from "vue";
 import ListEditorLayout from "@/components/common/list/ListEditorLayout.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
+import { generateId } from "@/utils/id";
 import SubtitleList from "./SubtitleList.vue";
 
 const props = withDefaults(
@@ -21,10 +22,6 @@ const props = withDefaults(
 
 const systemStore = useSystemStore();
 const { t } = useLang();
-
-// 生成唯一 ID 确保动画 key 稳定，避免在渲染列表时使用 index 作为 key 导致的动画异常
-const generateId = () =>
-  Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
 
 // 使用本地带 ID 的列表，方便在前端处理排序、删除等操作而不直接影响全局状态
 const items = ref(
