@@ -23,7 +23,7 @@ const handleFileChange = (file: File) => {
 
 <template>
   <div class="space-y-2">
-    <div class="flex items-center gap-1.5 mb-1.5 px-1">
+    <div class="flex items-center gap-1.5 mb-2 px-1">
       <label
         class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
       >
