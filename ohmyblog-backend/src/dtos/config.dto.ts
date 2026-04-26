@@ -69,6 +69,27 @@ export const SiteInfoConfigUpsertDTO = t.Object({
 				error: "site_info.icp_range",
 			}),
 		),
+		footerLinks: t.Optional(
+			t.Array(
+				t.Object({
+					name: t.String({
+						minLength: 1,
+						maxLength: 50,
+						description: "链接名称",
+						error: "site_info.footer_link_name_range",
+					}),
+					url: t.String({
+						minLength: 1,
+						maxLength: 500,
+						description: "链接地址",
+						error: "site_info.footer_link_url_range",
+					}),
+				}),
+				{
+					description: "页脚链接列表",
+				},
+			),
+		),
 	}),
 	...ConfigMetaDTO,
 });
