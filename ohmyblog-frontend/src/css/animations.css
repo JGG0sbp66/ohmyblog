@@ -2,8 +2,8 @@
 
 /* ==================== CSS 变量定义 ==================== */
 :root {
-  /* 内容延迟时间 - 首次加载时使用 */
-  --content-delay: 150ms;
+  /* 内容延迟时间 - 较晚加载，确保 Hero 和 Sidebar 先入场 */
+  --content-delay: 300ms;
 }
 
 /* ==================== 关键帧动画 ==================== */
@@ -37,10 +37,10 @@
   animation-delay: 0ms;
 }
 
-/* 侧边栏 - 第二个出现 */
+/* 侧边栏 - 在 Hero 之后出现 */
 #sidebar,
 .sidebar {
-  animation-delay: 100ms;
+  animation-delay: 200ms;
 }
 
 /* 主内容区域 - 使用可配置的延迟 */
@@ -55,10 +55,10 @@
   animation-delay: 250ms;
 }
 
-/* Hero 区域 - 稍晚出现 */
+/* Hero 区域 - 在导航栏之后立即出现 */
 #hero,
 .hero {
-  animation-delay: 200ms;
+  animation-delay: 100ms;
 }
 
 /* ==================== 列表项递增延迟 ==================== */
