@@ -22,7 +22,9 @@ const progressWidth = computed(() => {
 <template>
   <div class="flex flex-col gap-2">
     <!-- 进度文字描述 -->
-    <div class="flex justify-between items-end mb-1 text-sm text-fg-subtle px-1">
+    <div
+      class="flex justify-between items-end mb-1 text-sm text-fg-subtle px-1"
+    >
       <span>{{ title }}</span>
       <span>{{
         t("components.base.progress.BaseProgress.step", {

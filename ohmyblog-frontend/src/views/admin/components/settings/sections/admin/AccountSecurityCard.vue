@@ -73,11 +73,11 @@ const handleSave = async () => {
 
     // 成功后刷新用户信息
     await authStore.fetchMe();
-    
+
     // 重置密码框
     form.password = "";
     form.confirmPassword = "";
-    
+
     useToast.success(t("api.success.保存成功"));
   } catch (error: any) {
     useToast.error(t(`api.errors.${error}`));
@@ -122,7 +122,9 @@ const handleSave = async () => {
         v-model="form.password"
         type="password"
         :label="t('views.setup.steps.step3.password.label')"
-        :placeholder="t('views.admin.Settings.admin.account.passwordPlaceholder')"
+        :placeholder="
+          t('views.admin.Settings.admin.account.passwordPlaceholder')
+        "
         :schema="schema.password"
       />
 
