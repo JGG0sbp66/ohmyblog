@@ -319,7 +319,11 @@
         "icp_range": "备案号长度不能超过100个字符"
       },
       "personal_info": {
+        "username_range": "显示名称长度不能超过100个字符",
         "avatar_range": "头像 URL 长度不能超过500个字符",
+        "bio_range": "个人简介长度不能超过500个字符",
+        "social_name_range": "社交平台名称长度不能超过50个字符",
+        "social_url_range": "社交链接 URL 长度不能超过500个字符",
         "hero_range": "首页横幅 URL 长度不能超过500个字符"
       },
       "smtp": {

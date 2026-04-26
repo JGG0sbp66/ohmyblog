@@ -319,7 +319,11 @@
         "icp_range": "ICP number must be under 100 characters"
       },
       "personal_info": {
+        "username_range": "Display name must be under 100 characters",
         "avatar_range": "Avatar URL must be under 500 characters",
+        "bio_range": "Bio must be under 500 characters",
+        "social_name_range": "Platform name must be under 50 characters",
+        "social_url_range": "Social link URL must be under 500 characters",
         "hero_range": "Hero banner URL must be under 500 characters"
       },
       "smtp": {
