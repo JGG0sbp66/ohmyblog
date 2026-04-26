@@ -26,9 +26,8 @@ const handleNext = () => {
     };
 
     /**
-     * 将个性化配置（如首页头像、Hero横幅URL）持久化到系统配置表 (config)。
-     * 并且 user 表中的 avatar_url 字段已经通过 /upload/avatar 接口同步更新。
-     * 此处仅负责保存全局的站点外观显示配置。
+     * 将个性化配置（如显示名称、头像、简介、Hero横幅URL）持久化到系统配置表 (config)。
+     * 现在头像和简介等展示信息已完全移至配置表管理。
      */
     return upsertConfig({
       configKey: "personal_info",
