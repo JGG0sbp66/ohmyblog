@@ -1,6 +1,6 @@
 <!-- src/components/icon/common/User.vue -->
 <script setup lang="ts">
-import { RiUserLine } from "@remixicon/vue";
+import { RiIdCardLine } from "@remixicon/vue";
 const props = withDefaults(
   defineProps<{
     sizeClass?: string;
@@ -12,5 +12,5 @@ const props = withDefaults(
 </script>
 
 <template>
-  <RiUserLine :class="props.sizeClass" />
+  <RiIdCardLine :class="props.sizeClass" />
 </template>
