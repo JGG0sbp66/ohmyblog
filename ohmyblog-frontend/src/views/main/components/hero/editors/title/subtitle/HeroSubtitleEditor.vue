@@ -1,5 +1,5 @@
 <!-- 
-  src/views/main/components/hero/editors/title/HeroSubtitleEditor.vue 
+  src/views/main/components/hero/editors/title/subtitle/HeroSubtitleEditor.vue 
   副标题编辑器中枢，负责管理副标题列表的状态同步、分页逻辑及子组件调度。
 -->
 <script setup lang="ts">
@@ -7,7 +7,7 @@ import { computed, ref, watch } from "vue";
 import ListEditorLayout from "@/components/common/list/ListEditorLayout.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
-import SubtitleList from "./subtitle/SubtitleList.vue";
+import SubtitleList from "./SubtitleList.vue";
 
 const props = withDefaults(
   defineProps<{
