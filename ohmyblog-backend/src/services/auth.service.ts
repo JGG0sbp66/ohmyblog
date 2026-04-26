@@ -1,5 +1,6 @@
 // src/services/auth.service.ts
 import { userDao } from "../daos/user.dao";
+import { configDao } from "../daos/config.dao";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 
@@ -137,6 +138,24 @@ class AuthService {
 		}
 
 		const updatedUser = await userDao.update(uuid, updateData);
+
+		// 5. 同步更新 config 中的 username (针对单用户系统的显示名称同步)
+		if (data.username) {
+			try {
+				const personalInfo = await configDao.findByKey("personal_info");
+				if (personalInfo?.configValue) {
+					const newValue = {
+						...(personalInfo.configValue as object),
+						username: data.username,
+					};
+					await configDao.updateByKey("personal_info", { configValue: newValue });
+					this.logger.info("已同步更新个人资料中的显示名称");
+				}
+			} catch (err) {
+				this.logger.error({ err }, "同步更新个人资料显示名称失败");
+			}
+		}
+
 		this.logger.info({ userId: uuid }, "账号信息更新成功");
 		return updatedUser;
 	}
