@@ -4,14 +4,9 @@
 -->
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import BasePagination from "@/components/base/table/BasePagination.vue";
-import BaseTag from "@/components/base/tag/BaseTag.vue";
-import Add from "@/components/icon/common/Add.vue";
+import ListEditorLayout from "@/components/common/list/ListEditorLayout.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
-import HeroTitleEditorLayout from "./HeroTitleEditorLayout.vue";
-import SubtitleEmptyState from "./subtitle/SubtitleEmptyState.vue";
 import SubtitleList from "./subtitle/SubtitleList.vue";
 
 const props = withDefaults(
@@ -96,68 +91,24 @@ const removeRow = (id: string) => {
 </script>
 
 <template>
-  <HeroTitleEditorLayout
+  <ListEditorLayout
     :title="t('views.main.hero.titleEditor.subtitles.title')"
+    :count="items.length"
+    :add-text="t('views.main.hero.titleEditor.subtitles.add')"
+    :show-pagination="items.length > props.pageSize"
+    :current-page="currentPage"
+    :total-pages="totalPages"
+    @add="addSubtitle"
+    @update:current-page="currentPage = $event"
   >
-    <template #title-extra>
-      <BaseTag type="info" size="sm">
-        {{
-          t("views.main.hero.titleEditor.subtitles.count", {
-            count: items.length,
-          })
-        }}
-      </BaseTag>
-    </template>
-
-    <template #header-actions>
-      <ButtonSecondary
-        :text="t('views.main.hero.titleEditor.subtitles.add')"
-        class="group"
-        @click="addSubtitle"
-      >
-        <Add class="transition-transform duration-300 group-hover:rotate-90" />
-      </ButtonSecondary>
-    </template>
-
-    <Transition name="fade" mode="out-in">
-      <SubtitleEmptyState v-if="items.length === 0" key="empty" />
-      <SubtitleList
-        v-else
-        key="list"
-        :items="pagedRows"
-        :current-page="currentPage"
-        :page-size="props.pageSize"
-        @update="updateRow"
-        @remove="removeRow"
-      />
-    </Transition>
-
-    <template #footer>
-      <div v-if="items.length > props.pageSize" class="pt-2">
-        <BasePagination
-          :current-page="currentPage"
-          :total-pages="totalPages"
-          @update:currentPage="currentPage = $event"
-        />
-      </div>
-    </template>
-  </HeroTitleEditorLayout>
+    <SubtitleList
+      :items="pagedRows"
+      :current-page="currentPage"
+      :page-size="props.pageSize"
+      @update="updateRow"
+      @remove="removeRow"
+    />
+  </ListEditorLayout>
 </template>
 
-<style scoped>
-/* 状态切换动画 (Empty <-> List) */
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.2s ease-out;
-}
-
-.fade-enter-from {
-  opacity: 0;
-  transform: translateY(4px);
-}
-
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-</style>
+<style scoped></style>
