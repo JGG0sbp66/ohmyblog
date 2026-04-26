@@ -36,7 +36,7 @@ const paddingClasses = {
 <template>
   <div
     :class="[
-      'bg-bg-card rounded-3xl shadow-xl w-full',
+      'bg-bg-card rounded-3xl shadow-lg w-full',
       paddingClasses[padding],
       props.class,
     ]"
