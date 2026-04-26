@@ -149,7 +149,7 @@ const adminAvatar = computed(() => systemStore.personalInfo.avatar);
         </div>
       </template>
 
-      <div class="space-y-3">
+      <div class="flex flex-col gap-3">
         <p class="text-fg text-sm">
           {{ t("components.common.admin.AdminSidebar.user.modal.question") }}
         </p>

@@ -56,7 +56,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
 </script>
 
 <template>
-  <div class="w-full max-w-2xl mx-auto space-y-8 py-4">
+  <div class="flex flex-col gap-8 w-full max-w-2xl mx-auto py-4">
     <!-- 1. 头像上传部分 -->
     <div
       class="flex flex-col md:flex-row items-center md:items-start gap-10 px-4 md:px-0"
@@ -82,7 +82,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
       <!-- 右侧：文字与操作 -->
       <div class="flex-1 flex flex-col gap-5 text-center md:text-left">
         <!-- 1. 标题与描述 -->
-        <div class="space-y-1.5 pt-1">
+        <div class="flex flex-col gap-1.5 pt-1">
           <h3 class="text-lg font-bold text-fg">
             {{ t("views.setup.steps.step4.avatar.label") }}
           </h3>
@@ -121,10 +121,10 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
     </div>
 
     <!-- 2. 横幅上传部分 -->
-    <div class="space-y-6 px-4 md:px-0">
+    <div class="flex flex-col gap-8 px-4 md:px-0">
       <!-- 第一行：标题和按钮 -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div class="space-y-1 text-center md:text-left">
+        <div class="flex flex-col gap-1 text-center md:text-left">
           <h3 class="text-lg font-bold text-fg">
             {{ t("views.setup.steps.step4.hero.label") }}
           </h3>

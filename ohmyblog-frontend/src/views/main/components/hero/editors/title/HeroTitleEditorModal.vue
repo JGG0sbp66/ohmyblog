@@ -64,7 +64,7 @@ const handleSave = async () => {
       </div>
     </template>
 
-    <div class="space-y-6">
+    <div class="flex flex-col gap-8">
       <HeroMainTitleEditor />
 
       <HeroSubtitleEditor :page-size="5" />

@@ -75,12 +75,12 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full lg:w-120">
+  <div class="flex flex-col gap-8 w-full lg:w-120">
     <SettingCard
       :title="t('views.admin.Settings.site.footer.title')"
       :description="t('views.admin.Settings.site.footer.description')"
     >
-      <div class="space-y-8">
+      <div class="flex flex-col gap-8">
         <!-- 1. 版权文本 -->
         <TipInput
           v-model="systemStore.siteInfo.footer"

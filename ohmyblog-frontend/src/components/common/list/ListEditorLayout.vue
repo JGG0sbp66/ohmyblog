@@ -36,7 +36,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="flex flex-col gap-4">
     <!-- 头部：标题、计数、操作按钮 -->
     <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-2">
