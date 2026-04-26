@@ -42,7 +42,9 @@ defineEmits<{
           <TipInput
             :model-value="row.name"
             :placeholder="keyPlaceholder || '名称'"
-            @update:modelValue="(val) => $emit('update', row.id, String(val), row.url)"
+            @update:modelValue="
+              (val) => $emit('update', row.id, String(val), row.url)
+            "
           />
         </div>
 
@@ -51,7 +53,9 @@ defineEmits<{
           <TipInput
             :model-value="row.url"
             :placeholder="valuePlaceholder || '链接'"
-            @update:modelValue="(val) => $emit('update', row.id, row.name, String(val))"
+            @update:modelValue="
+              (val) => $emit('update', row.id, row.name, String(val))
+            "
           />
         </div>
 
