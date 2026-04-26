@@ -22,12 +22,6 @@ export const user = sqliteTable("user", {
 	// 加密后的密码哈希, 长度 255
 	passwordHash: text("password_hash").notNull(),
 
-	// 用户头像图片 URL, 允许为空
-	avatarUrl: text("avatar_url"),
-
-	// 用户个人简介或签名, 允许为空
-	bio: text("bio"),
-
 	// 用户角色: admin, user 等，默认 user
 	role: text("role", { enum: roles }).default("user").notNull(),
 
