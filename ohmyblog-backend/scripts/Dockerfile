@@ -10,8 +10,8 @@ WORKDIR /app
 COPY package.json ./
 RUN bun install --frozen-lockfile
 
-# 强制安装 musl 版本的 native 模块，以便在 builder (glibc) 中编译出 alpine 兼容包
-RUN bun add imgkit-linux-x64-musl
+# 强制安装 musl 版本的 @napi-rs/image 模块，以便在 builder (glibc) 中编译出 alpine 兼容包
+RUN bun add @napi-rs/image-linux-x64-musl
 
 # 复制源代码及构建脚本
 COPY . .
@@ -41,9 +41,9 @@ RUN apk add --no-cache \
     && rm -rf /var/cache/apk/*
 
 # 从构建阶段复制编译好的资源
-# 仅复制必要的二进制文件、native 模块和迁移文件，忽略 README 和 sourcemaps
+# 仅复制必要的二进制文件、native 模块和迁移文件
 COPY --from=builder --chmod=755 /app/scripts/dist/linux-musl/ohmyblog /app/
-COPY --from=builder /app/scripts/dist/linux-musl/image-turbo.linux-x64-musl.node /app/
+COPY --from=builder /app/scripts/dist/linux-musl/image.linux-x64-musl.node /app/
 COPY --from=builder /app/scripts/dist/linux-musl/db/ /app/db/
 
 # 定义数据挂载点
