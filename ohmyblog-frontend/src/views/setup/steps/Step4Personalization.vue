@@ -21,6 +21,9 @@ const [containerRef] = useAutoAnimate();
 
 const handleNext = () => {
   runStep(async () => {
+    // 同步 Step 3 填写的管理员用户名到config表中, 方便组件去调用
+    systemStore.personalInfo.username = setupStore.adminForm.username;
+
     const configValue: TPersonalInfoConfigUpsertDTO["configValue"] = {
       ...systemStore.personalInfo,
     };
