@@ -3,6 +3,7 @@
 import SitePreview from "../site/SitePreview.vue";
 import HeroSettingsForm from "../site/HeroSettingsForm.vue";
 import SiteInfoForm from "../site/SiteInfoForm.vue";
+import FooterSettingsForm from "../site/FooterSettingsForm.vue";
 </script>
 
 <template>
@@ -22,6 +23,9 @@ import SiteInfoForm from "../site/SiteInfoForm.vue";
 
       <!-- Hero 配置表单 -->
       <HeroSettingsForm class="onload-animation anim-delay-100" />
+
+      <!-- 页脚配置表单 -->
+      <FooterSettingsForm class="onload-animation anim-delay-150" />
     </div>
   </div>
 </template>
