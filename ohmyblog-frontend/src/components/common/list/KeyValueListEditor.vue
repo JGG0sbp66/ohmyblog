@@ -4,7 +4,7 @@
 -->
 <script setup lang="ts">
 import TipInput from "@/components/common/input/TipInput.vue";
-import DeleteButton from "@/components/common/button/DeleteButton.vue";
+import ListRowLayout from "@/components/common/list/ListRowLayout.vue";
 
 interface KeyValueItem {
   id: string;
@@ -35,7 +35,11 @@ defineEmits<{
     tag="div"
     class="relative flex flex-col gap-3"
   >
-    <div v-for="row in items" :key="row.id" class="relative">
+    <ListRowLayout
+      v-for="row in items"
+      :key="row.id"
+      @remove="$emit('remove', row.id)"
+    >
       <div class="flex items-start gap-3">
         <!-- Key (Name) - 较短 -->
         <div class="w-1/3 min-w-20">
@@ -58,11 +62,8 @@ defineEmits<{
             "
           />
         </div>
-
-        <!-- 删除按钮 -->
-        <DeleteButton class="pt-1" @click="$emit('remove', row.id)" />
       </div>
-    </div>
+    </ListRowLayout>
   </TransitionGroup>
 </template>
 

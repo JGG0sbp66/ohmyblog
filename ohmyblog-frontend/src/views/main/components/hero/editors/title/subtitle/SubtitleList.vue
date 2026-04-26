@@ -4,7 +4,7 @@
 -->
 <script setup lang="ts">
 import TipInput from "@/components/common/input/TipInput.vue";
-import DeleteButton from "@/components/common/button/DeleteButton.vue";
+import ListRowLayout from "@/components/common/list/ListRowLayout.vue";
 import { useLang } from "@/composables/lang.hook";
 
 const { t } = useLang();
@@ -32,22 +32,21 @@ defineEmits<{
     tag="div"
     class="relative flex flex-col gap-3"
   >
-    <div v-for="(row, index) in items" :key="row.id" class="relative">
-      <div class="flex items-start gap-3">
-        <TipInput
-          :model-value="row.value"
-          :placeholder="
-            t('views.main.hero.titleEditor.subtitles.placeholder', {
-              index: (currentPage - 1) * pageSize + index + 1,
-            })
-          "
-          class="flex-1"
-          @update:modelValue="(val) => $emit('update', row.id, String(val))"
-        />
-
-        <DeleteButton @click="$emit('remove', row.id)" />
-      </div>
-    </div>
+    <ListRowLayout
+      v-for="(row, index) in items"
+      :key="row.id"
+      @remove="$emit('remove', row.id)"
+    >
+      <TipInput
+        :model-value="row.value"
+        :placeholder="
+          t('views.main.hero.titleEditor.subtitles.placeholder', {
+            index: (currentPage - 1) * pageSize + index + 1,
+          })
+        "
+        @update:modelValue="(val) => $emit('update', row.id, String(val))"
+      />
+    </ListRowLayout>
   </TransitionGroup>
 </template>
 
