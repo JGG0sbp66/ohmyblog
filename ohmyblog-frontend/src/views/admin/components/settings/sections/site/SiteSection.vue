@@ -1,10 +1,10 @@
 <!-- src/views/admin/components/settings/sections/SiteSection.vue -->
 <script setup lang="ts">
-import SettingsPageLayout from "../layout/SettingsPageLayout.vue";
-import SitePreview from "../site/SitePreview.vue";
-import HeroSettingsForm from "../site/HeroSettingsForm.vue";
-import SiteInfoForm from "../site/SiteInfoForm.vue";
-import FooterSettingsForm from "../site/FooterSettingsForm.vue";
+import SettingsPageLayout from "../../layout/SettingsPageLayout.vue";
+import SitePreview from "./SitePreview.vue";
+import HeroSettingsForm from "./HeroSettingsForm.vue";
+import SiteInfoForm from "./SiteInfoForm.vue";
+import FooterSettingsForm from "./FooterSettingsForm.vue";
 </script>
 
 <template>

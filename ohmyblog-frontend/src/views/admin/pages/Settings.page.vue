@@ -2,10 +2,10 @@
 <!-- TODO: 实现设置页面功能 -->
 <script setup lang="ts">
 import { ref, markRaw, computed } from "vue";
-import AppearanceSection from "../components/settings/sections/AppearanceSection.vue";
-import SiteSection from "../components/settings/sections/SiteSection.vue";
-import AdminSection from "../components/settings/sections/AdminSection.vue";
-import SMTPSection from "../components/settings/sections/SMTPSection.vue";
+import AppearanceSection from "../components/settings/sections/appearance/AppearanceSection.vue";
+import SiteSection from "../components/settings/sections/site/SiteSection.vue";
+import AdminSection from "../components/settings/sections/admin/AdminSection.vue";
+import SMTPSection from "../components/settings/sections/smtp/SMTPSection.vue";
 import SettingsNav from "../components/settings/layout/SettingsNav.vue";
 import { useLang } from "@/composables/lang.hook";
 
