@@ -9,7 +9,7 @@ import Heading from "@/components/icon/common/Heading.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 import { useSystemStore } from "@/stores/system.store";
-import HeroSubtitleEditor from "./HeroSubtitleEditor.vue";
+import HeroSubtitleEditor from "./subtitle/HeroSubtitleEditor.vue";
 import HeroMainTitleEditor from "./HeroMainTitleEditor.vue";
 
 const { t } = useLang();

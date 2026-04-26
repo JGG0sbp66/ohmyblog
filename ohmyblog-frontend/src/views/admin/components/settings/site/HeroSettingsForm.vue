@@ -10,7 +10,7 @@ import { ref } from "vue";
 
 // 引入现有的编辑器组件以保持功能和视觉高度统一
 import HeroMainTitleEditor from "@/views/main/components/hero/editors/title/HeroMainTitleEditor.vue";
-import HeroSubtitleEditor from "@/views/main/components/hero/editors/title/HeroSubtitleEditor.vue";
+import HeroSubtitleEditor from "@/views/main/components/hero/editors/title/subtitle/HeroSubtitleEditor.vue";
 
 const { t } = useLang();
 const systemStore = useSystemStore();
