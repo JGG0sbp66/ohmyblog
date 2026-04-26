@@ -1,6 +1,7 @@
 // src/services/auth.service.ts
-import { userDao } from "../daos/user.dao";
+
 import { configDao } from "../daos/config.dao";
+import { userDao } from "../daos/user.dao";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 
@@ -148,7 +149,9 @@ class AuthService {
 						...(personalInfo.configValue as object),
 						username: data.username,
 					};
-					await configDao.updateByKey("personal_info", { configValue: newValue });
+					await configDao.updateByKey("personal_info", {
+						configValue: newValue,
+					});
 					this.logger.info("已同步更新个人资料中的显示名称");
 				}
 			} catch (err) {
