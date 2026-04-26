@@ -11,7 +11,7 @@ import SubtitleList from "./SubtitleList.vue";
 
 const props = withDefaults(
   defineProps<{
-    /** 分页大小 */
+    /** 分页大小，默认为 5 */
     pageSize?: number;
   }>(),
   {
@@ -19,10 +19,14 @@ const props = withDefaults(
   },
 );
 
+// --- 基础状态与 Hook ---
 const systemStore = useSystemStore();
 const { t } = useLang();
 
-// 使用通用的列表编辑器 Hook
+/**
+ * 列表管理核心逻辑 (Hook)
+ * 负责处理本地带 ID 的副标题数组、分页计算、增删跳转以及自动同步回 Store
+ */
 const {
   items,
   currentPage,
@@ -32,17 +36,23 @@ const {
   removeItem: removeRow,
   updateItem,
 } = useListEditor({
+  // 数据源：Store 里的副标题原始字符串数组
   initialSource: systemStore.personalInfo.heroSubtitles,
   pageSize: props.pageSize,
-  mapToLocal: (value) => ({ id: "", value }), // id 会在 Hook 内部自动处理
+  // 转换：将字符串包装成带 ID 的对象，方便 TransitionGroup 渲染
+  mapToLocal: (value) => ({ id: "", value }),
+  // 还原：同步回 Store 时只保留字符串
   mapToRemote: (item) => item.value,
   onSync: (newValues) => {
     systemStore.personalInfo.heroSubtitles = newValues;
   },
+  // 工厂：新增行时的初始结构
   newItemFactory: () => ({ id: "", value: "" }),
 });
 
-/** 更新特定 ID 的项 */
+/**
+ * 更新特定 ID 的副标题文本
+ */
 const updateRow = (id: string, value: string) => {
   updateItem(id, { value });
 };
