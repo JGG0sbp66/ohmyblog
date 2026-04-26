@@ -18,6 +18,7 @@ export const useSystemStore = defineStore("system", () => {
     favicon: "",
     footer: "",
     icp: "",
+    footerLinks: [] as { name: string; url: string }[],
   });
 
   // 个性化配置 (Hero, 头像等)
