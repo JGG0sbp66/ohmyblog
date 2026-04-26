@@ -23,11 +23,11 @@
 		"@elysiajs/jwt": "^1.4.1",
 		"@elysiajs/openapi": "^1.4.14",
 		"@elysiajs/static": "^1.4.9",
+		"@napi-rs/image": "^1.12.0",
 		"@paralleldrive/cuid2": "^3.3.0",
 		"consola": "^3.4.2",
 		"drizzle-orm": "^0.45.2",
 		"elysia": "^1.4.28",
-		"imgkit": "^2.2.1",
 		"nodemailer": "^8.0.5",
 		"zod": "^4.3.6"
 	},
