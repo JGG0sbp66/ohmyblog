@@ -24,16 +24,19 @@ const nameError = ref("");
 
 // 处理文件选择
 const handleFileChange = async (file: File) => {
+  // 如果名称为空，提示用户先填写名称
   const trimmedName = props.name.trim();
   if (!trimmedName) {
     nameError.value = t("views.admin.Settings.admin.social.links.nameRequired");
     return;
   }
 
+  // 清除错误状态
   nameError.value = "";
 
   try {
     uploading.value = true;
+    // 立即上传，使用 name 作为文件名（key）
     const result = await uploadSocialIcon(file, trimmedName);
     if (result?.url) {
       emit("update", props.id, { icon: result.url });
@@ -48,9 +51,9 @@ const handleFileChange = async (file: File) => {
 </script>
 
 <template>
-  <div class="flex items-center gap-3 w-full">
+  <div class="flex items-start gap-3 w-full">
     <!-- 名称 (Key) -->
-    <div class="w-32 sm:w-40">
+    <div class="w-40">
       <TipInput
         :model-value="name"
         :external-error="nameError"
@@ -72,7 +75,7 @@ const handleFileChange = async (file: File) => {
     </div>
 
     <!-- 图标上传 (Icon) -->
-    <div class="shrink-0 flex items-center h-10">
+    <div class="shrink-0 h-11 flex items-center">
       <ImageUpload
         :model-value="icon"
         :loading="uploading"
