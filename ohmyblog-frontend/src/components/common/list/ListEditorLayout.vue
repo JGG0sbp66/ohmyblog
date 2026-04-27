@@ -97,7 +97,7 @@ const afterEnter = (el: Element) => {
     </div>
 
     <!-- 内容区域 (带淡入淡出动画切换) -->
-    <div class="relative overflow-hidden transition-[height] duration-300">
+    <div class="relative transition-[height] duration-300">
       <Transition
         name="fade-list"
         mode="out-in"
@@ -108,7 +108,7 @@ const afterEnter = (el: Element) => {
         @enter="enter"
         @after-enter="afterEnter"
       >
-        <div :key="count === 0 ? 'empty' : 'content'" class="overflow-hidden">
+        <div :key="count === 0 ? 'empty' : 'content'">
           <slot v-if="count > 0" />
           <slot v-else name="empty">
             <EmptyState />
