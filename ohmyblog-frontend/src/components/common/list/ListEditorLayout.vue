@@ -3,7 +3,6 @@
   通用的列表编辑器外壳组件，统一管理标题、计数统计、添加按钮、内容区域及分页。
 -->
 <script setup lang="ts">
-import { ref } from "vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import BasePagination from "@/components/base/table/BasePagination.vue";
