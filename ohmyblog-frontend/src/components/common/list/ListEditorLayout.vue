@@ -3,6 +3,7 @@
   通用的列表编辑器外壳组件，统一管理标题、计数统计、添加按钮、内容区域及分页。
 -->
 <script setup lang="ts">
+import { ref } from "vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import BasePagination from "@/components/base/table/BasePagination.vue";
@@ -33,6 +34,41 @@ const emit = defineEmits<{
   /** 更新页码 */
   (e: "update:currentPage", page: number): void;
 }>();
+
+// --- 平滑高度切换逻辑 ---
+const beforeLeave = (el: Element) => {
+  const node = el as HTMLElement;
+  node.style.height = `${node.offsetHeight}px`;
+};
+
+const leave = (el: Element) => {
+  const node = el as HTMLElement;
+  // 触发重绘
+  node.offsetHeight;
+  node.style.height = "0";
+};
+
+const afterLeave = (el: Element) => {
+  const node = el as HTMLElement;
+  node.style.height = "";
+};
+
+const beforeEnter = (el: Element) => {
+  const node = el as HTMLElement;
+  node.style.height = "0";
+};
+
+const enter = (el: Element) => {
+  const node = el as HTMLElement;
+  // 触发重绘
+  node.offsetHeight;
+  node.style.height = `${node.scrollHeight}px`;
+};
+
+const afterEnter = (el: Element) => {
+  const node = el as HTMLElement;
+  node.style.height = "";
+};
 </script>
 
 <template>
@@ -62,9 +98,18 @@ const emit = defineEmits<{
     </div>
 
     <!-- 内容区域 (带淡入淡出动画切换) -->
-    <div class="relative">
-      <Transition name="fade-list" mode="out-in">
-        <div :key="count === 0 ? 'empty' : 'content'">
+    <div class="relative overflow-hidden transition-[height] duration-300">
+      <Transition
+        name="fade-list"
+        mode="out-in"
+        @before-leave="beforeLeave"
+        @leave="leave"
+        @after-leave="afterLeave"
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @after-enter="afterEnter"
+      >
+        <div :key="count === 0 ? 'empty' : 'content'" class="overflow-hidden">
           <slot v-if="count > 0" />
           <slot v-else name="empty">
             <EmptyState />
@@ -91,7 +136,10 @@ const emit = defineEmits<{
 /* 状态切换动画 (Empty <-> Content) */
 .fade-list-enter-active,
 .fade-list-leave-active {
-  transition: all 0.25s ease-out;
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out,
+    height 0.3s ease-in-out;
 }
 
 .fade-list-enter-from {
