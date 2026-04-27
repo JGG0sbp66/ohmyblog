@@ -51,12 +51,12 @@ const emit = defineEmits<{
       <!-- 添加按钮 -->
       <ButtonSecondary
         :text="addText"
-        class="group shrink-0"
+        class="group/addbtn shrink-0"
         size="sm"
         @click="$emit('add')"
       >
         <AddIcon
-          class="transition-transform duration-300 group-hover:rotate-90"
+          class="transition-transform duration-300 group-hover/addbtn:rotate-90"
         />
       </ButtonSecondary>
     </div>
