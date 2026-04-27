@@ -133,6 +133,28 @@
               "urlPlaceholder": "地址 (如 https://...)"
             }
           }
+        },
+        "admin": {
+          "account": {
+            "title": "账号安全",
+            "description": "管理您的登录凭据，包括用户名、邮箱和密码。",
+            "passwordPlaceholder": "不修改请留空"
+          },
+          "profile": {
+            "title": "个人资料",
+            "description": "设置您的个人简介，并管理在首页展示的社交平台链接。",
+            "bio": "个人简介",
+            "bioPlaceholder": "用几句话介绍一下你自己..."
+          },
+          "social": {
+            "links": {
+              "title": "社交平台",
+              "add": "添加链接",
+              "namePlaceholder": "平台 (如 GitHub)",
+              "urlPlaceholder": "链接 (如 https://...)",
+              "nameRequired": "请先填写平台名称后再上传图标"
+            }
+          }
         }
       }
     },
@@ -376,6 +398,10 @@
       "SMTP 服务器连接失败: Connection timeout": "SMTP 连接失败：连接服务器超时"
     },
     "success": {
+      "config": {
+        "保存成功": "保存成功",
+        "获取成功": "获取成功"
+      },
       "保存成功": "保存成功",
       "获取成功": "获取成功",
       "注册成功": "注册成功",

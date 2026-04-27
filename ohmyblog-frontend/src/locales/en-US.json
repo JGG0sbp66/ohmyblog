@@ -133,6 +133,30 @@
               "urlPlaceholder": "URL (e.g., https://...)"
             }
           }
+        },
+        "admin": {
+          "account": {
+            "title": "Account Security",
+            "description": "Manage your login credentials, including username, email, and password.",
+            "passwordPlaceholder": "Leave blank to keep current"
+          },
+          "profile": {
+            "title": "Profile",
+            "description": "Set your personal bio and manage social platform links displayed on your homepage.",
+            "bio": "Bio",
+            "bioPlaceholder": "Introduce yourself in a few sentences..."
+          },
+          "social": {
+            "title": "Social Links",
+            "description": "Configure social platform links displayed in your sidebar.",
+            "links": {
+              "title": "Social Platforms",
+              "add": "Add Link",
+              "namePlaceholder": "Platform (e.g., GitHub)",
+              "urlPlaceholder": "Link (e.g., https://...)",
+              "nameRequired": "Please enter platform name before uploading icon"
+            }
+          }
         }
       }
     },
@@ -376,6 +400,10 @@
       "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout"
     },
     "success": {
+      "config": {
+        "保存成功": "Settings saved successfully",
+        "获取成功": "Fetched successfully"
+      },
       "保存成功": "Settings saved successfully",
       "获取成功": "Fetched successfully",
       "注册成功": "Registration successful",
