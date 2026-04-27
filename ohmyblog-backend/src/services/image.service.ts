@@ -32,9 +32,9 @@ export const ImageService = {
 		let processed: Buffer;
 
 		if (isIcon) {
-			// 图标处理：强制 128x128 并转 PNG
+			// 图标处理：强制 256x256 并转 PNG
 			processed = await transformer
-				.resize(128, 128, 2) // 2 为 Lanczos3 算法
+				.resize(256, 256, 2) // 2 为 Lanczos3 算法
 				.png();
 		} else {
 			// 普通图片处理：
