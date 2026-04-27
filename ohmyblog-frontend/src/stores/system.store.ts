@@ -26,7 +26,12 @@ export const useSystemStore = defineStore("system", () => {
     username: "",
     avatar: "",
     bio: "",
-    socialLinks: [] as { name: string; url: string; icon?: string }[],
+    socialLinks: [] as {
+      name: string;
+      url: string;
+      iconLight?: string;
+      iconDark?: string;
+    }[],
     hero: "",
     heroTitle: "",
     heroSubtitles: [] as string[],
