@@ -99,7 +99,8 @@ export function useLang() {
         }
       }
       // 兜底使用原生翻译逻辑
-      return instance.t(key, args as any);
+      // 使用扩展运算符透传，确保不破坏原生的参数结构（如插值对象 {count} 等）
+      return (instance.t as any)(key, ...args);
     },
     locale: instance.locale as Ref<LocaleType>,
     setLocale,
