@@ -89,8 +89,8 @@ export const uploadRoute = new Elysia({ name: "uploadRoute" })
 			 */
 			.post(
 				"/social-icon",
-				async ({ body: { icon, key } }) => {
-					const result = await uploadService.uploadSocialIcon(icon, key);
+				async ({ body: { icon, key, mode } }) => {
+					const result = await uploadService.uploadSocialIcon(icon, key, mode);
 
 					return {
 						message: "社交图标上传成功",

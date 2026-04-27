@@ -60,10 +60,11 @@ class UploadService {
 	 * 上传并处理社交媒体链接图标
 	 * @param file 原始图片文件
 	 * @param key 社交平台的标识符
+	 * @param mode 图标模式 (light | dark)
 	 * @returns 处理后的访问路径
 	 */
-	async uploadSocialIcon(file: File, key: string) {
-		const filename = `${key}.png`;
+	async uploadSocialIcon(file: File, key: string, mode: "light" | "dark") {
+		const filename = `${key}-${mode}.png`;
 		return this.uploadAsset(
 			file,
 			SOCIAL_UPLOADS_DIR,
