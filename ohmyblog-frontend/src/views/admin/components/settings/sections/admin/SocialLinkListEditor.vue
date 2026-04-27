@@ -31,7 +31,7 @@ const {
   onSync: (newLinks) => {
     systemStore.personalInfo.socialLinks = newLinks;
   },
-  newItemFactory: () => ({ name: "", url: "", icon: "" }),
+  newItemFactory: () => ({ name: "", url: "", iconLight: "", iconDark: "" }),
 });
 </script>
 
@@ -60,7 +60,8 @@ const {
           :id="row.id"
           :name="row.name"
           :url="row.url"
-          :icon="row.icon || null"
+          :icon-light="row.iconLight || null"
+          :icon-dark="row.iconDark || null"
           @update="updateItem"
         />
       </ListRowLayout>

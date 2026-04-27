@@ -1,7 +1,7 @@
 ﻿<script setup lang="ts">
 import { ref } from "vue";
 import { useLang } from "@/composables/lang.hook";
-import { useToast } from "@/composables/toast.hook";
+import { useImageUpload } from "@/composables/upload.hook";
 import { uploadSocialIcon } from "@/api/upload.api";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
@@ -10,20 +10,30 @@ interface Props {
   id: string;
   name: string;
   url: string;
-  icon?: string | null;
+  iconLight?: string | null;
+  iconDark?: string | null;
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
-  (e: "update", id: string, data: { name?: string; url?: string; icon?: string }): void;
+  (
+    e: "update",
+    id: string,
+    data: {
+      name?: string;
+      url?: string;
+      iconLight?: string;
+      iconDark?: string;
+    },
+  ): void;
 }>();
 
 const { t } = useLang();
-const uploading = ref(false);
+const uploader = useImageUpload();
 const nameError = ref("");
 
 // 处理文件选择
-const handleFileChange = async (file: File) => {
+const handleFileChange = async (file: File, mode: "light" | "dark") => {
   // 如果名称为空，提示用户先填写名称
   const trimmedName = props.name.trim();
   if (!trimmedName) {
@@ -34,19 +44,18 @@ const handleFileChange = async (file: File) => {
   // 清除错误状态
   nameError.value = "";
 
-  try {
-    uploading.value = true;
-    // 立即上传，使用 name 作为文件名（key）
-    const result = await uploadSocialIcon(file, trimmedName);
-    if (result?.url) {
-      emit("update", props.id, { icon: result.url });
-      useToast.success(t("api.success.上传完成"));
-    }
-  } catch (error: any) {
-    useToast.error(t(`api.errors.${error}`));
-  } finally {
-    uploading.value = false;
-  }
+  // 使用通用的 handleUpload 逻辑
+  uploader.handleUpload(
+    file,
+    (f) => uploadSocialIcon(f, trimmedName, mode),
+    (urlWithTimestamp) => {
+      const updateData =
+        mode === "light"
+          ? { iconLight: urlWithTimestamp }
+          : { iconDark: urlWithTimestamp };
+      emit("update", props.id, updateData);
+    },
+  );
 };
 </script>
 
@@ -75,15 +84,36 @@ const handleFileChange = async (file: File) => {
     </div>
 
     <!-- 图标上传 (Icon) -->
-    <div class="shrink-0 h-11 flex items-center">
-      <ImageUpload
-        :model-value="icon"
-        :loading="uploading"
-        width="w-10"
-        height="h-10"
-        rounded-class="rounded-lg"
-        @change="handleFileChange"
-      />
+    <div class="shrink-0 flex items-center gap-2">
+      <!-- 浅色模式上传 -->
+      <div class="flex flex-col items-center gap-1">
+        <ImageUpload
+          :model-value="iconLight"
+          :loading="uploader.loading.value"
+          width="w-10"
+          height="h-10"
+          rounded-class="rounded-lg"
+          @change="handleFileChange($event, 'light')"
+        />
+        <span class="text-[10px] text-fg-subtle scale-90">{{
+          t("views.admin.Settings.admin.social.links.iconLight")
+        }}</span>
+      </div>
+
+      <!-- 深色模式上传 -->
+      <div class="flex flex-col items-center gap-1">
+        <ImageUpload
+          :model-value="iconDark"
+          :loading="uploader.loading.value"
+          width="w-10"
+          height="h-10"
+          rounded-class="rounded-lg"
+          @change="handleFileChange($event, 'dark')"
+        />
+        <span class="text-[10px] text-fg-subtle scale-90">{{
+          t("views.admin.Settings.admin.social.links.iconDark")
+        }}</span>
+      </div>
     </div>
   </div>
 </template>

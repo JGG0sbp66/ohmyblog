@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { useSystemStore } from "@/stores/system.store";
 import { useAuthStore } from "@/stores/auth.store";
+import { useTheme } from "@/composables/theme.hook";
 import { useImageUpload } from "@/composables/upload.hook";
 import { uploadAvatar } from "@/api/upload.api";
 import { upsertConfig } from "@/api/config.api";
@@ -15,6 +16,7 @@ import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 
 const systemStore = useSystemStore();
 const authStore = useAuthStore();
+const { isDark } = useTheme();
 const { t } = useLang();
 
 const {
@@ -41,19 +43,9 @@ const handleFileChange = (file: File) => {
 
     // 2. 同步到后端配置
     try {
-      const configValue = {
-        ...systemStore.personalInfo,
-        avatar: url,
-        socialLinks: systemStore.personalInfo.socialLinks.map((link) => ({
-          name: link.name,
-          url: link.url,
-          icon: typeof link.icon === "string" ? link.icon : undefined,
-        })),
-      };
-
       await upsertConfig({
         configKey: "personal_info",
-        configValue,
+        configValue: systemStore.personalInfo,
       } as any);
     } catch (error) {
       useToast.error(t("api.errors.获取个性化配置失败"));
@@ -144,14 +136,15 @@ const handleFileChange = (file: File) => {
       >
         <div class="w-11 h-11 bg-bg-muted rounded-lg">
           <ButtonSecondary class="w-full h-full p-0! hover:before:bg-accent/20!">
+            <!-- 根据当前主题自动切换图标 -->
             <img
-              v-if="link.icon && typeof link.icon === 'string'"
-              :src="link.icon"
+              v-if="isDark ? (link.iconDark || link.iconLight) : link.iconLight"
+              :src="(isDark ? (link.iconDark || link.iconLight) : link.iconLight)!"
               :alt="link.name"
               class="w-6 h-6 object-contain"
             />
             <span v-else class="text-xs font-bold">{{
-              link.name.charAt(0).toUpperCase()
+              link.name.slice(0, 1).toUpperCase()
             }}</span>
           </ButtonSecondary>
         </div>
