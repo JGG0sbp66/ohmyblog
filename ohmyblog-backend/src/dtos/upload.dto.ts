@@ -38,6 +38,11 @@ export const UploadSocialIconDTO = t.Object({
 		maxLength: 50,
 		description: "社交平台的唯一标识符 (用于作为图标文件名)",
 	}),
+	mode: t.Optional(
+		t.Union([t.Literal("light"), t.Literal("dark")], {
+			description: "图标模式：浅色或深色",
+		}),
+	),
 	icon: t.File({
 		type: "image",
 		maxSize: "512k",

@@ -134,10 +134,16 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 						description: "社交链接地址",
 						error: "personal_info.social_url_range",
 					}),
-					icon: t.Optional(
+					iconLight: t.Optional(
 						t.String({
 							maxLength: 500,
-							description: "图标标识或 URL",
+							description: "图标标识或 URL (浅色)",
+						}),
+					),
+					iconDark: t.Optional(
+						t.String({
+							maxLength: 500,
+							description: "图标标识或 URL (深色)",
 						}),
 					),
 				}),
