@@ -154,7 +154,9 @@
               "add": "Add Link",
               "namePlaceholder": "Platform (e.g., GitHub)",
               "urlPlaceholder": "Link (e.g., https://...)",
-              "nameRequired": "Please enter platform name before uploading icon"
+              "nameRequired": "Please enter platform name before uploading icon",
+              "iconLight": "Light Icon",
+              "iconDark": "Dark Icon"
             }
           }
         }

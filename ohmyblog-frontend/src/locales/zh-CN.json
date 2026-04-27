@@ -152,7 +152,9 @@
               "add": "添加链接",
               "namePlaceholder": "平台 (如 GitHub)",
               "urlPlaceholder": "链接 (如 https://...)",
-              "nameRequired": "请先填写平台名称后再上传图标"
+              "nameRequired": "请先填写平台名称后再上传图标",
+              "iconLight": "浅色图标",
+              "iconDark": "深色图标"
             }
           }
         }
