@@ -1,10 +1,23 @@
-<!-- src/views/admin/components/settings/sections/AdminSection.vue -->
+<!-- src/views/admin/components/settings/sections/admin/AdminSection.vue -->
+<script setup lang="ts">
+import ProfileCard from "@/components/common/widgets/ProfileCard.vue";
+import AccountSecurityCard from "./AccountSecurityCard.vue";
+import AdminProfileCard from "./AdminProfileCard.vue";
+</script>
+
 <template>
-  <div
-    class="flex flex-col items-center justify-center min-h-100 text-fg-dim onload-animation"
-  >
-    <div class="text-6xl mb-4 opacity-20">👤</div>
-    <p class="text-xl font-medium">Admin Settings</p>
-    <p class="mt-2 opacity-50 text-sm">Coming Soon</p>
+  <div class="w-full max-w-7xl mx-auto p-6 onload-animation">
+    <div class="flex flex-col lg:flex-row justify-center gap-8 items-start">
+      <!-- 左侧：编辑表单  -->
+      <div class="flex-1 w-full max-w-6xl flex flex-col gap-6">
+        <AccountSecurityCard />
+        <AdminProfileCard />
+      </div>
+
+      <!-- 右侧：预览区 (固定宽度) -->
+      <aside class="hidden lg:block w-70 sticky top-0">
+        <ProfileCard />
+      </aside>
+    </div>
   </div>
 </template>
