@@ -58,7 +58,6 @@ const handleFileChange = (file: File) => {
     ref="imageUploadRef"
     v-model="systemStore.personalInfo.hero"
     :loading="uploading"
-    accept="image/png,image/jpeg,image/webp"
     class="hidden"
     @change="handleFileChange"
   />

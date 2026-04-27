@@ -38,7 +38,6 @@ const handleFileChange = (file: File) => {
           ref="uploadRef"
           v-model="modelValue"
           :loading="loading"
-          accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,image/gif,image/apng,image/avif,image/x-icon,image/vnd.microsoft.icon,.ico"
           @change="handleFileChange"
         />
       </div>

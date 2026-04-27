@@ -16,8 +16,6 @@ interface Props {
   width?: string;
   /** 高度类名 (Tailwind) */
   height?: string;
-  /** 允许的文件类型 */
-  accept?: string;
   /** 圆角类名 */
   roundedClass?: string;
   /** 未上传图片时显示的说明文字 */
@@ -29,7 +27,6 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   width: "w-20",
   height: "h-20",
-  accept: "image/*",
   roundedClass: "rounded-xl",
 });
 
@@ -70,7 +67,7 @@ defineExpose({
     <input
       ref="fileInputRef"
       type="file"
-      :accept="accept"
+      accept="image/*"
       class="hidden"
       @change="handleFileChange"
     />

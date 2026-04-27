@@ -70,7 +70,6 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           width="w-32"
           height="h-32"
           rounded-class="rounded-2xl"
-          accept="image/png,image/jpeg,image/webp"
           @change="(file) => onFileChange('avatar', file)"
         >
           <template #icon>
@@ -154,7 +153,6 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           width="w-full"
           height="h-48 md:h-56"
           rounded-class="rounded-2xl"
-          accept="image/png,image/jpeg,image/webp"
           @change="(file) => onFileChange('hero', file)"
         >
           <template #icon>
