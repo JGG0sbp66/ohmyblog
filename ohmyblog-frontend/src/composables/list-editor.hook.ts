@@ -66,7 +66,8 @@ export function useListEditor<TBody extends object, R>(
       onSync(
         newItems.map((item) => {
           const { id: _, ...body } = item;
-          return mapToRemote(body as TBody);
+          // clone 以断开深层对象的引用，防止外部修改导致此处数据被静默更新
+          return mapToRemote(JSON.parse(JSON.stringify(body)));
         }),
       );
     },
@@ -100,11 +101,15 @@ export function useListEditor<TBody extends object, R>(
     }
   };
 
-  /** 更新项：支持局部更新业务 Body */
+  /** 更新项：采用不可变方式更新对象，确保触发完整响应式 */
   const updateItem = (id: string, updates: Partial<TBody>) => {
-    const item = items.value.find((item) => item.id === id);
-    if (item) {
-      Object.assign(item, updates);
+    const index = items.value.findIndex((item) => item.id === id);
+    if (index !== -1) {
+      // 通过解构并重新赋值触发 Vue 的响应式追踪，特别是对深层嵌套对象
+      items.value[index] = {
+        ...items.value[index],
+        ...updates,
+      } as ManagedItem<TBody>;
     }
   };
 
