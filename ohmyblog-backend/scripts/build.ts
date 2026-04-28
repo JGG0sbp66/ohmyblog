@@ -96,7 +96,7 @@ async function build(platform: Platform) {
 	}
 
 	// 5. 创建 README
-	const readme = `# OhMyBlog ${platform.toUpperCase()} Distribution
+	const readme = `# ohmyblog ${platform.toUpperCase()} Distribution
 
 ## 运行方式
 

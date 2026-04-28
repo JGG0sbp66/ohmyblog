@@ -19,7 +19,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  title: "OhMyBlog",
+  title: "ohmyblog",
   icon: null,
   viewportMode: "pc",
 });

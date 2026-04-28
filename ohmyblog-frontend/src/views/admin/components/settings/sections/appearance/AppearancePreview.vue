@@ -12,7 +12,7 @@ const { locale } = useLang();
 const systemStore = useSystemStore();
 
 // 从 store 获取站点信息
-const siteTitle = computed(() => systemStore.siteInfo.title || "OhMyBlog");
+const siteTitle = computed(() => systemStore.siteInfo.title || "ohmyblog");
 const siteFavicon = computed(() => systemStore.siteInfo.favicon);
 
 // 预览地址，默认为首页
