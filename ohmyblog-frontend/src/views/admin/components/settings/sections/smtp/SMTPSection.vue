@@ -7,6 +7,7 @@ import EmailSendCard from "./EmailSendCard.vue";
 import SettingsPageLayout from "../../layout/SettingsPageLayout.vue";
 
 const formRef = ref<InstanceType<typeof SMTPSettingsForm> | null>(null);
+const sendCardRef = ref<InstanceType<typeof EmailSendCard> | null>(null);
 </script>
 
 <template>
@@ -16,12 +17,13 @@ const formRef = ref<InstanceType<typeof SMTPSettingsForm> | null>(null);
       <EmailPreview
         :sender-name="formRef?.formData.senderName || 'ohmyblog'"
         :sender-email="formRef?.formData.senderEmail || 'noreply@ohmyblog.com'"
+        :recipients="sendCardRef?.recipients?.map(r => r.value).filter(Boolean) ?? []"
       />
     </template>
 
     <!-- 右侧：配置内容 -->
     <SMTPSettingsForm ref="formRef" />
-    <EmailSendCard />
+    <EmailSendCard ref="sendCardRef" />
   </SettingsPageLayout>
 </template>
 

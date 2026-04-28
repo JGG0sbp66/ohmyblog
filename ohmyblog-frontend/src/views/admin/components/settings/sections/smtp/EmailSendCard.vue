@@ -64,6 +64,8 @@ watch(recipientInput, (newVal) => {
   });
 });
 
+defineExpose({ recipients });
+
 const handleSend = async () => {
   const to = recipients.value.map((r) => r.value).filter(Boolean);
   if (!to.length) {

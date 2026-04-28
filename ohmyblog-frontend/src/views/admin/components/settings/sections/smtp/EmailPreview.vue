@@ -22,12 +22,18 @@ const currentTime = computed(() => new Date().toLocaleString(locale.value, {
 interface Props {
   senderName?: string;
   senderEmail?: string;
+  recipients?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   senderName: "ohmyblog",
   senderEmail: "noreply@ohmyblog.com",
+  recipients: () => [],
 });
+
+const toDisplay = computed(() =>
+  props.recipients.length > 0 ? props.recipients.join(", ") : "you@example.com",
+);
 
 // 模拟标签页标题和图标，保持与其他预览页面一致
 </script>
@@ -56,7 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
             <span class="text-xs font-normal opacity-50">&lt;{{ props.senderEmail }}&gt;</span>
           </div>
           <div class="flex items-center justify-between mt-1">
-            <div class="text-xs opacity-40">To: you@example.com</div>
+            <div class="text-xs opacity-40">To: {{ toDisplay }}</div>
             <div class="text-xs opacity-30">{{ currentTime }}</div>
           </div>
         </div>
