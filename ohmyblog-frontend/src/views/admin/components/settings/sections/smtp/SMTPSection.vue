@@ -3,6 +3,7 @@
 import { ref } from "vue";
 import EmailPreview from "./EmailPreview.vue";
 import SMTPSettingsForm from "./SMTPSettingsForm.vue";
+import EmailSendCard from "./EmailSendCard.vue";
 import SettingsPageLayout from "../../layout/SettingsPageLayout.vue";
 
 const formRef = ref<InstanceType<typeof SMTPSettingsForm> | null>(null);
@@ -20,6 +21,7 @@ const formRef = ref<InstanceType<typeof SMTPSettingsForm> | null>(null);
 
     <!-- 右侧：配置内容 -->
     <SMTPSettingsForm ref="formRef" />
+    <EmailSendCard />
   </SettingsPageLayout>
 </template>
 
