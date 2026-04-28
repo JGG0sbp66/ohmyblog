@@ -64,7 +64,7 @@ const handleSave = async () => {
     });
     toast.success(t("api.success.保存成功"));
   } catch (error: any) {
-    toast.error(t(error?.message));
+    useToast.error(t(`api.errors.${error}`));
   } finally {
     isSaving.value = false;
   }
