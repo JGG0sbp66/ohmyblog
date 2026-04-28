@@ -135,11 +135,15 @@ const handleFileChange = (file: File) => {
         :title="link.name"
       >
         <div class="w-11 h-11 bg-bg-muted rounded-lg">
-          <ButtonSecondary class="w-full h-full p-0! hover:before:bg-accent/20!">
+          <ButtonSecondary
+            class="w-full h-full p-0! hover:before:bg-accent/20!"
+          >
             <!-- 根据当前主题自动切换图标 -->
             <img
-              v-if="isDark ? (link.iconDark || link.iconLight) : link.iconLight"
-              :src="(isDark ? (link.iconDark || link.iconLight) : link.iconLight)!"
+              v-if="isDark ? link.iconDark || link.iconLight : link.iconLight"
+              :src="
+                (isDark ? link.iconDark || link.iconLight : link.iconLight)!
+              "
               :alt="link.name"
               class="w-6 h-6 object-contain"
             />

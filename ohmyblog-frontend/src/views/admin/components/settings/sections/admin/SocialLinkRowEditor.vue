@@ -66,7 +66,9 @@ const handleFileChange = async (file: File, mode: "light" | "dark") => {
       <TipInput
         :model-value="name"
         :external-error="nameError"
-        :placeholder="t('views.admin.Settings.admin.social.links.namePlaceholder')"
+        :placeholder="
+          t('views.admin.Settings.admin.social.links.namePlaceholder')
+        "
         @update:model-value="
           nameError = '';
           emit('update', id, { name: String($event) });
@@ -78,7 +80,9 @@ const handleFileChange = async (file: File, mode: "light" | "dark") => {
     <div class="flex-1">
       <TipInput
         :model-value="url"
-        :placeholder="t('views.admin.Settings.admin.social.links.urlPlaceholder')"
+        :placeholder="
+          t('views.admin.Settings.admin.social.links.urlPlaceholder')
+        "
         @update:model-value="emit('update', id, { url: String($event) })"
       />
     </div>

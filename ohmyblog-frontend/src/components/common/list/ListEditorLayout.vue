@@ -63,10 +63,7 @@ const emit = defineEmits<{
 
     <!-- 内容区域 (带淡入淡出动画切换) -->
     <div class="relative">
-      <Transition
-        name="fade-list"
-        mode="out-in"
-      >
+      <Transition name="fade-list" mode="out-in">
         <div :key="count === 0 ? 'empty' : 'content'">
           <slot v-if="count > 0" />
           <slot v-else name="empty">

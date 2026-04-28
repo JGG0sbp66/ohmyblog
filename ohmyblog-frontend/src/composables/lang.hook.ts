@@ -92,7 +92,7 @@ export function useLang() {
         const errorKey = key.replace("api.errors.", "");
         // 使用 tm (message manager) 获取 errors 对象
         const errors = instance.tm("api.errors") as Record<string, any>;
-        
+
         // 直接使用属性名称查找，这样可以匹配包含 "." 或 "\"" 的原始字符串键
         if (errors && errors[errorKey]) {
           return instance.rt(errors[errorKey]);
