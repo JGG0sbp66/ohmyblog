@@ -1,9 +1,9 @@
 <!-- src/views/admin/components/settings/sections/admin/AdminProfileCard.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
-import ProfileCard from "@/components/common/item/ProfileCard.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
+import SettingCard from "@/components/base/card/SettingCard.vue";
 import { useSystemStore } from "@/stores/system.store";
 import { useLang } from "@/composables/lang.hook";
 import { upsertConfig } from "@/api/config.api";
