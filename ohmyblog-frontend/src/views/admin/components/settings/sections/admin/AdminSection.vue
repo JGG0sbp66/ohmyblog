@@ -6,15 +6,18 @@ import AdminProfileCard from "./AdminProfileCard.vue";
 </script>
 
 <template>
-  <div class="w-full max-w-7xl mx-auto onload-animation">
-    <div class="flex flex-col lg:flex-row justify-center gap-8 items-start">
-      <!-- 左侧：编辑表单  -->
-      <div class="flex-1 w-full max-w-6xl flex flex-col gap-6">
+  <!-- 
+    Viewport 扩展方案：通过负 Margin 和 Padding 扩展裁剪区域，保护卡片阴影。
+  -->
+  <div class="-mx-6 px-6 -mb-6 pb-6 onload-animation">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 items-start">
+      <!-- 左侧：编辑表单区域 -->
+      <div class="flex-1 w-full max-w-6xl flex flex-col gap-8">
         <AccountSecurityCard />
         <AdminProfileCard />
       </div>
 
-      <!-- 右侧：预览区 (固定宽度) -->
+      <!-- 右侧：预览区 (固定宽度，sticky 吸附) -->
       <aside class="hidden lg:block w-70 sticky top-0">
         <ProfileCard />
       </aside>
