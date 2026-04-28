@@ -33,12 +33,12 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 w-full lg:w-120">
-    <SettingCard
-      :title="t('views.main.hero.titleEditor.modalTitle')"
-      :description="t('views.admin.Settings.site.hero.description')"
-    >
-      <div class="flex flex-col gap-8">
+  <SettingCard
+    class="w-full lg:w-120"
+    :title="t('views.main.hero.titleEditor.modalTitle')"
+    :description="t('views.admin.Settings.site.hero.description')"
+  >
+    <div class="flex flex-col gap-8">
         <!-- 直接复用成熟的编辑器组件 -->
         <HeroMainTitleEditor />
         <HeroSubtitleEditor :page-size="5" />
@@ -55,7 +55,6 @@ const handleSave = async () => {
         </div>
       </template>
     </SettingCard>
-  </div>
 </template>
 
 <style scoped></style>
