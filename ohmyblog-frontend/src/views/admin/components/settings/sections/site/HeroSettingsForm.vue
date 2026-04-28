@@ -22,7 +22,6 @@ const handleSave = async () => {
     await upsertConfig({
       configKey: "personal_info",
       configValue: systemStore.personalInfo,
-      description: "Hero Title Settings",
     });
     useToast.success(t("api.success.保存成功"));
   } catch (error) {
