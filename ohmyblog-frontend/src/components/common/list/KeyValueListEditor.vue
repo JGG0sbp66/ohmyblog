@@ -19,6 +19,8 @@ defineProps<{
   keyPlaceholder?: string;
   /** Value 的占位符 */
   valuePlaceholder?: string;
+  /** 当前页码，用于翻页时重建 TransitionGroup，避免第一个问题 */
+  pageKey?: number;
 }>();
 
 defineEmits<{
@@ -34,6 +36,8 @@ defineEmits<{
     name="list-item-anim"
     tag="div"
     class="relative flex flex-col gap-3"
+    :key="pageKey"
+    appear
   >
     <ListRowLayout
       v-for="row in items"

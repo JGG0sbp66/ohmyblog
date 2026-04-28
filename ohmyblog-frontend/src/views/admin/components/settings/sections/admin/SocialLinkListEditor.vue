@@ -50,6 +50,8 @@ const {
       name="list-item-anim"
       tag="div"
       class="relative flex flex-col gap-3"
+      :key="currentPage"
+      appear
     >
       <ListRowLayout
         v-for="row in pagedRows"

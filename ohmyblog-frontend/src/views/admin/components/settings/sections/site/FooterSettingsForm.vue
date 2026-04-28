@@ -110,6 +110,7 @@ const handleSave = async () => {
         >
           <KeyValueListEditor
             :items="pagedRows"
+            :page-key="currentPage"
             :key-placeholder="
               t('views.admin.Settings.site.footer.links.namePlaceholder')
             "

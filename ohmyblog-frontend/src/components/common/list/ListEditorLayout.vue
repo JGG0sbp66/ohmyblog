@@ -33,41 +33,6 @@ const emit = defineEmits<{
   /** 更新页码 */
   (e: "update:currentPage", page: number): void;
 }>();
-
-// --- 平滑高度切换逻辑 ---
-const beforeLeave = (el: Element) => {
-  const node = el as HTMLElement;
-  node.style.height = `${node.offsetHeight}px`;
-};
-
-const leave = (el: Element) => {
-  const node = el as HTMLElement;
-  // 触发重绘
-  node.offsetHeight;
-  node.style.height = "0";
-};
-
-const afterLeave = (el: Element) => {
-  const node = el as HTMLElement;
-  node.style.height = "";
-};
-
-const beforeEnter = (el: Element) => {
-  const node = el as HTMLElement;
-  node.style.height = "0";
-};
-
-const enter = (el: Element) => {
-  const node = el as HTMLElement;
-  // 触发重绘
-  node.offsetHeight;
-  node.style.height = `${node.scrollHeight}px`;
-};
-
-const afterEnter = (el: Element) => {
-  const node = el as HTMLElement;
-  node.style.height = "";
-};
 </script>
 
 <template>
@@ -97,16 +62,10 @@ const afterEnter = (el: Element) => {
     </div>
 
     <!-- 内容区域 (带淡入淡出动画切换) -->
-    <div class="relative transition-[height] duration-300">
+    <div class="relative">
       <Transition
         name="fade-list"
         mode="out-in"
-        @before-leave="beforeLeave"
-        @leave="leave"
-        @after-leave="afterLeave"
-        @before-enter="beforeEnter"
-        @enter="enter"
-        @after-enter="afterEnter"
       >
         <div :key="count === 0 ? 'empty' : 'content'">
           <slot v-if="count > 0" />
@@ -137,8 +96,7 @@ const afterEnter = (el: Element) => {
 .fade-list-leave-active {
   transition:
     opacity 0.2s ease-out,
-    transform 0.2s ease-out,
-    height 0.3s ease-in-out;
+    transform 0.2s ease-out;
 }
 
 .fade-list-enter-from {
