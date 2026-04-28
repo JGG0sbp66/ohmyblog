@@ -11,9 +11,6 @@ import HeroTitleDisplay from "./display/HeroTitleDisplay.vue";
 const systemStore = useSystemStore();
 const authStore = useAuthStore();
 
-// 从 store 获取背景图片
-const heroImage = computed(() => systemStore.personalInfo.hero);
-
 // Banner 动画控制 (声明式)
 const isBannerVisible = ref(false);
 
@@ -28,13 +25,13 @@ onMounted(() => {
 <template>
   <!-- 只在有 hero 图时才渲染整个 section -->
   <section
-    v-if="heroImage"
+    v-if="systemStore.personalInfo.hero"
     id="hero"
     class="relative h-[65vh] w-full overflow-hidden onload-animation"
   >
     <!-- 使用专用的 Hero 过渡组件 -->
     <HeroImageTransition
-      :src="heroImage"
+      :src="systemStore.personalInfo.hero"
       :show="isBannerVisible"
       alt="Hero banner image"
       :duration="1000"

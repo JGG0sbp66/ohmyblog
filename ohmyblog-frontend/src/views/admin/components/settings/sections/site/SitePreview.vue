@@ -9,12 +9,10 @@ import Footer from "@/components/common/layout/Footer.vue";
 const systemStore = useSystemStore();
 
 // 模拟标签页标题和图标
-const siteTitle = computed(() => systemStore.siteInfo.title || "ohmyblog");
-const siteFavicon = computed(() => systemStore.siteInfo.favicon);
 </script>
 
 <template>
-  <BrowserMockup :title="siteTitle" :icon="siteFavicon">
+  <BrowserMockup :title="systemStore.siteInfo.title" :icon="systemStore.siteInfo.favicon">
     <div
       class="w-full h-full overflow-y-auto overflow-x-hidden bg-bg custom-scrollbar flex flex-col"
     >

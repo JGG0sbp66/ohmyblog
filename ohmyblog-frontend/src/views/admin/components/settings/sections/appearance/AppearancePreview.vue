@@ -12,9 +12,6 @@ const { locale } = useLang();
 const systemStore = useSystemStore();
 
 // 从 store 获取站点信息
-const siteTitle = computed(() => systemStore.siteInfo.title || "ohmyblog");
-const siteFavicon = computed(() => systemStore.siteInfo.favicon);
-
 // 预览地址，默认为首页
 const previewUrl = ref(window.location.origin + "/");
 const isLoading = ref(true);
@@ -43,8 +40,8 @@ watch(locale, () => {
 
 <template>
   <BrowserMockup
-    :title="siteTitle"
-    :icon="siteFavicon"
+    :title="systemStore.siteInfo.title"
+    :icon="systemStore.siteInfo.favicon"
     :viewport-mode="viewportMode"
   >
     <!-- 加载遮罩 -->
