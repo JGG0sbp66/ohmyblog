@@ -5,7 +5,7 @@ import Footer from "@/components/common/layout/Footer.vue";
 import BaseProgress from "@/components/base/progress/BaseProgress.vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import PersonalizationPreview from "./components/PersonalizationPreview.vue";
-import SMTPForm from "./components/SMTPForm.vue";
+import SMTPForm from "@/components/common/smtp/SMTPForm.vue";
 
 import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import { useSetupStore } from "@/stores/setup.store";
@@ -80,7 +80,11 @@ const [rightSideRef] = useAutoAnimate();
               "
               padding="sm"
             >
-              <SMTPForm />
+              <SMTPForm
+                v-model="stepStore.smtpForm"
+                v-model:is-advanced-expanded="stepStore.isSMTPAdvancedExpanded"
+                @register-validator="stepStore.setSmtpFormValidator"
+              />
             </BaseCard>
             <TypingBrand
               v-else

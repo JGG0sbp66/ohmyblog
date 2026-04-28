@@ -1,7 +1,7 @@
 <!-- src/views/setup/steps/Step4Personalization.vue -->
 <script setup lang="ts">
 import StepLayout from "../components/StepLayout.vue";
-import ModuleItem from "../components/ModuleItem.vue";
+import ModuleItem from "@/components/common/item/ModuleItem.vue";
 import PersonalizationPreview from "../components/PersonalizationPreview.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStore } from "@/stores/setup.store";

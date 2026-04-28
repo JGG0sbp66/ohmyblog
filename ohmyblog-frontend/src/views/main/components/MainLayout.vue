@@ -3,7 +3,7 @@
 import Header from "@/components/common/layout/Header.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 import HeroSection from "@/views/main/components/hero/HeroSection.vue";
-import ProfileCard from "@/components/common/widgets/ProfileCard.vue";
+import ProfileCard from "@/components/common/item/ProfileCard.vue";
 </script>
 
 <template>

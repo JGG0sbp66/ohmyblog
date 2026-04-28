@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useSystemStore } from "@/stores/system.store";
-import BrowserMockup from "@/components/common/BrowserMockup.vue";
+import BrowserMockup from "@/components/common/container/BrowserMockup.vue";
 import HeroSection from "@/views/main/components/hero/HeroSection.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 

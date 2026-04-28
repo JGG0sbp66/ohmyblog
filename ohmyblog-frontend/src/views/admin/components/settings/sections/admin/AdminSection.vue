@@ -1,6 +1,6 @@
 <!-- src/views/admin/components/settings/sections/admin/AdminSection.vue -->
 <script setup lang="ts">
-import ProfileCard from "@/components/common/widgets/ProfileCard.vue";
+import ProfileCard from "@/components/common/item/ProfileCard.vue";
 import AccountSecurityCard from "./AccountSecurityCard.vue";
 import AdminProfileCard from "./AdminProfileCard.vue";
 </script>

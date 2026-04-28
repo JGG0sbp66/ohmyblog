@@ -5,7 +5,7 @@ import { useI18n } from "vue-i18n";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import Loading from "@/components/icon/common/Loading.vue";
-import BrowserMockup from "@/components/common/BrowserMockup.vue";
+import BrowserMockup from "@/components/common/container/BrowserMockup.vue";
 
 const { t } = useI18n();
 const { locale } = useLang();
