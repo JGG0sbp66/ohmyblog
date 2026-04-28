@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { LoginDTO, RegisterDTO } from "../dtos/auth.dto";
+import { LoginDTO, RegisterDTO, UpdateAccountDTO } from "../dtos/auth.dto";
 import { config } from "../env";
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
@@ -62,7 +62,6 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 							uuid: user.uuid,
 							username: user.username,
 							role: user.role,
-							avatar: user.avatarUrl,
 						},
 					};
 				},
@@ -83,6 +82,29 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				},
 				{
 					detail: { summary: "获取当前登录用户信息" },
+				},
+			)
+			// === 更新当前账号信息 ===
+			.patch(
+				"/me",
+				async ({ user, body }) => {
+					if (!user) {
+						throw new BusinessError("未登录或会话已过期", { status: 401 });
+					}
+
+					const updatedUser = await authService.updateAccount(user.uuid, body);
+					return {
+						message: "保存成功",
+						user: {
+							uuid: updatedUser.uuid,
+							username: updatedUser.username,
+							role: updatedUser.role,
+						},
+					};
+				},
+				{
+					detail: { summary: "更新账号信息" },
+					body: UpdateAccountDTO,
 				},
 			)
 			// === 登出接口 ===

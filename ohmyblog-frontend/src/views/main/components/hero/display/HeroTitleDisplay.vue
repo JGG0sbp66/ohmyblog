@@ -6,10 +6,6 @@ import { useTyping } from "@/composables/typing.hook";
 
 const systemStore = useSystemStore();
 
-// 从 store 获取标题数据
-const heroTitle = computed(() => systemStore.personalInfo.heroTitle);
-const heroSubtitles = computed(() => systemStore.personalInfo.heroSubtitles);
-
 // 打字机效果
 const { displayText, type, backspace, reset } = useTyping(80, 50);
 
@@ -24,7 +20,7 @@ async function playSubtitles() {
   const isValid = () => loopId === currentLoopId;
 
   while (isValid()) {
-    const subtitles = heroSubtitles.value;
+    const subtitles = systemStore.personalInfo.heroSubtitles;
 
     if (!subtitles || subtitles.length === 0) {
       break;
@@ -53,7 +49,7 @@ async function playSubtitles() {
 
 // 监听副标题变化，重新开始动画
 watch(
-  heroSubtitles,
+  () => systemStore.personalInfo.heroSubtitles,
   (newSubtitles) => {
     // 增加 ID 以终止旧的 while 循环
     currentLoopId++;
@@ -69,7 +65,10 @@ watch(
 );
 
 onMounted(() => {
-  if (heroSubtitles.value && heroSubtitles.value.length > 0) {
+  if (
+    systemStore.personalInfo.heroSubtitles &&
+    systemStore.personalInfo.heroSubtitles.length > 0
+  ) {
     playSubtitles();
   }
 });
@@ -82,7 +81,9 @@ onUnmounted(() => {
 // 判断是否显示组件
 const shouldDisplay = computed(() => {
   return (
-    heroTitle.value || (heroSubtitles.value && heroSubtitles.value.length > 0)
+    systemStore.personalInfo.heroTitle ||
+    (systemStore.personalInfo.heroSubtitles &&
+      systemStore.personalInfo.heroSubtitles.length > 0)
   );
 });
 </script>
@@ -94,16 +95,16 @@ const shouldDisplay = computed(() => {
   >
     <!-- 主标题 -->
     <h1
-      v-if="heroTitle"
+      v-if="systemStore.personalInfo.heroTitle"
       class="text-6xl md:text-7xl lg:text-8xl font-bold mb-4"
       style="text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7)"
     >
-      {{ heroTitle }}
+      {{ systemStore.personalInfo.heroTitle }}
     </h1>
 
     <!-- 副标题 (打字机效果) -->
     <div
-      v-if="heroSubtitles && heroSubtitles.length > 0"
+      v-if="systemStore.personalInfo.heroSubtitles && systemStore.personalInfo.heroSubtitles.length > 0"
       class="text-lg md:text-xl lg:text-2xl font-semibold min-h-[2em] flex items-center"
       style="text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6)"
     >

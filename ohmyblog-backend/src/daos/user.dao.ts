@@ -85,6 +85,20 @@ class UserDao {
 	}
 
 	/**
+	 * 更新用户信息
+	 * @param uuid 用户唯一标识
+	 * @param userData 待更新的数据
+	 */
+	async update(uuid: string, userData: Partial<NewUser>) {
+		const result = await db
+			.update(user)
+			.set(userData)
+			.where(eq(user.uuid, uuid))
+			.returning();
+		return result[0];
+	}
+
+	/**
 	 * 更新最后登录时间
 	 * @param uuid 用户唯一标识
 	 */
@@ -93,15 +107,6 @@ class UserDao {
 			.update(user)
 			.set({ lastLoginAt: new Date() })
 			.where(eq(user.uuid, uuid));
-	}
-
-	/**
-	 * 更新头像 URL
-	 * @param uuid 用户唯一标识
-	 * @param avatarUrl 头像访问路径
-	 */
-	async updateAvatarUrl(uuid: string, avatarUrl: string) {
-		await db.update(user).set({ avatarUrl }).where(eq(user.uuid, uuid));
 	}
 }
 

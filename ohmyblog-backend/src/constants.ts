@@ -14,6 +14,9 @@ export const UPLOADS_DIR = join(DATA_DIR, "uploads");
 /** 系统级静态资源目录 (如 Favicon、网站横幅等) */
 export const SYSTEM_UPLOADS_DIR = join(UPLOADS_DIR, "system");
 
+/** 社交媒体图标存储目录 */
+export const SOCIAL_UPLOADS_DIR = join(UPLOADS_DIR, "social");
+
 /** 运行日志存放目录 */
 export const LOGS_DIR = join(DATA_DIR, "logs");
 

@@ -75,8 +75,8 @@ defineExpose({ validate });
 
 <template>
   <div class="flex flex-col w-full text-left">
-    <!-- Label 区域 -->
-    <div v-if="label" class="flex items-center gap-1.5 mb-1.5 px-1">
+    <!-- Label 区域：仅在传入时渲染 -->
+    <div v-if="label" class="flex items-center gap-1.5 mb-2 px-1">
       <label
         class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
       >
@@ -88,9 +88,9 @@ defineExpose({ validate });
       <BaseTooltip v-if="hint" :content="hint" />
     </div>
 
-    <!-- Input Wrapper -->
+    <!-- Input Wrapper：固定的最小高度，确保与旁边按钮对齐 -->
     <div
-      class="w-full bg-bg-muted py-3 px-4 rounded-xl text-fg border border-transparent flex items-center"
+      class="w-full min-h-11 bg-bg-muted px-4 rounded-xl text-fg border border-transparent flex items-center"
       :class="[
         readonly ? 'opacity-60 cursor-not-allowed' : '',
         displayError
@@ -105,15 +105,15 @@ defineExpose({ validate });
         @input="internalError && validate()"
         :placeholder="placeholder"
         :readonly="readonly"
-        class="w-full bg-transparent outline-none placeholder:text-fg-soft text-sm font-medium"
+        class="w-full bg-transparent outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
       />
     </div>
 
-    <!-- 错误提示区域 -->
-    <div ref="errorContainerRef">
+    <!-- 错误提示区域：绝对定位或紧凑展示，避免大幅撑开列表行距 -->
+    <div ref="errorContainerRef" class="overflow-hidden">
       <p
         v-if="displayError"
-        class="mt-1.5 px-1 text-[11px] text-red-500 leading-tight"
+        class="mt-1 px-1 text-[10px] text-red-500 leading-tight"
       >
         {{ displayError }}
       </p>

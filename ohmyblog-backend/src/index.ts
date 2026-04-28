@@ -1,7 +1,8 @@
 import { openapi } from "@elysiajs/openapi";
 import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
-import { config, UPLOADS_DIR } from "./env";
+import { UPLOADS_DIR } from "./constants";
+import { config } from "./env";
 import { logPlugin } from "./plugins/logger.plugin.js";
 import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";

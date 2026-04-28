@@ -18,11 +18,20 @@ export const useSystemStore = defineStore("system", () => {
     favicon: "",
     footer: "",
     icp: "",
+    footerLinks: [] as { name: string; url: string }[],
   });
 
-  // 个性化配置 (Hero, 头像等)
+  // 个性化配置 (Hero, 头像, 简介, 显示名称等)
   const personalInfo = ref({
+    username: "",
     avatar: "",
+    bio: "",
+    socialLinks: [] as {
+      name: string;
+      url: string;
+      iconLight?: string;
+      iconDark?: string;
+    }[],
     hero: "",
     heroTitle: "",
     heroSubtitles: [] as string[],

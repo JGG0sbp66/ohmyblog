@@ -1,7 +1,6 @@
 // src/services/upload.service.ts
 import { join } from "node:path";
-import { SYSTEM_UPLOADS_DIR } from "../constants";
-import { userDao } from "../daos/user.dao";
+import { SOCIAL_UPLOADS_DIR, SYSTEM_UPLOADS_DIR } from "../constants";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 import { ImageService } from "./image.service";
@@ -15,7 +14,14 @@ class UploadService {
 	 * @returns 处理后的访问路径
 	 */
 	async uploadFavicon(file: File) {
-		return this.uploadSystemAsset(file, "favicon.png", "网站图标", true);
+		return this.uploadAsset(
+			file,
+			SYSTEM_UPLOADS_DIR,
+			"/api/uploads/system",
+			"favicon.png",
+			"网站图标",
+			true,
+		);
 	}
 
 	/**
@@ -24,50 +30,71 @@ class UploadService {
 	 * @returns 处理后的访问路径
 	 */
 	async uploadHero(file: File) {
-		return this.uploadSystemAsset(file, "hero.webp", "首页横幅", false);
+		return this.uploadAsset(
+			file,
+			SYSTEM_UPLOADS_DIR,
+			"/api/uploads/system",
+			"hero.webp",
+			"首页横幅",
+			false,
+		);
 	}
 
 	/**
-	 * 上传并处理管理员头像，并同步更新 users 表中的 avatar_url
+	 * 上传并处理管理员头像
 	 * @param file 原始图片文件
-	 * @param userUuid 用户 UUID
 	 * @returns 处理后的访问路径
 	 */
-	async uploadAvatar(file: File, userUuid: string) {
-		const result = await this.uploadSystemAsset(
+	async uploadAvatar(file: File) {
+		return this.uploadAsset(
 			file,
+			SYSTEM_UPLOADS_DIR,
+			"/api/uploads/system",
 			"avatar.webp",
 			"管理员头像",
 			false,
 		);
-
-		try {
-			await userDao.updateAvatarUrl(userUuid, result.url);
-			this.logger.info({ userUuid, url: result.url }, "已同步更新用户头像字段");
-		} catch (error) {
-			// 数据库更新失败仅记录日志，不阻断主流程
-			this.logger.error({ userUuid, error }, "同步更新用户头像字段失败");
-		}
-
-		return result;
 	}
 
 	/**
-	 * 统一处理系统级静态资源上传
+	 * 上传并处理社交媒体链接图标
+	 * @param file 原始图片文件
+	 * @param key 社交平台的标识符
+	 * @param mode 图标模式 (light | dark)
+	 * @returns 处理后的访问路径
+	 */
+	async uploadSocialIcon(file: File, key: string, mode: "light" | "dark") {
+		const filename = `${key}-${mode}.png`;
+		return this.uploadAsset(
+			file,
+			SOCIAL_UPLOADS_DIR,
+			"/api/uploads/social",
+			filename,
+			"社交图标",
+			true,
+		);
+	}
+
+	/**
+	 * 统一处理静态资源上传
 	 * @param file 文件对象
+	 * @param baseDir 物理存储基础目录
+	 * @param webPrefix Web 访问前缀
 	 * @param filename 存储文件名
 	 * @param displayName 日志显示的名称
 	 * @param isIcon 是否进行图标特殊处理 (128x128 PNG)
 	 */
-	private async uploadSystemAsset(
+	private async uploadAsset(
 		file: File,
+		baseDir: string,
+		webPrefix: string,
 		filename: string,
 		displayName: string,
 		isIcon: boolean,
 	) {
 		try {
-			const physicalPath = join(SYSTEM_UPLOADS_DIR, filename);
-			const webPath = `/api/uploads/system/${filename}`;
+			const physicalPath = join(baseDir, filename);
+			const webPath = `${webPrefix}/${filename}`;
 
 			await ImageService.optimizeAndSave(file, physicalPath, isIcon);
 

@@ -62,24 +62,24 @@ async function build(platform: Platform) {
 	await mkdir(join(distDir, "db"), { recursive: true });
 	await cp(drizzleSource, drizzleDest, { recursive: true });
 
-	// 4. 复制 imgkit 的 native 二进制文件
-	console.log(`   Copying native modules for imgkit...`);
+	// 4. 复制 @napi-rs/image 的 native 二进制文件
+	console.log(`   Copying native modules for @napi-rs/image...`);
 	const nativeConfigs = {
 		win: {
-			pkg: "imgkit-windows-x64",
-			file: "image-turbo.win32-x64-msvc.node",
+			pkg: "@napi-rs/image-win32-x64-msvc",
+			file: "image.win32-x64-msvc.node",
 		},
 		linux: {
-			pkg: "imgkit-linux-x64-gnu",
-			file: "image-turbo.linux-x64-gnu.node",
+			pkg: "@napi-rs/image-linux-x64-gnu",
+			file: "image.linux-x64-gnu.node",
 		},
 		"linux-musl": {
-			pkg: "imgkit-linux-x64-musl",
-			file: "image-turbo.linux-x64-musl.node",
+			pkg: "@napi-rs/image-linux-x64-musl",
+			file: "image.linux-x64-musl.node",
 		},
 		mac: {
-			pkg: "imgkit-darwin-arm64",
-			file: "image-turbo.darwin-arm64.node",
+			pkg: "@napi-rs/image-darwin-arm64",
+			file: "image.darwin-arm64.node",
 		},
 	};
 
@@ -96,7 +96,7 @@ async function build(platform: Platform) {
 	}
 
 	// 5. 创建 README
-	const readme = `# OhMyBlog ${platform.toUpperCase()} Distribution
+	const readme = `# ohmyblog ${platform.toUpperCase()} Distribution
 
 ## 运行方式
 

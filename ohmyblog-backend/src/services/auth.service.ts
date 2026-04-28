@@ -1,4 +1,6 @@
 // src/services/auth.service.ts
+
+import { configDao } from "../daos/config.dao";
 import { userDao } from "../daos/user.dao";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
@@ -105,9 +107,60 @@ class AuthService {
 		return {
 			uuid: user.uuid,
 			username: user.username,
+			email: user.email,
 			role: user.role,
-			avatar: user.avatarUrl,
 		};
+	}
+
+	/**
+	 * 更新账号信息 (单用户系统简化逻辑)
+	 * @param uuid 用户唯一标识
+	 * @param data 待更新的账号信息
+	 */
+	async updateAccount(
+		uuid: string,
+		data: { username?: string; email?: string; password?: string },
+	) {
+		const updateData: {
+			username?: string;
+			email?: string;
+			passwordHash?: string;
+		} = {};
+
+		if (data.username) updateData.username = data.username;
+		if (data.email) updateData.email = data.email;
+		if (data.password) {
+			updateData.passwordHash = await Bun.password.hash(data.password);
+		}
+
+		// 如果没有需要更新的内容，直接返回
+		if (Object.keys(updateData).length === 0) {
+			return await userDao.findById(uuid);
+		}
+
+		const updatedUser = await userDao.update(uuid, updateData);
+
+		// 5. 同步更新 config 中的 username (针对单用户系统的显示名称同步)
+		if (data.username) {
+			try {
+				const personalInfo = await configDao.findByKey("personal_info");
+				if (personalInfo?.configValue) {
+					const newValue = {
+						...(personalInfo.configValue as object),
+						username: data.username,
+					};
+					await configDao.updateByKey("personal_info", {
+						configValue: newValue,
+					});
+					this.logger.info("已同步更新个人资料中的显示名称");
+				}
+			} catch (err) {
+				this.logger.error({ err }, "同步更新个人资料显示名称失败");
+			}
+		}
+
+		this.logger.info({ userId: uuid }, "账号信息更新成功");
+		return updatedUser;
 	}
 }
 

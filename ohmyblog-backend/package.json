@@ -6,6 +6,7 @@
 		"dev": "bun run --watch src/index.ts",
 		"start": "NODE_ENV=production bun run src/index.ts",
 		"debug": "bun --inspect-wait --watch src/index.ts",
+		"email": "email dev --dir src/templates",
 		"db:push": "drizzle-kit push --config=db/drizzle.config.ts",
 		"db:studio": "drizzle-kit studio --config=db/drizzle.config.ts",
 		"db:gen": "drizzle-kit generate --config=db/drizzle.config.ts",
@@ -23,20 +24,27 @@
 		"@elysiajs/jwt": "^1.4.1",
 		"@elysiajs/openapi": "^1.4.14",
 		"@elysiajs/static": "^1.4.9",
+		"@napi-rs/image": "^1.12.0",
 		"@paralleldrive/cuid2": "^3.3.0",
+		"@react-email/components": "^1.0.12",
 		"consola": "^3.4.2",
 		"drizzle-orm": "^0.45.2",
 		"elysia": "^1.4.28",
-		"imgkit": "^2.2.1",
 		"nodemailer": "^8.0.5",
+		"react": "^19.2.5",
+		"react-dom": "^19.2.5",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.12",
+		"@react-email/ui": "6.0.1",
 		"@types/node": "^25.6.0",
 		"@types/nodemailer": "^7.0.11",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
 		"bun-types": "latest",
-		"drizzle-kit": "^0.31.10"
+		"drizzle-kit": "^0.31.10",
+		"react-email": "^6.0.1"
 	},
 	"module": "src/index.js"
 }

@@ -2,8 +2,8 @@
 
 /* ==================== CSS 变量定义 ==================== */
 :root {
-  /* 内容延迟时间 - 首次加载时使用 */
-  --content-delay: 150ms;
+  /* 内容延迟时间 - 较晚加载，确保 Hero 和 Sidebar 先入场 */
+  --content-delay: 300ms;
 }
 
 /* ==================== 关键帧动画 ==================== */
@@ -37,10 +37,10 @@
   animation-delay: 0ms;
 }
 
-/* 侧边栏 - 第二个出现 */
+/* 侧边栏 - 在 Hero 之后出现 */
 #sidebar,
 .sidebar {
-  animation-delay: 100ms;
+  animation-delay: 200ms;
 }
 
 /* 主内容区域 - 使用可配置的延迟 */
@@ -55,10 +55,10 @@
   animation-delay: 250ms;
 }
 
-/* Hero 区域 - 稍晚出现 */
+/* Hero 区域 - 在导航栏之后立即出现 */
 #hero,
 .hero {
-  animation-delay: 200ms;
+  animation-delay: 100ms;
 }
 
 /* ==================== 列表项递增延迟 ==================== */
@@ -149,4 +149,36 @@
 }
 .anim-delay-500 {
   animation-delay: 500ms;
+}
+
+/* ==================== Vue TransitionGroup: list-item-anim ==================== */
+
+/* 列表项动画 (进入和离开) */
+.list-item-anim-enter-active,
+.list-item-anim-leave-active {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.list-item-anim-enter-from {
+  opacity: 0;
+  transform: scale(0.9) translateY(10px);
+  filter: blur(4px);
+}
+
+.list-item-anim-leave-to {
+  opacity: 0;
+  transform: scale(0.9) translateX(20px);
+  filter: blur(4px);
+}
+
+/* 列表移动动画 (排序等) */
+.list-item-anim-move {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 离开时的绝对定位，确保平滑移动 */
+.list-item-anim-leave-active {
+  position: absolute;
+  width: 100%;
+  z-index: 0;
 }

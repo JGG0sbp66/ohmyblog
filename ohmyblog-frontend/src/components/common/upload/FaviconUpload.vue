@@ -22,8 +22,8 @@ const handleFileChange = (file: File) => {
 </script>
 
 <template>
-  <div class="space-y-2">
-    <div class="flex items-center gap-1.5 mb-1.5 px-1">
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center gap-1.5 mb-2 px-1">
       <label
         class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
       >
@@ -38,7 +38,6 @@ const handleFileChange = (file: File) => {
           ref="uploadRef"
           v-model="modelValue"
           :loading="loading"
-          accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml,image/gif,image/apng,image/avif,image/x-icon,image/vnd.microsoft.icon,.ico"
           @change="handleFileChange"
         />
       </div>
@@ -60,7 +59,7 @@ const handleFileChange = (file: File) => {
           </BaseTag>
         </div>
 
-        <div class="mt-3 space-y-1">
+        <div class="mt-3 flex flex-col gap-1">
           <p class="text-[11px] text-fg-muted leading-relaxed">
             {{ t("views.setup.steps.step2.siteIcon.help1") }}
           </p>

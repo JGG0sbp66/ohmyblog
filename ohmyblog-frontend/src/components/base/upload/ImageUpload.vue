@@ -16,8 +16,6 @@ interface Props {
   width?: string;
   /** 高度类名 (Tailwind) */
   height?: string;
-  /** 允许的文件类型 */
-  accept?: string;
   /** 圆角类名 */
   roundedClass?: string;
   /** 未上传图片时显示的说明文字 */
@@ -29,7 +27,6 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   width: "w-20",
   height: "h-20",
-  accept: "image/*",
   roundedClass: "rounded-xl",
 });
 
@@ -70,7 +67,7 @@ defineExpose({
     <input
       ref="fileInputRef"
       type="file"
-      :accept="accept"
+      accept="image/*"
       class="hidden"
       @change="handleFileChange"
     />
@@ -80,7 +77,7 @@ defineExpose({
         width,
         height,
         roundedClass,
-        'border-2 border-dashed border-fg-subtle/30 flex items-center justify-center bg-bg-muted/50 overflow-hidden relative group transition-colors',
+        'border-2 border-dashed border-fg-subtle/30 flex items-center justify-center bg-bg-muted/50 overflow-hidden relative group/image transition-colors',
         loading
           ? 'cursor-not-allowed'
           : 'cursor-pointer hover:border-accent/50',
@@ -112,7 +109,7 @@ defineExpose({
       <!-- 悬浮遮罩 (仅在有图片且非加载时显示) -->
       <div
         v-if="!loading && modelValue"
-        class="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"
+        class="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 group-hover/image:opacity-100 transition-opacity"
       >
         <Picture size-class="w-6 h-6 text-white drop-shadow-sm" />
       </div>

@@ -91,11 +91,8 @@
           "placeholder": "For example: Welcome to my cozy corner",
           "subtitles": {
             "title": "Subtitles",
-            "count": "{count} total",
             "add": "Add One",
-            "empty": "No subtitles yet. Click \"Add One\" to start.",
-            "placeholder": "Subtitle {index}",
-            "remove": "Delete"
+            "placeholder": "Subtitle {index}"
           }
         }
       }
@@ -125,6 +122,75 @@
           },
           "hero": {
             "description": "Set the main title and subtitles displayed on the homepage, with support for automatic cycling."
+          },
+          "footer": {
+            "title": "Footer Settings",
+            "description": "Configure the content displayed in the site footer.",
+            "links": {
+              "title": "Footer Links",
+              "add": "Add Link",
+              "namePlaceholder": "Name (e.g., GitHub)",
+              "urlPlaceholder": "URL (e.g., https://...)"
+            }
+          }
+        },
+        "admin": {
+          "account": {
+            "title": "Account Security",
+            "description": "Manage your login credentials, including username, email, and password.",
+            "passwordPlaceholder": "Leave blank to keep current"
+          },
+          "profile": {
+            "title": "Profile",
+            "description": "Set your personal bio and manage social platform links displayed on your homepage.",
+            "bio": "Bio",
+            "bioPlaceholder": "Introduce yourself in a few sentences..."
+          },
+          "social": {
+            "title": "Social Links",
+            "description": "Configure social platform links displayed in your sidebar.",
+            "links": {
+              "title": "Social Platforms",
+              "add": "Add Link",
+              "namePlaceholder": "Platform (e.g., GitHub)",
+              "urlPlaceholder": "Link (e.g., https://...)",
+              "nameRequired": "Please enter platform name before uploading icon",
+              "iconLight": "Light Icon",
+              "iconDark": "Dark Icon"
+            }
+          }
+        },
+        "smtp": {
+          "section": {
+            "title": "SMTP Service",
+            "description": "Configure SMTP server to enable email notification functions."
+          },
+          "preview": {
+            "testEmailTitle": "A test email from ohmyblog",
+            "greeting": "Hello, {name}!",
+            "testMessage": "This is an automatically generated test email to verify your SMTP configuration. If you receive this message, it means your email service is successfully connected and ready to go.",
+            "connectionDetailsTitle": "Connection Details",
+            "detailProtocol": "Protocol",
+            "detailEncryption": "Encryption",
+            "detailTime": "Timestamp",
+            "detailSender": "Sender",
+            "footerNote": "This email was automatically generated to test connection stability. You do not need to reply."
+          },
+          "send": {
+            "title": "Send Email",
+            "description": "Enter recipient addresses, preview the parsed list, and send a notification email.",
+            "recipient": {
+              "label": "Recipients",
+              "hint": "Enter multiple addresses separated by commas (,), semicolons (;), or spaces. The list will sync automatically.",
+              "placeholder": "user1@example.com, user2@example.com"
+            },
+            "list": {
+              "title": "Recipient List",
+              "add": "Add",
+              "placeholder": "Enter email address"
+            },
+            "button": "Send Email",
+            "noRecipient": "Please add at least one recipient"
           }
         }
       }
@@ -284,12 +350,22 @@
               "placeholder": "e.g., ohmyblog Bot",
               "hint": "If not specified, only email address is shown; when filled, displays as 'Name <email>' format"
             }
+          },
+          "preview": {
+            "title": "Email Preview",
+            "subject": "This is a test email",
+            "body": "If you are reading this email, it means your SMTP service is configured correctly!",
+            "footer": "This is an automated system email sent by {name}. Please do not reply."
           }
         }
       }
     }
   },
   "common": {
+    "list": {
+      "count": "{count} items",
+      "empty": "No data yet. Click the button above to add."
+    },
     "validation": {
       "auth": {
         "username_range": "Username must be between 3-50 characters",
@@ -308,7 +384,11 @@
         "icp_range": "ICP number must be under 100 characters"
       },
       "personal_info": {
+        "username_range": "Display name must be under 100 characters",
         "avatar_range": "Avatar URL must be under 500 characters",
+        "bio_range": "Bio must be under 500 characters",
+        "social_name_range": "Platform name must be under 50 characters",
+        "social_url_range": "Social link URL must be under 500 characters",
         "hero_range": "Hero banner URL must be under 500 characters"
       },
       "smtp": {
@@ -328,7 +408,8 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "finish": "Finish",
-    "save": "Save Settings"
+    "save": "Save Settings",
+    "delete": "Delete"
   },
   "stores": {
     "setup": {
@@ -351,13 +432,19 @@
       "获取个性化配置失败": "Failed to fetch personalization info",
       "用户名或邮箱已被注册": "Username or email is already registered",
       "未登录或会话已过期": "Not logged in or session expired",
+      "\"body.icon\" has invalid file type": "Invalid icon file type",
+      "\"body.avatar\" has invalid file type": "Invalid avatar file type",
+      "\"body.hero\" has invalid file type": "Invalid hero image file type",
       "请上传 1MB 以内的有效图片": "Please upload a valid image under 1MB.",
       "请上传 5MB 以内的有效图片": "Please upload a valid image under 5MB.",
       "请上传 2MB 以内的有效图片": "Please upload a valid image under 2MB.",
       "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP connection failed: Invalid username",
       "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP connection failed: Authentication credentials (password or auth code) invalid",
       "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP connection failed: Hostname not found (DNS error)",
-      "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout"
+      "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout",
+      "SMTP 服务器连接失败: Greeting never received": "SMTP connection failed: Greeting never received (Check encryption settings or port)",
+      "SMTP 配置不存在，请先完成邮件服务配置": "SMTP is not configured. Please complete your email settings first.",
+      "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP is disabled. Please enable it in Settings first."
     },
     "success": {
       "保存成功": "Settings saved successfully",
@@ -367,7 +454,8 @@
       "登出成功": "Logout successful",
       "图标上传成功": "Icon uploaded successfully",
       "横幅上传成功": "Banner uploaded successfully",
-      "头像上传成功": "Avatar uploaded successfully"
+      "头像上传成功": "Avatar uploaded successfully",
+      "邮件发送成功": "Email sent successfully"
     }
   }
 }

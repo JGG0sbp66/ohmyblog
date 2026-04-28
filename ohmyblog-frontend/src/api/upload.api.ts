@@ -36,3 +36,21 @@ export const uploadAvatar = (avatar: File) => {
     }),
   );
 };
+
+/**
+ * POST /upload/social-icon
+ * 上传社交图标
+ */
+export const uploadSocialIcon = (
+  icon: File,
+  key: string,
+  mode: "light" | "dark",
+) => {
+  return unwrap(
+    api.api.upload["social-icon"].post({
+      icon,
+      key,
+      mode,
+    }),
+  );
+};

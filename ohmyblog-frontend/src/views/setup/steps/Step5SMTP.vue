@@ -2,8 +2,8 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import StepLayout from "../components/StepLayout.vue";
-import ModuleItem from "../components/ModuleItem.vue";
-import SMTPForm from "../components/SMTPForm.vue";
+import ModuleItem from "@/components/common/item/ModuleItem.vue";
+import SMTPForm from "@/components/common/smtp/SMTPForm.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStore } from "@/stores/setup.store";
 import { useSetupStep } from "@/composables/setup-step.hook";
@@ -77,7 +77,11 @@ const handleNext = () => {
 
       <!-- 移动端/窄屏下的表单：当 lg 以下且启用了 SMTP 时显现 -->
       <div v-if="setupStore.isSMTPEnabled && !isDesktop" class="mt-2">
-        <SMTPForm />
+        <SMTPForm
+          v-model="setupStore.smtpForm"
+          v-model:is-advanced-expanded="setupStore.isSMTPAdvancedExpanded"
+          @register-validator="setupStore.setSmtpFormValidator"
+        />
       </div>
     </div>
   </StepLayout>

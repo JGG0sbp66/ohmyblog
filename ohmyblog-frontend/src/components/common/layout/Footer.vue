@@ -39,6 +39,22 @@ const [footerContentRef] = useAutoAnimate();
           </div>
         </div>
 
+        <!-- 页脚链接 -->
+        <div
+          v-if="siteInfo.footerLinks && siteInfo.footerLinks.length > 0"
+          class="flex items-center flex-wrap justify-center gap-x-1"
+        >
+          <template v-for="(link, index) in siteInfo.footerLinks" :key="index">
+            <span v-if="index > 0" class="text-fg-subtle/30">/</span>
+            <a :href="link.url" target="_blank" rel="noopener noreferrer">
+              <ButtonSecondary
+                :text="link.name"
+                class="h-7! text-sm! text-fg-subtle/60! hover:text-primary!"
+              />
+            </a>
+          </template>
+        </div>
+
         <!-- 备案信息 -->
         <a
           v-if="siteInfo.icp"

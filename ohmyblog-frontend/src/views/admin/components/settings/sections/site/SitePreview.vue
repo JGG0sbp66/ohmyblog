@@ -2,19 +2,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useSystemStore } from "@/stores/system.store";
-import BrowserMockup from "@/components/common/BrowserMockup.vue";
+import BrowserMockup from "@/components/common/container/BrowserMockup.vue";
 import HeroSection from "@/views/main/components/hero/HeroSection.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 
 const systemStore = useSystemStore();
 
 // 模拟标签页标题和图标
-const siteTitle = computed(() => systemStore.siteInfo.title || "OhMyBlog");
-const siteFavicon = computed(() => systemStore.siteInfo.favicon);
 </script>
 
 <template>
-  <BrowserMockup :title="siteTitle" :icon="siteFavicon">
+  <BrowserMockup :title="systemStore.siteInfo.title" :icon="systemStore.siteInfo.favicon">
     <div
       class="w-full h-full overflow-y-auto overflow-x-hidden bg-bg custom-scrollbar flex flex-col"
     >

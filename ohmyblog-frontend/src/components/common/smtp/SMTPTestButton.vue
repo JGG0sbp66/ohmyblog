@@ -1,10 +1,10 @@
-<!-- src/views/setup/components/SMTPTestButton.vue -->
+<!-- src/components/common/smtp/SMTPTestButton.vue -->
 <script setup lang="ts">
 /**
  * SMTP 连接测试按钮组件
  *
  * 功能：
- * 1. 监听 store 中的 SMTP 表单数据
+ * 1. 监听传入的 SMTP 表单数据
  * 2. 当必填字段（host/port/username/password）都填写后显示测试按钮
  * 3. 点击按钮测试 SMTP 连接，显示测试结果（成功/失败）
  */
@@ -14,11 +14,19 @@ import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
-import { useSetupStore } from "@/stores/setup.store";
 import { testSMTPConnection } from "@/api/email.api";
 
+const props = defineProps<{
+  config: {
+    host: string;
+    port: number;
+    username: string;
+    password: string;
+    enabled?: boolean;
+  };
+}>();
+
 const { t } = useLang();
-const setupStore = useSetupStore();
 
 /** 使用 auto-animate 自动处理测试结果的显示/隐藏动画 */
 const [parent] = useAutoAnimate();
@@ -41,24 +49,12 @@ const testMessage = ref("");
  */
 const canShowTest = computed(() => {
   return (
-    setupStore.smtpForm.host.trim() !== "" &&
-    setupStore.smtpForm.port > 0 &&
-    setupStore.smtpForm.username.trim() !== "" &&
-    setupStore.smtpForm.password.trim() !== ""
+    props.config.host.trim() !== "" &&
+    props.config.port > 0 &&
+    props.config.username.trim() !== "" &&
+    props.config.password.trim() !== ""
   );
 });
-
-/**
- * 构建测试配置对象
- * 根据实测，后端只需要这五个字段：enabled, host, port, username, password
- */
-const testConfig = computed(() => ({
-  enabled: setupStore.isSMTPEnabled,
-  host: setupStore.smtpForm.host,
-  port: setupStore.smtpForm.port,
-  username: setupStore.smtpForm.username,
-  password: setupStore.smtpForm.password,
-}));
 
 /**
  * 测试 SMTP 连接
@@ -69,7 +65,13 @@ const handleTestConnection = async () => {
   testMessage.value = "";
 
   try {
-    await testSMTPConnection(testConfig.value);
+    await testSMTPConnection({
+      enabled: props.config.enabled ?? true,
+      host: props.config.host,
+      port: props.config.port,
+      username: props.config.username,
+      password: props.config.password,
+    });
 
     testStatus.value = "success";
     testMessage.value = t("views.setup.steps.step5.test.success");

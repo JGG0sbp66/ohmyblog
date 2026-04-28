@@ -19,7 +19,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  title: "OhMyBlog",
+  title: "ohmyblog",
   icon: null,
   viewportMode: "pc",
 });
@@ -67,8 +67,6 @@ withDefaults(defineProps<Props>(), {
 
       <!-- 右侧状态标签 -->
       <BaseTag
-        type="primary"
-        size="xs"
         class="font-bold uppercase tracking-wider"
       >
         {{ t("components.common.BrowserMockup.preview") }}

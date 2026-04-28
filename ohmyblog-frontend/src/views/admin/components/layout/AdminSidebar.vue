@@ -64,7 +64,7 @@ const isItemActive = (item: MenuItem) => {
     @mouseleave="isExpanded = false"
     :class="[
       'bg-bg-card rounded-r-3xl shadow-sm py-6 flex flex-col items-start onload-animation anim-delay-50',
-      isExpanded ? 'w-48' : 'w-20',
+      isExpanded ? 'w-52' : 'w-20',
     ]"
   >
     <nav class="flex flex-col gap-3 w-full px-3 flex-1">

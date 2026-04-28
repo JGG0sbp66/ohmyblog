@@ -5,16 +5,13 @@ import { useI18n } from "vue-i18n";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import Loading from "@/components/icon/common/Loading.vue";
-import BrowserMockup from "@/components/common/BrowserMockup.vue";
+import BrowserMockup from "@/components/common/container/BrowserMockup.vue";
 
 const { t } = useI18n();
 const { locale } = useLang();
 const systemStore = useSystemStore();
 
 // 从 store 获取站点信息
-const siteTitle = computed(() => systemStore.siteInfo.title || "OhMyBlog");
-const siteFavicon = computed(() => systemStore.siteInfo.favicon);
-
 // 预览地址，默认为首页
 const previewUrl = ref(window.location.origin + "/");
 const isLoading = ref(true);
@@ -43,8 +40,8 @@ watch(locale, () => {
 
 <template>
   <BrowserMockup
-    :title="siteTitle"
-    :icon="siteFavicon"
+    :title="systemStore.siteInfo.title"
+    :icon="systemStore.siteInfo.favicon"
     :viewport-mode="viewportMode"
   >
     <!-- 加载遮罩 -->

@@ -10,7 +10,7 @@ defineProps<Props>();
 </script>
 
 <template>
-  <div class="group relative flex items-center">
+  <div class="group/tooltip relative flex items-center">
     <!-- 触发图标 -->
     <QuestionIcon
       sizeClass="w-3.5 h-3.5"
@@ -19,7 +19,7 @@ defineProps<Props>();
 
     <!-- Tooltip 弹窗内容 -->
     <div
-      class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 pointer-events-none opacity-0 group-hover:opacity-100 z-50"
+      class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 pointer-events-none opacity-0 group-hover/tooltip:opacity-100 z-50"
     >
       <!-- 气泡主体 -->
       <div

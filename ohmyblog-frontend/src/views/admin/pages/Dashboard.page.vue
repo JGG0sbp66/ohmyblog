@@ -14,7 +14,7 @@ const goHome = () => router.push("/");
 
 <template>
   <div
-    class="flex flex-col items-center justify-center min-h-[50vh] space-y-4 onload-animation"
+    class="flex flex-col items-center justify-center min-h-[50vh] gap-4 onload-animation"
   >
     <h1 class="text-2xl font-bold">这里是后台管理页面</h1>
     <p class="text-gray-500 italic">功能正在开发中...</p>

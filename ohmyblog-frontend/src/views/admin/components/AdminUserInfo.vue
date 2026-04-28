@@ -90,9 +90,6 @@ const contentClass = "relative z-10 pointer-events-none";
 
 // 头像容器 - 固定宽度，始终居中
 const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
-
-// 使用系统配置中的头像（即初始化/个性化设置中上传的管理员头像）
-const adminAvatar = computed(() => systemStore.personalInfo.avatar);
 </script>
 
 <template>
@@ -113,8 +110,8 @@ const adminAvatar = computed(() => systemStore.personalInfo.avatar);
           ]"
         >
           <img
-            v-if="adminAvatar"
-            :src="adminAvatar"
+            v-if="systemStore.personalInfo.avatar"
+            :src="systemStore.personalInfo.avatar"
             :alt="authStore.user?.username"
             class="w-full h-full object-cover"
           />
@@ -149,7 +146,7 @@ const adminAvatar = computed(() => systemStore.personalInfo.avatar);
         </div>
       </template>
 
-      <div class="space-y-3">
+      <div class="flex flex-col gap-3">
         <p class="text-fg text-sm">
           {{ t("components.common.admin.AdminSidebar.user.modal.question") }}
         </p>

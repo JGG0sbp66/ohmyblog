@@ -69,6 +69,27 @@ export const SiteInfoConfigUpsertDTO = t.Object({
 				error: "site_info.icp_range",
 			}),
 		),
+		footerLinks: t.Optional(
+			t.Array(
+				t.Object({
+					name: t.String({
+						minLength: 1,
+						maxLength: 50,
+						description: "链接名称",
+						error: "site_info.footer_link_name_range",
+					}),
+					url: t.String({
+						minLength: 1,
+						maxLength: 500,
+						description: "链接地址",
+						error: "site_info.footer_link_url_range",
+					}),
+				}),
+				{
+					description: "页脚链接列表",
+				},
+			),
+		),
 	}),
 	...ConfigMetaDTO,
 });
@@ -77,12 +98,59 @@ export const SiteInfoConfigUpsertDTO = t.Object({
 export const PersonalInfoConfigUpsertDTO = t.Object({
 	configKey: t.Literal("personal_info"),
 	configValue: t.Object({
+		username: t.Optional(
+			t.String({
+				maxLength: 100,
+				description: "显示名称",
+				error: "personal_info.username_range",
+			}),
+		),
 		avatar: t.Optional(
 			t.String({
 				maxLength: 500,
 				description: "头像 URL",
 				error: "personal_info.avatar_range",
 			}),
+		),
+		bio: t.Optional(
+			t.String({
+				maxLength: 500,
+				description: "个人简介",
+				error: "personal_info.bio_range",
+			}),
+		),
+		socialLinks: t.Optional(
+			t.Array(
+				t.Object({
+					name: t.String({
+						minLength: 1,
+						maxLength: 50,
+						description: "平台名称",
+						error: "personal_info.social_name_range",
+					}),
+					url: t.String({
+						minLength: 1,
+						maxLength: 500,
+						description: "社交链接地址",
+						error: "personal_info.social_url_range",
+					}),
+					iconLight: t.Optional(
+						t.String({
+							maxLength: 500,
+							description: "图标标识或 URL (浅色)",
+						}),
+					),
+					iconDark: t.Optional(
+						t.String({
+							maxLength: 500,
+							description: "图标标识或 URL (深色)",
+						}),
+					),
+				}),
+				{
+					description: "社交链接列表",
+				},
+			),
 		),
 		hero: t.Optional(
 			t.String({

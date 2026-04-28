@@ -3,9 +3,9 @@ import { existsSync, mkdirSync } from "node:fs";
 import { z } from "zod";
 import {
 	DATA_DIR,
-	DB_PATH,
 	ENV_PATH,
 	LOGS_DIR,
+	SOCIAL_UPLOADS_DIR,
 	SYSTEM_UPLOADS_DIR,
 	UPLOADS_DIR,
 } from "./constants";
@@ -41,7 +41,13 @@ const configDefaults = {
 // =================================================================
 // 2. 自动化引擎 & 目录初始化
 // =================================================================
-const REQUIRED_DIRS = [DATA_DIR, UPLOADS_DIR, SYSTEM_UPLOADS_DIR, LOGS_DIR];
+const REQUIRED_DIRS = [
+	DATA_DIR,
+	UPLOADS_DIR,
+	SYSTEM_UPLOADS_DIR,
+	SOCIAL_UPLOADS_DIR,
+	LOGS_DIR,
+];
 
 for (const dir of REQUIRED_DIRS) {
 	if (!existsSync(dir)) {
@@ -49,15 +55,6 @@ for (const dir of REQUIRED_DIRS) {
 		mkdirSync(dir, { recursive: true });
 	}
 }
-
-export {
-	DATA_DIR,
-	DB_PATH,
-	ENV_PATH,
-	LOGS_DIR,
-	SYSTEM_UPLOADS_DIR,
-	UPLOADS_DIR,
-};
 
 /**
  * 初始化配置文件，若 data/.env 不存在则自动生成，并返回 kv 映射

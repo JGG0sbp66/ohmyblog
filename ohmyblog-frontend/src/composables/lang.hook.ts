@@ -82,7 +82,26 @@ export function useLang() {
   };
 
   return {
-    t: instance.t,
+    /**
+     * 包装原生的 t 函数，增加对后端原始错误消息的特殊处理
+     * 目的是绕过 vue-i18n 对包含 "." 的 key 进行路径解析的问题
+     */
+    t: (key: string, ...args: any[]) => {
+      // 针对 api.errors 路径下的翻译进行拦截
+      if (key.startsWith("api.errors.")) {
+        const errorKey = key.replace("api.errors.", "");
+        // 使用 tm (message manager) 获取 errors 对象
+        const errors = instance.tm("api.errors") as Record<string, any>;
+
+        // 直接使用属性名称查找，这样可以匹配包含 "." 或 "\"" 的原始字符串键
+        if (errors && errors[errorKey]) {
+          return instance.rt(errors[errorKey]);
+        }
+      }
+      // 兜底使用原生翻译逻辑
+      // 使用扩展运算符透传，确保不破坏原生的参数结构（如插值对象 {count} 等）
+      return (instance.t as any)(key, ...args);
+    },
     locale: instance.locale as Ref<LocaleType>,
     setLocale,
     SUPPORTED_LOCALES,
