@@ -157,6 +157,23 @@
               "iconDark": "深色图标"
             }
           }
+        },
+        "smtp": {
+          "section": {
+            "title": "SMTP服务",
+            "description": "配置 SMTP 服务器以启用邮件发送功能，用于发送系统通知等。"
+          },
+          "preview": {
+            "testEmailTitle": "这是一封来自 ohmyblog 的测试邮件",
+            "greeting": "你好，{name}！",
+            "testMessage": "这是一封用于验证 SMTP 配置的自动生成的测试邮件。如果你能收到此邮件，说明你的邮件服务已成功连接并准备就绪。",
+            "connectionDetailsTitle": "连接详情",
+            "detailProtocol": "传输协议",
+            "detailEncryption": "加密方式",
+            "detailTime": "时间戳",
+            "detailSender": "发件地址",
+            "footerNote": "此邮件由系统自动发出，旨在测试连接稳定性，无需回复。"
+          }
         }
       }
     },
@@ -315,6 +332,12 @@
               "placeholder": "例如：ohmyblog Bot",
               "hint": "不填写时邮件中只显示邮箱地址，填写后显示为「名称 <邮箱>」格式"
             }
+          },
+          "preview": {
+            "title": "邮件预览",
+            "subject": "这是一封测试邮件",
+            "body": "如果你能看到这封邮件，说明你的 SMTP 服务已经配置成功了！",
+            "footer": "这是由 {name} 自动发送的系统邮件，请勿直接回复。"
           }
         }
       }
@@ -403,10 +426,6 @@
       "SMTP 服务器连接失败: Connection timeout": "SMTP 连接失败：连接服务器超时"
     },
     "success": {
-      "config": {
-        "保存成功": "保存成功",
-        "获取成功": "获取成功"
-      },
       "保存成功": "保存成功",
       "获取成功": "获取成功",
       "注册成功": "注册成功",

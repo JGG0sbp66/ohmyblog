@@ -159,6 +159,23 @@
               "iconDark": "Dark Icon"
             }
           }
+        },
+        "smtp": {
+          "section": {
+            "title": "SMTP Service",
+            "description": "Configure SMTP server to enable email notification functions."
+          },
+          "preview": {
+            "testEmailTitle": "A test email from ohmyblog",
+            "greeting": "Hello, {name}!",
+            "testMessage": "This is an automatically generated test email to verify your SMTP configuration. If you receive this message, it means your email service is successfully connected and ready to go.",
+            "connectionDetailsTitle": "Connection Details",
+            "detailProtocol": "Protocol",
+            "detailEncryption": "Encryption",
+            "detailTime": "Timestamp",
+            "detailSender": "Sender",
+            "footerNote": "This email was automatically generated to test connection stability. You do not need to reply."
+          }
         }
       }
     },
@@ -317,6 +334,12 @@
               "placeholder": "e.g., ohmyblog Bot",
               "hint": "If not specified, only email address is shown; when filled, displays as 'Name <email>' format"
             }
+          },
+          "preview": {
+            "title": "Email Preview",
+            "subject": "This is a test email",
+            "body": "If you are reading this email, it means your SMTP service is configured correctly!",
+            "footer": "This is an automated system email sent by {name}. Please do not reply."
           }
         }
       }
@@ -405,10 +428,6 @@
       "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout"
     },
     "success": {
-      "config": {
-        "保存成功": "Settings saved successfully",
-        "获取成功": "Fetched successfully"
-      },
       "保存成功": "Settings saved successfully",
       "获取成功": "Fetched successfully",
       "注册成功": "Registration successful",
