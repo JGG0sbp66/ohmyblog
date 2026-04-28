@@ -37,7 +37,7 @@ const handleSave = async () => {
 
     // 使用接口返回的 message 作为 Key 解析
     if (res?.message) {
-      useToast.success(t(`api.success.config.${res.message}`));
+      useToast.success(t(`api.success.${res.message}`));
     }
   } catch (error: any) {
     // 捕获 API 错误并翻译
