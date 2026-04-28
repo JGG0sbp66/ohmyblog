@@ -1,10 +1,23 @@
-<!-- src/views/admin/components/settings/sections/SMTPSection.vue -->
+<!-- src/views/admin/components/settings/sections/smtp/SMTPSection.vue -->
+<script setup lang="ts">
+import { ref } from "vue";
+import EmailPreview from "./EmailPreview.vue";
+import SMTPSettingsForm from "./SMTPSettingsForm.vue";
+import SettingsPageLayout from "../../layout/SettingsPageLayout.vue";
+
+const formRef = ref<InstanceType<typeof SMTPSettingsForm> | null>(null);
+</script>
+
 <template>
-  <div
-    class="flex flex-col items-center justify-center min-h-100 text-fg-dim onload-animation"
-  >
-    <div class="text-6xl mb-4 opacity-20">📧</div>
-    <p class="text-xl font-medium">SMTP Settings</p>
-    <p class="mt-2 opacity-50 text-sm">Coming Soon</p>
-  </div>
+  <SettingsPageLayout>
+    <template #preview>
+      <EmailPreview
+        :sender-name="formRef?.formData.senderName || 'ohmyblog'"
+        :sender-email="formRef?.formData.senderEmail || 'noreply@ohmyblog.com'"
+      />
+    </template>
+
+    <SMTPSettingsForm ref="formRef" />
+  </SettingsPageLayout>
 </template>
+
