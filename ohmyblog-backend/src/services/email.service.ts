@@ -80,7 +80,7 @@ class EmailService {
 		html,
 		smtpConfig,
 		siteTitle,
-	}: DispatchOptions): Promise<{ message: string }> {
+	}: DispatchOptions): Promise<{ message: string; count?: number }> {
 		const transporter = this.createTransporter(smtpConfig);
 		const fromAddress = smtpConfig.senderEmail || smtpConfig.username;
 		const fromName = smtpConfig.senderName || siteTitle;
@@ -92,7 +92,7 @@ class EmailService {
 				html,
 			});
 			this.logger.info({ to }, "邮件发送成功");
-			return { message: `邮件已成功发送至 ${to.length} 位收件人` };
+			return { message: "邮件发送成功", count: to.length };
 		} catch (error) {
 			this.logger.error({ error }, "邮件发送失败");
 			throw new BusinessError(
