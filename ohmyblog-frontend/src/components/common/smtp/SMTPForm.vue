@@ -1,4 +1,4 @@
-﻿<!-- src/views/setup/components/SMTPForm.vue -->
+<!-- src/components/common/smtp/SMTPForm.vue -->
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
@@ -6,18 +6,37 @@ import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import AdvancedToggle from "@/components/icon/ui/AdvancedToggle.vue";
 import SMTPTestButton from "./SMTPTestButton.vue";
 import { useLang } from "@/composables/lang.hook";
-import { useSetupStore } from "@/stores/setup.store";
 import { type Validatable } from "@/composables/setup-step.hook";
 import { SMTPConfigUpsertDTO } from "@server/dtos/config.dto";
 import { useAutoAnimate } from "@formkit/auto-animate/vue";
 
+const props = withDefaults(
+  defineProps<{
+    modelValue: {
+      host: string;
+      port: number;
+      username: string;
+      password: string;
+      senderEmail?: string;
+      senderName?: string;
+    };
+    isAdvancedExpanded?: boolean;
+  }>(),
+  {
+    isAdvancedExpanded: false,
+  },
+);
+
+const emit = defineEmits<{
+  (e: "update:modelValue", value: any): void;
+  (e: "update:isAdvancedExpanded", value: boolean): void;
+  (e: "registerValidator", validator: (() => boolean) | null): void;
+}>();
+
 const { t } = useLang();
-const setupStore = useSetupStore();
-// 动画容器 refs（通过模板引用自动绑定，TypeScript 可能报未使用警告但实际有效）
 const [advancedContentRef] = useAutoAnimate();
 const [testButtonContainerRef] = useAutoAnimate();
 
-// 输入框对应的可校验引用（由 TipInput 暴露 validate）
 const hostRef = ref<Validatable | null>(null);
 const portRef = ref<Validatable | null>(null);
 const usernameRef = ref<Validatable | null>(null);
@@ -25,7 +44,6 @@ const passwordRef = ref<Validatable | null>(null);
 const senderEmailRef = ref<Validatable | null>(null);
 const senderNameRef = ref<Validatable | null>(null);
 
-// 聚合校验入口：供 Step5 的“下一步”统一触发
 const validate = () => {
   const baseFieldValid = [
     hostRef.value?.validate?.() ?? false,
@@ -34,129 +52,120 @@ const validate = () => {
     passwordRef.value?.validate?.() ?? false,
   ].every((res) => res === true);
 
-  // 高级字段策略：
-  // - 展开时参与校验（格式校验，但不强制必填）
-  // - 收起时跳过校验（因为未渲染，ref 为 null）
-  const senderEmailValid = setupStore.isSMTPAdvancedExpanded
-    ? (senderEmailRef.value?.validate?.() ?? false)
+  const senderEmailValid = props.isAdvancedExpanded
+    ? senderEmailRef.value?.validate?.() ?? true
     : true;
-  const senderNameValid = setupStore.isSMTPAdvancedExpanded
-    ? (senderNameRef.value?.validate?.() ?? false)
+  const senderNameValid = props.isAdvancedExpanded
+    ? senderNameRef.value?.validate?.() ?? true
     : true;
 
   return baseFieldValid && senderEmailValid && senderNameValid;
 };
 
-// 当前组件挂载时，把校验器注册给 store
-// 这样无论表单渲染在左侧（桌面）还是右侧（窄屏），都能被同一个入口调用
 onMounted(() => {
-  setupStore.setSmtpFormValidator(validate);
+  emit("registerValidator", validate);
 });
 
-// 卸载时清理注册，避免引用过期组件实例
 onBeforeUnmount(() => {
-  setupStore.setSmtpFormValidator(null);
+  emit("registerValidator", null);
 });
 
 defineExpose({ validate });
+
+/** 统一处理字段更新 */
+const updateField = (key: string, value: any) => {
+  emit("update:modelValue", {
+    ...props.modelValue,
+    [key]: value,
+  });
+};
 </script>
 
 <template>
   <div class="flex flex-col gap-4">
-    <!-- 测试按钮和状态显示（自动动画） -->
     <div ref="testButtonContainerRef">
-      <SMTPTestButton />
+      <SMTPTestButton :config="modelValue" />
     </div>
 
     <div class="grid grid-cols-2 gap-4">
       <TipInput
         ref="hostRef"
-        v-model="setupStore.smtpForm.host"
+        :model-value="modelValue.host"
         :label="t('views.setup.steps.step5.form.host.label')"
         :placeholder="t('views.setup.steps.step5.form.host.placeholder')"
         :schema="SMTPConfigUpsertDTO.properties.configValue.properties.host"
         required
+        @update:model-value="updateField('host', $event)"
       />
 
       <TipInput
         ref="portRef"
-        v-model.number="setupStore.smtpForm.port"
+        :model-value="modelValue.port"
         type="number"
         :label="t('views.setup.steps.step5.form.port.label')"
         :placeholder="t('views.setup.steps.step5.form.port.placeholder')"
         :schema="SMTPConfigUpsertDTO.properties.configValue.properties.port"
         required
+        @update:model-value="updateField('port', Number($event))"
       />
     </div>
 
     <TipInput
       ref="usernameRef"
-      v-model="setupStore.smtpForm.username"
+      :model-value="modelValue.username"
       :label="t('views.setup.steps.step5.form.username.label')"
       :placeholder="t('views.setup.steps.step5.form.username.placeholder')"
       :schema="SMTPConfigUpsertDTO.properties.configValue.properties.username"
       required
+      @update:model-value="updateField('username', $event)"
     />
 
     <TipInput
       ref="passwordRef"
-      v-model="setupStore.smtpForm.password"
+      :model-value="modelValue.password"
       type="password"
       :label="t('views.setup.steps.step5.form.password.label')"
       :placeholder="t('views.setup.steps.step5.form.password.placeholder')"
       :hint="t('views.setup.steps.step5.form.password.hint')"
       :schema="SMTPConfigUpsertDTO.properties.configValue.properties.password"
       required
+      @update:model-value="updateField('password', $event)"
     />
 
     <div class="pt-1">
       <ButtonSecondary
         class="text-[14px] text-accent!"
         :text="
-          setupStore.isSMTPAdvancedExpanded
+          isAdvancedExpanded
             ? t('views.setup.steps.step5.form.advanced.hide')
             : t('views.setup.steps.step5.form.advanced.show')
         "
-        @click="
-          setupStore.isSMTPAdvancedExpanded = !setupStore.isSMTPAdvancedExpanded
-        "
+        @click="emit('update:isAdvancedExpanded', !isAdvancedExpanded)"
       >
-        <AdvancedToggle :expanded="setupStore.isSMTPAdvancedExpanded" />
+        <AdvancedToggle :expanded="isAdvancedExpanded" />
       </ButtonSecondary>
 
-      <!-- 高级字段仅在展开时渲染 -->
       <div ref="advancedContentRef">
-        <div
-          v-if="setupStore.isSMTPAdvancedExpanded"
-          class="flex flex-col gap-4 mt-3"
-        >
-          <!-- 可选字段：不填写时使用默认值 -->
+        <div v-if="isAdvancedExpanded" class="flex flex-col gap-4 mt-3">
           <TipInput
             ref="senderEmailRef"
-            v-model="setupStore.smtpForm.senderEmail"
+            :model-value="modelValue.senderEmail || ''"
             type="email"
             :label="t('views.setup.steps.step5.form.senderEmail.label')"
-            :placeholder="
-              t('views.setup.steps.step5.form.senderEmail.placeholder')
-            "
+            :placeholder="t('views.setup.steps.step5.form.senderEmail.placeholder')"
             :hint="t('views.setup.steps.step5.form.senderEmail.hint')"
-            :schema="
-              SMTPConfigUpsertDTO.properties.configValue.properties.senderEmail
-            "
+            :schema="SMTPConfigUpsertDTO.properties.configValue.properties.senderEmail"
+            @update:model-value="updateField('senderEmail', $event)"
           />
 
-          <!-- 可选字段：不填写时使用默认值 -->
           <TipInput
             ref="senderNameRef"
-            v-model="setupStore.smtpForm.senderName"
+            :model-value="modelValue.senderName || ''"
             :label="t('views.setup.steps.step5.form.senderName.label')"
-            :placeholder="
-              t('views.setup.steps.step5.form.senderName.placeholder')
-            "
+            :placeholder="t('views.setup.steps.step5.form.senderName.placeholder')"
             :hint="t('views.setup.steps.step5.form.senderName.hint')"
-            :schema="
-              SMTPConfigUpsertDTO.properties.configValue.properties.senderName
-            "
+            :schema="SMTPConfigUpsertDTO.properties.configValue.properties.senderName"
+            @update:model-value="updateField('senderName', $event)"
           />
         </div>
       </div>
