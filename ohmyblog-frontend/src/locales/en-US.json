@@ -175,6 +175,22 @@
             "detailTime": "Timestamp",
             "detailSender": "Sender",
             "footerNote": "This email was automatically generated to test connection stability. You do not need to reply."
+          },
+          "send": {
+            "title": "Send Email",
+            "description": "Enter recipient addresses, preview the parsed list, and send a notification email.",
+            "recipient": {
+              "label": "Recipients",
+              "hint": "Enter multiple addresses separated by commas (,), semicolons (;), or spaces. The list will sync automatically.",
+              "placeholder": "user1@example.com, user2@example.com"
+            },
+            "list": {
+              "title": "Recipient List",
+              "add": "Add",
+              "placeholder": "Enter email address"
+            },
+            "button": "Send Email",
+            "noRecipient": "Please add at least one recipient"
           }
         }
       }
@@ -426,7 +442,9 @@
       "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP connection failed: Authentication credentials (password or auth code) invalid",
       "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP connection failed: Hostname not found (DNS error)",
       "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout",
-      "SMTP 服务器连接失败: Greeting never received": "SMTP connection failed: Greeting never received (Check encryption settings or port)"
+      "SMTP 服务器连接失败: Greeting never received": "SMTP connection failed: Greeting never received (Check encryption settings or port)",
+      "SMTP 配置不存在，请先完成邮件服务配置": "SMTP is not configured. Please complete your email settings first.",
+      "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP is disabled. Please enable it in Settings first."
     },
     "success": {
       "保存成功": "Settings saved successfully",
@@ -436,7 +454,8 @@
       "登出成功": "Logout successful",
       "图标上传成功": "Icon uploaded successfully",
       "横幅上传成功": "Banner uploaded successfully",
-      "头像上传成功": "Avatar uploaded successfully"
+      "头像上传成功": "Avatar uploaded successfully",
+      "邮件发送成功": "Email sent successfully"
     }
   }
 }

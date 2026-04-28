@@ -173,6 +173,22 @@
             "detailTime": "时间戳",
             "detailSender": "发件地址",
             "footerNote": "此邮件由系统自动发出，旨在测试连接稳定性，无需回复。"
+          },
+          "send": {
+            "title": "发送邮件",
+            "description": "输入收件人地址，预览解析结果后发送通知邮件。",
+            "recipient": {
+              "label": "收件人",
+              "hint": "支持同时输入多个邮箱地址，使用英文逗号（,）、分号（;）或空格分隔，列表将自动同步",
+              "placeholder": "user1@example.com, user2@example.com"
+            },
+            "list": {
+              "title": "收件人列表",
+              "add": "添加",
+              "placeholder": "请输入邮箱地址"
+            },
+            "button": "发送邮件",
+            "noRecipient": "请添加至少一位收件人"
           }
         }
       }
@@ -424,7 +440,9 @@
       "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP 连接失败：认证凭据（密码或授权码）无效",
       "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP 连接失败：无法解析服务器地址 (DNS 错误)",
       "SMTP 服务器连接失败: Connection timeout": "SMTP 连接失败：连接服务器超时",
-      "SMTP 服务器连接失败: Greeting never received": "SMTP 连接失败：未从服务器收到问候（请检查加密设置或端口）"
+      "SMTP 服务器连接失败: Greeting never received": "SMTP 连接失败：未从服务器收到问候（请检查加密设置或端口）",
+      "SMTP 配置不存在，请先完成邮件服务配置": "SMTP 配置不存在，请先完成邮件服务配置",
+      "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP 服务未启用，请先在设置中开启邮件服务"
     },
     "success": {
       "保存成功": "保存成功",
@@ -434,7 +452,8 @@
       "登出成功": "登出成功",
       "图标上传成功": "图标上传成功",
       "横幅上传成功": "横幅上传成功",
-      "头像上传成功": "头像上传成功"
+      "头像上传成功": "头像上传成功",
+      "邮件发送成功": "邮件发送成功"
     }
   }
 }
