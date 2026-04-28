@@ -6,7 +6,7 @@ import AdminProfileCard from "./AdminProfileCard.vue";
 </script>
 
 <template>
-  <div class="w-full max-w-7xl mx-auto p-6 onload-animation">
+  <div class="w-full max-w-7xl mx-auto onload-animation">
     <div class="flex flex-col lg:flex-row justify-center gap-8 items-start">
       <!-- 左侧：编辑表单  -->
       <div class="flex-1 w-full max-w-6xl flex flex-col gap-6">
