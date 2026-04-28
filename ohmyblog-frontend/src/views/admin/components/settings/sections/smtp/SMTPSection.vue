@@ -10,6 +10,7 @@ const formRef = ref<InstanceType<typeof SMTPSettingsForm> | null>(null);
 
 <template>
   <SettingsPageLayout>
+    <!-- 左侧：实时预览区域 -->
     <template #preview>
       <EmailPreview
         :sender-name="formRef?.formData.senderName || 'ohmyblog'"
@@ -17,6 +18,7 @@ const formRef = ref<InstanceType<typeof SMTPSettingsForm> | null>(null);
       />
     </template>
 
+    <!-- 右侧：配置内容 -->
     <SMTPSettingsForm ref="formRef" />
   </SettingsPageLayout>
 </template>
