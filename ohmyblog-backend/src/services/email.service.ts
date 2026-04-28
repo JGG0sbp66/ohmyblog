@@ -18,13 +18,13 @@ class EmailService {
 			const transporter = nodemailer.createTransport({
 				host: smtpConfig.host,
 				port: smtpConfig.port,
-				// 465 端口使用 SSL (连接时就加密)
-				secure: smtpConfig.port === 465,
+				// 只要不是 25 端口，就默认尝试安全连接 (Implicit SSL/TLS)
+				secure: smtpConfig.port !== 25,
 				auth: {
 					user: smtpConfig.username,
 					pass: smtpConfig.password,
 				},
-				// 587 端口强制要求 STARTTLS (先连接再升级到加密)
+				// 587 端口强制要求 STARTTLS
 				requireTLS: smtpConfig.port === 587,
 				// 超时设置: 10 秒
 				connectionTimeout: 10000,

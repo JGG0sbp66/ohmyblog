@@ -425,7 +425,8 @@
       "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP connection failed: Invalid username",
       "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP connection failed: Authentication credentials (password or auth code) invalid",
       "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP connection failed: Hostname not found (DNS error)",
-      "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout"
+      "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout",
+      "SMTP 服务器连接失败: Greeting never received": "SMTP connection failed: Greeting never received (Check encryption settings or port)"
     },
     "success": {
       "保存成功": "Settings saved successfully",
