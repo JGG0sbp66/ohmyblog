@@ -2,10 +2,9 @@
 import { type Static, t } from "elysia";
 
 /** 当前支持的邮件模板类型，后续新增模板时在 Union 中追加 Literal */
-export const EmailTemplateType = t.Union(
-	[t.Literal("smtp_test")],
-	{ description: "邮件模板类型" },
-);
+export const EmailTemplateType = t.Union([t.Literal("smtp_test")], {
+	description: "邮件模板类型",
+});
 
 export type TEmailTemplateType = Static<typeof EmailTemplateType>;
 

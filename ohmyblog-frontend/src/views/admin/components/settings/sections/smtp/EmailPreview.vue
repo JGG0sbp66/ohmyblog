@@ -10,14 +10,16 @@ import { computed } from "vue";
 const { t, locale } = useLang();
 const systemStore = useSystemStore();
 
-const currentTime = computed(() => new Date().toLocaleString(locale.value, {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false
-}));
+const currentTime = computed(() =>
+  new Date().toLocaleString(locale.value, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }),
+);
 
 interface Props {
   senderName?: string;
@@ -39,9 +41,14 @@ const toDisplay = computed(() =>
 </script>
 
 <template>
-  <BrowserMockup :title="systemStore.siteInfo.title" :icon="systemStore.siteInfo.favicon">
+  <BrowserMockup
+    :title="systemStore.siteInfo.title"
+    :icon="systemStore.siteInfo.favicon"
+  >
     <!-- 邮件模拟界面-->
-    <div class="h-full w-full bg-bg-card p-6 lg:p-8 flex flex-col overflow-y-auto">
+    <div
+      class="h-full w-full bg-bg-card p-6 lg:p-8 flex flex-col overflow-y-auto"
+    >
       <!-- 邮件标题 -->
       <div class="max-w-4xl w-full mx-auto mb-6">
         <h1 class="text-2xl font-bold tracking-tight text-fg">
@@ -50,16 +57,22 @@ const toDisplay = computed(() =>
       </div>
 
       <!-- 邮件头 -->
-      <div class="max-w-4xl w-full mx-auto pb-6 border-b border-border/50 flex items-start gap-4">
+      <div
+        class="max-w-4xl w-full mx-auto pb-6 border-b border-border/50 flex items-start gap-4"
+      >
         <!-- 图标 -->
-        <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent mt-0.5 shrink-0">
+        <div
+          class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent mt-0.5 shrink-0"
+        >
           <Inbox size-class="w-5 h-5" />
         </div>
         <!-- 文字区 -->
         <div class="flex-1 min-w-0">
           <div class="text-sm font-bold flex items-center gap-2 truncate">
             {{ props.senderName }}
-            <span class="text-xs font-normal opacity-50">&lt;{{ props.senderEmail }}&gt;</span>
+            <span class="text-xs font-normal opacity-50"
+              >&lt;{{ props.senderEmail }}&gt;</span
+            >
           </div>
           <div class="flex items-center justify-between mt-1">
             <div class="text-xs opacity-40">To: {{ toDisplay }}</div>

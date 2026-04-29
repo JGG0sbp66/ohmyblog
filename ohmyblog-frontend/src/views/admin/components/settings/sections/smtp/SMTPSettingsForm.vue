@@ -44,7 +44,9 @@ const loadConfig = async () => {
     }
   } catch (error) {
     // 404 可能是还没配置过，忽略
-    console.warn("Failed to load SMTP config, it might not be initialized yet.");
+    console.warn(
+      "Failed to load SMTP config, it might not be initialized yet.",
+    );
   }
 };
 

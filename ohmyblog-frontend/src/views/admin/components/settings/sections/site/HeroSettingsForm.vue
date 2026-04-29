@@ -38,22 +38,22 @@ const handleSave = async () => {
     :description="t('views.admin.Settings.site.hero.description')"
   >
     <div class="flex flex-col gap-8">
-        <!-- 直接复用成熟的编辑器组件 -->
-        <HeroMainTitleEditor />
-        <HeroSubtitleEditor :page-size="5" />
-      </div>
+      <!-- 直接复用成熟的编辑器组件 -->
+      <HeroMainTitleEditor />
+      <HeroSubtitleEditor :page-size="5" />
+    </div>
 
-      <template #footer>
-        <div class="flex justify-end pt-4">
-          <ButtonPrimary
-            :text="t('common.save')"
-            :loading="isSubmitting"
-            @click="handleSave"
-            class="min-w-32"
-          />
-        </div>
-      </template>
-    </SettingCard>
+    <template #footer>
+      <div class="flex justify-end pt-4">
+        <ButtonPrimary
+          :text="t('common.save')"
+          :loading="isSubmitting"
+          @click="handleSave"
+          class="min-w-32"
+        />
+      </div>
+    </template>
+  </SettingCard>
 </template>
 
 <style scoped></style>

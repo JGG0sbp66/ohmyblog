@@ -81,59 +81,59 @@ const handleSave = async () => {
     :description="t('views.admin.Settings.site.footer.description')"
   >
     <div class="flex flex-col gap-8">
-        <!-- 1. 版权文本 -->
-        <TipInput
-          v-model="systemStore.siteInfo.footer"
-          :label="t('views.setup.steps.step2.footer.label')"
-          :placeholder="t('views.setup.steps.step2.footer.placeholder')"
-          :hint="t('views.setup.steps.step2.footer.hint')"
-        />
+      <!-- 1. 版权文本 -->
+      <TipInput
+        v-model="systemStore.siteInfo.footer"
+        :label="t('views.setup.steps.step2.footer.label')"
+        :placeholder="t('views.setup.steps.step2.footer.placeholder')"
+        :hint="t('views.setup.steps.step2.footer.hint')"
+      />
 
-        <!-- 2. 备案号 -->
-        <TipInput
-          v-model="systemStore.siteInfo.icp"
-          :label="t('views.setup.steps.step2.icp.label')"
-          :placeholder="t('views.setup.steps.step2.icp.placeholder')"
-          :hint="t('views.setup.steps.step2.icp.hint')"
-        />
+      <!-- 2. 备案号 -->
+      <TipInput
+        v-model="systemStore.siteInfo.icp"
+        :label="t('views.setup.steps.step2.icp.label')"
+        :placeholder="t('views.setup.steps.step2.icp.placeholder')"
+        :hint="t('views.setup.steps.step2.icp.hint')"
+      />
 
-        <!-- 3. 页脚链接 -->
-        <ListEditorLayout
-          :title="t('views.admin.Settings.site.footer.links.title')"
-          :count="items.length"
-          :add-text="t('views.admin.Settings.site.footer.links.add')"
-          :show-pagination="items.length > PAGE_SIZE"
-          :current-page="currentPage"
-          :total-pages="totalPages"
-          @add="addLink"
-          @update:current-page="currentPage = $event"
-        >
-          <KeyValueListEditor
-            :items="pagedRows"
-            :page-key="currentPage"
-            :key-placeholder="
-              t('views.admin.Settings.site.footer.links.namePlaceholder')
-            "
-            :value-placeholder="
-              t('views.admin.Settings.site.footer.links.urlPlaceholder')
-            "
-            @update="updateRow"
-            @remove="removeRow"
-          />
-        </ListEditorLayout>
+      <!-- 3. 页脚链接 -->
+      <ListEditorLayout
+        :title="t('views.admin.Settings.site.footer.links.title')"
+        :count="items.length"
+        :add-text="t('views.admin.Settings.site.footer.links.add')"
+        :show-pagination="items.length > PAGE_SIZE"
+        :current-page="currentPage"
+        :total-pages="totalPages"
+        @add="addLink"
+        @update:current-page="currentPage = $event"
+      >
+        <KeyValueListEditor
+          :items="pagedRows"
+          :page-key="currentPage"
+          :key-placeholder="
+            t('views.admin.Settings.site.footer.links.namePlaceholder')
+          "
+          :value-placeholder="
+            t('views.admin.Settings.site.footer.links.urlPlaceholder')
+          "
+          @update="updateRow"
+          @remove="removeRow"
+        />
+      </ListEditorLayout>
+    </div>
+
+    <template #footer>
+      <div class="flex justify-end pt-4">
+        <ButtonPrimary
+          :text="t('common.save')"
+          :loading="isSubmitting"
+          @click="handleSave"
+          class="min-w-32"
+        />
       </div>
-
-      <template #footer>
-        <div class="flex justify-end pt-4">
-          <ButtonPrimary
-            :text="t('common.save')"
-            :loading="isSubmitting"
-            @click="handleSave"
-            class="min-w-32"
-          />
-        </div>
-      </template>
-    </SettingCard>
+    </template>
+  </SettingCard>
 </template>
 
 <style scoped></style>

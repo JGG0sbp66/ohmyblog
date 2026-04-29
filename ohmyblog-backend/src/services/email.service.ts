@@ -2,12 +2,12 @@
 import nodemailer from "nodemailer";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { configDao } from "../daos/config.dao";
 import type { TSMTPConfigUpsertDTO } from "../dtos/config.dto";
 import type { TEmailSendDTO } from "../dtos/email.dto";
-import { configDao } from "../daos/config.dao";
-import { SMTPTestEmail } from "../templates/SMTPTestEmail";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
+import { SMTPTestEmail } from "../templates/SMTPTestEmail";
 
 interface SiteConfig {
 	title: string;
@@ -42,17 +42,14 @@ class EmailService {
 	}
 
 	/** 读取并校验数据库中的 SMTP 配置 */
-	private async getSmtpConfig(): Promise<
-		TSMTPConfigUpsertDTO["configValue"]
-	> {
+	private async getSmtpConfig(): Promise<TSMTPConfigUpsertDTO["configValue"]> {
 		const record = await configDao.findByKey("smtp");
 		if (!record?.configValue) {
 			throw new BusinessError("SMTP 配置不存在，请先完成邮件服务配置", {
 				status: 400,
 			});
 		}
-		const config =
-			record.configValue as TSMTPConfigUpsertDTO["configValue"];
+		const config = record.configValue as TSMTPConfigUpsertDTO["configValue"];
 		if (!config.enabled) {
 			throw new BusinessError("SMTP 服务未启用，请先在设置中开启邮件服务", {
 				status: 400,
@@ -64,9 +61,10 @@ class EmailService {
 	/** 读取站点信息（标题、页脚），供模板使用 */
 	private async getSiteConfig(): Promise<SiteConfig> {
 		const record = await configDao.findByKey("site_info");
-		const raw = record?.configValue as
-			| { title?: string; footer?: string }
-			| null;
+		const raw = record?.configValue as {
+			title?: string;
+			footer?: string;
+		} | null;
 		return {
 			title: raw?.title ?? "ohmyblog",
 			footer: raw?.footer ?? "",
@@ -95,10 +93,9 @@ class EmailService {
 			return { message: "邮件发送成功", count: to.length };
 		} catch (error) {
 			this.logger.error({ error }, "邮件发送失败");
-			throw new BusinessError(
-				`邮件发送失败: ${(error as Error).message}`,
-				{ status: 500 },
-			);
+			throw new BusinessError(`邮件发送失败: ${(error as Error).message}`, {
+				status: 500,
+			});
 		}
 	}
 
@@ -145,13 +142,12 @@ class EmailService {
 	/** 发送 SMTP 测试通知邮件（SMTPTestEmail 模板），包含连接详情卡片 */
 	private async sendSMTPTestEmail(data: TEmailSendDTO) {
 		const smtpConfig = await this.getSmtpConfig();
-		const { title: siteTitle, footer: siteFooter } =
-			await this.getSiteConfig();
+		const { title: siteTitle, footer: siteFooter } = await this.getSiteConfig();
 
 		const personalRecord = await configDao.findByKey("personal_info");
 		const adminName =
-			(personalRecord?.configValue as { username?: string } | null)
-				?.username ?? "Admin";
+			(personalRecord?.configValue as { username?: string } | null)?.username ??
+			"Admin";
 
 		const senderEmail = smtpConfig.senderEmail || smtpConfig.username;
 		const sentAt = new Date().toLocaleString("zh-CN", {

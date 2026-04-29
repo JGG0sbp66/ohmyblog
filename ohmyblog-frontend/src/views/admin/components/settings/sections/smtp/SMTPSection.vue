@@ -17,7 +17,9 @@ const sendCardRef = ref<InstanceType<typeof EmailSendCard> | null>(null);
       <EmailPreview
         :sender-name="formRef?.formData.senderName || 'ohmyblog'"
         :sender-email="formRef?.formData.senderEmail || 'noreply@ohmyblog.com'"
-        :recipients="sendCardRef?.recipients?.map(r => r.value).filter(Boolean) ?? []"
+        :recipients="
+          sendCardRef?.recipients?.map((r) => r.value).filter(Boolean) ?? []
+        "
       />
     </template>
 
@@ -26,4 +28,3 @@ const sendCardRef = ref<InstanceType<typeof EmailSendCard> | null>(null);
     <EmailSendCard ref="sendCardRef" />
   </SettingsPageLayout>
 </template>
-

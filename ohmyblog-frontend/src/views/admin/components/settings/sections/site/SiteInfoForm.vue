@@ -41,29 +41,29 @@ const handleSave = async () => {
     :description="t('views.admin.Settings.site.siteInfo.description')"
   >
     <div class="flex flex-col gap-8">
-        <!-- 1. 站点标题 -->
-        <TipInput
-          v-model="systemStore.siteInfo.title"
-          :label="t('views.setup.steps.step2.siteTitle.label')"
-          :placeholder="t('views.setup.steps.step2.siteTitle.placeholder')"
-          :hint="t('views.setup.steps.step2.siteTitle.hint')"
+      <!-- 1. 站点标题 -->
+      <TipInput
+        v-model="systemStore.siteInfo.title"
+        :label="t('views.setup.steps.step2.siteTitle.label')"
+        :placeholder="t('views.setup.steps.step2.siteTitle.placeholder')"
+        :hint="t('views.setup.steps.step2.siteTitle.hint')"
+      />
+
+      <!-- 2. 站点图标 -->
+      <FaviconUpload v-model="systemStore.siteInfo.favicon" />
+    </div>
+
+    <template #footer>
+      <div class="flex justify-end pt-4">
+        <ButtonPrimary
+          :text="t('common.save')"
+          :loading="isSubmitting"
+          @click="handleSave"
+          class="min-w-32"
         />
-
-        <!-- 2. 站点图标 -->
-        <FaviconUpload v-model="systemStore.siteInfo.favicon" />
       </div>
-
-      <template #footer>
-        <div class="flex justify-end pt-4">
-          <ButtonPrimary
-            :text="t('common.save')"
-            :loading="isSubmitting"
-            @click="handleSave"
-            class="min-w-32"
-          />
-        </div>
-      </template>
-    </SettingCard>
+    </template>
+  </SettingCard>
 </template>
 
 <style scoped></style>

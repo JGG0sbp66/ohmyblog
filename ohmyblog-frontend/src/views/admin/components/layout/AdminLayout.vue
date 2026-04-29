@@ -15,7 +15,9 @@ import AdminHeader from "./AdminHeader.vue";
       <AdminSidebar class="h-full" />
 
       <!-- 主内容区 -->
-      <main class="flex-1 p-6 flex flex-col min-h-0 overflow-y-auto custom-scrollbar">
+      <main
+        class="flex-1 p-6 flex flex-col min-h-0 overflow-y-auto custom-scrollbar"
+      >
         <div
           class="flex-1 flex flex-col min-h-0 onload-animation anim-delay-150"
         >

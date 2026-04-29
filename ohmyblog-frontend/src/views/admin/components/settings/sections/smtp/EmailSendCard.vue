@@ -58,7 +58,10 @@ watch(recipientInput, (newVal) => {
     .split(/[,;，；\s]+/)
     .map((e) => e.trim())
     .filter(Boolean);
-  recipients.value = emails.map((email) => ({ value: email, id: generateId() }));
+  recipients.value = emails.map((email) => ({
+    value: email,
+    id: generateId(),
+  }));
   nextTick(() => {
     isSyncing.value = false;
   });
