@@ -14,7 +14,7 @@
 import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
 import { createElement } from "react";
-import type { TEmailLogType } from "../../db/table/email-log";
+import type { TEmailLogType } from "../../db/constants/email-log.constants";
 import { configDao } from "../daos/config.dao";
 import { emailLogDao } from "../daos/email-log.dao";
 import type {

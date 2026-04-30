@@ -1,5 +1,10 @@
 // src/dtos/email.dto.ts
 import { type Static, t } from "elysia";
+import {
+	emailLogStatuses,
+	emailLogTypes,
+} from "../../db/constants/email-log.constants";
+import { tStringEnum } from "../utils/typebox";
 
 /** 当前支持的邮件模板类型，后续新增模板时在 Union 中追加 Literal */
 export const EmailTemplateType = t.Union([t.Literal("smtp_test")], {
@@ -8,17 +13,9 @@ export const EmailTemplateType = t.Union([t.Literal("smtp_test")], {
 
 export type TEmailTemplateType = Static<typeof EmailTemplateType>;
 
-/** 邮件日志类型筛选（与 db/table/email-log.ts 的 emailLogTypes 保持同步） */
-export const EmailLogTypeFilter = t.Union([
-	t.Literal("smtp_test"),
-	t.Literal("login_alert"),
-	t.Literal("reset_password"),
-]);
-
-export const EmailLogStatusFilter = t.Union([
-	t.Literal("success"),
-	t.Literal("failed"),
-]);
+/** 邮件日志类型筛选 */
+export const EmailLogTypeFilter = tStringEnum(emailLogTypes);
+export const EmailLogStatusFilter = tStringEnum(emailLogStatuses);
 
 /** 邮件记录列表查询 */
 export const EmailLogQueryDTO = t.Object({
