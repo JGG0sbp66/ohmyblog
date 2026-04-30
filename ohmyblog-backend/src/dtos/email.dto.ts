@@ -8,6 +8,37 @@ export const EmailTemplateType = t.Union([t.Literal("smtp_test")], {
 
 export type TEmailTemplateType = Static<typeof EmailTemplateType>;
 
+/** 邮件日志类型筛选（与 db/table/email-log.ts 的 emailLogTypes 保持同步） */
+export const EmailLogTypeFilter = t.Union([
+	t.Literal("smtp_test"),
+	t.Literal("login_alert"),
+	t.Literal("reset_password"),
+]);
+
+export const EmailLogStatusFilter = t.Union([
+	t.Literal("success"),
+	t.Literal("failed"),
+]);
+
+/** 邮件记录列表查询 */
+export const EmailLogQueryDTO = t.Object({
+	page: t.Optional(
+		t.Numeric({ minimum: 1, default: 1, description: "页码，从 1 开始" }),
+	),
+	pageSize: t.Optional(
+		t.Numeric({
+			minimum: 1,
+			maximum: 100,
+			default: 20,
+			description: "每页条数",
+		}),
+	),
+	type: t.Optional(EmailLogTypeFilter),
+	status: t.Optional(EmailLogStatusFilter),
+});
+
+export type TEmailLogQueryDTO = Static<typeof EmailLogQueryDTO>;
+
 export const EmailSendDTO = t.Object({
 	to: t.Array(
 		t.String({

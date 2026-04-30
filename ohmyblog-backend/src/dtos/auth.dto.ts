@@ -62,6 +62,41 @@ export const UpdateAccountDTO = t.Object({
 	),
 });
 
+// 4. 忘记密码 - 请求验证码
+export const ForgotPasswordDTO = t.Object({
+	email: t.String({
+		format: "email",
+		description: "用于接收验证码的邮箱",
+		examples: ["test@example.com"],
+		error: "auth.email_invalid",
+	}),
+});
+
+// 5. 重置密码 - 提交验证码 + 新密码
+export const ResetPasswordDTO = t.Object({
+	email: t.String({
+		format: "email",
+		description: "邮箱（与请求验证码时保持一致）",
+		examples: ["test@example.com"],
+		error: "auth.email_invalid",
+	}),
+	code: t.String({
+		minLength: 6,
+		maxLength: 6,
+		description: "6 位邮箱验证码",
+		examples: ["123456"],
+		error: "auth.code_invalid",
+	}),
+	newPassword: t.String({
+		minLength: 6,
+		maxLength: 50,
+		description: "新密码",
+		error: "auth.password_range",
+	}),
+});
+
 export type TRegisterDTO = Static<typeof RegisterDTO>;
 export type TLoginDTO = Static<typeof LoginDTO>;
 export type TUpdateAccountDTO = Static<typeof UpdateAccountDTO>;
+export type TForgotPasswordDTO = Static<typeof ForgotPasswordDTO>;
+export type TResetPasswordDTO = Static<typeof ResetPasswordDTO>;
