@@ -14,9 +14,12 @@
 import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
 import { createElement } from "react";
-import type { TEmailLogType } from "../../db/constants/email-log.constants";
+import type {
+	TEmailLogStatus,
+	TEmailLogType,
+} from "../../db/constants/email-log.constants";
 import { configDao } from "../daos/config.dao";
-import { emailLogDao } from "../daos/email-log.dao";
+import { emailLogDao, type EmailLogQueryOptions } from "../daos/email-log.dao";
 import type {
 	TAppearanceConfigUpsertDTO,
 	TSMTPConfigUpsertDTO,
@@ -196,7 +199,7 @@ class EmailService {
 		type: TEmailLogType;
 		to: string[];
 		subject: string;
-		status: "success" | "failed";
+		status: TEmailLogStatus;
 		errorMessage?: string;
 		params?: Record<string, unknown>;
 		triggeredBy?: string | null;
@@ -349,12 +352,7 @@ class EmailService {
 	 * 分页查询邮件发送历史（管理后台使用）
 	 * @param query 分页 + 类型 + 状态过滤
 	 */
-	async getEmailLogs(query: {
-		page?: number;
-		pageSize?: number;
-		type?: TEmailLogType;
-		status?: "success" | "failed";
-	}) {
+	async getEmailLogs(query: EmailLogQueryOptions) {
 		return emailLogDao.findAll(query);
 	}
 
