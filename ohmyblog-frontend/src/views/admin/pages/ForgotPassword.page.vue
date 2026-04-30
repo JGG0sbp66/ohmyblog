@@ -8,8 +8,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import BaseCard from "@/components/base/card/BaseCard.vue";
-import TypingBrand from "@/components/icon/TypingBrand.vue";
+import AuthLayout from "@/views/admin/components/layout/AuthLayout.vue";
 import ForgotPasswordStep1Email from "@/views/admin/components/forgot-password/ForgotPasswordStep1Email.vue";
 import ForgotPasswordStep2Reset from "@/views/admin/components/forgot-password/ForgotPasswordStep2Reset.vue";
 import type { ForgotPasswordForm } from "@/views/admin/components/forgot-password/types";
@@ -87,41 +86,25 @@ const handleResend = async () => {
 </script>
 
 <template>
-  <div
-    class="min-h-screen flex flex-col bg-bg overflow-x-hidden overflow-y-clip"
+  <AuthLayout
+    :brand-line1="t('views.forgotPassword.brand.line1')"
+    :brand-line2="t('views.forgotPassword.brand.line2')"
+    :brand-line3="t('views.forgotPassword.brand.line3')"
   >
-    <main class="flex-1 flex flex-col p-8 gap-10">
-      <div class="flex-1 flex items-center justify-center">
-        <div class="w-full max-w-5xl flex items-center justify-center gap-12">
-          <!-- 左侧：品牌展示 -->
-          <div class="hidden lg:block w-full onload-animation">
-            <TypingBrand
-              :line1="t('views.forgotPassword.brand.line1')"
-              :line2="t('views.forgotPassword.brand.line2')"
-              :line3="t('views.forgotPassword.brand.line3')"
-            />
-          </div>
-
-          <!-- 右侧：表单卡片，根据 step 切换子组件 -->
-          <BaseCard class="max-w-122 onload-animation anim-delay-100">
-            <ForgotPasswordStep1Email
-              v-if="step === 1"
-              :form="form"
-              :is-submitting="isSubmitting"
-              @submit="handleSendCode"
-              @back="router.push({ name: 'login' })"
-            />
-            <ForgotPasswordStep2Reset
-              v-else
-              :form="form"
-              :is-submitting="isSubmitting"
-              @submit="handleResetPassword"
-              @resend="handleResend"
-              @back="step = 1"
-            />
-          </BaseCard>
-        </div>
-      </div>
-    </main>
-  </div>
+    <ForgotPasswordStep1Email
+      v-if="step === 1"
+      :form="form"
+      :is-submitting="isSubmitting"
+      @submit="handleSendCode"
+      @back="router.push({ name: 'login' })"
+    />
+    <ForgotPasswordStep2Reset
+      v-else
+      :form="form"
+      :is-submitting="isSubmitting"
+      @submit="handleResetPassword"
+      @resend="handleResend"
+      @back="step = 1"
+    />
+  </AuthLayout>
 </template>
