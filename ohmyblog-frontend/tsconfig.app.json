@@ -13,6 +13,8 @@
       "elysia": ["../ohmyblog-backend/node_modules/elysia"],
       // 后端 DTO 类型（例如 TRegisterDTO / TLoginDTO）
       "@server/dtos/*": ["../ohmyblog-backend/src/dtos/*"],
+      // 后端 db/constants 下的零依赖共享常量（前后端复用枚举字面量）
+      "@server/db/constants/*": ["../ohmyblog-backend/db/constants/*"],
       // TypeBox runtime 校验（复用后端依赖）
       "@sinclair/typebox": [
         "../ohmyblog-backend/node_modules/@sinclair/typebox"
