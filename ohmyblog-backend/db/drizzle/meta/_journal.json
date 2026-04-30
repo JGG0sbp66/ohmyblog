@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1767177108973,
-      "tag": "0000_glorious_blade",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1770252066730,
-      "tag": "0001_narrow_lady_vermin",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1777529897358,
-      "tag": "0002_real_otto_octavius",
+      "when": 1777536047726,
+      "tag": "0000_flowery_blob",
       "breakpoints": true
     }
   ]
