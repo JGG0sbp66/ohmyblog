@@ -1,5 +1,11 @@
 import { Elysia } from "elysia";
-import { LoginDTO, RegisterDTO, UpdateAccountDTO } from "../dtos/auth.dto";
+import {
+	ForgotPasswordDTO,
+	LoginDTO,
+	RegisterDTO,
+	ResetPasswordDTO,
+	UpdateAccountDTO,
+} from "../dtos/auth.dto";
 import { config } from "../env";
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
@@ -111,6 +117,42 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				{
 					detail: { summary: "更新账号信息" },
 					body: UpdateAccountDTO,
+				},
+			)
+			// === 忘记密码 - 发送验证码 ===
+			.post(
+				"/forgot-password",
+				async ({ body, request, server }) => {
+					const ip = getClientIp({ request, server });
+					await authService.forgotPassword(body.email, ip);
+					// 无论邮箱是否存在，都返回同样的提示，防止接口被用来枚举有效邮箱
+					return {
+						message: "若邮箱存在，验证码已发送，请注意查收",
+					};
+				},
+				{
+					detail: {
+						summary: "忘记密码 - 请求验证码",
+						description:
+							"出于安全考虑，无论邮箱是否注册都返回相同的成功提示。",
+					},
+					body: ForgotPasswordDTO,
+				},
+			)
+			// === 重置密码 - 校验验证码并设置新密码 ===
+			.post(
+				"/reset-password",
+				async ({ body }) => {
+					await authService.resetPassword(
+						body.email,
+						body.code,
+						body.newPassword,
+					);
+					return { message: "密码重置成功，请使用新密码登录" };
+				},
+				{
+					detail: { summary: "忘记密码 - 提交验证码并重置密码" },
+					body: ResetPasswordDTO,
 				},
 			)
 			// === 登出接口 ===
