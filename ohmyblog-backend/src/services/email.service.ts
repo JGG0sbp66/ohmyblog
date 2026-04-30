@@ -65,7 +65,8 @@ class EmailService {
 	private async getAppearanceConfig(): Promise<{ hue: number }> {
 		const record = await configDao.findByKey("appearance");
 		const raw = record?.configValue as
-			TAppearanceConfigUpsertDTO["configValue"] | null;
+			| TAppearanceConfigUpsertDTO["configValue"]
+			| null;
 		return { hue: raw?.hue ?? 250 };
 	}
 

@@ -123,7 +123,9 @@ export const SMTPTestEmail = ({
 								</Column>
 								<Column style={{ width: "50%" }}>
 									<Text className={labelClass}>时间戳</Text>
-									<Text className={`${valueClass} text-fg-muted`}>{sentAt}</Text>
+									<Text className={`${valueClass} text-fg-muted`}>
+										{sentAt}
+									</Text>
 								</Column>
 							</Row>
 						</Section>
@@ -142,7 +144,6 @@ export const SMTPTestEmail = ({
 					</Container>
 				</Body>
 			</Html>
-
 		</Tailwind>
 	);
 };
@@ -150,7 +151,6 @@ export const SMTPTestEmail = ({
 const labelClass =
 	"text-[10px] font-bold uppercase text-fg-subtle m-0 mb-1.5 tracking-tight";
 
-const valueClass =
-	"text-sm font-mono leading-normal m-0";
+const valueClass = "text-sm font-mono leading-normal m-0";
 
 export default SMTPTestEmail;

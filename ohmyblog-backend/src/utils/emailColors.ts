@@ -39,9 +39,9 @@ export function hueToEmailColors(hue: number): EmailColorPalette {
 		accent: oklchToHex(0.6, 0.18, hue),
 		fg: oklchToHex(0.2, 0.03, hue),
 		// 中性灰色
-		fgMuted: "#737373", 
+		fgMuted: "#737373",
 		// 极低彩度 (0.02)，让它看起来是灰色，但由于有色相，会比纯灰更耐看
-		fgSubtle: oklchToHex(0.7, 0.02, hue), 
+		fgSubtle: oklchToHex(0.7, 0.02, hue),
 		bgMuted: oklchToHex(0.95, 0.03, hue),
 		bgMutedSoft: oklchToHex(0.98, 0.01, hue),
 		border: oklchToHex(0.9, 0.02, hue),
@@ -49,6 +49,3 @@ export function hueToEmailColors(hue: number): EmailColorPalette {
 		borderLight: oklchToHex(0.97, 0.005, hue),
 	};
 }
-
-
-
