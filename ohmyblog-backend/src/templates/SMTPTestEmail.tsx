@@ -9,8 +9,10 @@ import {
 	Preview,
 	Row,
 	Section,
+	Tailwind,
 	Text,
 } from "@react-email/components";
+import { hueToEmailColors } from "../utils/emailColors";
 
 interface SMTPTestEmailProps {
 	siteTitle?: string;
@@ -20,6 +22,8 @@ interface SMTPTestEmailProps {
 	footerNote?: string;
 	senderEmail?: string;
 	sentAt?: string;
+	/** OKLCH hue (0–360) read from the appearance config; defaults to 250 (blue) */
+	hue?: number;
 }
 
 export const SMTPTestEmail = ({
@@ -30,176 +34,123 @@ export const SMTPTestEmail = ({
 	footerNote = "此邮件由系统自动发出，旨在测试连接稳定性，无需回复。",
 	senderEmail = "no-reply@example.com",
 	sentAt = "2026/04/28 18:03",
+	hue = 250,
 }: SMTPTestEmailProps) => {
-	// 重新定义颜色，匹配你前端的截图 (绿色系)
-	const colors = {
-		accent: "#189a30",
-		fg: "#243024",
-		fgMuted: "#4b5563",
-		fgSubtle: "#9ca3af",
-		bgMuted: "#f0f9f0",
-		border: "#ffffff",
-	};
+	const colors = hueToEmailColors(hue);
 
 	return (
-		<Html lang="zh">
-			<Head>
-				<style>{`
-          body { font-family: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif !important; }
-        `}</style>
-			</Head>
-			<Preview>SMTP 测试邮件</Preview>
-			<Body
-				style={{
-					backgroundColor: "#ffffff",
-					margin: "0",
-					padding: "40px 20px",
-				}}
-			>
-				<Container style={{ maxWidth: "600px", margin: "0 auto" }}>
-					{/* 问候语 - text-xl font-bold */}
-					<Heading
-						style={{
-							fontSize: "20px",
-							fontWeight: "700",
-							color: colors.fg,
-							margin: "0 0 24px",
-							textAlign: "left" as const,
-						}}
-					>
-						{greeting}
-					</Heading>
+		<Tailwind
+			config={{
+				theme: {
+					extend: {
+						colors: {
+							accent: colors.accent,
+							fg: colors.fg,
+							"fg-muted": colors.fgMuted,
+							"fg-subtle": colors.fgSubtle,
+							"bg-muted": colors.bgMuted,
+							"bg-muted-soft": colors.bgMutedSoft,
+							border: colors.border,
+							"border-soft": colors.borderSoft,
+							"border-light": colors.borderLight,
+						},
+					},
+				},
+			}}
+		>
+			<Html lang="zh">
+				<Head>
+					<style>{`
+            body { font-family: "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif !important; }
+          `}</style>
+				</Head>
+				<Preview>SMTP 测试邮件</Preview>
+				<Body className="bg-white m-0 py-10 px-5">
+					<Container style={{ maxWidth: "600px", margin: "0 auto" }}>
+						{/* 问候语 */}
+						<Heading className="text-xl font-bold text-fg mt-0 mb-6 text-left">
+							{greeting}
+						</Heading>
 
-					{/* 正文 - leading-relaxed */}
-					<Text
-						style={{
-							color: colors.fgMuted,
-							lineHeight: "1.6",
-							fontSize: "15px",
-							margin: "0 0 24px",
-						}}
-					>
-						{testMessage}
-					</Text>
-
-					{/* 连接详情卡片 - 模拟 rounded-xl p-6 border */}
-					<Section
-						style={{
-							backgroundColor: colors.bgMuted,
-							borderRadius: "12px",
-							border: `1px solid ${colors.border}`,
-							padding: "24px",
-							marginBottom: "24px",
-						}}
-					>
-						{/* 标题栏 */}
-						<Row style={{ marginBottom: "20px" }}>
-							<Column>
-								<div
-									style={{
-										display: "inline-block",
-										width: "8px",
-										height: "8px",
-										borderRadius: "50%",
-										backgroundColor: colors.accent,
-										marginRight: "8px",
-									}}
-								/>
-								<span
-									style={{
-										fontSize: "12px",
-										fontWeight: "bold",
-										textTransform: "uppercase",
-										letterSpacing: "0.05em",
-										color: colors.fg,
-										opacity: 0.7,
-									}}
-								>
-									连接详情
-								</span>
-							</Column>
-						</Row>
-
-						{/* 数据网格 - 邮件中建议用 Row/Column 模拟 Grid */}
-						<Row>
-							<Column style={{ width: "50%", paddingBottom: "16px" }}>
-								<Text style={labelStyle}>传输协议</Text>
-								<Text style={{ ...valueStyle, color: colors.accent }}>
-									SMTP / ESMTP
-								</Text>
-							</Column>
-							<Column style={{ width: "50%", paddingBottom: "16px" }}>
-								<Text style={labelStyle}>加密方式</Text>
-								<Text style={{ ...valueStyle, color: colors.accent }}>
-									STARTTLS / SSL
-								</Text>
-							</Column>
-						</Row>
-						<Row>
-							<Column style={{ width: "50%" }}>
-								<Text style={labelStyle}>发件地址</Text>
-								<Text style={valueStyle}>{senderEmail}</Text>
-							</Column>
-							<Column style={{ width: "50%" }}>
-								<Text style={labelStyle}>时间戳</Text>
-								<Text style={valueStyle}>{sentAt}</Text>
-							</Column>
-						</Row>
-					</Section>
-
-					{/* 提示语 - italic opacity-60 */}
-					<Text
-						style={{
-							fontSize: "14px",
-							fontStyle: "italic",
-							color: colors.fgSubtle,
-							margin: "0 0 32px",
-						}}
-					>
-						{footerNote}
-					</Text>
-
-					{/* 底部版权 - border-t border-border/30 */}
-					<Section
-						style={{
-							borderTop: `1px solid #f3f4f6`,
-							paddingTop: "24px",
-							textAlign: "center" as const,
-						}}
-					>
-						<Text
-							style={{
-								fontSize: "12px",
-								color: colors.fgSubtle,
-								margin: "0",
-								lineHeight: "1.5",
-							}}
-						>
-							© {new Date().getFullYear()} {siteTitle} {siteFooter}
+						{/* 正文 */}
+						<Text className="text-[15px] leading-relaxed text-fg-muted mt-0 mb-8">
+							{testMessage}
 						</Text>
-					</Section>
-				</Container>
-			</Body>
-		</Html>
+
+						{/* 连接详情卡片 */}
+						<Section className="bg-bg-muted-soft rounded-xl border border-border-soft p-6 mb-8">
+							{/* 标题栏 */}
+							<Row className="mb-5">
+								<Column>
+									<div
+										style={{
+											display: "inline-block",
+											width: "6px",
+											height: "6px",
+											borderRadius: "50%",
+											backgroundColor: colors.accent,
+											marginRight: "8px",
+											verticalAlign: "middle",
+										}}
+									/>
+									<span className="text-sm font-bold uppercase tracking-wider text-fg-muted">
+										连接详情
+									</span>
+								</Column>
+							</Row>
+
+							{/* 数据网格 */}
+							<Row>
+								<Column style={{ width: "50%", paddingBottom: "20px" }}>
+									<Text className={labelClass}>传输协议</Text>
+									<Text className={`${valueClass} text-accent`}>
+										SMTP / ESMTP
+									</Text>
+								</Column>
+								<Column style={{ width: "50%", paddingBottom: "20px" }}>
+									<Text className={labelClass}>加密方式</Text>
+									<Text className={`${valueClass} text-accent`}>
+										STARTTLS / SSL
+									</Text>
+								</Column>
+							</Row>
+							<Row>
+								<Column style={{ width: "50%" }}>
+									<Text className={labelClass}>发件地址</Text>
+									<Text className={`${valueClass} text-fg-muted`}>
+										{senderEmail}
+									</Text>
+								</Column>
+								<Column style={{ width: "50%" }}>
+									<Text className={labelClass}>时间戳</Text>
+									<Text className={`${valueClass} text-fg-muted`}>{sentAt}</Text>
+								</Column>
+							</Row>
+						</Section>
+
+						{/* 提示语 */}
+						<Text className="text-sm italic text-fg-subtle mt-0 mb-8">
+							{footerNote}
+						</Text>
+
+						{/* 底部版权 */}
+						<Section className="border-t border-border-light pt-6 text-center">
+							<Text className="text-[12px] text-fg-subtle m-0 leading-normal">
+								© {new Date().getFullYear()} {siteTitle} {siteFooter}
+							</Text>
+						</Section>
+					</Container>
+				</Body>
+			</Html>
+
+		</Tailwind>
 	);
 };
 
-const labelStyle = {
-	fontSize: "10px",
-	fontWeight: "bold" as const,
-	textTransform: "uppercase" as const,
-	color: "#9ca3af",
-	margin: "0 0 4px",
-	letterSpacing: "0.02em",
-};
+const labelClass =
+	"text-[10px] font-bold uppercase text-fg-subtle m-0 mb-1.5 tracking-tight";
 
-const valueStyle = {
-	fontSize: "13px",
-	fontFamily:
-		'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-	color: "#4b5563",
-	lineHeight: "1.5",
-	margin: "0",
-};
+const valueClass =
+	"text-sm font-mono leading-normal m-0";
 
 export default SMTPTestEmail;
