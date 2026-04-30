@@ -3,7 +3,10 @@ import nodemailer from "nodemailer";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { configDao } from "../daos/config.dao";
-import type { TSMTPConfigUpsertDTO } from "../dtos/config.dto";
+import type {
+	TAppearanceConfigUpsertDTO,
+	TSMTPConfigUpsertDTO,
+} from "../dtos/config.dto";
 import type { TEmailSendDTO } from "../dtos/email.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
@@ -56,6 +59,14 @@ class EmailService {
 			});
 		}
 		return config;
+	}
+
+	/** 读取外观配置（hue），供模板使用 */
+	private async getAppearanceConfig(): Promise<{ hue: number }> {
+		const record = await configDao.findByKey("appearance");
+		const raw = record?.configValue as
+			TAppearanceConfigUpsertDTO["configValue"] | null;
+		return { hue: raw?.hue ?? 250 };
 	}
 
 	/** 读取站点信息（标题、页脚），供模板使用 */
@@ -149,6 +160,8 @@ class EmailService {
 			(personalRecord?.configValue as { username?: string } | null)?.username ??
 			"Admin";
 
+		const { hue } = await this.getAppearanceConfig();
+
 		const senderEmail = smtpConfig.senderEmail || smtpConfig.username;
 		const sentAt = new Date().toLocaleString("zh-CN", {
 			year: "numeric",
@@ -168,6 +181,7 @@ class EmailService {
 				greeting: `你好，${adminName}！`,
 				testMessage: data.content[0],
 				footerNote: data.content[1],
+				hue,
 			}),
 		);
 
