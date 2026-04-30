@@ -2,7 +2,7 @@
 import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { emailLog } from "../../db/schema";
-import type { TEmailLogStatus, TEmailLogType } from "../../db/table/email-log";
+import type { TEmailLogStatus, TEmailLogType } from "../../db/constants/email-log.constants";
 
 export type NewEmailLog = typeof emailLog.$inferInsert;
 

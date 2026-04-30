@@ -1,17 +1,10 @@
 import { createId } from "@paralleldrive/cuid2";
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-
-export const emailLogTypes = [
-	"smtp_test",
-	"login_alert",
-	"reset_password",
-] as const;
-
-export const emailLogStatuses = ["success", "failed"] as const;
-
-export type TEmailLogType = (typeof emailLogTypes)[number];
-export type TEmailLogStatus = (typeof emailLogStatuses)[number];
+import {
+	emailLogStatuses,
+	emailLogTypes,
+} from "../constants/email-log.constants";
 
 export const emailLog = sqliteTable("email_log", {
 	// 主键

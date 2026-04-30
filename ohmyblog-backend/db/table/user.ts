@@ -1,11 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-
-export const roles = ["admin", "user"] as const;
-export const statuses = ["active", "inactive", "banned"] as const;
-
-export type Roles = (typeof roles)[number];
+import { roles, statuses } from "../constants/user.constants";
 
 export const user = sqliteTable("user", {
 	// uuid: UUID 格式，在 SQLite 中存储为 text

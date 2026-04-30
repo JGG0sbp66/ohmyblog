@@ -13,7 +13,7 @@
 import { and, eq, gt, isNull } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { emailVerification } from "../../db/schema";
-import type { TEmailVerificationType } from "../../db/table/email-verification";
+import type { TEmailVerificationType } from "../../db/constants/email-verification.constants";
 
 export type NewEmailVerification = typeof emailVerification.$inferInsert;
 

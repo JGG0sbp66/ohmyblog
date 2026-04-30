@@ -1,10 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-
-export const emailVerificationTypes = ["reset_password"] as const;
-
-export type TEmailVerificationType = (typeof emailVerificationTypes)[number];
+import { emailVerificationTypes } from "../constants/email-verification.constants";
 
 export const emailVerification = sqliteTable("email_verification", {
 	// 主键
