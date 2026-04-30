@@ -43,6 +43,9 @@ export const user = sqliteTable("user", {
 	// 最后登录时间
 	lastLoginAt: integer("last_login_at", { mode: "timestamp" }),
 
+	// 最后登录 IP（用于异地登录检测）
+	lastLoginIp: text("last_login_ip"),
+
 	// 邮箱验证状态: true/false
 	// SQLite 没有布尔型，Drizzle 会用 0/1 自动映射
 	emailVerified: integer("email_verified", { mode: "boolean" }).default(false),

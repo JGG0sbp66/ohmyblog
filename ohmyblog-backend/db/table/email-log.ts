@@ -1,0 +1,50 @@
+import { createId } from "@paralleldrive/cuid2";
+import { sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+
+export const emailLogTypes = [
+	"smtp_test",
+	"login_alert",
+	"reset_password",
+] as const;
+
+export const emailLogStatuses = ["success", "failed"] as const;
+
+export type TEmailLogType = (typeof emailLogTypes)[number];
+export type TEmailLogStatus = (typeof emailLogStatuses)[number];
+
+export const emailLog = sqliteTable("email_log", {
+	// 主键
+	uuid: text("uuid")
+		.primaryKey()
+		.$defaultFn(() => createId()),
+
+	// 邮件类型: smtp_test / login_alert / reset_password
+	type: text("type", { enum: emailLogTypes }).notNull(),
+
+	// 收件人（单个邮箱或逗号分隔的多个邮箱）
+	to: text("to").notNull(),
+
+	// 邮件主题
+	subject: text("subject").notNull(),
+
+	// 发送状态: success / failed
+	status: text("status", { enum: emailLogStatuses }).notNull(),
+
+	// 失败时的错误信息
+	errorMessage: text("error_message"),
+
+	// 模板关键参数快照（JSON），用于后台展示和预览重渲染
+	params: text("params", { mode: "json" }),
+
+	// 触发来源的 IP 地址
+	ip: text("ip"),
+
+	// 触发来源（user uuid 或 'system'）
+	triggeredBy: text("triggered_by"),
+
+	// 发送时间
+	createdAt: integer("created_at", { mode: "timestamp" })
+		.notNull()
+		.default(sql`(unixepoch())`),
+});
