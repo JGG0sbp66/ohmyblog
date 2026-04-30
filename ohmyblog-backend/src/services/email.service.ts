@@ -1,8 +1,22 @@
 // src/services/email.service.ts
+//
+// 邮件服务层。负责：
+//   1. 读取 SMTP / 外观 / 站点配置
+//   2. 渲染 React 邮件模板为 HTML
+//   3. 通过 nodemailer 发送
+//   4. 发送后自动向 email_log 写入记录（无论成败）
+//
+// 新增一种邮件模板的完整流程：
+//   1. 在 src/templates 下新建一个 *.tsx React Email 模板
+//   2. 在 db/table/email-log.ts 的 emailLogTypes 中补一个枚举值
+//   3. 在本文件新增一个 send*Email() 方法，调用 dispatch 并带上 type / params
+//   4. 如果需要让前台【发送邮件】接口可选该模板，同步扩展 email.dto.ts 的 EmailTemplateType
 import nodemailer from "nodemailer";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import type { TEmailLogType } from "../../db/table/email-log";
 import { configDao } from "../daos/config.dao";
+import { emailLogDao } from "../daos/email-log.dao";
 import type {
 	TAppearanceConfigUpsertDTO,
 	TSMTPConfigUpsertDTO,
@@ -10,6 +24,8 @@ import type {
 import type { TEmailSendDTO } from "../dtos/email.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
+import { LoginAlertEmail } from "../templates/LoginAlertEmail";
+import { ResetPasswordEmail } from "../templates/ResetPasswordEmail";
 import { SMTPTestEmail } from "../templates/SMTPTestEmail";
 
 interface SiteConfig {
@@ -23,6 +39,33 @@ interface DispatchOptions {
 	html: string;
 	smtpConfig: TSMTPConfigUpsertDTO["configValue"];
 	siteTitle: string;
+	/** 邮件类型，用于落库 email_log */
+	type: TEmailLogType;
+	/** 模板关键参数快照（用于后台展示和预览重渲染），可选 */
+	params?: Record<string, unknown>;
+	/** 触发来源（user uuid 或 'system'），可选 */
+	triggeredBy?: string | null;
+	/** 触发来源 IP，可选 */
+	ip?: string | null;
+}
+
+export interface SendLoginAlertParams {
+	to: string;
+	adminName: string;
+	currentIp: string;
+	currentLocation: string;
+	previousLocation: string;
+	loginAt: Date;
+	triggeredBy: string;
+}
+
+export interface SendResetPasswordParams {
+	to: string;
+	adminName: string;
+	code: string;
+	expiresInMinutes: number;
+	triggeredBy: string;
+	ip?: string | null;
 }
 
 class EmailService {
@@ -83,13 +126,24 @@ class EmailService {
 		};
 	}
 
-	/** 使用已就绪的配置实际投递邮件 */
+	/**
+	 * 统一的邮件投递出口，所有 send*Email 方法都归集到这里。
+	 *
+	 * - 调用者只需准备好 HTML 和元数据，dispatch 负责发送 + 落库两件事
+	 * - 发送成功 → 写一条 status=success 的 email_log
+	 * - 发送失败 → 写一条 status=failed + errorMessage 的 email_log，然后重抛 BusinessError
+	 * - email_log 写入本身出错不会影响主流程（参见 writeLog）
+	 */
 	private async dispatch({
 		to,
 		subject,
 		html,
 		smtpConfig,
 		siteTitle,
+		type,
+		params,
+		triggeredBy,
+		ip,
 	}: DispatchOptions): Promise<{ message: string; count?: number }> {
 		const transporter = this.createTransporter(smtpConfig);
 		const fromAddress = smtpConfig.senderEmail || smtpConfig.username;
@@ -102,12 +156,65 @@ class EmailService {
 				html,
 			});
 			this.logger.info({ to }, "邮件发送成功");
+			await this.writeLog({
+				type,
+				to,
+				subject,
+				status: "success",
+				params,
+				triggeredBy,
+				ip,
+			});
 			return { message: "邮件发送成功", count: to.length };
 		} catch (error) {
+			const errorMessage = (error as Error).message;
 			this.logger.error({ error }, "邮件发送失败");
-			throw new BusinessError(`邮件发送失败: ${(error as Error).message}`, {
+			await this.writeLog({
+				type,
+				to,
+				subject,
+				status: "failed",
+				errorMessage,
+				params,
+				triggeredBy,
+				ip,
+			});
+			throw new BusinessError(`邮件发送失败: ${errorMessage}`, {
 				status: 500,
 			});
+		}
+	}
+
+	/**
+	 * 写入 email_log 表。捕获自身的任何异常、只记错不重抛。
+	 *
+	 * 原因：邮件已经发送出去了，写日志是审计需求，不能因为表写入失败
+	 * 就向调用者报错（那会让前端以为邮件发失败）。
+	 * 同理，失败场景下写日志也不能压去原始错误。
+	 */
+	private async writeLog(data: {
+		type: TEmailLogType;
+		to: string[];
+		subject: string;
+		status: "success" | "failed";
+		errorMessage?: string;
+		params?: Record<string, unknown>;
+		triggeredBy?: string | null;
+		ip?: string | null;
+	}) {
+		try {
+			await emailLogDao.create({
+				type: data.type,
+				to: data.to.join(", "),
+				subject: data.subject,
+				status: data.status,
+				errorMessage: data.errorMessage ?? null,
+				params: data.params ?? null,
+				triggeredBy: data.triggeredBy ?? null,
+				ip: data.ip ?? null,
+			});
+		} catch (err) {
+			this.logger.error({ err }, "写入 email_log 失败");
 		}
 	}
 
@@ -173,17 +280,19 @@ class EmailService {
 			hour12: false,
 		});
 
+		const templateProps = {
+			siteTitle,
+			siteFooter,
+			senderEmail,
+			sentAt,
+			greeting: `你好，${adminName}！`,
+			testMessage: data.content[0],
+			footerNote: data.content[1],
+			hue,
+		};
+
 		const html = renderToStaticMarkup(
-			createElement(SMTPTestEmail, {
-				siteTitle,
-				siteFooter,
-				senderEmail,
-				sentAt,
-				greeting: `你好，${adminName}！`,
-				testMessage: data.content[0],
-				footerNote: data.content[1],
-				hue,
-			}),
+			createElement(SMTPTestEmail, templateProps),
 		);
 
 		return this.dispatch({
@@ -192,6 +301,83 @@ class EmailService {
 			html,
 			smtpConfig,
 			siteTitle,
+			type: "smtp_test",
+			params: templateProps,
+		});
+	}
+
+	/** 发送异地登录提醒邮件 */
+	async sendLoginAlertEmail(params: SendLoginAlertParams) {
+		const smtpConfig = await this.getSmtpConfig();
+		const { title: siteTitle, footer: siteFooter } = await this.getSiteConfig();
+		const { hue } = await this.getAppearanceConfig();
+
+		const loginAtStr = params.loginAt.toLocaleString("zh-CN", {
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+		});
+
+		const templateProps = {
+			siteTitle,
+			siteFooter,
+			greeting: `你好，${params.adminName}！`,
+			currentIp: params.currentIp,
+			currentLocation: params.currentLocation,
+			previousLocation: params.previousLocation,
+			loginAt: loginAtStr,
+			hue,
+		};
+
+		const html = renderToStaticMarkup(
+			createElement(LoginAlertEmail, templateProps),
+		);
+
+		return this.dispatch({
+			to: [params.to],
+			subject: `[${siteTitle}] 检测到来自新国家/地区的登录`,
+			html,
+			smtpConfig,
+			siteTitle,
+			type: "login_alert",
+			params: templateProps,
+			triggeredBy: params.triggeredBy,
+			ip: params.currentIp,
+		});
+	}
+
+	/** 发送密码重置验证码邮件 */
+	async sendResetPasswordEmail(params: SendResetPasswordParams) {
+		const smtpConfig = await this.getSmtpConfig();
+		const { title: siteTitle, footer: siteFooter } = await this.getSiteConfig();
+		const { hue } = await this.getAppearanceConfig();
+
+		const templateProps = {
+			siteTitle,
+			siteFooter,
+			greeting: `你好，${params.adminName}！`,
+			code: params.code,
+			expiresInMinutes: params.expiresInMinutes,
+			hue,
+		};
+
+		const html = renderToStaticMarkup(
+			createElement(ResetPasswordEmail, templateProps),
+		);
+
+		return this.dispatch({
+			to: [params.to],
+			subject: `[${siteTitle}] 密码重置验证码`,
+			html,
+			smtpConfig,
+			siteTitle,
+			type: "reset_password",
+			params: templateProps,
+			triggeredBy: params.triggeredBy,
+			ip: params.ip ?? null,
 		});
 	}
 }
