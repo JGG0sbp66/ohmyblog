@@ -1,9 +1,16 @@
 // src/services/auth.service.ts
 
+import { randomInt } from "node:crypto";
 import { configDao } from "../daos/config.dao";
+import { emailVerificationDao } from "../daos/email-verification.dao";
 import { userDao } from "../daos/user.dao";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
+import { emailService } from "./email.service";
+import { geoService } from "./geo.service";
+
+/** 重置密码验证码有效期（分钟） */
+const RESET_PASSWORD_CODE_TTL_MIN = 15;
 
 class AuthService {
 	private logger = logger.withTag("AuthService");
@@ -83,12 +90,159 @@ class AuthService {
 			user.status = "active";
 		}
 
-		// 4. 更新最后登录时间和 IP
-		// TODO(batch-2): 在更新前对比 IP geo，触发异地登录提醒邮件
+		// 4. 先抓上次登录的 IP（在更新前），后面用来做异地检测
+		const previousIp = user.lastLoginIp;
+
+		// 5. 更新最后登录时间和 IP
 		await userDao.updateLastLogin(user.uuid, ip);
 
 		this.logger.info({ userId: user.uuid }, "用户登录成功");
+
+		// 6. 异步触发异地登录检测（fire-and-forget）
+		//    - 不 await：避免 geo 查询 + 发邮件拖慢登录响应
+		//    - .catch 包住：防止 unhandled promise rejection 拖垮进程
+		if (previousIp) {
+			this.checkAndAlertGeoChange({
+				userUuid: user.uuid,
+				username: user.username,
+				email: user.email,
+				previousIp,
+				currentIp: ip,
+			}).catch((err) =>
+				this.logger.error({ err }, "异地登录检测任务异常"),
+			);
+		}
+
 		return user;
+	}
+
+	/**
+	 * 异地登录检测任务。不要直接 await 调用，请以 fire-and-forget 方式使用。
+	 */
+	private async checkAndAlertGeoChange(params: {
+		userUuid: string;
+		username: string;
+		email: string;
+		previousIp: string;
+		currentIp: string;
+	}) {
+		const diff = await geoService.isDifferentLocation(
+			params.previousIp,
+			params.currentIp,
+		);
+		if (!diff) return;
+
+		const [prevGeo, currGeo] = await Promise.all([
+			geoService.lookup(params.previousIp),
+			geoService.lookup(params.currentIp),
+		]);
+
+		const formatLocation = (g: { countryName: string | null; city: string | null }) =>
+			[g.countryName, g.city].filter(Boolean).join(" / ") || "未知";
+
+		this.logger.warn(
+			{
+				userId: params.userUuid,
+				prev: params.previousIp,
+				curr: params.currentIp,
+			},
+			"检测到异地登录，准备发送提醒邮件",
+		);
+
+		await emailService.sendLoginAlertEmail({
+			to: params.email,
+			adminName: params.username,
+			currentIp: params.currentIp,
+			currentLocation: formatLocation(currGeo),
+			previousLocation: formatLocation(prevGeo),
+			loginAt: new Date(),
+			triggeredBy: params.userUuid,
+		});
+	}
+
+	/**
+	 * 忘记密码第一步：根据邮箱发送验证码
+	 *
+	 * 安全设计：无论邮箱是否存在，都返回同样的成功提示，以防止
+	 * 攻击者通过接口枚举出有效邮箱。记得验证码只能发出去一次，带有
+	 * 15 分钟过期时间。
+	 *
+	 * @param email 用户邮箱
+	 * @param ip 请求来源 IP，写入验证码记录供审计
+	 */
+	async forgotPassword(email: string, ip: string) {
+		const user = await userDao.findByIdentifier(email);
+		// 邮箱不存在时静默返回，不暴露任何信息
+		if (!user) {
+			this.logger.warn({ email }, "重置密码请求指向不存在的邮箱");
+			return;
+		}
+		if (user.status === "banned") {
+			this.logger.warn({ userId: user.uuid }, "被封禁账户尝试重置密码");
+			return;
+		}
+
+		// 生成 6 位随机验证码（使用 crypto.randomInt 而非 Math.random，属于加密安全随机源）
+		const code = String(randomInt(100000, 1000000));
+		const expiresAt = new Date(
+			Date.now() + RESET_PASSWORD_CODE_TTL_MIN * 60 * 1000,
+		);
+
+		// 先作废旧码 → 再写新码，避免同时存在多个有效验证码
+		await emailVerificationDao.invalidateByUser(user.uuid, "reset_password");
+		await emailVerificationDao.create({
+			userUuid: user.uuid,
+			type: "reset_password",
+			code,
+			expiresAt,
+			ip,
+		});
+
+		await emailService.sendResetPasswordEmail({
+			to: user.email,
+			adminName: user.username,
+			code,
+			expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
+			triggeredBy: user.uuid,
+			ip,
+		});
+
+		this.logger.info({ userId: user.uuid }, "重置密码验证码已发送");
+	}
+
+	/**
+	 * 忘记密码第二步：验证 code 并重置密码
+	 *
+	 * 为了防止枚举、重放：
+	 * - code 严格与 email 绑定校验，不允许 A 账号的 code 重置 B 账号
+	 * - 验证成功后立即 markAsUsed，同一 code 不能用两次
+	 */
+	async resetPassword(email: string, code: string, newPassword: string) {
+		const record = await emailVerificationDao.findActiveByCode(
+			code,
+			"reset_password",
+		);
+		if (!record) {
+			throw new BusinessError("验证码无效或已过期", { status: 400 });
+		}
+
+		const user = await userDao.findById(record.userUuid);
+		if (!user || user.email !== email) {
+			this.logger.warn(
+				{ recordUserId: record.userUuid, submittedEmail: email },
+				"重置密码时 code 与邮箱不匹配",
+			);
+			throw new BusinessError("验证码无效或已过期", { status: 400 });
+		}
+		if (user.status === "banned") {
+			throw new BusinessError("账户已被封禁", { status: 403 });
+		}
+
+		const hashedPassword = await Bun.password.hash(newPassword);
+		await userDao.update(user.uuid, { passwordHash: hashedPassword });
+		await emailVerificationDao.markAsUsed(record.uuid);
+
+		this.logger.info({ userId: user.uuid }, "密码重置成功");
 	}
 
 	/**

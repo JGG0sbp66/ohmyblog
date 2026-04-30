@@ -349,6 +349,49 @@ class EmailService {
 		});
 	}
 
+	/**
+	 * 分页查询邮件发送历史（管理后台使用）
+	 * @param query 分页 + 类型 + 状态过滤
+	 */
+	async getEmailLogs(query: {
+		page?: number;
+		pageSize?: number;
+		type?: TEmailLogType;
+		status?: "success" | "failed";
+	}) {
+		return emailLogDao.findAll(query);
+	}
+
+	/**
+	 * 重新渲染历史邮件的 HTML（管理后台预览用）
+	 *
+	 * 实现方式：根据日志中保存的 type 选择对应模板，把 params 快照作为 props 重新跑一次渲染。
+	 * 因此模板必须设计为「纯函数 + props 自带默认值」，否则缺字段会渲染异常。
+	 *
+	 * 新增模板时记得在下方 switch 里追加分支。
+	 */
+	async previewEmailLog(uuid: string): Promise<string> {
+		const log = await emailLogDao.findById(uuid);
+		if (!log) {
+			throw new BusinessError("邮件记录不存在", { status: 404 });
+		}
+		// params 是 JSON 字段，类型在 drizzle 里是 unknown，这里按 type 分支兜底
+		const params = (log.params ?? {}) as Record<string, unknown>;
+		switch (log.type) {
+			case "smtp_test":
+				return renderToStaticMarkup(createElement(SMTPTestEmail, params));
+			case "login_alert":
+				return renderToStaticMarkup(createElement(LoginAlertEmail, params));
+			case "reset_password":
+				return renderToStaticMarkup(createElement(ResetPasswordEmail, params));
+			default: {
+				// 安全网：未来若新增 type 但忘了在这里加分支，会触发编译错误
+				const _exhaustive: never = log.type;
+				throw new BusinessError(`未知邮件类型: ${_exhaustive}`, { status: 500 });
+			}
+		}
+	}
+
 	/** 发送密码重置验证码邮件 */
 	async sendResetPasswordEmail(params: SendResetPasswordParams) {
 		const smtpConfig = await this.getSmtpConfig();
