@@ -5,6 +5,7 @@ import BaseCard from "@/components/base/card/BaseCard.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
+import ButtonThird from "@/components/base/button/ButtonThird.vue";
 import TypingBrand from "@/components/icon/TypingBrand.vue";
 import ArrowLeft from "@/components/icon/ui/ArrowLeft.vue";
 import { useAuthStore } from "@/stores/auth.store";
@@ -119,6 +120,16 @@ const handleLogin = async () => {
                     :placeholder="t('views.login.password.placeholder')"
                     :schema="LoginDTO.properties.password"
                     required
+                  />
+                </div>
+
+                <!-- 忘记密码 -->
+                <div
+                  class="-mt-3 flex justify-end text-xs onload-animation anim-delay-100"
+                >
+                  <ButtonThird
+                    :text="t('views.login.forgotPassword')"
+                    @click="router.push({ name: 'forgot-password' })"
                   />
                 </div>
 
