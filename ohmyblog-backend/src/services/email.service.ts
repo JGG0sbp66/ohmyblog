@@ -11,9 +11,9 @@
 //   2. 在 db/table/email-log.ts 的 emailLogTypes 中补一个枚举值
 //   3. 在本文件新增一个 send*Email() 方法，调用 dispatch 并带上 type / params
 //   4. 如果需要让前台【发送邮件】接口可选该模板，同步扩展 email.dto.ts 的 EmailTemplateType
+import { render } from "@react-email/components";
 import nodemailer from "nodemailer";
 import { createElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import type { TEmailLogType } from "../../db/table/email-log";
 import { configDao } from "../daos/config.dao";
 import { emailLogDao } from "../daos/email-log.dao";
@@ -291,9 +291,7 @@ class EmailService {
 			hue,
 		};
 
-		const html = renderToStaticMarkup(
-			createElement(SMTPTestEmail, templateProps),
-		);
+		const html = await render(createElement(SMTPTestEmail, templateProps));
 
 		return this.dispatch({
 			to: data.to,
@@ -332,9 +330,7 @@ class EmailService {
 			hue,
 		};
 
-		const html = renderToStaticMarkup(
-			createElement(LoginAlertEmail, templateProps),
-		);
+		const html = await render(createElement(LoginAlertEmail, templateProps));
 
 		return this.dispatch({
 			to: [params.to],
@@ -379,11 +375,11 @@ class EmailService {
 		const params = (log.params ?? {}) as Record<string, unknown>;
 		switch (log.type) {
 			case "smtp_test":
-				return renderToStaticMarkup(createElement(SMTPTestEmail, params));
+				return render(createElement(SMTPTestEmail, params));
 			case "login_alert":
-				return renderToStaticMarkup(createElement(LoginAlertEmail, params));
+				return render(createElement(LoginAlertEmail, params));
 			case "reset_password":
-				return renderToStaticMarkup(createElement(ResetPasswordEmail, params));
+				return render(createElement(ResetPasswordEmail, params));
 			default: {
 				// 安全网：未来若新增 type 但忘了在这里加分支，会触发编译错误
 				const _exhaustive: never = log.type;
@@ -407,9 +403,7 @@ class EmailService {
 			hue,
 		};
 
-		const html = renderToStaticMarkup(
-			createElement(ResetPasswordEmail, templateProps),
-		);
+		const html = await render(createElement(ResetPasswordEmail, templateProps));
 
 		return this.dispatch({
 			to: [params.to],
