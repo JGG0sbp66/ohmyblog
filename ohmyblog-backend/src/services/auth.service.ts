@@ -54,9 +54,10 @@ class AuthService {
 	 * 登录逻辑
 	 * @param identifier 用户名或邮箱
 	 * @param passwordPlain 明文密码
+	 * @param ip 客户端 IP，用于异地登录检测和登录历史记录
 	 * @returns 登录后的用户实体，调用方可读取 role / uuid 等字段
 	 */
-	async login(identifier: string, passwordPlain: string) {
+	async login(identifier: string, passwordPlain: string, ip: string) {
 		// 1. 查找用户
 		const user = await userDao.findByIdentifier(identifier);
 		if (!user) {
@@ -82,8 +83,9 @@ class AuthService {
 			user.status = "active";
 		}
 
-		// 4. 更新最后登录时间
-		await userDao.updateLastLogin(user.uuid);
+		// 4. 更新最后登录时间和 IP
+		// TODO(batch-2): 在更新前对比 IP geo，触发异地登录提醒邮件
+		await userDao.updateLastLogin(user.uuid, ip);
 
 		this.logger.info({ userId: user.uuid }, "用户登录成功");
 		return user;

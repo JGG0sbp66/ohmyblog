@@ -4,6 +4,7 @@ import { config } from "../env";
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
 import { authService } from "../services/auth.service";
+import { getClientIp } from "../utils/getClientIp";
 
 export const authRoute = new Elysia({ name: "authRoute" }).group(
 	"/auth",
@@ -38,8 +39,13 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 			// === 登录接口 ===
 			.post(
 				"/login",
-				async ({ body, jwt, cookie }) => {
-					const user = await authService.login(body.identifier, body.password);
+				async ({ body, jwt, cookie, request, server }) => {
+					const ip = getClientIp({ request, server });
+					const user = await authService.login(
+						body.identifier,
+						body.password,
+						ip,
+					);
 
 					const token = await jwt.sign({
 						uuid: user.uuid,
