@@ -15,6 +15,12 @@ export const emailLog = sqliteTable("email_log", {
 	// 邮件类型: smtp_test / login_alert / reset_password
 	type: text("type", { enum: emailLogTypes }).notNull(),
 
+	// 发件人名称（如: "no-reply"、站点名等）
+	fromName: text("from_name").notNull().default(""),
+
+	// 发件人邮箱
+	fromEmail: text("from_email").notNull().default(""),
+
 	// 收件人（单个邮箱或逗号分隔的多个邮箱）
 	to: text("to").notNull(),
 

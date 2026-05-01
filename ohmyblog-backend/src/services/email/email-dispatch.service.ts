@@ -58,6 +58,8 @@ class EmailDispatchService {
 				subject,
 				status: "success",
 				params,
+				fromName,
+				fromEmail: fromAddress,
 			});
 			return { message: "邮件发送成功", count: to.length };
 		} catch (error) {
@@ -70,6 +72,8 @@ class EmailDispatchService {
 				status: "failed",
 				errorMessage,
 				params,
+				fromName,
+				fromEmail: fromAddress,
 			});
 			throw new BusinessError(`邮件发送失败: ${errorMessage}`, {
 				status: 500,
@@ -81,7 +85,6 @@ class EmailDispatchService {
 	 * 写入 email_log 表
 	 * @param data 日志记录详情
 	 */
-	// TODO: review代码
 	private async writeLog(data: {
 		type: TEmailLogType;
 		to: string[];
@@ -89,10 +92,14 @@ class EmailDispatchService {
 		status: TEmailLogStatus;
 		errorMessage?: string;
 		params?: Record<string, unknown>;
+		fromName: string;
+		fromEmail: string;
 	}) {
 		try {
 			await emailLogDao.create({
 				type: data.type,
+				fromName: data.fromName,
+				fromEmail: data.fromEmail,
 				to: data.to.join(", "),
 				subject: data.subject,
 				status: data.status,
