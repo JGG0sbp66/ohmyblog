@@ -249,6 +249,27 @@
         "resend": "没收到？重新发送"
       }
     },
+    "emails": {
+      "title": "邮件管理",
+      "filters": {
+        "all": "全部",
+        "type": "类型"
+      },
+      "types": {
+        "smtp_test": "SMTP 测试",
+        "login_alert": "异地登录提醒",
+        "reset_password": "密码重置"
+      },
+      "statuses": {
+        "success": "成功",
+        "failed": "失败"
+      },
+      "preview": {
+        "errorMessageLabel": "失败原因"
+      },
+      "empty_selection_title": "未选中邮件",
+      "empty_selection_desc": "请从左侧列表中选择一封邮件来查看其详细内容。"
+    },
     "setup": {
       "steps": {
         "step1": {
@@ -401,6 +422,10 @@
       "count": "共 {count} 条",
       "empty": "暂无数据，请点击上方按钮添加"
     },
+    "refresh": "刷新列表",
+    "clear_all": "清空日志",
+    "no_data": "暂无消息",
+    "no_more_data": "已经到底啦",
     "validation": {
       "auth": {
         "username_range": "用户名长度需在3-50位之间",

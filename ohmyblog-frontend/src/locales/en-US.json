@@ -251,6 +251,27 @@
         "resend": "Didn't receive? Resend"
       }
     },
+    "emails": {
+      "title": "Email Management",
+      "filters": {
+        "all": "All",
+        "type": "Type"
+      },
+      "types": {
+        "smtp_test": "SMTP Test",
+        "login_alert": "Login Alert",
+        "reset_password": "Password Reset"
+      },
+      "statuses": {
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "preview": {
+        "errorMessageLabel": "Error"
+      },
+      "empty_selection_title": "No Message Selected",
+      "empty_selection_desc": "Select a message from the list to view its details and content."
+    },
     "setup": {
       "steps": {
         "step1": {
@@ -400,9 +421,13 @@
   },
   "common": {
     "list": {
-      "count": "{count} items",
-      "empty": "No data yet. Click the button above to add."
+      "count": "{count} items in total",
+      "empty": "No data yet, click the button above to add"
     },
+    "refresh": "Refresh List",
+    "clear_all": "Clear Logs",
+    "no_data": "No messages",
+    "no_more_data": "No more data",
     "validation": {
       "auth": {
         "username_range": "Username must be between 3-50 characters",
