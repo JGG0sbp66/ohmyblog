@@ -2,7 +2,10 @@
 import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { emailLog } from "../../db/schema";
-import type { TEmailLogStatus, TEmailLogType } from "../../db/constants/email-log.constants";
+import type {
+	TEmailLogStatus,
+	TEmailLogType,
+} from "../../db/constants/email-log.constants";
 
 export type NewEmailLog = typeof emailLog.$inferInsert;
 
@@ -46,10 +49,7 @@ class EmailLogDao {
 				.orderBy(desc(emailLog.createdAt))
 				.limit(pageSize)
 				.offset(offset),
-			db
-				.select({ total: count() })
-				.from(emailLog)
-				.where(where),
+			db.select({ total: count() }).from(emailLog).where(where),
 		]);
 
 		return { list, total: totalResult[0].total };

@@ -133,8 +133,7 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				{
 					detail: {
 						summary: "忘记密码 - 请求验证码",
-						description:
-							"出于安全考虑，无论邮箱是否注册都返回相同的成功提示。",
+						description: "出于安全考虑，无论邮箱是否注册都返回相同的成功提示。",
 					},
 					body: ForgotPasswordDTO,
 				},

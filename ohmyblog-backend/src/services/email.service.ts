@@ -381,7 +381,9 @@ class EmailService {
 			default: {
 				// 安全网：未来若新增 type 但忘了在这里加分支，会触发编译错误
 				const _exhaustive: never = log.type;
-				throw new BusinessError(`未知邮件类型: ${_exhaustive}`, { status: 500 });
+				throw new BusinessError(`未知邮件类型: ${_exhaustive}`, {
+					status: 500,
+				});
 			}
 		}
 	}

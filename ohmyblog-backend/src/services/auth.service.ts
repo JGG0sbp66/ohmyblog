@@ -108,9 +108,7 @@ class AuthService {
 				email: user.email,
 				previousIp,
 				currentIp: ip,
-			}).catch((err) =>
-				this.logger.error({ err }, "异地登录检测任务异常"),
-			);
+			}).catch((err) => this.logger.error({ err }, "异地登录检测任务异常"));
 		}
 
 		return user;
@@ -137,8 +135,10 @@ class AuthService {
 			geoService.lookup(params.currentIp),
 		]);
 
-		const formatLocation = (g: { countryName: string | null; city: string | null }) =>
-			[g.countryName, g.city].filter(Boolean).join(" / ") || "未知";
+		const formatLocation = (g: {
+			countryName: string | null;
+			city: string | null;
+		}) => [g.countryName, g.city].filter(Boolean).join(" / ") || "未知";
 
 		this.logger.warn(
 			{
