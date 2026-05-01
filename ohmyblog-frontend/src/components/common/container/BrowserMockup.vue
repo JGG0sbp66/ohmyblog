@@ -27,7 +27,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <div
-    class="flex-1 bg-bg-card rounded-3xl shadow-xl overflow-hidden relative group flex flex-col transition-all duration-500 self-stretch border border-border/50"
+    class="flex-1 bg-bg-card rounded-3xl shadow-lg overflow-hidden relative group flex flex-col transition-all duration-500 self-stretch border border-border/50"
   >
     <!-- 1. 浏览器模拟工具栏 -->
     <div
