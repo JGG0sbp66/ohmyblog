@@ -1,6 +1,7 @@
 // src/dtos/config.dto.ts
 import { type Static, t } from "elysia";
 import { tStringEnum } from "../utils/typebox";
+import { themeModes, supportedLanguages } from "../../db/constants/config.constants";
 
 const ConfigMetaDTO = {
 	description: t.Optional(
@@ -21,7 +22,7 @@ const ConfigMetaDTO = {
 export const AppearanceConfigUpsertDTO = t.Object({
 	configKey: t.Literal("appearance"),
 	configValue: t.Object({
-		theme: tStringEnum(["light", "dark", "auto"] as const, {
+		theme: tStringEnum(themeModes, {
 			description: "主题模式",
 			error: "appearance.theme_invalid",
 		}),
@@ -31,7 +32,7 @@ export const AppearanceConfigUpsertDTO = t.Object({
 			description: "主题色相",
 			error: "appearance.hue_range",
 		}),
-		language: tStringEnum(["zh-CN", "en-US"] as const, {
+		language: tStringEnum(supportedLanguages, {
 			description: "界面语言",
 			error: "appearance.language_invalid",
 		}),
