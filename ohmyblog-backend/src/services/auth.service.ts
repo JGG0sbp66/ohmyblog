@@ -1,13 +1,11 @@
 // src/services/auth.service.ts
 
-import { randomInt } from "node:crypto";
 import { configDao } from "../daos/config.dao";
 import { emailVerificationDao } from "../daos/email-verification.dao";
 import { userDao } from "../daos/user.dao";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
-import { emailService } from "./email.service";
-import { geoService } from "./geo.service";
+import { emailSenderService } from "./email/email-sender.service";
 
 /** 重置密码验证码有效期（分钟） */
 const RESET_PASSWORD_CODE_TTL_MIN = 15;
@@ -99,65 +97,18 @@ class AuthService {
 		this.logger.info({ userId: user.uuid }, "用户登录成功");
 
 		// 6. 异步触发异地登录检测（fire-and-forget）
-		//    - 不 await：避免 geo 查询 + 发邮件拖慢登录响应
-		//    - .catch 包住：防止 unhandled promise rejection 拖垮进程
 		if (previousIp) {
-			this.checkAndAlertGeoChange({
-				userUuid: user.uuid,
-				username: user.username,
-				email: user.email,
-				previousIp,
-				currentIp: ip,
-			}).catch((err) => this.logger.error({ err }, "异地登录检测任务异常"));
+			emailSenderService
+				.maybeSendLoginAlert({
+					to: user.email,
+					currentIp: ip,
+					previousIp,
+					loginAt: new Date(),
+				})
+				.catch((err: unknown) => this.logger.error({ err }, "异地登录检测任务异常"));
 		}
 
 		return user;
-	}
-
-	/**
-	 * 异地登录检测任务。不要直接 await 调用，请以 fire-and-forget 方式使用。
-	 */
-	private async checkAndAlertGeoChange(params: {
-		userUuid: string;
-		username: string;
-		email: string;
-		previousIp: string;
-		currentIp: string;
-	}) {
-		const diff = await geoService.isDifferentLocation(
-			params.previousIp,
-			params.currentIp,
-		);
-		if (!diff) return;
-
-		const [prevGeo, currGeo] = await Promise.all([
-			geoService.lookup(params.previousIp),
-			geoService.lookup(params.currentIp),
-		]);
-
-		const formatLocation = (g: {
-			countryName: string | null;
-			city: string | null;
-		}) => [g.countryName, g.city].filter(Boolean).join(" / ") || "未知";
-
-		this.logger.warn(
-			{
-				userId: params.userUuid,
-				prev: params.previousIp,
-				curr: params.currentIp,
-			},
-			"检测到异地登录，准备发送提醒邮件",
-		);
-
-		await emailService.sendLoginAlertEmail({
-			to: params.email,
-			adminName: params.username,
-			currentIp: params.currentIp,
-			currentLocation: formatLocation(currGeo),
-			previousLocation: formatLocation(prevGeo),
-			loginAt: new Date(),
-			triggeredBy: params.userUuid,
-		});
 	}
 
 	/**
@@ -182,8 +133,14 @@ class AuthService {
 			return;
 		}
 
-		// 生成 6 位随机验证码（使用 crypto.randomInt 而非 Math.random，属于加密安全随机源）
-		const code = String(randomInt(100000, 1000000));
+		// 1. 发送邮件并在内部生成加密安全验证码
+		const { code } = await emailSenderService.sendResetPasswordEmail({
+			to: user.email,
+			expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
+			ip,
+		});
+
+		// 2. 将生成的验证码及过期信息存入数据库
 		const expiresAt = new Date(
 			Date.now() + RESET_PASSWORD_CODE_TTL_MIN * 60 * 1000,
 		);
@@ -195,15 +152,6 @@ class AuthService {
 			type: "reset_password",
 			code,
 			expiresAt,
-			ip,
-		});
-
-		await emailService.sendResetPasswordEmail({
-			to: user.email,
-			adminName: user.username,
-			code,
-			expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
-			triggeredBy: user.uuid,
 			ip,
 		});
 
