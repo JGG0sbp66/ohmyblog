@@ -90,30 +90,6 @@ class GeoService {
 	}
 
 	/**
-	 * 判断两个 IP 是否属于不同的地理位置（城市级）
-	 * 比较规则：
-	 *   - 国家不同 → 异地
-	 *   - 国家相同但城市不同 → 异地
-	 *   - 任一解析失败或关键字段缺失 → 视为相同（避免误报）
-	 */
-	async isDifferentLocation(
-		prevIp: string,
-		currentIp: string,
-	): Promise<boolean> {
-		if (!prevIp || !currentIp || prevIp === currentIp) return false;
-		const [prev, curr] = await Promise.all([
-			this.lookup(prevIp),
-			this.lookup(currentIp),
-		]);
-		if (!prev.ok || !curr.ok) return false;
-		if (!prev.country || !curr.country) return false;
-		if (prev.country !== curr.country) return true;
-		// 同国家，进一步比较城市
-		if (!prev.city || !curr.city) return false;
-		return prev.city !== curr.city;
-	}
-
-	/**
 	 * 判断是否为本地或 RFC1918 保留内网地址。
 	 * 这类 IP 调用外部 API 总是返回失败，提前拦截可以：
 	 *   - 减少一次不必要的网络请求
@@ -135,6 +111,17 @@ class GeoService {
 		// IPv6 链路本地
 		if (ip.startsWith("fe80:")) return true;
 		return false;
+	}
+
+	/**
+	 * 格式化地理位置信息为可读字符串（例如 "中国 / 上海"）
+	 * @param geo 地理位置信息对象
+	 * @returns 格式化后的字符串，解析失败或为空时返回 "未知"
+	 */
+	// TODO: review代码
+	formatLocation(geo: Partial<GeoInfo> | null | undefined): string {
+		if (!geo) return "未知";
+		return [geo.countryName, geo.city].filter(Boolean).join(" / ") || "未知";
 	}
 }
 
