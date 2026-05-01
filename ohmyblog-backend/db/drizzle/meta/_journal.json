@@ -22,6 +22,13 @@
       "when": 1777613742565,
       "tag": "0002_nice_martin_li",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1777630245002,
+      "tag": "0003_add_from_to_email_log",
+      "breakpoints": true
     }
   ]
 }
