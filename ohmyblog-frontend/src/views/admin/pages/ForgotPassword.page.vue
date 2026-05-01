@@ -11,7 +11,7 @@ import { useRouter } from "vue-router";
 import AuthLayout from "@/views/admin/components/layout/AuthLayout.vue";
 import ForgotPasswordStep1Email from "@/views/admin/components/forgot-password/ForgotPasswordStep1Email.vue";
 import ForgotPasswordStep2Reset from "@/views/admin/components/forgot-password/ForgotPasswordStep2Reset.vue";
-import type { ForgotPasswordForm } from "@/views/admin/components/forgot-password/types";
+import type { ForgotPasswordForm } from "@/api/shared";
 import { forgotPassword, resetPassword } from "@/api/auth.api";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";

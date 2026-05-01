@@ -12,7 +12,7 @@ import ArrowLeft from "@/components/icon/ui/ArrowLeft.vue";
 import { ForgotPasswordDTO } from "@server/dtos/auth.dto";
 import { useLang } from "@/composables/lang.hook";
 import type { Validatable } from "@/composables/setup-step.hook";
-import type { ForgotPasswordForm } from "./types";
+import type { ForgotPasswordForm } from "@/api/shared";
 
 defineProps<{
   form: ForgotPasswordForm;

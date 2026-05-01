@@ -8,6 +8,7 @@ import { useTheme } from "@/composables/theme.hook";
 import { useLang } from "@/composables/lang.hook";
 import { useSetupStep } from "@/composables/setup-step.hook";
 import { upsertConfig } from "@/api/config.api";
+import type { TThemeMode, TLanguage } from "@/api/shared";
 import type { TAppearanceConfigUpsertDTO } from "@server/dtos/config.dto";
 
 const { t, locale } = useLang();
@@ -18,9 +19,9 @@ const { isSubmitting, runStep } = useSetupStep();
 const handleNext = () => {
   runStep(async () => {
     const configValue: TAppearanceConfigUpsertDTO["configValue"] = {
-      theme: colorMode.value,
+      theme: colorMode.value as TThemeMode,
       hue: currentHue.value,
-      language: locale.value,
+      language: locale.value as TLanguage,
     };
 
     return upsertConfig({
