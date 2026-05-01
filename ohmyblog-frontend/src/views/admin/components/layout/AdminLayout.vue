@@ -10,7 +10,7 @@ import AdminHeader from "./AdminHeader.vue";
     <AdminHeader />
 
     <!-- 下方内容区 - 圆角卡片样式 -->
-    <div class="flex-1 flex gap-4 min-h-0 pr-4 pb-4 pt-4 overflow-hidden">
+    <div class="flex-1 flex gap-4 min-h-0 pr-4 pb-4 overflow-hidden">
       <!-- 侧边栏 -->
       <AdminSidebar class="h-full" />
 
