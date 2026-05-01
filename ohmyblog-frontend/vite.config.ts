@@ -33,6 +33,10 @@ export default defineConfig({
       "@server/db/constants": fileURLToPath(
         new URL("../ohmyblog-backend/db/constants", import.meta.url),
       ),
+      // 后端数据库表定义（用于推断类型）
+      "@server/db/table": fileURLToPath(
+        new URL("../ohmyblog-backend/db/table", import.meta.url),
+      ),
       // 锁定与后端一致的 Elysia 类型
       elysia: fileURLToPath(
         new URL("../ohmyblog-backend/node_modules/elysia", import.meta.url),

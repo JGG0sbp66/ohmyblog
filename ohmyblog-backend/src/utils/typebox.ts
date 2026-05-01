@@ -4,19 +4,6 @@
 import { t } from "elysia";
 
 /**
- * 把一个 `readonly string[]` 字面量数组映射为 TypeBox 的 TLiteral 元组。
- * 必须保留每个字面量类型才能让 t.Union 推导出 union of literals 而不是 string。
- *
- * 一般不需要直接调用，优先使用 `tStringEnum`。
- */
-export const literalsOf = <T extends readonly string[]>(values: T) =>
-	values.map((v) => t.Literal(v)) as {
-		-readonly [K in keyof T]: T[K] extends string
-			? ReturnType<typeof t.Literal<T[K]>>
-			: never;
-	};
-
-/**
  * 由字面量数组生成 `t.Union(TLiteral[])` schema。
  *
  * @example
@@ -31,4 +18,5 @@ export const literalsOf = <T extends readonly string[]>(values: T) =>
 export const tStringEnum = <T extends readonly string[]>(
 	values: T,
 	options?: Parameters<typeof t.Union>[1],
-) => t.Union(literalsOf(values), options);
+) => t.Unsafe<T[number]>(t.Union(values.map((v) => t.Literal(v)), options));
+
