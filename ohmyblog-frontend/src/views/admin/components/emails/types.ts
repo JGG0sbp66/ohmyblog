@@ -1,6 +1,9 @@
 // src/views/admin/components/emails/types.ts
 import type { TEmailLog } from "@server/db/table/email-log";
 import type { TEmailLogQueryDTO } from "@server/dtos/email.dto";
+import type { TEmailLogType } from "@/api/shared";
+
+export type { TEmailLogType };
 
 /**
  * 列表项类型
