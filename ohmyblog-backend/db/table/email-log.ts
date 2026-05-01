@@ -30,12 +30,6 @@ export const emailLog = sqliteTable("email_log", {
 	// 模板关键参数快照（JSON），用于后台展示和预览重渲染
 	params: text("params", { mode: "json" }),
 
-	// 触发来源的 IP 地址
-	ip: text("ip"),
-
-	// 触发来源（user uuid 或 'system'）
-	triggeredBy: text("triggered_by"),
-
 	// 发送时间
 	createdAt: integer("created_at", { mode: "timestamp" })
 		.notNull()
