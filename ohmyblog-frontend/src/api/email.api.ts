@@ -3,7 +3,7 @@ import { api, unwrap } from "./client";
 import type { TSMTPConfigUpsertDTO } from "@server/dtos/config.dto";
 import type {
   TEmailLogQueryDTO,
-  TEmailSendDTO,
+  TEmailTestDTO,
 } from "@server/dtos/email.dto";
 
 /**
@@ -17,11 +17,11 @@ export const testSMTPConnection = (
 };
 
 /**
- * POST /api/email/send
- * 发送通知邮件
+ * POST /api/email/send-test-email
+ * 发送 SMTP 测试邮件
  */
-export const sendEmail = (data: TEmailSendDTO) => {
-  return unwrap(api.api.email.send.post(data));
+export const sendTestEmail = (data: TEmailTestDTO) => {
+  return unwrap(api.api.email["send-test-email"].post(data));
 };
 
 /**
