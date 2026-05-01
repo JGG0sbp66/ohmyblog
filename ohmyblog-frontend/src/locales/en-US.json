@@ -212,7 +212,65 @@
         "placeholder": "Enter your password"
       },
       "submit": "Sign In",
-      "backToHome": "Back to Home"
+      "backToHome": "Back to Home",
+      "forgotPassword": "Forgot password?"
+    },
+    "forgotPassword": {
+      "brand": {
+        "line1": "Don't worry",
+        "line2": "We'll help you in",
+        "line3": "Keep your blog safe"
+      },
+      "step1": {
+        "title": "Forgot Password",
+        "description": "Enter your registered email and we'll send you a verification code",
+        "email": {
+          "label": "Email",
+          "placeholder": "Enter the email you registered with"
+        },
+        "submit": "Send Code",
+        "backToLogin": "Back to Sign In"
+      },
+      "step2": {
+        "title": "Reset Password",
+        "description": "Enter the 6-digit code from your email and set a new password",
+        "email": {
+          "label": "Email"
+        },
+        "code": {
+          "label": "Verification Code",
+          "placeholder": "Enter 6-digit code",
+          "hint": "The code is valid for 15 minutes"
+        },
+        "newPassword": {
+          "label": "New Password",
+          "placeholder": "Choose a new password"
+        },
+        "submit": "Reset Password",
+        "back": "Back to previous step",
+        "resend": "Didn't receive? Resend"
+      }
+    },
+    "emails": {
+      "title": "Email Management",
+      "filters": {
+        "all": "All",
+        "type": "Type"
+      },
+      "types": {
+        "smtp_test": "SMTP Test",
+        "login_alert": "Login Alert",
+        "reset_password": "Password Reset"
+      },
+      "statuses": {
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "preview": {
+        "errorMessageLabel": "Error"
+      },
+      "empty_selection_title": "No Message Selected",
+      "empty_selection_desc": "Select a message from the list to view its details and content."
     },
     "setup": {
       "steps": {
@@ -363,9 +421,13 @@
   },
   "common": {
     "list": {
-      "count": "{count} items",
-      "empty": "No data yet. Click the button above to add."
+      "count": "{count} items in total",
+      "empty": "No data yet, click the button above to add"
     },
+    "refresh": "Refresh List",
+    "clear_all": "Clear Logs",
+    "no_data": "No messages",
+    "no_more_data": "No more data",
     "validation": {
       "auth": {
         "username_range": "Username must be between 3-50 characters",
@@ -444,7 +506,9 @@
       "SMTP 服务器连接失败: Connection timeout": "SMTP connection failed: Connection timeout",
       "SMTP 服务器连接失败: Greeting never received": "SMTP connection failed: Greeting never received (Check encryption settings or port)",
       "SMTP 配置不存在，请先完成邮件服务配置": "SMTP is not configured. Please complete your email settings first.",
-      "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP is disabled. Please enable it in Settings first."
+      "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP is disabled. Please enable it in Settings first.",
+      "验证码无效或已过期": "Verification code is invalid or expired",
+      "账户已被封禁": "This account has been banned"
     },
     "success": {
       "保存成功": "Settings saved successfully",
@@ -455,7 +519,9 @@
       "图标上传成功": "Icon uploaded successfully",
       "横幅上传成功": "Banner uploaded successfully",
       "头像上传成功": "Avatar uploaded successfully",
-      "邮件发送成功": "Email sent successfully"
+      "邮件发送成功": "Email sent successfully",
+      "若邮箱存在，验证码已发送，请注意查收": "If the email exists, a verification code has been sent",
+      "密码重置成功，请使用新密码登录": "Password reset successfully. Please sign in with your new password"
     }
   }
 }

@@ -1,6 +1,6 @@
 import { jwt } from "@elysiajs/jwt";
 import { Elysia, t } from "elysia";
-import type { Roles } from "../../db/schema";
+import type { Roles } from "../../db/constants/user.constants";
 import { config } from "../env";
 import { BusinessError } from "./errors";
 

@@ -1,0 +1,1 @@
+ALTER TABLE `email_log` DROP COLUMN `triggered_by`;

@@ -29,6 +29,14 @@ export default defineConfig({
       "@server/dtos": fileURLToPath(
         new URL("../ohmyblog-backend/src/dtos", import.meta.url),
       ),
+      // 后端 db/constants 下的零依赖共享常量（前后端复用枚举字面量）
+      "@server/db/constants": fileURLToPath(
+        new URL("../ohmyblog-backend/db/constants", import.meta.url),
+      ),
+      // 后端数据库表定义（用于推断类型）
+      "@server/db/table": fileURLToPath(
+        new URL("../ohmyblog-backend/db/table", import.meta.url),
+      ),
       // 锁定与后端一致的 Elysia 类型
       elysia: fileURLToPath(
         new URL("../ohmyblog-backend/node_modules/elysia", import.meta.url),

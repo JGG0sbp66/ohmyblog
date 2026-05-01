@@ -12,7 +12,10 @@ const systemStore = useSystemStore();
 </script>
 
 <template>
-  <BrowserMockup :title="systemStore.siteInfo.title" :icon="systemStore.siteInfo.favicon">
+  <BrowserMockup
+    :title="systemStore.siteInfo.title"
+    :icon="systemStore.siteInfo.favicon"
+  >
     <div
       class="w-full h-full overflow-y-auto overflow-x-hidden bg-bg custom-scrollbar flex flex-col"
     >

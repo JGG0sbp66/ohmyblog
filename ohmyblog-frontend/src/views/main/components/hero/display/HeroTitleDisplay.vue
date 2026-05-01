@@ -104,7 +104,10 @@ const shouldDisplay = computed(() => {
 
     <!-- 副标题 (打字机效果) -->
     <div
-      v-if="systemStore.personalInfo.heroSubtitles && systemStore.personalInfo.heroSubtitles.length > 0"
+      v-if="
+        systemStore.personalInfo.heroSubtitles &&
+        systemStore.personalInfo.heroSubtitles.length > 0
+      "
       class="text-lg md:text-xl lg:text-2xl font-semibold min-h-[2em] flex items-center"
       style="text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6)"
     >

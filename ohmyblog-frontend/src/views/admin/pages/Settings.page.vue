@@ -38,24 +38,20 @@ const activeTab = ref("appearance");
 </script>
 
 <template>
-  <div class="flex flex-col flex-1 min-h-0">
-    <!-- Teleport 到 AdminHeader 的中间区域 -->
-    <Teleport defer to="#admin-header-center">
-      <SettingsNav
-        :menu-items="menuItems"
-        v-model:active-tab="activeTab"
-        class="onload-animation"
-      />
-    </Teleport>
+  <!-- Teleport 到 AdminHeader 的中间区域 -->
+  <Teleport defer to="#admin-header-center">
+    <SettingsNav
+      :menu-items="menuItems"
+      v-model:active-tab="activeTab"
+      class="onload-animation"
+    />
+  </Teleport>
 
-    <!-- 主内容区 -->
-    <div class="flex-1 min-h-0 flex flex-col">
-      <component
-        :is="menuItems.find((i) => i.id === activeTab)?.component"
-        class="flex-1"
-      />
-    </div>
-  </div>
+  <!-- 主内容区 -->
+  <component
+    :is="menuItems.find((i) => i.id === activeTab)?.component"
+    class="flex-1"
+  />
 </template>
 
 <style scoped></style>

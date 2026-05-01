@@ -2,6 +2,8 @@
 import { useColorMode, useCssVar, useStorage } from "@vueuse/core";
 import { computed, watch } from "vue";
 import { getConfig } from "@/api/config.api";
+import type { TThemeMode } from "@/api/shared";
+import { THEME_MODES } from "@/api/shared";
 
 /**
  * 主题配置常量存储键名
@@ -10,15 +12,6 @@ const STORAGE_KEYS = {
   THEME: "colorMode", // 存储主题模式 (light/dark/auto)
   HUE: "app-hue", // 存储主题色相 (0-360)
 } as const;
-
-/**
- * 支持的主题模式：
- * - light: 浅色模式
- * - dark: 深色模式
- * - auto: 跟随系统设置
- */
-export const THEME_MODES = ["light", "dark", "auto"] as const;
-export type ThemeMode = (typeof THEME_MODES)[number];
 
 /**
  * 默认视觉配置
@@ -34,7 +27,7 @@ export const DEFAULT_HUE = 250; // 默认品牌色相 (蓝色)
  * 2. <html> 标签上的 .dark 类名切换
  * 3. 当设置为 'auto' 时，自动监听系统的 prefers-color-scheme
  */
-const colorMode = useColorMode<ThemeMode>({
+const colorMode = useColorMode<TThemeMode>({
   storageKey: STORAGE_KEYS.THEME,
   initialValue: "auto",
   emitAuto: true,
@@ -90,7 +83,7 @@ export function useTheme() {
    * 设置主题模式
    * @param mode 主题模式 (light | dark | auto)
    */
-  const setTheme = (mode: ThemeMode) => {
+  const setTheme = (mode: TThemeMode) => {
     // 临时禁用文字颜色过渡，避免深浅模式切换时的黑白闪烁
     // 但保留背景色、边框等的过渡效果
     document.documentElement.classList.add("no-color-transition");
@@ -166,7 +159,6 @@ export function useTheme() {
     initThemeConfig,
 
     // 常量
-    THEME_MODES,
     DEFAULT_HUE,
   };
 }

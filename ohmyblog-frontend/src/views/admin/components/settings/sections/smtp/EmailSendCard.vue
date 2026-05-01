@@ -13,7 +13,7 @@ import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
 import { useListEditor } from "@/composables/list-editor.hook";
 import { generateId } from "@/utils/id";
-import { sendEmail } from "@/api/email.api";
+import { sendTestEmail } from "@/api/email.api";
 
 const { t } = useLang();
 const toast = useToast;
@@ -58,7 +58,10 @@ watch(recipientInput, (newVal) => {
     .split(/[,;，；\s]+/)
     .map((e) => e.trim())
     .filter(Boolean);
-  recipients.value = emails.map((email) => ({ value: email, id: generateId() }));
+  recipients.value = emails.map((email) => ({
+    value: email,
+    id: generateId(),
+  }));
   nextTick(() => {
     isSyncing.value = false;
   });
@@ -74,7 +77,7 @@ const handleSend = async () => {
   }
   try {
     isSending.value = true;
-    const result = await sendEmail({ to, content: [] });
+    const result = await sendTestEmail({ to });
     if (result?.message) {
       toast.success(t(`api.success.${result.message}`));
     }

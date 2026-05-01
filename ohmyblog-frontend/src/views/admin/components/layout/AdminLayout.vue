@@ -10,12 +10,14 @@ import AdminHeader from "./AdminHeader.vue";
     <AdminHeader />
 
     <!-- 下方内容区 - 圆角卡片样式 -->
-    <div class="flex-1 flex gap-4 min-h-0 pr-4 pb-4 pt-4 overflow-hidden">
+    <div class="flex-1 flex gap-4 min-h-0 pr-4 pb-4 overflow-hidden">
       <!-- 侧边栏 -->
       <AdminSidebar class="h-full" />
 
       <!-- 主内容区 -->
-      <main class="flex-1 p-6 flex flex-col min-h-0 overflow-y-auto custom-scrollbar">
+      <main
+        class="flex-1 p-6 flex flex-col min-h-0 overflow-y-auto custom-scrollbar"
+      >
         <div
           class="flex-1 flex flex-col min-h-0 onload-animation anim-delay-150"
         >

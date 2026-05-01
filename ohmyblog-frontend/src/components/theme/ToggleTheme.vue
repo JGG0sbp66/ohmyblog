@@ -6,19 +6,20 @@ import ThemePicker from "../icon/theme/ThemePicker.vue";
 import { computed } from "vue";
 import { useLang } from "@/composables/lang.hook";
 import DropButton from "../common/button/DropButton.vue";
+import { type TThemeMode, THEME_MODES } from "@/api/shared";
 
 const { t } = useLang();
-const { colorMode, cycleTheme, setTheme, THEME_MODES } = useTheme();
+const { colorMode, cycleTheme, setTheme } = useTheme();
 
 const themeOptions = computed(() => {
-  return THEME_MODES.map((mode) => ({
+  return THEME_MODES.map((mode: TThemeMode) => ({
     value: mode,
     label: t(`components.theme.ToggleTheme.${mode}`),
   }));
 });
 
 // 判断当前主题是否为选中主题
-const isActive = (value: string) => {
+const isActive = (value: TThemeMode) => {
   return colorMode.value === value;
 };
 </script>

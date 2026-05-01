@@ -53,10 +53,10 @@ const validate = () => {
   ].every((res) => res === true);
 
   const senderEmailValid = props.isAdvancedExpanded
-    ? senderEmailRef.value?.validate?.() ?? true
+    ? (senderEmailRef.value?.validate?.() ?? true)
     : true;
   const senderNameValid = props.isAdvancedExpanded
-    ? senderNameRef.value?.validate?.() ?? true
+    ? (senderNameRef.value?.validate?.() ?? true)
     : true;
 
   return baseFieldValid && senderEmailValid && senderNameValid;
@@ -152,9 +152,13 @@ const updateField = (key: string, value: any) => {
             :model-value="modelValue.senderEmail || ''"
             type="email"
             :label="t('views.setup.steps.step5.form.senderEmail.label')"
-            :placeholder="t('views.setup.steps.step5.form.senderEmail.placeholder')"
+            :placeholder="
+              t('views.setup.steps.step5.form.senderEmail.placeholder')
+            "
             :hint="t('views.setup.steps.step5.form.senderEmail.hint')"
-            :schema="SMTPConfigUpsertDTO.properties.configValue.properties.senderEmail"
+            :schema="
+              SMTPConfigUpsertDTO.properties.configValue.properties.senderEmail
+            "
             @update:model-value="updateField('senderEmail', $event)"
           />
 
@@ -162,9 +166,13 @@ const updateField = (key: string, value: any) => {
             ref="senderNameRef"
             :model-value="modelValue.senderName || ''"
             :label="t('views.setup.steps.step5.form.senderName.label')"
-            :placeholder="t('views.setup.steps.step5.form.senderName.placeholder')"
+            :placeholder="
+              t('views.setup.steps.step5.form.senderName.placeholder')
+            "
             :hint="t('views.setup.steps.step5.form.senderName.hint')"
-            :schema="SMTPConfigUpsertDTO.properties.configValue.properties.senderName"
+            :schema="
+              SMTPConfigUpsertDTO.properties.configValue.properties.senderName
+            "
             @update:model-value="updateField('senderName', $event)"
           />
         </div>

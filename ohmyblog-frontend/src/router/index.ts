@@ -39,6 +39,12 @@ const routes = [
     name: "login",
     component: () => import("@/views/admin/pages/Login.page.vue"),
   },
+  // 忘记密码（公开路由，不需要登录）
+  {
+    path: "/admin/forgot-password",
+    name: "forgot-password",
+    component: () => import("@/views/admin/pages/ForgotPassword.page.vue"),
+  },
   // Admin 后台管理路由
   {
     path: "/admin",

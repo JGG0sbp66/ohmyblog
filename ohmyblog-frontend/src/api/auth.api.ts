@@ -1,7 +1,9 @@
 import { api, unwrap } from "./client";
 import type {
+  TForgotPasswordDTO,
   TLoginDTO,
   TRegisterDTO,
+  TResetPasswordDTO,
   TUpdateAccountDTO,
 } from "@server/dtos/auth.dto";
 
@@ -42,4 +44,22 @@ export const logout = () => {
  */
 export const getMe = () => {
   return unwrap(api.api.auth.me.get());
+};
+
+/**
+ * POST /api/auth/forgot-password
+ * 忘记密码 - 请求验证码
+ *
+ * 后端无论邮箱是否存在都返回成功，前端不需要做特殊处理
+ */
+export const forgotPassword = (data: TForgotPasswordDTO) => {
+  return unwrap(api.api.auth["forgot-password"].post(data));
+};
+
+/**
+ * POST /api/auth/reset-password
+ * 忘记密码 - 提交验证码并设置新密码
+ */
+export const resetPassword = (data: TResetPasswordDTO) => {
+  return unwrap(api.api.auth["reset-password"].post(data));
 };

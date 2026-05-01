@@ -99,13 +99,14 @@ class UserDao {
 	}
 
 	/**
-	 * 更新最后登录时间
+	 * 更新最后登录时间和 IP
 	 * @param uuid 用户唯一标识
+	 * @param ip 本次登录 IP
 	 */
-	async updateLastLogin(uuid: string) {
+	async updateLastLogin(uuid: string, ip: string) {
 		await db
 			.update(user)
-			.set({ lastLoginAt: new Date() })
+			.set({ lastLoginAt: new Date(), lastLoginIp: ip })
 			.where(eq(user.uuid, uuid));
 	}
 }

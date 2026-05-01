@@ -4,9 +4,10 @@ import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ThemePicker from "@/components/icon/theme/ThemePicker.vue";
 import { useTheme } from "@/composables/theme.hook";
 import { useLang } from "@/composables/lang.hook";
+import { THEME_MODES } from "@/api/shared";
 
 const { t } = useLang();
-const { colorMode, setTheme, THEME_MODES } = useTheme();
+const { colorMode, setTheme } = useTheme();
 </script>
 
 <template>

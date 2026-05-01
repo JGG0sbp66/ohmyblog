@@ -210,7 +210,65 @@
         "placeholder": "请输入密码"
       },
       "submit": "登录",
-      "backToHome": "返回首页"
+      "backToHome": "返回首页",
+      "forgotPassword": "忘记密码？"
+    },
+    "forgotPassword": {
+      "brand": {
+        "line1": "别担心",
+        "line2": "我们帮你找回",
+        "line3": "继续守护你的博客"
+      },
+      "step1": {
+        "title": "忘记密码",
+        "description": "输入注册邮箱，我们会给你发送一封带验证码的邮件",
+        "email": {
+          "label": "邮箱",
+          "placeholder": "请输入注册时使用的邮箱"
+        },
+        "submit": "发送验证码",
+        "backToLogin": "返回登录"
+      },
+      "step2": {
+        "title": "重置密码",
+        "description": "请输入邮箱中收到的 6 位验证码并设置新密码",
+        "email": {
+          "label": "邮箱"
+        },
+        "code": {
+          "label": "验证码",
+          "placeholder": "请输入 6 位验证码",
+          "hint": "验证码 15 分钟内有效，请尽快使用"
+        },
+        "newPassword": {
+          "label": "新密码",
+          "placeholder": "请设置新密码"
+        },
+        "submit": "重置密码",
+        "back": "返回上一步",
+        "resend": "没收到？重新发送"
+      }
+    },
+    "emails": {
+      "title": "邮件管理",
+      "filters": {
+        "all": "全部",
+        "type": "类型"
+      },
+      "types": {
+        "smtp_test": "SMTP 测试",
+        "login_alert": "异地登录提醒",
+        "reset_password": "密码重置"
+      },
+      "statuses": {
+        "success": "成功",
+        "failed": "失败"
+      },
+      "preview": {
+        "errorMessageLabel": "失败原因"
+      },
+      "empty_selection_title": "未选中邮件",
+      "empty_selection_desc": "请从左侧列表中选择一封邮件来查看其详细内容。"
     },
     "setup": {
       "steps": {
@@ -364,6 +422,10 @@
       "count": "共 {count} 条",
       "empty": "暂无数据，请点击上方按钮添加"
     },
+    "refresh": "刷新列表",
+    "clear_all": "清空日志",
+    "no_data": "暂无消息",
+    "no_more_data": "已经到底啦",
     "validation": {
       "auth": {
         "username_range": "用户名长度需在3-50位之间",
@@ -442,7 +504,9 @@
       "SMTP 服务器连接失败: Connection timeout": "SMTP 连接失败：连接服务器超时",
       "SMTP 服务器连接失败: Greeting never received": "SMTP 连接失败：未从服务器收到问候（请检查加密设置或端口）",
       "SMTP 配置不存在，请先完成邮件服务配置": "SMTP 配置不存在，请先完成邮件服务配置",
-      "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP 服务未启用，请先在设置中开启邮件服务"
+      "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP 服务未启用，请先在设置中开启邮件服务",
+      "验证码无效或已过期": "验证码无效或已过期",
+      "账户已被封禁": "账户已被封禁"
     },
     "success": {
       "保存成功": "保存成功",
@@ -453,7 +517,9 @@
       "图标上传成功": "图标上传成功",
       "横幅上传成功": "横幅上传成功",
       "头像上传成功": "头像上传成功",
-      "邮件发送成功": "邮件发送成功"
+      "邮件发送成功": "邮件发送成功",
+      "若邮箱存在，验证码已发送，请注意查收": "若邮箱存在，验证码已发送，请注意查收",
+      "密码重置成功，请使用新密码登录": "密码重置成功，请使用新密码登录"
     }
   }
 }

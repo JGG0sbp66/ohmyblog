@@ -5,6 +5,11 @@ import { getHealth } from "@/api/health.api";
 import { getConfig } from "@/api/config.api";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
+import type { TConfigKey } from "@/api/shared";
+import type {
+  TSiteInfoConfigUpsertDTO,
+  TPersonalInfoConfigUpsertDTO,
+} from "@server/dtos/config.dto";
 
 export const useSystemStore = defineStore("system", () => {
   const { t } = useLang();
@@ -13,35 +18,30 @@ export const useSystemStore = defineStore("system", () => {
   const initialized = ref<boolean | null>(null);
 
   // 站点全局配置
-  const siteInfo = ref({
+  const siteInfo = ref<TSiteInfoConfigUpsertDTO["configValue"]>({
     title: "",
     favicon: "",
     footer: "",
     icp: "",
-    footerLinks: [] as { name: string; url: string }[],
+    footerLinks: [],
   });
 
   // 个性化配置 (Hero, 头像, 简介, 显示名称等)
-  const personalInfo = ref({
+  const personalInfo = ref<TPersonalInfoConfigUpsertDTO["configValue"]>({
     username: "",
     avatar: "",
     bio: "",
-    socialLinks: [] as {
-      name: string;
-      url: string;
-      iconLight?: string;
-      iconDark?: string;
-    }[],
+    socialLinks: [],
     hero: "",
     heroTitle: "",
-    heroSubtitles: [] as string[],
+    heroSubtitles: [],
   });
 
   /**
    * 通用配置获取辅助函数
    */
   async function fetchConfig(
-    configKey: string,
+    configKey: TConfigKey,
     target: any,
     errorMsgMask: string,
   ) {
