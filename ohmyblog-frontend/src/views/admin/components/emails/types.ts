@@ -13,6 +13,5 @@ export interface EmailLogItem extends Omit<TEmailLog, "createdAt"> {
   createdAt: string | number | Date;
 }
 
-
 /** 过滤条件，复用后端 query DTO 的部分字段 */
 export type EmailLogFilters = Pick<TEmailLogQueryDTO, "type" | "status">;

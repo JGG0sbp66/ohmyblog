@@ -1,12 +1,13 @@
 // src/api/config.api.ts
 import { api, unwrap } from "./client";
+import type { TConfigKey } from "./shared";
 import type { TConfigUpsertDTO } from "@server/dtos/config.dto";
 
 /**
  * GET /api/config
  * 读取配置项
  */
-export const getConfig = (configKey: string) =>
+export const getConfig = (configKey: TConfigKey) =>
   unwrap(api.api.config({ configKey }).get());
 
 /**
