@@ -11,6 +11,7 @@ const slots = useSlots();
  * - isActive: 是否处于激活状态（默认 false）
  * - text: 按钮文本，可选
  * - disabled: 是否禁用（默认 false）
+ * - gap: 图标与文本之间的间距级别（对应 tailwind gap-n，默认 "2"）
  *
  * 插槽:
  * - default: 图标或其他内容，通常放在文本左侧
@@ -20,8 +21,9 @@ const props = withDefaults(
     isActive?: boolean;
     text?: string;
     disabled?: boolean;
+    gap?: string;
   }>(),
-  { isActive: false, text: "", disabled: false },
+  { isActive: false, text: "", disabled: false, gap: "2" },
 );
 
 // 检测是否有插槽内容
@@ -81,17 +83,20 @@ const dynamicClass = computed(() => {
 // 内容容器样式
 const contentClass = "relative z-10 pointer-events-none";
 
-// 图标间距：只有同时存在 slot 和 text 时才添加
-const iconSpacing = computed(() => (hasSlot.value && props.text ? "mr-3" : ""));
+// 计算间距样式
+const gapClass = computed(() => {
+  if (!hasSlot.value || !props.text) return "";
+  return `gap-${props.gap}`;
+});
 </script>
 
 <template>
   <button
     type="button"
     :disabled="props.disabled"
-    :class="[baseClass, dynamicClass]"
+    :class="[baseClass, dynamicClass, gapClass]"
   >
-    <span v-if="hasSlot" :class="[contentClass, iconSpacing]">
+    <span v-if="hasSlot" :class="contentClass">
       <slot></slot>
     </span>
     <span v-if="props.text" :class="contentClass">
