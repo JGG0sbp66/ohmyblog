@@ -6,13 +6,6 @@ import {
 } from "../../db/constants/email-log.constants";
 import { tStringEnum } from "../utils/typebox";
 
-/** 当前支持的邮件模板类型，后续新增模板时在 Union 中追加 Literal */
-export const EmailTemplateType = t.Union([t.Literal("smtp_test")], {
-	description: "邮件模板类型",
-});
-
-export type TEmailTemplateType = Static<typeof EmailTemplateType>;
-
 /** 邮件日志类型筛选 */
 export const EmailLogTypeFilter = tStringEnum(emailLogTypes);
 export const EmailLogStatusFilter = tStringEnum(emailLogStatuses);
@@ -36,38 +29,60 @@ export const EmailLogQueryDTO = t.Object({
 
 export type TEmailLogQueryDTO = Static<typeof EmailLogQueryDTO>;
 
-export const EmailSendDTO = t.Object({
-	to: t.Array(
-		t.String({
-			format: "email",
-			description: "收件人邮箱",
-			error: "email.to_invalid",
-		}),
-		{
-			minItems: 1,
-			description: "收件人列表",
-			error: "email.to_required",
-		},
-	),
-	subject: t.Optional(
-		t.String({
-			maxLength: 200,
-			description: "邮件主题",
-			error: "email.subject_range",
-		}),
-	),
-	content: t.Array(
-		t.String({
-			maxLength: 2000,
-			description: "邮件正文段落",
-			error: "email.content_invalid",
-		}),
-		{
-			description: "邮件内容列表",
-		},
-	),
-	/** 指定渲染模板，默认 smtp_test */
-	template: t.Optional(EmailTemplateType),
+/** 邮件连通性测试请求 */
+export const EmailTestDTO = t.Object({
+	to: t.Array(t.String({ format: "email", description: "收件人邮箱" }), {
+		minItems: 1,
+		description: "测试邮件收件人列表",
+	}),
 });
 
-export type TEmailSendDTO = Static<typeof EmailSendDTO>;
+export type TEmailTestDTO = Static<typeof EmailTestDTO>;
+
+/** 基础邮件模板参数 DTO (公共字段) */
+const BaseEmailParamsDTO = {
+	siteTitle: t.Optional(t.String()),
+	siteFooter: t.Optional(t.String()),
+	greeting: t.Optional(t.String()),
+	/** OKLCH hue (0–360) */
+	hue: t.Optional(t.Number()),
+};
+
+/** SMTP 测试邮件参数 DTO */
+export const SMTPTestEmailParamsDTO = t.Object({
+	...BaseEmailParamsDTO,
+	testMessage: t.Optional(t.String()),
+	footerNote: t.Optional(t.String()),
+	senderEmail: t.String({ description: "发件人邮箱" }),
+	sentAt: t.String({ description: "发送时间戳" }),
+});
+
+/** 登录告警邮件参数 DTO */
+export const LoginAlertEmailParamsDTO = t.Object({
+	...BaseEmailParamsDTO,
+	/** 当前登录的 IP */
+	currentIp: t.String(),
+	/** 当前登录的地理位置（如 "中国 / 北京"） */
+	currentLocation: t.String(),
+	/** 上次登录的地理位置 */
+	previousLocation: t.String(),
+	/** 登录时间字符串 */
+	loginAt: t.String(),
+});
+
+/** 密码重置邮件参数 DTO */
+export const ResetPasswordEmailParamsDTO = t.Object({
+	...BaseEmailParamsDTO,
+	/** 6 位验证码 */
+	code: t.String(),
+	/** 验证码有效期（分钟） */
+	expiresInMinutes: t.Number(),
+	/** 请求 IP */
+	ip: t.String(),
+	/** 请求地理位置 */
+	location: t.String(),
+});
+
+export type TSMTPTestEmailParams = Static<typeof SMTPTestEmailParamsDTO>;
+export type TLoginAlertEmailParams = Static<typeof LoginAlertEmailParamsDTO>;
+export type TResetPasswordEmailParams = Static<typeof ResetPasswordEmailParamsDTO>;
