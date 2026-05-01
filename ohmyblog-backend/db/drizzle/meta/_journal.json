@@ -15,6 +15,13 @@
       "when": 1777605353547,
       "tag": "0001_outgoing_redwing",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1777613742565,
+      "tag": "0002_nice_martin_li",
+      "breakpoints": true
     }
   ]
 }
