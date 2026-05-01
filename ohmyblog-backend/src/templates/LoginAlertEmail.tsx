@@ -13,22 +13,7 @@ import {
 	Text,
 } from "@react-email/components";
 import { hueToEmailColors } from "../utils/emailColors";
-
-interface LoginAlertEmailProps {
-	siteTitle?: string;
-	siteFooter?: string;
-	greeting?: string;
-	/** 当前登录的 IP */
-	currentIp?: string;
-	/** 当前登录的地理位置（如 "中国 / 北京"） */
-	currentLocation?: string;
-	/** 上次登录的地理位置 */
-	previousLocation?: string;
-	/** 登录时间字符串 */
-	loginAt?: string;
-	/** OKLCH hue (0–360)，与外观配置同步 */
-	hue?: number;
-}
+import type { TLoginAlertEmailParams } from "../dtos/email.dto";
 
 export const LoginAlertEmail = ({
 	siteTitle = "ohmyblog",
@@ -39,7 +24,7 @@ export const LoginAlertEmail = ({
 	previousLocation = "未知",
 	loginAt = "—",
 	hue = 250,
-}: LoginAlertEmailProps) => {
+}: TLoginAlertEmailParams) => {
 	const colors = hueToEmailColors(hue);
 
 	return (

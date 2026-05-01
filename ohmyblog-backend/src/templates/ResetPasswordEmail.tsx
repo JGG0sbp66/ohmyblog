@@ -11,18 +11,7 @@ import {
 	Text,
 } from "@react-email/components";
 import { hueToEmailColors } from "../utils/emailColors";
-
-interface ResetPasswordEmailProps {
-	siteTitle?: string;
-	siteFooter?: string;
-	greeting?: string;
-	/** 6 位验证码 */
-	code?: string;
-	/** 验证码有效期（分钟） */
-	expiresInMinutes?: number;
-	/** OKLCH hue */
-	hue?: number;
-}
+import type { TResetPasswordEmailParams } from "../dtos/email.dto";
 
 export const ResetPasswordEmail = ({
 	siteTitle = "ohmyblog",
@@ -30,8 +19,10 @@ export const ResetPasswordEmail = ({
 	greeting = "你好，admin！",
 	code = "000000",
 	expiresInMinutes = 15,
+	ip = "122.224.54.123",
+	location = "中国 / 浙江 / 杭州",
 	hue = 250,
-}: ResetPasswordEmailProps) => {
+}: TResetPasswordEmailParams) => {
 	const colors = hueToEmailColors(hue);
 
 	return (
@@ -71,7 +62,7 @@ export const ResetPasswordEmail = ({
 							我们收到了你的密码重置请求。请在重置页面输入下方的验证码完成重置。如果不是你本人操作，请忽略此邮件，你的账号仍然安全。
 						</Text>
 
-						{/* 验证码卡片 */}
+						{/* 验证码与安全信息卡片 */}
 						<Section className="bg-bg-muted-soft rounded-xl border border-border-soft py-8 px-6 mb-8 text-center">
 							<Text className="text-[10px] font-bold uppercase text-fg-subtle m-0 mb-3 tracking-widest">
 								验证码
@@ -92,6 +83,16 @@ export const ResetPasswordEmail = ({
 							<Text className="text-xs text-fg-subtle m-0 mt-3">
 								有效期 {expiresInMinutes} 分钟
 							</Text>
+
+							{/* 底部安全信息区 */}
+							<Section className="mt-6 pt-4 border-t border-border-light">
+								<Text className="text-[11px] text-fg-muted m-0">
+									请求来自 {location} · IP: {ip}
+								</Text>
+								<Text className="text-[10px] text-fg-subtle m-0 mt-1">
+									{new Date().toLocaleString("zh-CN", { hour12: false })}
+								</Text>
+							</Section>
 						</Section>
 
 						<Text className="text-sm italic text-fg-subtle mt-0 mb-8">

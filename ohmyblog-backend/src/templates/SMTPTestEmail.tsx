@@ -13,18 +13,7 @@ import {
 	Text,
 } from "@react-email/components";
 import { hueToEmailColors } from "../utils/emailColors";
-
-interface SMTPTestEmailProps {
-	siteTitle?: string;
-	siteFooter?: string;
-	greeting?: string;
-	testMessage?: string;
-	footerNote?: string;
-	senderEmail?: string;
-	sentAt?: string;
-	/** OKLCH hue (0–360) read from the appearance config; defaults to 250 (blue) */
-	hue?: number;
-}
+import type { TSMTPTestEmailParams } from "../dtos/email.dto";
 
 export const SMTPTestEmail = ({
 	siteTitle = "ohmyblog - Just Do It",
@@ -35,7 +24,7 @@ export const SMTPTestEmail = ({
 	senderEmail = "no-reply@example.com",
 	sentAt = "2026/04/28 18:03",
 	hue = 250,
-}: SMTPTestEmailProps) => {
+}: TSMTPTestEmailParams) => {
 	const colors = hueToEmailColors(hue);
 
 	return (
