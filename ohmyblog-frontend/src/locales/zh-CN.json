@@ -253,6 +253,7 @@
       "title": "邮件管理",
       "filters": {
         "all": "全部",
+        "unread": "未读",
         "type": "类型"
       },
       "types": {
@@ -261,7 +262,6 @@
         "reset_password": "密码重置"
       },
       "statuses": {
-        "success": "成功",
         "failed": "失败"
       },
       "preview": {

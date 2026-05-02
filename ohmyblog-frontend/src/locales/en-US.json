@@ -255,6 +255,7 @@
       "title": "Email Management",
       "filters": {
         "all": "All",
+        "unread": "Unread",
         "type": "Type"
       },
       "types": {
@@ -263,7 +264,6 @@
         "reset_password": "Password Reset"
       },
       "statuses": {
-        "success": "Success",
         "failed": "Failed"
       },
       "preview": {
