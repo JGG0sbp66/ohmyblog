@@ -66,7 +66,7 @@ export const emailRoute = new Elysia({ name: "emailRoute" })
 				async ({ params }) => {
 					const html = await emailSenderService.previewEmailLog(params.uuid);
 
-					// 方案 B: 预览时自动标记为已读
+					// 预览时自动标记为已读
 					await emailLogDao.markAsRead(params.uuid);
 
 					// 特判：直接返回 Response 对象以绕过 responsePlugin 的统一 JSON 包装
