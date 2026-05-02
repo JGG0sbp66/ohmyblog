@@ -55,7 +55,7 @@ const fetchList = async (reset = false) => {
       page: currentPage.value,
       pageSize: PAGE_SIZE,
       type: props.filters.type,
-      status: props.filters.status,
+      isRead: props.filters.isRead,
     });
     
     const newList = (res?.list ?? []) as EmailLogItem[];

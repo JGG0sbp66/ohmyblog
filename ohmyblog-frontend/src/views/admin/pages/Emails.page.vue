@@ -16,7 +16,7 @@ import type {
 } from "@/views/admin/components/emails/types";
 
 // 过滤与状态追踪
-const filters = ref<TFilters>({ type: undefined, status: 'success' });
+const filters = ref<TFilters>({ type: undefined, isRead: undefined });
 
 // 当前选中的邮件项（用于右侧详情展示）
 const selectedItem = ref<EmailLogItem | null>(null);
@@ -30,7 +30,7 @@ const selectedItem = ref<EmailLogItem | null>(null);
       <div class="w-100 border-r border-border/40 flex flex-col bg-bg-muted/10">
         <!-- 操作区域 -->
         <EmailListActions 
-          v-model:status="filters.status"
+          v-model:isRead="filters.isRead"
           v-model:type="filters.type"
         />
 

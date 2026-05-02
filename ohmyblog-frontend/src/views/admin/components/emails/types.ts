@@ -17,4 +17,4 @@ export interface EmailLogItem extends Omit<TEmailLog, "createdAt"> {
 }
 
 /** 过滤条件，复用后端 query DTO 的部分字段 */
-export type EmailLogFilters = Pick<TEmailLogQueryDTO, "type" | "status">;
+export type EmailLogFilters = Pick<TEmailLogQueryDTO, "type" | "isRead">;
