@@ -47,6 +47,17 @@ export const emailRoute = new Elysia({ name: "emailRoute" })
 					detail: { summary: "获取未读邮件记录数" },
 				},
 			)
+			.post(
+				"/mark-all-read",
+				async () => {
+					await emailLogDao.markAllAsRead();
+					return null;
+				},
+				{
+					beforeHandle: ensureAdminIfExists,
+					detail: { summary: "全部标记为已读" },
+				},
+			)
 			// === 邮件发送记录列表（管理员） ===
 			.get(
 				"/logs",

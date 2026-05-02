@@ -83,6 +83,16 @@ class EmailLogDao {
 	}
 
 	/**
+	 * 将所有未读邮件记录标记为已读
+	 */
+	async markAllAsRead() {
+		await db
+			.update(emailLog)
+			.set({ isRead: true })
+			.where(eq(emailLog.isRead, false));
+	}
+
+	/**
 	 * 获取未读邮件总数
 	 */
 	async countUnread() {
