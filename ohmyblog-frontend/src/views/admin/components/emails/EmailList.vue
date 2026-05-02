@@ -106,11 +106,6 @@ watch(
 const handleSelect = (item: EmailLogItem) => {
   emit("update:modelValue", item);
   emit("select", item);
-  // 本地标记为已读，与后端 iframe 加载时自动 markAsRead 保持同步
-  const found = list.value.find((i) => i.uuid === item.uuid);
-  if (found && !found.isRead) {
-    found.isRead = true;
-  }
 };
 
 onMounted(() => {

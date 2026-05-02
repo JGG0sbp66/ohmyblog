@@ -27,6 +27,8 @@ watch(
   (newItem, oldItem) => {
     if (newItem && newItem.uuid !== oldItem?.uuid && !newItem.isRead) {
       emailStore.decreaseUnread();
+      // 本地标记为已读，确保列表样式同步更新
+      newItem.isRead = true;
     }
   },
 );
