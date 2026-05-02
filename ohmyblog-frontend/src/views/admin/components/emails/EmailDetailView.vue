@@ -6,10 +6,11 @@
   - 底部显示发送失败的错误详情（如果有）
 -->
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import type { EmailLogItem } from "./types";
 import { getEmailLogPreviewUrl } from "@/api/email.api";
 import { useLang } from "@/composables/lang.hook";
+import { useEmailStore } from "@/stores/email.store";
 import Inbox from "@/components/icon/common/Inbox.vue";
 import EmailHeaderInfo from "./EmailHeaderInfo.vue";
 
@@ -18,6 +19,17 @@ const props = defineProps<{
 }>();
 
 const { t } = useLang();
+const emailStore = useEmailStore();
+
+/** 切换到未读邮件时，主动减少 store 中的未读数（后端会在 iframe 加载时自动 markAsRead） */
+watch(
+  () => props.item,
+  (newItem, oldItem) => {
+    if (newItem && newItem.uuid !== oldItem?.uuid && !newItem.isRead) {
+      emailStore.decreaseUnread();
+    }
+  },
+);
 
 /** 计算当前选中邮件的 HTML 预览 URL */
 const previewUrl = computed(() =>
