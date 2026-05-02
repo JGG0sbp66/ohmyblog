@@ -11,7 +11,6 @@ import type { EmailLogItem } from "./types";
 import { getEmailLogPreviewUrl } from "@/api/email.api";
 import { useLang } from "@/composables/lang.hook";
 import Inbox from "@/components/icon/common/Inbox.vue";
-import BaseTag from "@/components/base/tag/BaseTag.vue";
 
 const props = defineProps<{
   item: EmailLogItem | null;
@@ -51,13 +50,6 @@ const formatTime = (raw: string | number | Date) => {
           <h1 class="text-2xl font-bold tracking-tight text-fg leading-tight">
             {{ item.subject }}
           </h1>
-          <BaseTag
-            :type="item.status === 'success' ? 'success' : 'error'"
-            size="sm"
-            class="shrink-0 uppercase font-bold tracking-wider"
-          >
-            {{ t(`views.emails.statuses.${item.status}`) }}
-          </BaseTag>
         </div>
 
         <div class="flex items-start gap-4">
