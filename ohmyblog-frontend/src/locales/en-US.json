@@ -47,8 +47,9 @@
       },
       "button": {
         "NotificationButton": {
-          "title": "Notifications",
-          "empty": "No notifications"
+          "empty": "No notifications",
+          "markAllRead": "Mark All Read",
+          "viewAll": "View All Messages"
         }
       },
       "BrowserMockup": {

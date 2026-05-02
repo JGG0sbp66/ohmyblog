@@ -47,8 +47,9 @@
       },
       "button": {
         "NotificationButton": {
-          "title": "通知",
-          "empty": "暂无通知"
+          "empty": "暂无通知",
+          "markAllRead": "一键已读",
+          "viewAll": "查看全部消息"
         }
       },
       "BrowserMockup": {
