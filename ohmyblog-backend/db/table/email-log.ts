@@ -36,6 +36,9 @@ export const emailLog = sqliteTable("email_log", {
 	// 模板关键参数快照（JSON），用于后台展示和预览重渲染
 	params: text("params", { mode: "json" }),
 
+	// 是否已读（管理员是否查看过）
+	isRead: integer("is_read", { mode: "boolean" }).notNull().default(false),
+
 	// 发送时间
 	createdAt: integer("created_at", { mode: "timestamp" })
 		.notNull()

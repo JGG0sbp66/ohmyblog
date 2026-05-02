@@ -68,6 +68,28 @@ class EmailLogDao {
 			.limit(1);
 		return result[0] || null;
 	}
+
+	/**
+	 * 将邮件记录标记为已读
+	 * @param uuid 记录唯一标识
+	 */
+	async markAsRead(uuid: string) {
+		await db
+			.update(emailLog)
+			.set({ isRead: true })
+			.where(eq(emailLog.uuid, uuid));
+	}
+
+	/**
+	 * 获取未读邮件总数
+	 */
+	async countUnread() {
+		const result = await db
+			.select({ total: count() })
+			.from(emailLog)
+			.where(eq(emailLog.isRead, false));
+		return result[0].total;
+	}
 }
 
 export const emailLogDao = new EmailLogDao();
