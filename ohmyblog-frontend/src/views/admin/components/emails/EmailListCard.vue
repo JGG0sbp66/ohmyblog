@@ -56,7 +56,8 @@ const formatTime = (raw: string | number | Date) => {
     </div>
     
     <h3 
-      class="text-sm font-bold text-fg mb-1 line-clamp-1 group-hover:text-accent transition-colors"
+      class="text-sm font-bold mb-1 line-clamp-1 transition-colors"
+      :class="[active ? 'text-accent' : 'text-fg group-hover:text-accent']"
     >
       {{ item.subject }}
     </h3>
