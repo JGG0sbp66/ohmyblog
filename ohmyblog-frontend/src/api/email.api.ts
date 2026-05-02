@@ -41,3 +41,11 @@ export const getEmailLogs = (query: TEmailLogQueryDTO) => {
 export const getEmailLogPreviewUrl = (uuid: string): string => {
   return `/api/email/logs/${encodeURIComponent(uuid)}/preview`;
 };
+
+/**
+ * GET /api/email/unread-count
+ * 获取未读邮件记录总数
+ */
+export const getEmailUnreadCount = () => {
+  return unwrap(api.api.email["unread-count"].get());
+};
