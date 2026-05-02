@@ -29,6 +29,13 @@
       "when": 1777630245002,
       "tag": "0003_add_from_to_email_log",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1777713523123,
+      "tag": "0004_green_rogue",
+      "breakpoints": true
     }
   ]
 }

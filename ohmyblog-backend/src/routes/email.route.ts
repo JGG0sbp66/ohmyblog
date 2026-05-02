@@ -36,6 +36,28 @@ export const emailRoute = new Elysia({ name: "emailRoute" })
 					body: EmailTestDTO,
 				},
 			)
+			// === 邮件日志推断类型（供前端使用） ===
+			.get(
+				"/unread-count",
+				async () => {
+					return await emailLogDao.countUnread();
+				},
+				{
+					beforeHandle: ensureAdminIfExists,
+					detail: { summary: "获取未读邮件记录数" },
+				},
+			)
+			.post(
+				"/mark-all-read",
+				async () => {
+					await emailLogDao.markAllAsRead();
+					return null;
+				},
+				{
+					beforeHandle: ensureAdminIfExists,
+					detail: { summary: "全部标记为已读" },
+				},
+			)
 			// === 邮件发送记录列表（管理员） ===
 			.get(
 				"/logs",
@@ -54,6 +76,10 @@ export const emailRoute = new Elysia({ name: "emailRoute" })
 				"/logs/:uuid/preview",
 				async ({ params }) => {
 					const html = await emailSenderService.previewEmailLog(params.uuid);
+
+					// 预览时自动标记为已读
+					await emailLogDao.markAsRead(params.uuid);
+
 					// 特判：直接返回 Response 对象以绕过 responsePlugin 的统一 JSON 包装
 					// 否则 HTML 字符串会被包装成 { success: true, data: "<html>...</html>" }，导致 iframe 无法正常渲染
 					return new Response(html, {

@@ -6,18 +6,32 @@
   - 底部显示发送失败的错误详情（如果有）
 -->
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import type { EmailLogItem } from "./types";
 import { getEmailLogPreviewUrl } from "@/api/email.api";
 import { useLang } from "@/composables/lang.hook";
+import { useEmailStore } from "@/stores/email.store";
 import Inbox from "@/components/icon/common/Inbox.vue";
-import BaseTag from "@/components/base/tag/BaseTag.vue";
+import EmailHeaderInfo from "./EmailHeaderInfo.vue";
 
 const props = defineProps<{
   item: EmailLogItem | null;
 }>();
 
 const { t } = useLang();
+const emailStore = useEmailStore();
+
+/** 切换到未读邮件时，主动减少 store 中的未读数（后端会在 iframe 加载时自动 markAsRead） */
+watch(
+  () => props.item,
+  (newItem, oldItem) => {
+    if (newItem && newItem.uuid !== oldItem?.uuid && !newItem.isRead) {
+      emailStore.decreaseUnread();
+      // 本地标记为已读，确保列表样式同步更新
+      newItem.isRead = true;
+    }
+  },
+);
 
 /** 计算当前选中邮件的 HTML 预览 URL */
 const previewUrl = computed(() =>
@@ -51,29 +65,18 @@ const formatTime = (raw: string | number | Date) => {
           <h1 class="text-2xl font-bold tracking-tight text-fg leading-tight">
             {{ item.subject }}
           </h1>
-          <BaseTag
-            :type="item.status === 'success' ? 'success' : 'error'"
-            size="sm"
-            class="shrink-0 uppercase font-bold tracking-wider"
-          >
-            {{ t(`views.emails.statuses.${item.status}`) }}
-          </BaseTag>
         </div>
 
         <div class="flex items-start gap-4">
           <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
             <Inbox size-class="w-5 h-5" />
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="text-sm font-bold text-fg truncate">
-              {{ item.fromName }}
-              <span class="text-xs font-normal text-fg-subtle ml-2">&lt;{{ item.fromEmail }}&gt;</span>
-            </div>
-            <div class="flex items-center justify-between mt-1">
-              <div class="text-xs text-fg-subtle truncate mr-4">To: {{ item.to }}</div>
-              <div class="text-xs text-fg-subtle whitespace-nowrap">{{ formatTime(item.createdAt) }}</div>
-            </div>
-          </div>
+          <EmailHeaderInfo
+            :sender-name="item.fromName"
+            :sender-email="item.fromEmail"
+            :to="item.to"
+            :time="formatTime(item.createdAt)"
+          />
         </div>
       </div>
 

@@ -47,8 +47,9 @@
       },
       "button": {
         "NotificationButton": {
-          "title": "Notifications",
-          "empty": "No notifications"
+          "empty": "No notifications",
+          "markAllRead": "Mark All Read",
+          "viewAll": "View All Messages"
         }
       },
       "BrowserMockup": {
@@ -255,6 +256,7 @@
       "title": "Email Management",
       "filters": {
         "all": "All",
+        "unread": "Unread",
         "type": "Type"
       },
       "types": {
@@ -263,11 +265,15 @@
         "reset_password": "Password Reset"
       },
       "statuses": {
-        "success": "Success",
         "failed": "Failed"
       },
       "preview": {
         "errorMessageLabel": "Error"
+      },
+      "body_preview": {
+        "smtp_test": "SMTP connection test, sender: {senderEmail}",
+        "login_alert": "Login detected from {location} (IP: {ip})",
+        "reset_password": "Password reset request from {location}, IP: {ip}, expires in {minutes} min"
       },
       "empty_selection_title": "No Message Selected",
       "empty_selection_desc": "Select a message from the list to view its details and content."

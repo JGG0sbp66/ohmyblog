@@ -1,16 +1,25 @@
 <!-- src/views/admin/components/layout/AdminSidebar.vue -->
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import { useRouter, useRoute } from "vue-router";
 import { LayoutDashboard, PenLine, Mail, Settings } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import SidebarButton from "@/components/base/button/SidebarButton.vue";
 import AdminUserInfo from "../AdminUserInfo.vue";
+import { useEmailStore } from "@/stores/email.store";
 
 const isExpanded = ref(false);
 const router = useRouter();
 const route = useRoute();
 const { t } = useLang();
+
+const emailStore = useEmailStore();
+const { unreadCount: emailUnreadCount } = storeToRefs(emailStore);
+
+onMounted(() => {
+  emailStore.fetchUnreadCount();
+});
 
 // 按功能将菜单拆成三组：仪表盘、内容管理、系统设置。
 const menuGroups = computed(() => [
@@ -77,6 +86,7 @@ const isItemActive = (item: MenuItem) => {
             :text="item.name"
             :isActive="isItemActive(item)"
             :isExpanded="isExpanded"
+            :badge="item.path === '/admin/emails' ? emailUnreadCount : undefined"
             @click="handleNavClick(item.path)"
           />
         </div>

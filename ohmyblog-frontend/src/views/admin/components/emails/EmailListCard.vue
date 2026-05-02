@@ -7,6 +7,7 @@
 -->
 <script setup lang="ts">
 import type { EmailLogItem } from "./types";
+import { getEmailBodyPreview } from "@/utils/email";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -38,7 +39,8 @@ const formatTime = (raw: string | number | Date) => {
     :class="[
       active 
         ? 'bg-accent/10' 
-        : 'bg-transparent hover:bg-accent/5 active:bg-accent/10'
+        : 'bg-transparent hover:bg-accent/5 active:bg-accent/10',
+      item.isRead && !active ? 'opacity-50' : ''
     ]"
   >
     <!-- 选中状态的左侧标识条 -->
@@ -56,13 +58,17 @@ const formatTime = (raw: string | number | Date) => {
     </div>
     
     <h3 
-      class="text-sm font-bold text-fg mb-1 line-clamp-1 group-hover:text-accent transition-colors"
+      class="text-sm mb-1 line-clamp-1 transition-colors"
+      :class="[
+        active ? 'text-accent font-bold' : 'text-fg group-hover:text-accent',
+        item.isRead ? 'font-normal' : 'font-bold'
+      ]"
     >
       {{ item.subject }}
     </h3>
     
     <p class="text-xs text-fg-muted line-clamp-2 break-all leading-relaxed">
-      {{ item.to }}
+      {{ getEmailBodyPreview(item, t) }}
     </p>
 
     <div v-if="!active && item.status === 'failed'" class="mt-2">

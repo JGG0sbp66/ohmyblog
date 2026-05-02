@@ -14,6 +14,7 @@ export interface EmailLogQueryOptions {
 	pageSize?: number;
 	type?: TEmailLogType;
 	status?: TEmailLogStatus;
+	isRead?: boolean;
 }
 
 class EmailLogDao {
@@ -33,12 +34,13 @@ class EmailLogDao {
 	 * @returns { list, total }
 	 */
 	async findAll(options: EmailLogQueryOptions = {}) {
-		const { page = 1, pageSize = 20, type, status } = options;
+		const { page = 1, pageSize = 20, type, status, isRead } = options;
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [];
 		if (type) conditions.push(eq(emailLog.type, type));
 		if (status) conditions.push(eq(emailLog.status, status));
+		if (isRead !== undefined) conditions.push(eq(emailLog.isRead, isRead));
 		const where = conditions.length > 0 ? and(...conditions) : undefined;
 
 		const [list, totalResult] = await Promise.all([
@@ -67,6 +69,38 @@ class EmailLogDao {
 			.where(eq(emailLog.uuid, uuid))
 			.limit(1);
 		return result[0] || null;
+	}
+
+	/**
+	 * 将邮件记录标记为已读
+	 * @param uuid 记录唯一标识
+	 */
+	async markAsRead(uuid: string) {
+		await db
+			.update(emailLog)
+			.set({ isRead: true })
+			.where(eq(emailLog.uuid, uuid));
+	}
+
+	/**
+	 * 将所有未读邮件记录标记为已读
+	 */
+	async markAllAsRead() {
+		await db
+			.update(emailLog)
+			.set({ isRead: true })
+			.where(eq(emailLog.isRead, false));
+	}
+
+	/**
+	 * 获取未读邮件总数
+	 */
+	async countUnread() {
+		const result = await db
+			.select({ total: count() })
+			.from(emailLog)
+			.where(eq(emailLog.isRead, false));
+		return result[0].total;
 	}
 }
 

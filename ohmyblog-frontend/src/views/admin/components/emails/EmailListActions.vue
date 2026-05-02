@@ -8,26 +8,26 @@
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import DropButton from "@/components/common/button/DropButton.vue";
 import More from "@/components/icon/common/More.vue";
-import Success from "@/components/icon/common/Success.vue";
-import ErrorIcon from "@/components/icon/common/Error.vue";
+import MailAll from "@/components/icon/common/MailAll.vue";
+import MailUnread from "@/components/icon/common/MailUnread.vue";
 import { useLang } from "@/composables/lang.hook";
 import { emailLogTypes } from "@/api/shared";
-import type { TEmailLogStatus, TEmailLogType } from "@/api/shared";
+import type { TEmailLogType } from "@/api/shared";
 
 const props = defineProps<{
-  status?: TEmailLogStatus;
+  isRead?: boolean;
   type?: TEmailLogType | "all";
 }>();
 
 const emit = defineEmits<{
-  "update:status": [value: TEmailLogStatus | undefined];
+  "update:isRead": [value: boolean | undefined];
   "update:type": [value: TEmailLogType | undefined];
 }>();
 
 const { t } = useLang();
 
-const setStatus = (val: TEmailLogStatus | undefined) => {
-  emit("update:status", val);
+const setIsRead = (val: boolean | undefined) => {
+  emit("update:isRead", val);
 };
 
 const setType = (val: TEmailLogType | undefined) => {
@@ -37,28 +37,28 @@ const setType = (val: TEmailLogType | undefined) => {
 
 <template>
   <div class="p-4 border-b border-border/40 flex items-center justify-between gap-2">
-    <!-- 状态切换 -->
+    <!-- 已读/未读切换 -->
     <div class="flex items-center gap-1.5 p-1 bg-bg-muted-soft rounded-2xl">
-      <div class="h-9 ">
+      <div class="h-9">
         <ButtonSecondary
           class="w-full h-full text-sm"
-          :isActive="status === 'success'"
-          :text="t('views.emails.statuses.success')"
+          :isActive="isRead === undefined"
+          :text="t('views.emails.filters.all')"
           gap="1.5"
-          @click="setStatus('success')"
+          @click="setIsRead(undefined)"
         >
-          <Success class="w-3.5 h-3.5" />
+          <MailAll class="w-3.5 h-3.5" />
         </ButtonSecondary>
       </div>
-      <div class="h-9 ">
+      <div class="h-9">
         <ButtonSecondary
           class="w-full h-full text-sm"
-          :isActive="status === 'failed'"
-          :text="t('views.emails.statuses.failed')"
+          :isActive="isRead === false"
+          :text="t('views.emails.filters.unread')"
           gap="1.5"
-          @click="setStatus('failed')"
+          @click="setIsRead(false)"
         >
-          <ErrorIcon class="w-3.5 h-3.5" />
+          <MailUnread class="w-3.5 h-3.5" />
         </ButtonSecondary>
       </div>
     </div>

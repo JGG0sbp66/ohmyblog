@@ -25,6 +25,7 @@ export const EmailLogQueryDTO = t.Object({
 	),
 	type: t.Optional(EmailLogTypeFilter),
 	status: t.Optional(EmailLogStatusFilter),
+	isRead: t.Optional(t.Boolean()),
 });
 
 export type TEmailLogQueryDTO = Static<typeof EmailLogQueryDTO>;

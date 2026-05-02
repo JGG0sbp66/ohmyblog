@@ -47,8 +47,9 @@
       },
       "button": {
         "NotificationButton": {
-          "title": "通知",
-          "empty": "暂无通知"
+          "empty": "暂无通知",
+          "markAllRead": "一键已读",
+          "viewAll": "查看全部消息"
         }
       },
       "BrowserMockup": {
@@ -253,6 +254,7 @@
       "title": "邮件管理",
       "filters": {
         "all": "全部",
+        "unread": "未读",
         "type": "类型"
       },
       "types": {
@@ -261,11 +263,15 @@
         "reset_password": "密码重置"
       },
       "statuses": {
-        "success": "成功",
         "failed": "失败"
       },
       "preview": {
         "errorMessageLabel": "失败原因"
+      },
+      "body_preview": {
+        "smtp_test": "SMTP 连接测试，发件人: {senderEmail}",
+        "login_alert": "检测到来自 {location} 的登录 (IP: {ip})",
+        "reset_password": "密码重置请求，来自 {location}，IP: {ip}，有效期 {minutes} 分钟"
       },
       "empty_selection_title": "未选中邮件",
       "empty_selection_desc": "请从左侧列表中选择一封邮件来查看其详细内容。"

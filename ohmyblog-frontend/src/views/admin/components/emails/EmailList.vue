@@ -5,11 +5,9 @@
   - 循环渲染 EmailListCard
 -->
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
-import { useInfiniteScroll } from "@vueuse/core";
-import { getEmailLogs } from "@/api/email.api";
+import { ref, watch, onMounted, nextTick } from "vue";
 import { useLang } from "@/composables/lang.hook";
-import { useToast } from "@/composables/toast.hook";
+import { useEmailLogList } from "@/composables/email-log-list.hook";
 import EmailListCard from "./EmailListCard.vue";
 import type { EmailLogItem, EmailLogFilters } from "./types";
 
@@ -25,92 +23,79 @@ const emit = defineEmits<{
 
 const { t } = useLang();
 
-// 分页配置
-const PAGE_SIZE = 20;
-
-// 列表数据与加载控制
-const list = ref<EmailLogItem[]>([]);
-const total = ref(0);
-const currentPage = ref(1);
-const isLoading = ref(false);
-const isFinished = ref(false);
-
 const scrollContainer = ref<HTMLElement | null>(null);
 
-/**
- * 拉取列表
- * @param reset 是否重置列表（用于过滤条件变化时）
- */
-const fetchList = async (reset = false) => {
-  if (isLoading.value || (isFinished.value && !reset)) return;
-  
-  isLoading.value = true;
-  if (reset) {
-    currentPage.value = 1;
-    isFinished.value = false;
-  }
-
-  try {
-    const res = await getEmailLogs({
-      page: currentPage.value,
-      pageSize: PAGE_SIZE,
-      type: props.filters.type,
-      status: props.filters.status,
-    });
-    
-    const newList = (res?.list ?? []) as EmailLogItem[];
-    
-    if (reset) {
-      list.value = newList;
-    } else {
-      list.value.push(...newList);
-    }
-    
-    total.value = res?.total ?? 0;
-    
-    if (list.value.length >= total.value || newList.length < PAGE_SIZE) {
-      isFinished.value = true;
-    } else {
-      currentPage.value++;
-    }
-    
-    // 如果没有选中项且列表不为空，默认选中第一项
-    if (!props.modelValue && list.value.length > 0) {
-      emit("update:modelValue", list.value[0] || null);
-    }
-  } catch (error: any) {
-    useToast.error(t(`api.errors.${error}`));
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-// 注册无限滚动
-useInfiniteScroll(
+const { list, isLoading, isFinished, fetchList } = useEmailLogList(
+  () => props.filters,
   scrollContainer,
-  () => {
-    if (!isFinished.value && !isLoading.value) {
-      fetchList();
+  {
+    onFetch() {
+      // 首次加载且没有选中项时，默认选中第一项
+      if (!props.modelValue && list.value.length > 0) {
+        emit("update:modelValue", list.value[0] ?? null);
+      }
+    },
+  },
+);
+
+// 记录已经滚动过的 uuid，防止在同一项被选中时，因为无限滚动追加数据而重复触发平滑滚动
+const scrolledToUuid = ref<string | null>(null);
+
+/**
+ * 核心定位逻辑：
+ * 监听【选中项ID】和【列表长度】。
+ * 当目标项出现在列表中时，立即执行平滑滚动定位。
+ */
+watch(
+  [() => props.modelValue?.uuid, () => list.value.length],
+  ([uuid]) => {
+    if (!uuid || uuid === scrolledToUuid.value) return;
+    const found = list.value.some((i) => i.uuid === uuid);
+    if (found) {
+      scrolledToUuid.value = uuid;
+      nextTick(() => {
+        scrollContainer.value
+          ?.querySelector(`[data-uuid="${uuid}"]`)
+          ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
     }
   },
-  { distance: 50 }
 );
 
-// 监听过滤条件变化
-watch(
-  () => props.filters,
-  () => fetchList(true),
-  { deep: true }
-);
+// 自动翻页逻辑：当外部传入一个不在当前列表中的 uuid 时，自动加载后续页面直到找到该项
+const targetUuid = ref<string | null>(null);
+
+const checkAndLoadMore = () => {
+  const uuid = targetUuid.value;
+  if (!uuid) return;
+  
+  // 如果已在列表中，停止加载
+  if (list.value.some((i) => i.uuid === uuid)) {
+    targetUuid.value = null;
+    return;
+  }
+  
+  // 否则继续静默加载下一页
+  if (!isFinished.value && !isLoading.value) fetchList();
+};
+
+// 监听外部传入的 uuid 变化
+watch(() => props.modelValue?.uuid, (uuid) => {
+  targetUuid.value = uuid ?? null;
+  checkAndLoadMore();
+});
+
+// 每一页加载完成后，继续检查是否需要加载下一页
+watch(isLoading, (loading) => {
+  if (!loading) checkAndLoadMore();
+});
 
 const handleSelect = (item: EmailLogItem) => {
   emit("update:modelValue", item);
   emit("select", item);
 };
 
-onMounted(() => {
-  fetchList();
-});
+onMounted(() => fetchList(true));
 </script>
 
 <template>
@@ -121,6 +106,7 @@ onMounted(() => {
     <EmailListCard
       v-for="item in list"
       :key="item.uuid"
+      :data-uuid="item.uuid"
       :item="item"
       :active="modelValue?.uuid === item.uuid"
       class="w-full"

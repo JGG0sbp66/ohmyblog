@@ -1,0 +1,1 @@
+ALTER TABLE `email_log` ADD `is_read` integer DEFAULT false NOT NULL;
