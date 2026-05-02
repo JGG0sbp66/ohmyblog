@@ -1,6 +1,6 @@
 <!-- src/components/common/button/NotificationButton.vue -->
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
@@ -8,36 +8,55 @@ import BellIcon from "@/components/icon/ui/Bell.vue";
 import DropButton from "@/components/common/button/DropButton.vue";
 import UnreadBadge from "@/components/base/tag/UnreadBadge.vue";
 import EmailListCard from "@/views/admin/components/emails/EmailListCard.vue";
-import { getEmailLogs } from "@/api/email.api";
 import { useEmailStore } from "@/stores/email.store";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
+import { useEmailLogList } from "@/composables/email-log-list.hook";
 import type { EmailLogItem } from "@/views/admin/components/emails/types";
 
 const { t } = useLang();
 const router = useRouter();
 const emailStore = useEmailStore();
 
-const unreadList = ref<EmailLogItem[]>([]);
-const isLoading = ref(false);
+const scrollContainer = ref<HTMLElement | null>(null);
 const isMarkingRead = ref(false);
 
-const fetchUnreadList = async () => {
-  isLoading.value = true;
-  try {
-    const res = await getEmailLogs({ page: 1, pageSize: 5, isRead: false });
-    unreadList.value = (res?.list ?? []) as EmailLogItem[];
-  } finally {
-    isLoading.value = false;
+// 列表数据加载与状态管理
+const {
+  list: unreadList,
+  isLoading,
+  isFinished,
+  fetchList: fetchUnreadList,
+} = useEmailLogList(() => ({ isRead: false }), scrollContainer);
+
+// 缓存与预加载逻辑
+let lastFetchTime = 0;
+const STALE_MS = 30_000; // 30秒缓存
+
+/** 鼠标移入通知图标时：如果数据为空或已过期，刷新列表 */
+const onPopupEnter = () => {
+  if (Date.now() - lastFetchTime > STALE_MS || unreadList.value.length === 0) {
+    lastFetchTime = Date.now();
+    fetchUnreadList(true);
   }
 };
 
+/** 组件挂载时：如果有未读消息，静默预加载第一页数据，提升弹窗打开速度 */
+onMounted(() => {
+  if (emailStore.unreadCount > 0) {
+    lastFetchTime = Date.now();
+    fetchUnreadList(true);
+  }
+});
+
+/** 一键已读 */
 const handleMarkAllRead = async () => {
   if (isMarkingRead.value) return;
   isMarkingRead.value = true;
   try {
     await emailStore.markAllAsRead();
     unreadList.value = [];
+    isFinished.value = true;
   } catch (error: any) {
     useToast.error(t(`api.errors.${error}`));
   } finally {
@@ -45,13 +64,15 @@ const handleMarkAllRead = async () => {
   }
 };
 
+/** 点击邮件卡片：存入 store 供跳转后的页面消费，并执行跳转 */
 const handleCardClick = (item: EmailLogItem) => {
   emailStore.pendingOpenItem = item;
-  router.push({ name: "emails" });
+  router.push({ name: "emails" }).catch(() => {});
 };
 
+/** 查看全部 */
 const handleViewAll = () => {
-  router.push({ name: "emails" });
+  router.push({ name: "emails" }).catch(() => {});
 };
 </script>
 
@@ -60,7 +81,7 @@ const handleViewAll = () => {
     trigger-class="w-11 h-11 relative"
     content-class="w-80 flex flex-col overflow-hidden"
     placement="-left-60"
-    @mouseenter="fetchUnreadList"
+    @mouseenter="onPopupEnter"
   >
     <template #trigger="{ active }">
       <ButtonSecondary :isActive="active" class="w-full h-full">
@@ -88,7 +109,7 @@ const handleViewAll = () => {
       </div>
 
       <!-- Section 2: Unread email list -->
-      <div class="overflow-y-auto max-h-80 border-t border-fg-muted/10 notification-list">
+      <div ref="scrollContainer" class="overflow-y-auto max-h-80 border-t border-fg-muted/10 notification-list">
         <!-- Loading skeleton -->
         <div v-if="isLoading" class="flex flex-col">
           <div
