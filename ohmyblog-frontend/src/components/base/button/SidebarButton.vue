@@ -2,6 +2,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import type { Component } from "vue";
+import UnreadBadge from "@/components/base/tag/UnreadBadge.vue";
 
 /**
  * SidebarButton - 侧边栏按钮组件
@@ -22,12 +23,14 @@ const props = withDefaults(
     text: string;
     iconSize?: number;
     iconStrokeWidth?: number;
+    badge?: number;
   }>(),
   {
     isActive: false,
     isExpanded: false,
     iconSize: 24,
     iconStrokeWidth: 2,
+    badge: undefined,
   },
 );
 
@@ -104,6 +107,8 @@ const iconContainerClass = "w-12 flex items-center justify-center shrink-0";
         {{ text }}
       </span>
     </Transition>
+    <!-- 未读气泡：收缩时小红点，展开时数字 -->
+    <UnreadBadge v-if="badge !== undefined" :count="badge" :is-expanded="isExpanded" />
   </button>
 </template>
 
