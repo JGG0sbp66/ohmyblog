@@ -5,8 +5,9 @@
   - 支持无限滚动加载，支持按状态（成功、失败）过滤
 -->
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
+import { useEmailStore } from "@/stores/email.store";
 import EmailList from "@/views/admin/components/emails/EmailList.vue";
 import EmailDetailView from "@/views/admin/components/emails/EmailDetailView.vue";
 import EmailListActions from "@/views/admin/components/emails/EmailListActions.vue";
@@ -15,11 +16,20 @@ import type {
   EmailLogItem,
 } from "@/views/admin/components/emails/types";
 
+const emailStore = useEmailStore();
+
 // 过滤与状态追踪
 const filters = ref<TFilters>({ type: undefined, isRead: undefined });
 
 // 当前选中的邮件项（用于右侧详情展示）
 const selectedItem = ref<EmailLogItem | null>(null);
+
+onMounted(() => {
+  if (emailStore.pendingOpenItem) {
+    selectedItem.value = emailStore.pendingOpenItem;
+    emailStore.pendingOpenItem = null;
+  }
+});
 
 </script>
 

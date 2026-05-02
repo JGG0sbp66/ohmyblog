@@ -1,9 +1,11 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import { getEmailUnreadCount, markAllEmailsAsRead } from "@/api/email.api";
+import type { EmailLogItem } from "@/views/admin/components/emails/types";
 
 export const useEmailStore = defineStore("email", () => {
   const unreadCount = ref(0);
+  const pendingOpenItem = ref<EmailLogItem | null>(null);
 
   async function fetchUnreadCount() {
     try {
@@ -24,6 +26,7 @@ export const useEmailStore = defineStore("email", () => {
 
   return {
     unreadCount,
+    pendingOpenItem,
     fetchUnreadCount,
     decreaseUnread,
     markAllAsRead,
