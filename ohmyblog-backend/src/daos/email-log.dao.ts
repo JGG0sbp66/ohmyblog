@@ -14,6 +14,7 @@ export interface EmailLogQueryOptions {
 	pageSize?: number;
 	type?: TEmailLogType;
 	status?: TEmailLogStatus;
+	isRead?: boolean;
 }
 
 class EmailLogDao {
@@ -33,12 +34,13 @@ class EmailLogDao {
 	 * @returns { list, total }
 	 */
 	async findAll(options: EmailLogQueryOptions = {}) {
-		const { page = 1, pageSize = 20, type, status } = options;
+		const { page = 1, pageSize = 20, type, status, isRead } = options;
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [];
 		if (type) conditions.push(eq(emailLog.type, type));
 		if (status) conditions.push(eq(emailLog.status, status));
+		if (isRead !== undefined) conditions.push(eq(emailLog.isRead, isRead));
 		const where = conditions.length > 0 ? and(...conditions) : undefined;
 
 		const [list, totalResult] = await Promise.all([
