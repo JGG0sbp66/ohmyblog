@@ -38,7 +38,8 @@ const formatTime = (raw: string | number | Date) => {
     :class="[
       active 
         ? 'bg-accent/10' 
-        : 'bg-transparent hover:bg-accent/5 active:bg-accent/10'
+        : 'bg-transparent hover:bg-accent/5 active:bg-accent/10',
+      item.isRead && !active ? 'opacity-50' : ''
     ]"
   >
     <!-- 选中状态的左侧标识条 -->
@@ -56,8 +57,11 @@ const formatTime = (raw: string | number | Date) => {
     </div>
     
     <h3 
-      class="text-sm font-bold mb-1 line-clamp-1 transition-colors"
-      :class="[active ? 'text-accent' : 'text-fg group-hover:text-accent']"
+      class="text-sm mb-1 line-clamp-1 transition-colors"
+      :class="[
+        active ? 'text-accent font-bold' : 'text-fg group-hover:text-accent',
+        item.isRead ? 'font-normal' : 'font-bold'
+      ]"
     >
       {{ item.subject }}
     </h3>
