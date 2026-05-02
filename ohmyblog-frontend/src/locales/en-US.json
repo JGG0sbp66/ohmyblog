@@ -269,6 +269,11 @@
       "preview": {
         "errorMessageLabel": "Error"
       },
+      "body_preview": {
+        "smtp_test": "SMTP connection test, sender: {senderEmail}",
+        "login_alert": "Login detected from {location} (IP: {ip})",
+        "reset_password": "Password reset request from {location}, IP: {ip}, expires in {minutes} min"
+      },
       "empty_selection_title": "No Message Selected",
       "empty_selection_desc": "Select a message from the list to view its details and content."
     },

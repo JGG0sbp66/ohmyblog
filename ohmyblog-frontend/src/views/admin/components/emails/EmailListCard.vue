@@ -7,6 +7,7 @@
 -->
 <script setup lang="ts">
 import type { EmailLogItem } from "./types";
+import { getEmailBodyPreview } from "@/utils/email";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -67,7 +68,7 @@ const formatTime = (raw: string | number | Date) => {
     </h3>
     
     <p class="text-xs text-fg-muted line-clamp-2 break-all leading-relaxed">
-      {{ item.to }}
+      {{ getEmailBodyPreview(item, t) }}
     </p>
 
     <div v-if="!active && item.status === 'failed'" class="mt-2">
