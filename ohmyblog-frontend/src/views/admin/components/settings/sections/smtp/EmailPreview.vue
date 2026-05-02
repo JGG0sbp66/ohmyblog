@@ -5,6 +5,7 @@ import { useSystemStore } from "@/stores/system.store";
 import BrowserMockup from "@/components/common/container/BrowserMockup.vue";
 import Inbox from "@/components/icon/common/Inbox.vue";
 import TemplatePreview from "./TemplatePreview.vue";
+import EmailHeaderInfo from "@/views/admin/components/emails/EmailHeaderInfo.vue";
 import { computed } from "vue";
 
 const { t, locale } = useLang();
@@ -67,18 +68,12 @@ const toDisplay = computed(() =>
           <Inbox size-class="w-5 h-5" />
         </div>
         <!-- 文字区 -->
-        <div class="flex-1 min-w-0">
-          <div class="text-sm font-bold flex items-center gap-2 truncate">
-            {{ props.senderName }}
-            <span class="text-xs font-normal opacity-50"
-              >&lt;{{ props.senderEmail }}&gt;</span
-            >
-          </div>
-          <div class="flex items-center justify-between mt-1">
-            <div class="text-xs opacity-40">To: {{ toDisplay }}</div>
-            <div class="text-xs opacity-30">{{ currentTime }}</div>
-          </div>
-        </div>
+        <EmailHeaderInfo
+          :sender-name="props.senderName"
+          :sender-email="props.senderEmail"
+          :to="toDisplay"
+          :time="currentTime"
+        />
       </div>
 
       <!-- 邮件正文组件 -->
