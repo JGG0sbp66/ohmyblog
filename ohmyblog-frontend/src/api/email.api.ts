@@ -49,3 +49,11 @@ export const getEmailLogPreviewUrl = (uuid: string): string => {
 export const getEmailUnreadCount = () => {
   return unwrap(api.api.email["unread-count"].get());
 };
+
+/**
+ * POST /api/email/mark-all-read
+ * 将所有未读邮件标记为已读
+ */
+export const markAllEmailsAsRead = () => {
+  return unwrap(api.api.email["mark-all-read"].post());
+};
