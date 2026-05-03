@@ -37,13 +37,13 @@ const routes = [
   {
     path: "/admin/login",
     name: "login",
-    component: () => import("@/views/admin/pages/Login.page.vue"),
+    component: () => import("@/views/admin/pages/auth/Login.page.vue"),
   },
   // 忘记密码（公开路由，不需要登录）
   {
     path: "/admin/forgot-password",
     name: "forgot-password",
-    component: () => import("@/views/admin/pages/ForgotPassword.page.vue"),
+    component: () => import("@/views/admin/pages/auth/ForgotPassword.page.vue"),
   },
   // Admin 后台管理路由
   {
@@ -59,8 +59,23 @@ const routes = [
       },
       {
         path: "posts",
-        name: "posts",
-        component: () => import("@/views/admin/pages/PostNew.page.vue"),
+        component: () =>
+          import(
+            "@/views/admin/components/posts/layout/PostsLayout.vue"
+          ),
+        children: [
+          {
+            path: "",
+            name: "posts",
+            component: () => import("@/views/admin/pages/posts/PostList.page.vue"),
+          },
+          {
+            path: ":uuid/edit",
+            name: "post-edit",
+            component: () =>
+              import("@/views/admin/pages/posts/PostEditor.page.vue"),
+          },
+        ],
       },
       {
         path: "emails",
