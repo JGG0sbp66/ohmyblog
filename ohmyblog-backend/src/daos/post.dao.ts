@@ -1,5 +1,5 @@
 // src/daos/post.dao.ts
-import { and, count, desc, eq, like, ne, or } from "drizzle-orm";
+import { and, count, desc, eq, like, ne, or, sql } from "drizzle-orm";
 import type { TPostListQueryDTO } from "../dtos/post.dto";
 import { db } from "../../db/connection";
 import { post } from "../../db/schema";
@@ -178,6 +178,23 @@ class PostDao {
 		return { list, total: totalResult[0].total };
 	}
 
+
+	/**
+	 * 一次查询获取各状态的文章数量（用于列表页 filter badge）
+	 * @returns { all, draft, published, archived, deleted }
+	 */
+	async countByStatus() {
+		const result = await db
+			.select({
+				all: count(),
+				draft: count(sql`CASE WHEN ${post.status} = 'draft' THEN 1 END`),
+				published: count(sql`CASE WHEN ${post.status} = 'published' THEN 1 END`),
+				archived: count(sql`CASE WHEN ${post.status} = 'archived' THEN 1 END`),
+				deleted: count(sql`CASE WHEN ${post.status} = 'deleted' THEN 1 END`),
+			})
+			.from(post);
+		return result[0];
+	}
 
 	/**
 	 * 更新文章字段，支持部分更新，自动过滤 undefined 值

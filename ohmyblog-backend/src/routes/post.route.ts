@@ -47,6 +47,21 @@ export const postRoute = new Elysia({ name: "postRoute" })
 				},
 			)
 			/**
+			 * GET /posts/counts
+			 * 一次返回各状态文章数量，供列表页 filter badge 使用
+			 */
+			.get(
+				"/counts",
+				async () => {
+					const counts = await postService.getCounts();
+					return { message: "获取成功", counts };
+				},
+				{
+					beforeHandle: ensureAdminIfExists,
+					detail: { summary: "各状态文章数量 (GET)" },
+				},
+			)
+			/**
 			 * GET /posts/:uuid
 			 * 获取单篇文章完整数据（含 content JSON），用于编辑器加载
 			 */

@@ -31,6 +31,14 @@ class PostService {
 		return postDao.findAll(options);
 	}
 
+	/**
+	 * 获取各状态文章数量（用于列表页 filter badge 显示）
+	 * @returns { all, draft, published, archived, deleted }
+	 */
+	async getCounts() {
+		return postDao.countByStatus();
+	}
+
 	// ─── 管理员 · 单条 ──────────────────────────────────────────────────────────
 
 	/**

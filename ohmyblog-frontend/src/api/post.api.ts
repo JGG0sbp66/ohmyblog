@@ -30,6 +30,14 @@ export const getPostList = (query: TPostListQueryDTO) => {
 };
 
 /**
+ * GET /api/posts/counts
+ * 获取各状态文章数量（filter badge 用）
+ */
+export const getPostCounts = () => {
+  return unwrap(api.api.posts.counts.get());
+};
+
+/**
  * GET /api/posts/:uuid
  * 获取文章详情
  */
