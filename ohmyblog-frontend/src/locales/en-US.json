@@ -100,6 +100,15 @@
       }
     },
     "admin": {
+      "Posts": {
+        "filter": {
+          "all": "All",
+          "draft": "Draft",
+          "published": "Published",
+          "archived": "Archived",
+          "deleted": "Trash"
+        }
+      },
       "Settings": {
         "nav": {
           "appearance": "Appearance",
