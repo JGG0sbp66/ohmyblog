@@ -47,12 +47,12 @@ const badgeClass = (key: PostStatusFilter) =>
 </script>
 
 <template>
-  <!-- items-end：让每个 tab 的 indicator 线与容器 border-b 底边对齐 -->
-  <div class="flex items-end gap-1">
+  <!-- 外层 items-center 让按钮与 SearchInput 自然对齐 -->
+  <div class="flex items-center gap-1">
     <div
       v-for="item in items"
       :key="String(item.key)"
-      class="flex flex-col items-stretch"
+      class="relative"
     >
       <ButtonSecondary
         :isActive="modelValue === item.key"
@@ -73,9 +73,9 @@ const badgeClass = (key: PostStatusFilter) =>
         </span>
       </ButtonSecondary>
 
-      <!-- indicator 线：与按钮之间保留 gap，-mb-px 与容器 border-b 重叠 -->
+      <!-- indicator 绝对定位至容器底部，不影响按钮高度，也不影响兄弟元素布局 -->
       <div
-        class="h-0.75 mx-1 mt-1.5 -mb-px rounded-t-sm transition-colors duration-200"
+        class="absolute -bottom-3 left-1 right-1 h-0.75 rounded-t-sm transition-colors duration-200"
         :class="modelValue === item.key ? 'bg-accent' : 'bg-transparent'"
       />
     </div>
