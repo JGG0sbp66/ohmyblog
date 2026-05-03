@@ -9,6 +9,7 @@ import { authRoute } from "./routes/auth.route.js";
 import { configRoute } from "./routes/config.route.js";
 import { emailRoute } from "./routes/email.route.js";
 import { healthRoute } from "./routes/health.route.js";
+import { postRoute } from "./routes/post.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 
 const app = new Elysia()
@@ -41,6 +42,7 @@ const app = new Elysia()
 			.use(authRoute)
 			.use(configRoute)
 			.use(emailRoute)
+			.use(postRoute)
 			.use(uploadRoute),
 	)
 	// 启动服务
