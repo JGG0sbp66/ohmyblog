@@ -4,6 +4,7 @@ import { computed } from "vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import { useLang } from "@/composables/lang.hook";
 import type { TPostStatus } from "@server/db/constants/post.constants";
+import { POST_STATUS_COLORS } from "./postStatusColors";
 
 export type PostStatusFilter = TPostStatus | null;
 
@@ -26,14 +27,6 @@ const emit = defineEmits<{
 
 const { t } = useLang();
 
-const badgeColorMap: Record<string, string> = {
-  null:      "bg-accent/15 text-accent",
-  published: "bg-blue-500/15 text-blue-500",
-  draft:     "bg-amber-400/20 text-amber-500",
-  archived:  "bg-purple-500/15 text-purple-500",
-  deleted:   "bg-red-500/15 text-red-500",
-};
-
 const items = computed(() => [
   { key: null as PostStatusFilter,        label: t("views.admin.Posts.filter.all"),       count: props.counts.all       },
   { key: "published" as PostStatusFilter, label: t("views.admin.Posts.filter.published"), count: props.counts.published },
@@ -43,7 +36,7 @@ const items = computed(() => [
 ]);
 
 const badgeClass = (key: PostStatusFilter) =>
-  badgeColorMap[String(key)] ?? "bg-accent/15 text-accent";
+  POST_STATUS_COLORS[key ?? "all"];
 </script>
 
 <template>
