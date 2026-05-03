@@ -87,7 +87,7 @@ export const PostListQueryDTO = t.Object({
 		t.Numeric({
 			minimum: 1,
 			maximum: 100,
-			default: 20,
+			default: 10,
 			description: "每页条数，最大 100",
 			error: "post.page_size_invalid",
 		}),

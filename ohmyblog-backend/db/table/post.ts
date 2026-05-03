@@ -43,6 +43,9 @@ export const post = sqliteTable("post", {
 	// 手动摘要，优先展示；未填则取 contentText 前 N 字
 	excerpt: text("excerpt"),
 
+	// 观看人数，前台每次访问时自增，默认为 0
+	viewCount: integer("view_count").notNull().default(0),
+
 	// 发布时间，仅 status 为 published 时有值
 	publishedAt: integer("published_at", { mode: "timestamp" }),
 

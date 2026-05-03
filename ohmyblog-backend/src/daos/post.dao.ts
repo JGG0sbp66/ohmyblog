@@ -20,6 +20,7 @@ const listColumns = {
 	tags: post.tags,
 	slug: post.slug,
 	excerpt: post.excerpt,
+	viewCount: post.viewCount,
 	publishedAt: post.publishedAt,
 	deletedAt: post.deletedAt,
 	createdAt: post.createdAt,
