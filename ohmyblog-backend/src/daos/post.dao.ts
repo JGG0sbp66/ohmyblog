@@ -53,7 +53,11 @@ class PostDao {
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [];
-		if (status) conditions.push(eq(post.status, status));
+		if (status) {
+			conditions.push(eq(post.status, status));
+		} else {
+			conditions.push(ne(post.status, "deleted"));
+		}
 		if (search) {
 			conditions.push(
 				or(
