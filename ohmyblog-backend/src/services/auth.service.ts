@@ -3,6 +3,7 @@
 import { configDao } from "../daos/config.dao";
 import { emailVerificationDao } from "../daos/email-verification.dao";
 import { userDao } from "../daos/user.dao";
+import type { TRegisterDTO, TUpdateAccountDTO } from "../dtos/auth.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 import { emailSenderService } from "./email/email-sender.service";
@@ -18,7 +19,7 @@ class AuthService {
 	 * @param body 用户注册信息（用户名、邮箱、明文密码）
 	 * @returns 创建后的用户记录，包含角色与 uuid
 	 */
-	async register(body: { username: string; email: string; password: string }) {
+	async register(body: TRegisterDTO) {
 		// 1. 查重
 		const exists = await userDao.checkExists(body.username, body.email);
 		if (exists) {
@@ -221,10 +222,7 @@ class AuthService {
 	 * @param uuid 用户唯一标识
 	 * @param data 待更新的账号信息
 	 */
-	async updateAccount(
-		uuid: string,
-		data: { username?: string; email?: string; password?: string },
-	) {
+	async updateAccount(uuid: string, data: TUpdateAccountDTO) {
 		const updateData: {
 			username?: string;
 			email?: string;

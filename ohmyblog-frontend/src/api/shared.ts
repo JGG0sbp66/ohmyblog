@@ -48,11 +48,6 @@ export type {
   TConfigKey
 } from "@server/db/constants/config.constants";
 
-/** 忘记密码表单状态 */
-export interface ForgotPasswordForm {
-  email: string;
-  code: string;
-  newPassword: string;
-}
+export type { TResetPasswordDTO as ForgotPasswordForm } from "@server/dtos/auth.dto";
 
 

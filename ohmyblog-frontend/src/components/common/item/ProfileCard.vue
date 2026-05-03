@@ -37,7 +37,7 @@ const triggerUpload = () => {
  * 处理头像文件选择
  */
 const handleFileChange = (file: File) => {
-  handleUpload(file, uploadAvatar, async (url) => {
+  handleUpload(file, (f) => uploadAvatar({ avatar: f }), async (url) => {
     // 1. 更新全局 store 中的头像链接
     systemStore.personalInfo.avatar = url;
 
@@ -123,7 +123,7 @@ const handleFileChange = (file: File) => {
 
     <!-- 社交链接区域 -->
     <div
-      v-if="systemStore.personalInfo.socialLinks.length > 0"
+      v-if="systemStore.personalInfo.socialLinks && systemStore.personalInfo.socialLinks.length > 0"
       class="flex flex-wrap justify-center gap-3 mt-2"
     >
       <a

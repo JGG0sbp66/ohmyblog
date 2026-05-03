@@ -47,7 +47,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
   const config = UPLOAD_CONFIGS[type];
   const hook = type === "avatar" ? avatar : hero;
 
-  hook.handleUpload(file, config.api, (url) => {
+  hook.handleUpload(file, (f) => config.api({ [config.fileName]: f } as any), (url) => {
     // handleUpload 已自动添加时间戳，直接赋值即可
     const info = systemStore.personalInfo as any;
     info[config.storeKey] = url;

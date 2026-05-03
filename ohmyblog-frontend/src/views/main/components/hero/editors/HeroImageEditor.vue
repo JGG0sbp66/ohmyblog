@@ -32,7 +32,7 @@ const triggerUpload = () => {
  * 处理文件选择
  */
 const handleFileChange = (file: File) => {
-  handleUpload(file, uploadHero, async (url) => {
+  handleUpload(file, (f) => uploadHero({ hero: f }), async (url) => {
     // 1. 更新全局 store 中的 hero 链接
     systemStore.personalInfo.hero = url;
 

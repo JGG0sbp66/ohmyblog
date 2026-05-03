@@ -15,7 +15,7 @@ const { loading, uploadRef, trigger, getButtonText, handleUpload } =
   useImageUpload();
 
 const handleFileChange = (file: File) => {
-  handleUpload(file, uploadFavicon, (url) => {
+  handleUpload(file, (f) => uploadFavicon({ icon: f }), (url) => {
     modelValue.value = url;
   });
 };

@@ -47,7 +47,7 @@ const handleFileChange = async (file: File, mode: "light" | "dark") => {
   // 使用通用的 handleUpload 逻辑
   uploader.handleUpload(
     file,
-    (f) => uploadSocialIcon(f, trimmedName, mode),
+    (f) => uploadSocialIcon({ icon: f, key: trimmedName, mode }),
     (urlWithTimestamp) => {
       const updateData =
         mode === "light"
