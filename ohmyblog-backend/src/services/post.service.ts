@@ -1,7 +1,7 @@
 // src/services/post.service.ts
 import type { TPostStatus } from "../../db/constants/post.constants";
-import type { TPostListQueryDTO, TSavePostDTO } from "../dtos/post.dto";
 import { postDao } from "../daos/post.dao";
+import type { TPostListQueryDTO, TSavePostDTO } from "../dtos/post.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 
@@ -149,7 +149,10 @@ class PostService {
 		}
 
 		const updated = await postDao.update(uuid, patch);
-		this.logger.info({ postId: uuid, from: post.status, to: targetStatus }, "文章状态已变更");
+		this.logger.info(
+			{ postId: uuid, from: post.status, to: targetStatus },
+			"文章状态已变更",
+		);
 		return updated;
 	}
 
@@ -167,9 +170,12 @@ class PostService {
 		}
 
 		if (post.status !== "deleted") {
-			throw new BusinessError("只能永久删除回收站中的文章，请先将文章移入回收站", {
-				status: 400,
-			});
+			throw new BusinessError(
+				"只能永久删除回收站中的文章，请先将文章移入回收站",
+				{
+					status: 400,
+				},
+			);
 		}
 
 		await postDao.permanentDelete(uuid);

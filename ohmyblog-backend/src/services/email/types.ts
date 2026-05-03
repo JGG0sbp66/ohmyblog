@@ -1,6 +1,7 @@
 // src/services/email/types.ts
-import type { TSMTPConfigUpsertDTO } from "../../dtos/config.dto";
+
 import type { TEmailLogType } from "../../../db/constants/email-log.constants";
+import type { TSMTPConfigUpsertDTO } from "../../dtos/config.dto";
 
 export interface SiteConfig {
 	title: string;

@@ -1,55 +1,55 @@
 {
-  "version": "7",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "6",
-      "when": 1777536047726,
-      "tag": "0000_flowery_blob",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1777605353547,
-      "tag": "0001_outgoing_redwing",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1777613742565,
-      "tag": "0002_nice_martin_li",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1777630245002,
-      "tag": "0003_add_from_to_email_log",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1777713523123,
-      "tag": "0004_green_rogue",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1777762356913,
-      "tag": "0005_supreme_nehzno",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1777808848370,
-      "tag": "0006_futuristic_cerise",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "sqlite",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "6",
+			"when": 1777536047726,
+			"tag": "0000_flowery_blob",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "6",
+			"when": 1777605353547,
+			"tag": "0001_outgoing_redwing",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "6",
+			"when": 1777613742565,
+			"tag": "0002_nice_martin_li",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "6",
+			"when": 1777630245002,
+			"tag": "0003_add_from_to_email_log",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "6",
+			"when": 1777713523123,
+			"tag": "0004_green_rogue",
+			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "6",
+			"when": 1777762356913,
+			"tag": "0005_supreme_nehzno",
+			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "6",
+			"when": 1777808848370,
+			"tag": "0006_futuristic_cerise",
+			"breakpoints": true
+		}
+	]
 }

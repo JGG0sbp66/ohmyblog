@@ -1,10 +1,13 @@
 // src/services/email/email-dispatch.service.ts
 import nodemailer from "nodemailer";
-import { logger } from "../../plugins/logger.plugin";
+import type {
+	TEmailLogStatus,
+	TEmailLogType,
+} from "../../../db/constants/email-log.constants";
 import { emailLogDao } from "../../daos/email-log.dao";
-import { BusinessError } from "../../plugins/errors";
-import type { TEmailLogStatus, TEmailLogType } from "../../../db/constants/email-log.constants";
 import type { TSMTPConfigUpsertDTO } from "../../dtos/config.dto";
+import { BusinessError } from "../../plugins/errors";
+import { logger } from "../../plugins/logger.plugin";
 import type { DispatchOptions } from "./types";
 
 class EmailDispatchService {

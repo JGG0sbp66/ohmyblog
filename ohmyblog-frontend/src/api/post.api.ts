@@ -2,10 +2,7 @@
 import { api, unwrap } from "./client";
 import type { TPostStatus } from "@server/db/constants/post.constants";
 import type { TPost } from "@server/db/table/post";
-import type {
-  TSavePostDTO,
-  TPostListQueryDTO,
-} from "@server/dtos/post.dto";
+import type { TSavePostDTO, TPostListQueryDTO } from "@server/dtos/post.dto";
 
 /** 文章列表项（用于管理端列表展示） */
 export type PostListItem = Omit<TPost, "content" | "contentMarkdown">;

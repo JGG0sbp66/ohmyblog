@@ -31,14 +31,7 @@ withDefaults(
   <button
     type="button"
     :disabled="disabled"
-    class="
-      inline-flex items-center gap-1
-      bg-transparent border-none p-0
-      text-fg-subtle hover:text-accent
-      transition-colors
-      cursor-pointer
-      disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-fg-subtle
-    "
+    class="inline-flex items-center gap-1 bg-transparent border-none p-0 text-fg-subtle hover:text-accent transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-fg-subtle"
   >
     <slot />
     <span v-if="text">{{ text }}</span>

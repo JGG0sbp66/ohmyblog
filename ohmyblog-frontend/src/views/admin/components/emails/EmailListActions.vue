@@ -36,7 +36,9 @@ const setType = (val: TEmailLogType | undefined) => {
 </script>
 
 <template>
-  <div class="p-4 border-b border-border/40 flex items-center justify-between gap-2">
+  <div
+    class="p-4 border-b border-border/40 flex items-center justify-between gap-2"
+  >
     <!-- 已读/未读切换 -->
     <div class="flex items-center gap-1.5 p-1 bg-bg-muted-soft rounded-2xl">
       <div class="h-9">
@@ -64,12 +66,20 @@ const setType = (val: TEmailLogType | undefined) => {
     </div>
 
     <!-- 更多操作 -->
-    <DropButton contentClass="min-w-40 p-2" placement="-right-10" trigger-class="w-fit">
+    <DropButton
+      contentClass="min-w-40 p-2"
+      placement="-right-10"
+      trigger-class="w-fit"
+    >
       <template #trigger="{ active }">
-        <ButtonSecondary 
-          :isActive="active" 
-          class="w-full h-full px-3 text-sm" 
-          :text="props.type && props.type !== 'all' ? t(`views.emails.types.${props.type}`) : t('views.emails.filters.type')"
+        <ButtonSecondary
+          :isActive="active"
+          class="w-full h-full px-3 text-sm"
+          :text="
+            props.type && props.type !== 'all'
+              ? t(`views.emails.types.${props.type}`)
+              : t('views.emails.filters.type')
+          "
           gap="1.5"
         >
           <More class="w-3.5 h-3.5" />
@@ -77,17 +87,17 @@ const setType = (val: TEmailLogType | undefined) => {
       </template>
       <template #content>
         <div class="flex flex-col gap-1">
-          <ButtonSecondary 
-            class="w-full justify-start px-3 py-2 text-sm" 
+          <ButtonSecondary
+            class="w-full justify-start px-3 py-2 text-sm"
             :isActive="type === undefined || type === 'all'"
             :text="t('views.emails.filters.all')"
             @click="setType(undefined)"
           />
           <div class="h-px bg-border/40 my-1"></div>
-          <ButtonSecondary 
+          <ButtonSecondary
             v-for="item in emailLogTypes"
             :key="item"
-            class="w-full justify-start px-3 py-2 text-sm" 
+            class="w-full justify-start px-3 py-2 text-sm"
             :isActive="type === item"
             :text="t(`views.emails.types.${item}`)"
             @click="setType(item)"

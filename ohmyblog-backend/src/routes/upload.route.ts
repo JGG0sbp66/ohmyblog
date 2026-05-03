@@ -126,7 +126,8 @@ export const uploadRoute = new Elysia({ name: "uploadRoute" })
 					body: UploadPostCoverDTO,
 					detail: {
 						summary: "上传文章封面图 (POST)",
-						description: "仅限管理员操作，上传后自动处理为 WebP 格式，同一文章重复上传会覆盖原封面",
+						description:
+							"仅限管理员操作，上传后自动处理为 WebP 格式，同一文章重复上传会覆盖原封面",
 					},
 				},
 			)
@@ -148,7 +149,8 @@ export const uploadRoute = new Elysia({ name: "uploadRoute" })
 					body: UploadPostImageDTO,
 					detail: {
 						summary: "上传文章行内图 (POST)",
-						description: "仅限管理员操作，编辑器粘贴图片时调用，返回 URL 直接插入编辑器",
+						description:
+							"仅限管理员操作，编辑器粘贴图片时调用，返回 URL 直接插入编辑器",
 					},
 				},
 			),

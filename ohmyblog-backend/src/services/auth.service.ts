@@ -106,7 +106,9 @@ class AuthService {
 					previousIp,
 					loginAt: new Date(),
 				})
-				.catch((err: unknown) => this.logger.error({ err }, "异地登录检测任务异常"));
+				.catch((err: unknown) =>
+					this.logger.error({ err }, "异地登录检测任务异常"),
+				);
 		}
 
 		return user;

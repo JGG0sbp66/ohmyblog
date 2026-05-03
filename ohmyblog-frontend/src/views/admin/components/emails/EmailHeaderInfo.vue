@@ -24,12 +24,10 @@ defineProps<Props>();
         &lt;{{ senderEmail }}&gt;
       </span>
     </div>
-    
+
     <!-- 收件人和时间 -->
     <div class="flex items-center justify-between mt-1">
-      <div class="text-xs opacity-40 truncate mr-4">
-        To: {{ to }}
-      </div>
+      <div class="text-xs opacity-40 truncate mr-4">To: {{ to }}</div>
       <div class="text-xs opacity-30 whitespace-nowrap">
         {{ time }}
       </div>

@@ -108,7 +108,11 @@ const iconContainerClass = "w-12 flex items-center justify-center shrink-0";
       </span>
     </Transition>
     <!-- 未读气泡：收缩时小红点，展开时数字 -->
-    <UnreadBadge v-if="badge !== undefined" :count="badge" :is-expanded="isExpanded" />
+    <UnreadBadge
+      v-if="badge !== undefined"
+      :count="badge"
+      :is-expanded="isExpanded"
+    />
   </button>
 </template>
 

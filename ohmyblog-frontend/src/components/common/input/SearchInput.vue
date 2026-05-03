@@ -29,7 +29,8 @@ const { t } = useLang();
 const innerValue = useVModel(props, "modelValue", emit);
 
 const resolvedPlaceholder = computed(
-  () => props.placeholder ?? t("components.common.input.SearchInput.placeholder"),
+  () =>
+    props.placeholder ?? t("components.common.input.SearchInput.placeholder"),
 );
 
 const handleClear = () => {
@@ -44,13 +45,13 @@ const handleEnter = () => {
 
 <template>
   <div
-    class="flex items-center gap-2 h-10 px-3 rounded-xl bg-bg-muted
-           border border-transparent transition-all duration-150
-           focus-within:ring-2 focus-within:ring-accent/30"
+    class="flex items-center gap-2 h-10 px-3 rounded-xl bg-bg-muted border border-transparent transition-all duration-150 focus-within:ring-2 focus-within:ring-accent/30"
     :class="width"
   >
     <!-- 搜索图标 -->
-    <RiSearchLine class="w-4 h-4 text-fg-soft shrink-0 transition-colors duration-150 group-focus-within:text-accent" />
+    <RiSearchLine
+      class="w-4 h-4 text-fg-soft shrink-0 transition-colors duration-150 group-focus-within:text-accent"
+    />
 
     <!-- 输入框 -->
     <input

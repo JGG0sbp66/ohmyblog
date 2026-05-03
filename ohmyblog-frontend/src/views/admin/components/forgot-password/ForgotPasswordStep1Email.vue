@@ -33,7 +33,6 @@ const handleSubmit = () => {
   if (!emailRef.value?.validate()) return;
   emit("submit");
 };
-
 </script>
 
 <template>

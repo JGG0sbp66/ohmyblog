@@ -32,23 +32,27 @@ const triggerUpload = () => {
  * 处理文件选择
  */
 const handleFileChange = (file: File) => {
-  handleUpload(file, (f) => uploadHero({ hero: f }), async (url) => {
-    // 1. 更新全局 store 中的 hero 链接
-    systemStore.personalInfo.hero = url;
+  handleUpload(
+    file,
+    (f) => uploadHero({ hero: f }),
+    async (url) => {
+      // 1. 更新全局 store 中的 hero 链接
+      systemStore.personalInfo.hero = url;
 
-    // 2. 调用配置更新 API 同步到后端
-    try {
-      await upsertConfig({
-        configKey: "personal_info",
-        configValue: {
-          ...systemStore.personalInfo,
-          hero: url,
-        },
-      });
-    } catch (error) {
-      useToast.error(t("api.errors.获取个性化配置失败"));
-    }
-  });
+      // 2. 调用配置更新 API 同步到后端
+      try {
+        await upsertConfig({
+          configKey: "personal_info",
+          configValue: {
+            ...systemStore.personalInfo,
+            hero: url,
+          },
+        });
+      } catch (error) {
+        useToast.error(t("api.errors.获取个性化配置失败"));
+      }
+    },
+  );
 };
 </script>
 

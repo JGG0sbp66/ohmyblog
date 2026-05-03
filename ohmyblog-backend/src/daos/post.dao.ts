@@ -1,8 +1,8 @@
 // src/daos/post.dao.ts
 import { and, count, desc, eq, like, ne, or, sql } from "drizzle-orm";
-import type { TPostListQueryDTO } from "../dtos/post.dto";
 import { db } from "../../db/connection";
 import { post } from "../../db/schema";
+import type { TPostListQueryDTO } from "../dtos/post.dto";
 
 export type NewPost = typeof post.$inferInsert;
 export type PostUpdate = Partial<
@@ -48,7 +48,8 @@ class PostDao {
 	 * @returns { list, total }
 	 */
 	async findAll(options: TPostListQueryDTO = {}) {
-		const { page, pageSize, status, search } = options as Required<TPostListQueryDTO>;
+		const { page, pageSize, status, search } =
+			options as Required<TPostListQueryDTO>;
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [];
@@ -150,7 +151,9 @@ class PostDao {
 	 * @param options 分页 + 可选关键词搜索
 	 * @returns { list, total }
 	 */
-	async findPublished(options: Pick<TPostListQueryDTO, "page" | "pageSize" | "search"> = {}) {
+	async findPublished(
+		options: Pick<TPostListQueryDTO, "page" | "pageSize" | "search"> = {},
+	) {
 		const { page, pageSize, search } = options as Required<TPostListQueryDTO>;
 		const offset = (page - 1) * pageSize;
 
@@ -179,7 +182,6 @@ class PostDao {
 		return { list, total: totalResult[0].total };
 	}
 
-
 	/**
 	 * 一次查询获取各状态的文章数量（用于列表页 filter badge）
 	 * @returns { all, draft, published, archived, deleted }
@@ -189,7 +191,9 @@ class PostDao {
 			.select({
 				all: count(),
 				draft: count(sql`CASE WHEN ${post.status} = 'draft' THEN 1 END`),
-				published: count(sql`CASE WHEN ${post.status} = 'published' THEN 1 END`),
+				published: count(
+					sql`CASE WHEN ${post.status} = 'published' THEN 1 END`,
+				),
 				archived: count(sql`CASE WHEN ${post.status} = 'archived' THEN 1 END`),
 				deleted: count(sql`CASE WHEN ${post.status} = 'deleted' THEN 1 END`),
 			})
@@ -225,10 +229,7 @@ class PostDao {
 	 * @returns 被删除的记录，未找到则返回 null
 	 */
 	async permanentDelete(uuid: string) {
-		const result = await db
-			.delete(post)
-			.where(eq(post.uuid, uuid))
-			.returning();
+		const result = await db.delete(post).where(eq(post.uuid, uuid)).returning();
 		return result[0] || null;
 	}
 }

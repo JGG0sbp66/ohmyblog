@@ -1,7 +1,10 @@
 // src/dtos/config.dto.ts
 import { type Static, t } from "elysia";
+import {
+	supportedLanguages,
+	themeModes,
+} from "../../db/constants/config.constants";
 import { tStringEnum } from "../utils/typebox";
-import { themeModes, supportedLanguages } from "../../db/constants/config.constants";
 
 const ConfigMetaDTO = {
 	description: t.Optional(

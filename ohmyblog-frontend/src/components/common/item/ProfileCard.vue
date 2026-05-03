@@ -37,20 +37,24 @@ const triggerUpload = () => {
  * 处理头像文件选择
  */
 const handleFileChange = (file: File) => {
-  handleUpload(file, (f) => uploadAvatar({ avatar: f }), async (url) => {
-    // 1. 更新全局 store 中的头像链接
-    systemStore.personalInfo.avatar = url;
+  handleUpload(
+    file,
+    (f) => uploadAvatar({ avatar: f }),
+    async (url) => {
+      // 1. 更新全局 store 中的头像链接
+      systemStore.personalInfo.avatar = url;
 
-    // 2. 同步到后端配置
-    try {
-      await upsertConfig({
-        configKey: "personal_info",
-        configValue: systemStore.personalInfo,
-      } as any);
-    } catch (error) {
-      useToast.error(t("api.errors.获取个性化配置失败"));
-    }
-  });
+      // 2. 同步到后端配置
+      try {
+        await upsertConfig({
+          configKey: "personal_info",
+          configValue: systemStore.personalInfo,
+        } as any);
+      } catch (error) {
+        useToast.error(t("api.errors.获取个性化配置失败"));
+      }
+    },
+  );
 };
 </script>
 
@@ -123,7 +127,10 @@ const handleFileChange = (file: File) => {
 
     <!-- 社交链接区域 -->
     <div
-      v-if="systemStore.personalInfo.socialLinks && systemStore.personalInfo.socialLinks.length > 0"
+      v-if="
+        systemStore.personalInfo.socialLinks &&
+        systemStore.personalInfo.socialLinks.length > 0
+      "
       class="flex flex-wrap justify-center gap-3 mt-2"
     >
       <a

@@ -1,8 +1,8 @@
 // src/daos/email-log.dao.ts
 import { and, count, desc, eq } from "drizzle-orm";
-import type { TEmailLogQueryDTO } from "../dtos/email.dto";
 import { db } from "../../db/connection";
 import { emailLog } from "../../db/schema";
+import type { TEmailLogQueryDTO } from "../dtos/email.dto";
 
 export type NewEmailLog = typeof emailLog.$inferInsert;
 
@@ -23,7 +23,8 @@ class EmailLogDao {
 	 * @returns { list, total }
 	 */
 	async findAll(options: TEmailLogQueryDTO = {}) {
-		const { page, pageSize, type, status, isRead } = options as Required<TEmailLogQueryDTO>;
+		const { page, pageSize, type, status, isRead } =
+			options as Required<TEmailLogQueryDTO>;
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [];

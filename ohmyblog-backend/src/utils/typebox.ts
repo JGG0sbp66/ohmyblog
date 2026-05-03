@@ -18,5 +18,10 @@ import { t } from "elysia";
 export const tStringEnum = <T extends readonly string[]>(
 	values: T,
 	options?: Parameters<typeof t.Union>[1],
-) => t.Unsafe<T[number]>(t.Union(values.map((v) => t.Literal(v)), options));
-
+) =>
+	t.Unsafe<T[number]>(
+		t.Union(
+			values.map((v) => t.Literal(v)),
+			options,
+		),
+	);

@@ -109,7 +109,10 @@ const handleViewAll = () => {
       </div>
 
       <!-- Section 2: Unread email list -->
-      <div ref="scrollContainer" class="overflow-y-auto max-h-80 border-t border-fg-muted/10 notification-list">
+      <div
+        ref="scrollContainer"
+        class="overflow-y-auto max-h-80 border-t border-fg-muted/10 notification-list"
+      >
         <!-- Loading skeleton -->
         <div v-if="isLoading" class="flex flex-col">
           <div

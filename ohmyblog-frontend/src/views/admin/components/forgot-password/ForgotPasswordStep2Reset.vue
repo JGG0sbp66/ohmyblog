@@ -37,7 +37,6 @@ const handleSubmit = () => {
   if (!codeValid || !passwordValid) return;
   emit("submit");
 };
-
 </script>
 
 <template>

@@ -1,7 +1,11 @@
 // src/services/upload.service.ts
 import { join } from "node:path";
 import { createId } from "@paralleldrive/cuid2";
-import { POST_UPLOADS_DIR, SOCIAL_UPLOADS_DIR, SYSTEM_UPLOADS_DIR } from "../constants";
+import {
+	POST_UPLOADS_DIR,
+	SOCIAL_UPLOADS_DIR,
+	SYSTEM_UPLOADS_DIR,
+} from "../constants";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 import { ImageService } from "./image.service";
@@ -86,7 +90,14 @@ class UploadService {
 	async uploadPostCover(file: File, postUuid: string) {
 		const dir = join(POST_UPLOADS_DIR, postUuid);
 		const webPrefix = `/api/uploads/posts/${postUuid}`;
-		return this.uploadAsset(file, dir, webPrefix, "cover.webp", "文章封面图", false);
+		return this.uploadAsset(
+			file,
+			dir,
+			webPrefix,
+			"cover.webp",
+			"文章封面图",
+			false,
+		);
 	}
 
 	/**
@@ -100,7 +111,14 @@ class UploadService {
 		const filename = `${createId()}.webp`;
 		const dir = join(POST_UPLOADS_DIR, postUuid);
 		const webPrefix = `/api/uploads/posts/${postUuid}`;
-		return this.uploadAsset(file, dir, webPrefix, filename, "文章行内图", false);
+		return this.uploadAsset(
+			file,
+			dir,
+			webPrefix,
+			filename,
+			"文章行内图",
+			false,
+		);
 	}
 
 	/**

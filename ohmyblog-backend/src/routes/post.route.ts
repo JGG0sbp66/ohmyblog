@@ -122,7 +122,8 @@ export const postRoute = new Elysia({ name: "postRoute" })
 					beforeHandle: ensureAdminIfExists,
 					detail: {
 						summary: "永久删除文章 (DELETE)",
-						description: "只允许删除已在回收站（status=deleted）的文章，需先调用状态接口移入回收站",
+						description:
+							"只允许删除已在回收站（status=deleted）的文章，需先调用状态接口移入回收站",
 					},
 				},
 			),
@@ -144,7 +145,8 @@ export const postRoute = new Elysia({ name: "postRoute" })
 					query: PublicPostListQueryDTO,
 					detail: {
 						summary: "已发布文章列表（前台）(GET)",
-						description: "无需登录，仅返回 published 状态的文章，支持关键词搜索",
+						description:
+							"无需登录，仅返回 published 状态的文章，支持关键词搜索",
 					},
 				},
 			)

@@ -1,6 +1,6 @@
 /**
  * db/constants/config.constants.ts
- * 
+ *
  * 系统配置相关的常量定义 (SSOT)
  */
 
@@ -20,4 +20,3 @@ export const configKeys = [
 	"smtp",
 ] as const;
 export type TConfigKey = (typeof configKeys)[number];
-

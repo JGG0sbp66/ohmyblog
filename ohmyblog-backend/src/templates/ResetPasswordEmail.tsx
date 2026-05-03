@@ -10,8 +10,8 @@ import {
 	Tailwind,
 	Text,
 } from "@react-email/components";
-import { hueToEmailColors } from "../utils/emailColors";
 import type { TResetPasswordEmailParams } from "../dtos/email.dto";
+import { hueToEmailColors } from "../utils/emailColors";
 
 export const ResetPasswordEmail = ({
 	siteTitle = "ohmyblog",

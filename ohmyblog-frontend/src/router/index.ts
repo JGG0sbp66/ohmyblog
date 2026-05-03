@@ -60,14 +60,13 @@ const routes = [
       {
         path: "posts",
         component: () =>
-          import(
-            "@/views/admin/components/posts/layout/PostsLayout.vue"
-          ),
+          import("@/views/admin/components/posts/layout/PostsLayout.vue"),
         children: [
           {
             path: "",
             name: "posts",
-            component: () => import("@/views/admin/pages/posts/PostList.page.vue"),
+            component: () =>
+              import("@/views/admin/pages/posts/PostList.page.vue"),
           },
           {
             path: ":uuid/edit",

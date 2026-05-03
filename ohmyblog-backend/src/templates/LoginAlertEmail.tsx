@@ -12,8 +12,8 @@ import {
 	Tailwind,
 	Text,
 } from "@react-email/components";
-import { hueToEmailColors } from "../utils/emailColors";
 import type { TLoginAlertEmailParams } from "../dtos/email.dto";
+import { hueToEmailColors } from "../utils/emailColors";
 
 export const LoginAlertEmail = ({
 	siteTitle = "ohmyblog",

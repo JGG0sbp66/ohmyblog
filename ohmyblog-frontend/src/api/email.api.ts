@@ -1,10 +1,7 @@
 // src/api/email.api.ts
 import { api, unwrap } from "./client";
 import type { TSMTPConfigUpsertDTO } from "@server/dtos/config.dto";
-import type {
-  TEmailLogQueryDTO,
-  TEmailTestDTO,
-} from "@server/dtos/email.dto";
+import type { TEmailLogQueryDTO, TEmailTestDTO } from "@server/dtos/email.dto";
 
 /**
  * POST /api/email/test-smtp
