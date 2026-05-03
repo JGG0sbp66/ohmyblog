@@ -43,6 +43,13 @@
       "when": 1777762356913,
       "tag": "0005_supreme_nehzno",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1777808848370,
+      "tag": "0006_futuristic_cerise",
+      "breakpoints": true
     }
   ]
 }
