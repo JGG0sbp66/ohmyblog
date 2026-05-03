@@ -60,3 +60,5 @@ export const post = sqliteTable("post", {
 		.default(sql`(unixepoch())`)
 		.$onUpdate(() => new Date()),
 });
+
+export type TPost = typeof post.$inferSelect;
