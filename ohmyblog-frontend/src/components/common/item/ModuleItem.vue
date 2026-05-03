@@ -25,7 +25,7 @@ const modelValue = defineModel<boolean>({ default: false });
     <div class="flex-1 pr-4">
       <h3 class="flex items-center gap-2 text-base font-semibold text-fg">
         {{ title }}
-        <BaseTag v-if="tag" size="sm">{{ tag }}</BaseTag>
+        <BaseTag v-if="tag" type="primary" size="sm">{{ tag }}</BaseTag>
       </h3>
       <p class="mt-1 text-sm text-fg-muted leading-relaxed">
         {{ description }}
