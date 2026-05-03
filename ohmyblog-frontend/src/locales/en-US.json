@@ -11,13 +11,13 @@
         }
       },
       "admin": {
-        "AdminSidebar": {
+        "PostsNav": {
           "nav": {
-            "dashboard": "Dashboard",
-            "posts": "Write",
-            "emails": "Mailbox",
-            "settings": "Preferences"
-          },
+            "list": "Posts",
+            "editor": "Write"
+          }
+        },
+        "AdminSidebar": {
           "user": {
             "logout": "Click to logout",
             "modal": {
@@ -31,6 +31,7 @@
           "pages": {
             "dashboard": "Dashboard",
             "posts": "Posts",
+            "post-edit": "Edit Post",
             "emails": "Emails",
             "settings": "Settings",
             "default": "Admin"

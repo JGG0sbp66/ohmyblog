@@ -25,7 +25,7 @@ onMounted(() => {
 const menuGroups = computed(() => [
   [
     {
-      name: t("components.common.admin.AdminSidebar.nav.dashboard"),
+      name: t("components.common.admin.AdminHeader.pages.dashboard"),
       icon: LayoutDashboard,
       path: "/admin/dashboard",
       exact: true,
@@ -33,19 +33,19 @@ const menuGroups = computed(() => [
   ],
   [
     {
-      name: t("components.common.admin.AdminSidebar.nav.posts"),
+      name: t("components.common.admin.AdminHeader.pages.posts"),
       icon: PenLine,
       path: "/admin/posts",
     },
     {
-      name: t("components.common.admin.AdminSidebar.nav.emails"),
+      name: t("components.common.admin.AdminHeader.pages.emails"),
       icon: Mail,
       path: "/admin/emails",
     },
   ],
   [
     {
-      name: t("components.common.admin.AdminSidebar.nav.settings"),
+      name: t("components.common.admin.AdminHeader.pages.settings"),
       icon: Settings,
       path: "/admin/settings",
     },

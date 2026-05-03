@@ -11,13 +11,13 @@
         }
       },
       "admin": {
-        "AdminSidebar": {
+        "PostsNav": {
           "nav": {
-            "dashboard": "仪表盘",
-            "posts": "写文章",
-            "emails": "邮件内容",
-            "settings": "系统配置"
-          },
+            "list": "文章管理",
+            "editor": "写文章"
+          }
+        },
+        "AdminSidebar": {
           "user": {
             "logout": "点击退出登录",
             "modal": {
@@ -31,6 +31,7 @@
           "pages": {
             "dashboard": "仪表盘",
             "posts": "文章管理",
+            "post-edit": "文章编辑",
             "emails": "邮件管理",
             "settings": "系统设置",
             "default": "管理后台"
