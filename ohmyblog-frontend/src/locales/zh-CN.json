@@ -44,6 +44,9 @@
       "input": {
         "TipInput": {
           "required": "此项不能为空"
+        },
+        "SearchInput": {
+          "placeholder": "搜索..."
         }
       },
       "button": {
