@@ -36,7 +36,6 @@ export const UploadHeroDTO = t.Object({
 export const UploadSocialIconDTO = t.Object({
 	key: t.String({
 		minLength: 1,
-		maxLength: 50,
 		description: "社交平台的唯一标识符 (用于作为图标文件名)",
 	}),
 	mode: tStringEnum(["light", "dark"] as const, {
