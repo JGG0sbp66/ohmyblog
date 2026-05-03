@@ -1,6 +1,7 @@
 // src/services/upload.service.ts
 import { join } from "node:path";
-import { SOCIAL_UPLOADS_DIR, SYSTEM_UPLOADS_DIR } from "../constants";
+import { createId } from "@paralleldrive/cuid2";
+import { POST_UPLOADS_DIR, SOCIAL_UPLOADS_DIR, SYSTEM_UPLOADS_DIR } from "../constants";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 import { ImageService } from "./image.service";
@@ -73,6 +74,33 @@ class UploadService {
 			"社交图标",
 			true,
 		);
+	}
+
+	/**
+	 * 上传文章封面图
+	 * 存储为 posts/{postUuid}/cover.webp，替换时直接覆盖同名文件
+	 * @param file 原始图片文件
+	 * @param postUuid 文章 UUID（用于确定存储子目录）
+	 * @returns 封面图的 Web 访问路径
+	 */
+	async uploadPostCover(file: File, postUuid: string) {
+		const dir = join(POST_UPLOADS_DIR, postUuid);
+		const webPrefix = `/api/uploads/posts/${postUuid}`;
+		return this.uploadAsset(file, dir, webPrefix, "cover.webp", "文章封面图", false);
+	}
+
+	/**
+	 * 上传文章行内图（编辑器粘贴/插入时调用）
+	 * 存储为 posts/{postUuid}/{cuid}.webp，每张图片独立命名不覆盖
+	 * @param file 原始图片文件
+	 * @param postUuid 文章 UUID（用于确定存储子目录）
+	 * @returns 行内图的 Web 访问路径
+	 */
+	async uploadPostImage(file: File, postUuid: string) {
+		const filename = `${createId()}.webp`;
+		const dir = join(POST_UPLOADS_DIR, postUuid);
+		const webPrefix = `/api/uploads/posts/${postUuid}`;
+		return this.uploadAsset(file, dir, webPrefix, filename, "文章行内图", false);
 	}
 
 	/**

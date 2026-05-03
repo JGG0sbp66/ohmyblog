@@ -50,7 +50,29 @@ export const UploadSocialIconDTO = t.Object({
 	}),
 });
 
+// 文章封面图 DTO
+export const UploadPostCoverDTO = t.Object({
+	cover: t.File({
+		type: "image",
+		maxSize: "5m",
+		description: "文章封面图，最大 5MB，上传后自动转为 WebP",
+		error: "请上传 5MB 以内的有效图片",
+	}),
+});
+
+// 文章行内图 DTO（编辑器粘贴/插入图片时使用）
+export const UploadPostImageDTO = t.Object({
+	image: t.File({
+		type: "image",
+		maxSize: "10m",
+		description: "文章内图片，最大 10MB，上传后自动转为 WebP",
+		error: "请上传 10MB 以内的有效图片",
+	}),
+});
+
 export type TUploadIconDTO = Static<typeof UploadIconDTO>;
 export type TUploadHeroDTO = Static<typeof UploadHeroDTO>;
 export type TUploadAvatarDTO = Static<typeof UploadAvatarDTO>;
 export type TUploadSocialIconDTO = Static<typeof UploadSocialIconDTO>;
+export type TUploadPostCoverDTO = Static<typeof UploadPostCoverDTO>;
+export type TUploadPostImageDTO = Static<typeof UploadPostImageDTO>;
