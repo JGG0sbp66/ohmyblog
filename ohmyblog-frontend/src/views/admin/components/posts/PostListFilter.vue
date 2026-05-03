@@ -28,25 +28,40 @@ const emit = defineEmits<{
 const { t } = useLang();
 
 const items = computed(() => [
-  { key: null as PostStatusFilter,        label: t("views.admin.Posts.filter.all"),       count: props.counts.all       },
-  { key: "published" as PostStatusFilter, label: t("views.admin.Posts.filter.published"), count: props.counts.published },
-  { key: "draft" as PostStatusFilter,     label: t("views.admin.Posts.filter.draft"),     count: props.counts.draft     },
-  { key: "archived" as PostStatusFilter,  label: t("views.admin.Posts.filter.archived"),  count: props.counts.archived  },
-  { key: "deleted" as PostStatusFilter,   label: t("views.admin.Posts.filter.deleted"),   count: props.counts.deleted   },
+  {
+    key: null as PostStatusFilter,
+    label: t("views.admin.Posts.filter.all"),
+    count: props.counts.all,
+  },
+  {
+    key: "published" as PostStatusFilter,
+    label: t("views.admin.Posts.filter.published"),
+    count: props.counts.published,
+  },
+  {
+    key: "draft" as PostStatusFilter,
+    label: t("views.admin.Posts.filter.draft"),
+    count: props.counts.draft,
+  },
+  {
+    key: "archived" as PostStatusFilter,
+    label: t("views.admin.Posts.filter.archived"),
+    count: props.counts.archived,
+  },
+  {
+    key: "deleted" as PostStatusFilter,
+    label: t("views.admin.Posts.filter.deleted"),
+    count: props.counts.deleted,
+  },
 ]);
 
-const badgeClass = (key: PostStatusFilter) =>
-  POST_STATUS_COLORS[key ?? "all"];
+const badgeClass = (key: PostStatusFilter) => POST_STATUS_COLORS[key ?? "all"];
 </script>
 
 <template>
   <!-- 外层 items-center 让按钮与 SearchInput 自然对齐 -->
   <div class="flex items-center gap-1">
-    <div
-      v-for="item in items"
-      :key="String(item.key)"
-      class="relative"
-    >
+    <div v-for="item in items" :key="String(item.key)" class="relative">
       <ButtonSecondary
         :isActive="modelValue === item.key"
         class="h-10 px-4"
@@ -57,9 +72,18 @@ const badgeClass = (key: PostStatusFilter) =>
           <span>{{ item.label }}</span>
           <span
             class="inline-flex items-center overflow-hidden transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-            :class="modelValue === item.key ? 'max-w-8 ml-1.5 opacity-100' : 'max-w-0 ml-0 opacity-0'"
+            :class="
+              modelValue === item.key
+                ? 'max-w-8 ml-1.5 opacity-100'
+                : 'max-w-0 ml-0 opacity-0'
+            "
           >
-            <span :class="['text-[10px] py-0.5 px-1.5 rounded-full font-medium tabular-nums whitespace-nowrap', badgeClass(item.key)]">
+            <span
+              :class="[
+                'text-[10px] py-0.5 px-1.5 rounded-full font-medium tabular-nums whitespace-nowrap',
+                badgeClass(item.key),
+              ]"
+            >
               {{ item.count }}
             </span>
           </span>

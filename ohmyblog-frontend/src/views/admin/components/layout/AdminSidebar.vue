@@ -3,7 +3,8 @@
 import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useRouter, useRoute } from "vue-router";
-import { LayoutDashboard, PenLine, Mail, Settings } from "lucide-vue-next";
+import { LayoutDashboard, Mail, Settings } from "lucide-vue-next";
+import { RiQuillPenLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import SidebarButton from "@/components/base/button/SidebarButton.vue";
 import AdminUserInfo from "../AdminUserInfo.vue";
@@ -34,7 +35,7 @@ const menuGroups = computed(() => [
   [
     {
       name: t("components.common.admin.AdminHeader.pages.posts"),
-      icon: PenLine,
+      icon: RiQuillPenLine,
       path: "/admin/posts",
     },
     {
@@ -86,7 +87,9 @@ const isItemActive = (item: MenuItem) => {
             :text="item.name"
             :isActive="isItemActive(item)"
             :isExpanded="isExpanded"
-            :badge="item.path === '/admin/emails' ? emailUnreadCount : undefined"
+            :badge="
+              item.path === '/admin/emails' ? emailUnreadCount : undefined
+            "
             @click="handleNavClick(item.path)"
           />
         </div>
