@@ -47,9 +47,8 @@ const formatted = computed(() => (date.value ? fmt.format(date.value) : "—"));
 </script>
 
 <template>
-  <div class="w-32 shrink-0 text-xs text-fg-soft">
-    <span class="text-fg-muted">{{ label }}</span>
-    <br />
-    {{ formatted }}
+  <div class="w-32 shrink-0 flex flex-col text-xs text-fg-muted">
+    <span class="text-fg-subtle">{{ label }}</span>
+    <span>{{ formatted }}</span>
   </div>
 </template>
