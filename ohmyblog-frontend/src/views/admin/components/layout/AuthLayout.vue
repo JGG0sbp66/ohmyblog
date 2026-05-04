@@ -8,7 +8,7 @@
 -->
 <script setup lang="ts">
 import BaseCard from "@/components/base/card/BaseCard.vue";
-import TypingBrand from "@/components/icon/TypingBrand.vue";
+import Brand from "@/components/common/item/Brand.vue";
 
 defineProps<{
   /** 品牌打字三行文案 */
@@ -27,7 +27,7 @@ defineProps<{
         <div class="w-full max-w-5xl flex items-center justify-center gap-12">
           <!-- 左：品牌展示 -->
           <div class="hidden lg:block w-full onload-animation">
-            <TypingBrand
+            <Brand
               :line1="brandLine1"
               :line2="brandLine2"
               :line3="brandLine3"

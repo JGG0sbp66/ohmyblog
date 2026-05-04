@@ -1,6 +1,6 @@
 <!-- src/views/setup/Setup.page.vue -->
 <script setup lang="ts">
-import TypingBrand from "@/components/icon/TypingBrand.vue";
+import Brand from "@/components/common/item/Brand.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 import BaseProgress from "@/components/base/progress/BaseProgress.vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
@@ -86,7 +86,7 @@ const [rightSideRef] = useAutoAnimate();
                 @register-validator="stepStore.setSmtpFormValidator"
               />
             </BaseCard>
-            <TypingBrand
+            <Brand
               v-else
               :line1="t('components.icon.TypingBrand.line1')"
               :line2="t('components.icon.TypingBrand.line2')"
