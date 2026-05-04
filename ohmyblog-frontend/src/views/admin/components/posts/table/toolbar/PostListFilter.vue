@@ -1,10 +1,10 @@
-<!-- src/views/admin/components/posts/PostListFilter.vue -->
+<!-- src/views/admin/components/posts/table/toolbar/PostListFilter.vue -->
 <script setup lang="ts">
 import { computed } from "vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import { useLang } from "@/composables/lang.hook";
 import type { TPostStatus } from "@server/db/constants/post.constants";
-import { POST_STATUS_COLORS } from "./postStatusColors";
+import { POST_STATUS_COLORS } from "../../postStatusColors";
 
 export type PostStatusFilter = TPostStatus | null;
 
