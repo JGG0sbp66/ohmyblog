@@ -1,6 +1,6 @@
 <!-- src/views/admin/pages/posts/PostList.page.vue -->
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import PostListFilter from "@/views/admin/components/posts/table/toolbar/PostListFilter.vue";
@@ -21,6 +21,10 @@ const total = ref(0);
 const page = ref(1);
 const loading = ref(false);
 const selectedUuids = ref<string[]>([]);
+
+const selectedPosts = computed(() =>
+  posts.value.filter((p) => selectedUuids.value.includes(p.uuid)),
+);
 
 const fetchCounts = async () => {
   try {
@@ -79,8 +83,11 @@ onMounted(() => {
       <div class="flex items-center gap-2">
         <Transition name="bulk-fade">
           <div v-if="selectedUuids.length > 0" class="flex items-center gap-2">
-            <PostBulkStatusButton class="onload-animation anim-delay-0" @click="" />
-            <PostBulkDeleteButton class="onload-animation anim-delay-50" @click="" />
+            <PostBulkStatusButton @click="" />
+            <PostBulkDeleteButton
+              :selected-posts="selectedPosts"
+              @refresh="fetchCounts(); fetchList();"
+            />
           </div>
         </Transition>
         <!-- 搜索框（与 filter 按钮自然居中对齐） -->
@@ -107,11 +114,15 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.bulk-fade-enter-active,
 .bulk-fade-leave-active {
-  transition: opacity 0.15s ease;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.bulk-fade-enter-from,
 .bulk-fade-leave-to {
   opacity: 0;
+  transform: translateY(8px) scale(0.95);
+  filter: blur(4px);
 }
 </style>
