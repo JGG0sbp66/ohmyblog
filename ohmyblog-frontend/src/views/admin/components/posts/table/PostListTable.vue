@@ -122,7 +122,10 @@ const handleEdit = (uuid: string) => {
           @click="handleEdit(post.uuid)"
         >
           <!-- 选择框 -->
-          <div class="w-10 shrink-0">
+          <div
+            class="w-10 shrink-0 self-stretch flex items-center cursor-pointer"
+            @click.stop="toggleSelect(!selected.includes(post.uuid), post.uuid)"
+          >
             <BaseCheckbox
               :model-value="selected.includes(post.uuid)"
               @update:model-value="(val) => toggleSelect(val, post.uuid)"
