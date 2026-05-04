@@ -28,18 +28,24 @@ defineEmits<{ "update:modelValue": [value: boolean] }>();
   >
     <!-- 选中状态 -->
     <Transition
-      enter-active-class="transition ease-out duration-300"
+      mode="out-in"
+      enter-active-class="transition ease-out duration-200"
       enter-from-class="opacity-0 scale-50"
       enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-100"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-50"
     >
       <Check
         v-if="modelValue && !indeterminate"
+        key="check"
         class="w-3 h-3 text-white"
         :stroke-width="4"
       />
       <!-- 半选状态 -->
       <Minus
         v-else-if="indeterminate"
+        key="minus"
         class="w-3 h-3 text-white"
         :stroke-width="4"
       />
