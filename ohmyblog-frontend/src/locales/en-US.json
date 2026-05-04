@@ -132,6 +132,10 @@
           "untitled": "New Post",
           "empty": "No posts yet",
           "noTags": "No tags",
+          "bulk": {
+            "changeStatus": "Change Status",
+            "delete": "Bulk Delete"
+          },
           "timeLabel": {
             "published": "Published",
             "deleted": "Deleted",

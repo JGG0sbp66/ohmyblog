@@ -3,8 +3,10 @@
 import { ref, watch, onMounted } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import BaseCard from "@/components/base/card/BaseCard.vue";
-import PostListFilter from "@/views/admin/components/posts/PostListFilter.vue";
-import type { PostStatusFilter } from "@/views/admin/components/posts/PostListFilter.vue";
+import PostListFilter from "@/views/admin/components/posts/table/toolbar/PostListFilter.vue";
+import type { PostStatusFilter } from "@/views/admin/components/posts/table/toolbar/PostListFilter.vue";
+import PostBulkStatusButton from "@/views/admin/components/posts/table/toolbar/PostBulkStatusButton.vue";
+import PostBulkDeleteButton from "@/views/admin/components/posts/table/toolbar/PostBulkDeleteButton.vue";
 import SearchInput from "@/components/common/input/SearchInput.vue";
 import { getPostList, getPostCounts } from "@/api/post.api";
 import type { PostListItem } from "@/api/post.api";
@@ -73,8 +75,17 @@ onMounted(() => {
     >
       <!-- 左：分类过滤 -->
       <PostListFilter v-model="activeFilter" :counts="counts" />
-      <!-- 右：搜索框（与 filter 按钮自然居中对齐） -->
-      <SearchInput v-model="searchQuery" />
+      <!-- 右：批量操作 + 搜索框 -->
+      <div class="flex items-center gap-2">
+        <Transition name="bulk-fade">
+          <div v-if="selectedUuids.length > 0" class="flex items-center gap-2">
+            <PostBulkStatusButton class="onload-animation anim-delay-0" @click="" />
+            <PostBulkDeleteButton class="onload-animation anim-delay-50" @click="" />
+          </div>
+        </Transition>
+        <!-- 搜索框（与 filter 按钮自然居中对齐） -->
+        <SearchInput v-model="searchQuery" />
+      </div>
     </div>
 
     <PostListTable
@@ -94,3 +105,13 @@ onMounted(() => {
     />
   </BaseCard>
 </template>
+
+<style scoped>
+.bulk-fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.bulk-fade-leave-to {
+  opacity: 0;
+}
+</style>

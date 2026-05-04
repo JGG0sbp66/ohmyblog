@@ -132,6 +132,10 @@
           "untitled": "新文章",
           "empty": "暂无文章",
           "noTags": "无标签",
+          "bulk": {
+            "changeStatus": "修改状态",
+            "delete": "批量删除"
+          },
           "timeLabel": {
             "published": "发布于",
             "deleted": "删除于",
