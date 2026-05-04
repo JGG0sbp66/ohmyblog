@@ -1,7 +1,7 @@
 <!-- src/components/base/pop/ConfirmListModal.vue -->
 <script setup lang="ts">
 import type { Component } from "vue";
-import { FileText } from "lucide-vue-next";
+import BaseTag from "@/components/base/tag/BaseTag.vue";
 import ConfirmModal from "./ConfirmModal.vue";
 
 /**
@@ -29,7 +29,14 @@ withDefaults(
     /** 确认按钮 loading 状态 */
     loading?: boolean;
     /** 列表条目：key 用于 v-for，label 为显示文字 */
-    items: Array<{ key: string; label: string }>;
+    items: Array<{
+      key: string;
+      label: string;
+      /** 右侧显示的额外信息（如状态标签文案） */
+      tag?: string;
+      /** 状态标签对应的 class（用于控制颜色） */
+      tagClass?: string;
+    }>;
   }>(),
   {
     loading: false,
@@ -58,17 +65,34 @@ const emit = defineEmits<{
     @confirm="emit('confirm')"
   >
     <template #list>
-      <div class="border border-border rounded-xl overflow-hidden">
-        <ul
-          class="bg-bg-card divide-y divide-border/40 max-h-44 overflow-y-auto"
-        >
+      <div class="border-y border-border/40 -mx-6 my-2">
+        <ul class="max-h-52 overflow-y-auto divide-y divide-border/20">
           <li
-            v-for="item in items"
+            v-for="(item, index) in items"
             :key="item.key"
-            class="flex items-center gap-3 px-4 py-2.5"
+            class="flex items-center gap-4 px-6 py-3"
           >
-            <FileText class="w-4 h-4 text-fg-muted shrink-0" />
-            <span class="text-sm text-fg truncate min-w-0">{{ item.label }}</span>
+            <!-- 左侧序号 -->
+            <span
+              class="font-mono text-[10px] text-fg-subtle w-8 shrink-0 text-right"
+            >
+              {{ (index + 1).toString().padStart(2, "0") }} /
+            </span>
+
+            <!-- 中间标题 -->
+            <span class="text-sm text-fg truncate flex-1 font-medium">
+              {{ item.label }}
+            </span>
+
+            <!-- 右侧状态标签 -->
+            <BaseTag
+              v-if="item.tag"
+              :show-icon="false"
+              class="shrink-0 text-[10px] px-1.5 py-0.5"
+              :class="item.tagClass"
+            >
+              {{ item.tag }}
+            </BaseTag>
           </li>
         </ul>
       </div>

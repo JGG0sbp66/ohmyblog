@@ -4,7 +4,7 @@ import { computed } from "vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import { useLang } from "@/composables/lang.hook";
 import type { TPostStatus } from "@server/db/constants/post.constants";
-import { POST_STATUS_COLORS } from "../../postStatusColors";
+import { POST_STATUS_COLORS, POST_STATUS_LABEL_KEYS } from "../cells/PostStatusBadge.vue";
 
 export type PostStatusFilter = TPostStatus | null;
 
@@ -35,22 +35,22 @@ const items = computed(() => [
   },
   {
     key: "published" as PostStatusFilter,
-    label: t("views.admin.Posts.filter.published"),
+    label: t(POST_STATUS_LABEL_KEYS.published),
     count: props.counts.published,
   },
   {
     key: "draft" as PostStatusFilter,
-    label: t("views.admin.Posts.filter.draft"),
+    label: t(POST_STATUS_LABEL_KEYS.draft),
     count: props.counts.draft,
   },
   {
     key: "archived" as PostStatusFilter,
-    label: t("views.admin.Posts.filter.archived"),
+    label: t(POST_STATUS_LABEL_KEYS.archived),
     count: props.counts.archived,
   },
   {
     key: "deleted" as PostStatusFilter,
-    label: t("views.admin.Posts.filter.deleted"),
+    label: t(POST_STATUS_LABEL_KEYS.deleted),
     count: props.counts.deleted,
   },
 ]);

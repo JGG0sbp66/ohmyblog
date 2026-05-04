@@ -8,6 +8,7 @@ import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 import { updatePostStatus, permanentDeletePost } from "@/api/post.api";
 import type { PostListItem } from "@/api/post.api";
+import { POST_STATUS_COLORS, POST_STATUS_LABEL_KEYS } from "../cells/PostStatusBadge.vue";
 
 const props = defineProps<{
   selectedPosts: PostListItem[];
@@ -36,6 +37,8 @@ const items = computed(() =>
   props.selectedPosts.map((p) => ({
     key: p.uuid,
     label: p.title || t("views.admin.Posts.table.untitled"),
+    tag: t(POST_STATUS_LABEL_KEYS[p.status]),
+    tagClass: POST_STATUS_COLORS[p.status],
   })),
 );
 
