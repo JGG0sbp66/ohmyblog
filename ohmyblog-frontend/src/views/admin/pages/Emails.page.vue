@@ -43,9 +43,14 @@ watch(() => emailStore.pendingOpenItem, consumePending);
 
 <template>
   <!-- 主容器 -->
-  <BaseCard padding="none" class="flex-1 overflow-hidden flex">
+  <BaseCard
+    padding="none"
+    class="flex-1 overflow-hidden flex onload-animation"
+  >
     <!-- 左侧列表 -->
-    <div class="w-100 border-r border-border/40 flex flex-col bg-bg-muted/10">
+    <div
+      class="w-100 border-r border-border/40 flex flex-col bg-bg-muted/10 onload-animation anim-delay-100"
+    >
       <!-- 操作区域 -->
       <EmailListActions
         v-model:isRead="filters.isRead"
@@ -57,7 +62,7 @@ watch(() => emailStore.pendingOpenItem, consumePending);
     </div>
 
     <!-- 右侧展示区域 -->
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 overflow-hidden onload-animation anim-delay-150">
       <EmailDetailView :item="selectedItem" />
     </div>
   </BaseCard>
