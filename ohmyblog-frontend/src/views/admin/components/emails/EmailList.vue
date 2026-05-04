@@ -103,15 +103,17 @@ onMounted(() => fetchList(true));
     ref="scrollContainer"
     class="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar"
   >
-    <EmailListCard
-      v-for="item in list"
-      :key="item.uuid"
-      :data-uuid="item.uuid"
-      :item="item"
-      :active="modelValue?.uuid === item.uuid"
-      class="w-full"
-      @click="handleSelect(item)"
-    />
+    <TransitionGroup name="list-item-anim">
+      <EmailListCard
+        v-for="item in list"
+        :key="item.uuid"
+        :data-uuid="item.uuid"
+        :item="item"
+        :active="modelValue?.uuid === item.uuid"
+        class="w-full"
+        @click="handleSelect(item)"
+      />
+    </TransitionGroup>
 
     <!-- 加载状态指示器 -->
     <div v-if="isLoading" class="flex flex-col gap-2">
