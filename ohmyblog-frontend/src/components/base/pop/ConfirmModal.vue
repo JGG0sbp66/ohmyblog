@@ -60,6 +60,7 @@ const { t } = useLang();
 
     <div class="flex flex-col gap-3">
       <p class="text-fg text-sm">{{ question }}</p>
+      <slot name="list" />
       <div v-if="warning" class="flex items-center gap-1 text-red-500">
         <Info class="w-3.5 h-3.5 shrink-0" />
         <p class="text-xs">{{ warning }}</p>
