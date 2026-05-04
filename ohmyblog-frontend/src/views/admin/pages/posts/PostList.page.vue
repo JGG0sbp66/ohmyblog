@@ -83,10 +83,19 @@ onMounted(() => {
       <div class="flex items-center gap-2">
         <Transition name="bulk-fade">
           <div v-if="selectedUuids.length > 0" class="flex items-center gap-2">
-            <PostBulkStatusButton @click="" />
+            <PostBulkStatusButton
+              :selected-posts="selectedPosts"
+              @refresh="
+                fetchCounts();
+                fetchList();
+              "
+            />
             <PostBulkDeleteButton
               :selected-posts="selectedPosts"
-              @refresh="fetchCounts(); fetchList();"
+              @refresh="
+                fetchCounts();
+                fetchList();
+              "
             />
           </div>
         </Transition>
