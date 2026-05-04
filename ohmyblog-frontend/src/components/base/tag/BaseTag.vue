@@ -1,8 +1,7 @@
 <!-- src/components/base/tag/BaseTag.vue -->
 <script setup lang="ts">
 import { computed } from "vue";
-import Check from "@/components/icon/tag/Check.vue";
-import XCircle from "@/components/icon/tag/XCircle.vue";
+import { Check, CircleX } from "lucide-vue-next";
 
 /**
  * 基础标签/药丸组件
@@ -54,8 +53,8 @@ const classes = computed(() => {
     <!-- 图标插槽：showIcon=false 时完全跳过（不渲染 slot 也不渲染默认图标） -->
     <template v-if="showIcon">
       <slot name="icon">
-        <Check v-if="type === 'success'" size-class="w-3 h-3" />
-        <XCircle v-else-if="type === 'error'" size-class="w-3 h-3" />
+        <Check v-if="type === 'success'" class="w-3 h-3" />
+        <CircleX v-else-if="type === 'error'" class="w-3 h-3" />
       </slot>
     </template>
     <!-- 默认文本插槽 -->
