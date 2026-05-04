@@ -9,7 +9,7 @@ import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import User from "@/components/icon/common/User.vue";
-import PanelTop from "@/components/icon/ui/PanelTop.vue";
+import { RiGalleryFill } from "@remixicon/vue";
 
 const { t } = useLang();
 const systemStore = useSystemStore();
@@ -161,7 +161,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         >
           <template #icon>
             <div class="flex flex-col items-center gap-3">
-              <PanelTop size-class="w-10 h-10 text-fg-subtle/30" />
+              <RiGalleryFill class="w-10 h-10 text-fg-subtle/30" />
               <p class="text-xs text-fg-subtle/60">
                 {{ t("views.setup.steps.step4.hero.recommend") }}
               </p>

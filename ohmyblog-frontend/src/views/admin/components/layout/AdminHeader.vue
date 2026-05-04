@@ -4,7 +4,7 @@ import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useLang } from "@/composables/lang.hook";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import HomeIcon from "@/components/icon/ui/Home.vue";
+import { RiHome5Line } from "@remixicon/vue";
 import NotificationButton from "@/components/common/button/NotificationButton.vue";
 
 const router = useRouter();
@@ -50,7 +50,7 @@ const goToHome = () => {
             :title="t('components.common.admin.AdminHeader.actions.goHome')"
             class="w-full h-full"
           >
-            <HomeIcon />
+            <RiHome5Line class="w-5 h-5" />
           </ButtonSecondary>
         </div>
 

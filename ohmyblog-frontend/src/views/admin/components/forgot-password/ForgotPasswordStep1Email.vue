@@ -8,7 +8,7 @@ import { useTemplateRef } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import ArrowLeft from "@/components/icon/ui/ArrowLeft.vue";
+import { RiArrowLeftLine } from "@remixicon/vue";
 import { ForgotPasswordDTO } from "@server/dtos/auth.dto";
 import { useLang } from "@/composables/lang.hook";
 import type { Validatable } from "@/composables/setup-step.hook";
@@ -81,7 +81,7 @@ const handleSubmit = () => {
           @click="emit('back')"
           class="w-full px-4! py-2!"
         >
-          <ArrowLeft />
+          <RiArrowLeftLine class="w-5 h-5" />
         </ButtonSecondary>
       </div>
     </form>

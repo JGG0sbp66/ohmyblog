@@ -6,7 +6,7 @@ import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonThird from "@/components/base/button/ButtonThird.vue";
-import ArrowLeft from "@/components/icon/ui/ArrowLeft.vue";
+import { RiArrowLeftLine } from "@remixicon/vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { login } from "@/api/auth.api";
 import { LoginDTO } from "@server/dtos/auth.dto";
@@ -138,7 +138,7 @@ const handleLogin = async () => {
             @click="router.push({ name: 'home' })"
             class="w-full px-4! py-2!"
           >
-            <ArrowLeft />
+            <RiArrowLeftLine class="w-5 h-5" />
           </ButtonSecondary>
         </div>
       </form>
