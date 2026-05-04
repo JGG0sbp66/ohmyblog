@@ -2,7 +2,7 @@
 <script lang="ts" setup>
 import { useTheme } from "@/composables/theme.hook";
 import ButtonSecondary from "../base/button/ButtonSecondary.vue";
-import ThemePicker from "../icon/theme/ThemePicker.vue";
+import { RiContrastLine, RiSunLine, RiMoonLine } from "@remixicon/vue";
 import { computed } from "vue";
 import { useLang } from "@/composables/lang.hook";
 import DropButton from "../common/button/DropButton.vue";
@@ -33,8 +33,9 @@ const isActive = (value: TThemeMode) => {
         @click="cycleTheme()"
         class="w-full h-full"
       >
-        <!-- 传入当前的模式名称 -->
-        <ThemePicker :theme="colorMode" />
+        <RiContrastLine v-if="colorMode === 'auto'" class="w-5 h-5" />
+        <RiSunLine v-if="colorMode === 'light'" class="w-5 h-5" />
+        <RiMoonLine v-if="colorMode === 'dark'" class="w-5 h-5" />
       </ButtonSecondary>
     </template>
 
@@ -48,7 +49,9 @@ const isActive = (value: TThemeMode) => {
           class="w-full py-2.5 px-4 justify-start"
           :isActive="isActive(option.value)"
         >
-          <ThemePicker :theme="option.value" />
+          <RiContrastLine v-if="option.value === 'auto'" class="w-5 h-5" />
+          <RiSunLine v-if="option.value === 'light'" class="w-5 h-5" />
+          <RiMoonLine v-if="option.value === 'dark'" class="w-5 h-5" />
         </ButtonSecondary>
       </div>
     </template>
