@@ -134,7 +134,21 @@
           "noTags": "No tags",
           "bulk": {
             "changeStatus": "Change Status",
-            "delete": "Bulk Delete"
+            "delete": "Bulk Delete",
+            "trashModal": {
+              "title": "Move to Trash",
+              "question": "Are you sure you want to move the following posts to Trash?",
+              "listHeader": "Posts to be moved",
+              "warning": "You can find and restore them from the Trash section at any time.",
+              "confirm": "Move All to Trash"
+            },
+            "deleteModal": {
+              "title": "Permanent Bulk Delete",
+              "question": "Are you sure you want to permanently delete the following posts?",
+              "listHeader": "Posts to be permanently deleted",
+              "warning": "This action cannot be undone. The posts will be permanently deleted and cannot be recovered.",
+              "confirm": "Delete All Permanently"
+            }
           },
           "timeLabel": {
             "published": "Published",

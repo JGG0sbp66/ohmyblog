@@ -134,7 +134,21 @@
           "noTags": "无标签",
           "bulk": {
             "changeStatus": "修改状态",
-            "delete": "批量删除"
+            "delete": "批量删除",
+            "trashModal": {
+              "title": "批量移入回收站",
+              "question": "您确定要将以下文章移入回收站吗？",
+              "listHeader": "即将移入回收站",
+              "warning": "移入回收站的文章可在「回收站」中找回并恢复",
+              "confirm": "全部移入回收站"
+            },
+            "deleteModal": {
+              "title": "批量永久删除",
+              "question": "您确定要永久删除以下文章吗？",
+              "listHeader": "即将永久删除",
+              "warning": "此操作不可撤销，文章将被彻底删除，无法恢复",
+              "confirm": "全部永久删除"
+            }
           },
           "timeLabel": {
             "published": "发布于",

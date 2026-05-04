@@ -8,7 +8,7 @@
   - 操作完成后 emit('refresh')，父组件刷新列表和计数
 -->
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { RiQuillPenLine } from "@remixicon/vue";
 import { Trash2, TriangleAlert } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
@@ -32,48 +32,36 @@ const emit = defineEmits<{
 
 const { t } = useLang();
 
+// ─── 状态计算 ────────────────────────────────────────────────────────────────
+
+/** 
+ * 是否为永久删除模式
+ * 业务逻辑：如果文章已在回收站，则触发永久删除弹窗
+ */
+const isPermanentDelete = computed(() => props.post.status === "deleted");
+
 // ─── 弹窗状态 ────────────────────────────────────────────────────────────────
 
-/** 移入回收站确认弹窗是否显示 */
-const showTrashConfirm = ref(false);
-/** 永久删除确认弹窗是否显示 */
-const showDeleteConfirm = ref(false);
+/** 确认弹窗是否显示 */
+const showConfirm = ref(false);
 /** 防止按钮连续点击 */
 const loading = ref(false);
 
-// ─── 删除按钮点击入口 ────────────────────────────────────────────────────────
+// ─── 操作逻辑 ────────────────────────────────────────────────────────────────
 
-/** 根据文章状态决定弹出哪个确认弹窗 */
-const handleDeleteClick = () => {
-  if (props.post.status === "deleted") {
-    showDeleteConfirm.value = true;
-  } else {
-    showTrashConfirm.value = true;
-  }
-};
-
-// ─── 确认操作 ────────────────────────────────────────────────────────────────
-
-/** 确认移入回收站 */
-const confirmTrash = async () => {
+/** 
+ * 执行确认后的删除操作
+ * 根据 isPermanentDelete 决定调用物理删除还是移入回收站
+ */
+const handleConfirm = async () => {
   loading.value = true;
   try {
-    await updatePostStatus(props.post.uuid, "deleted");
-    showTrashConfirm.value = false;
-    emit("refresh");
-  } catch (error: any) {
-    useToast.error(t(`api.errors.${error}`));
-  } finally {
-    loading.value = false;
-  }
-};
-
-/** 确认永久删除 */
-const confirmDelete = async () => {
-  loading.value = true;
-  try {
-    await permanentDeletePost(props.post.uuid);
-    showDeleteConfirm.value = false;
+    if (isPermanentDelete.value) {
+      await permanentDeletePost(props.post.uuid);
+    } else {
+      await updatePostStatus(props.post.uuid, "deleted");
+    }
+    showConfirm.value = false;
     emit("refresh");
   } catch (error: any) {
     useToast.error(t(`api.errors.${error}`));
@@ -103,36 +91,40 @@ const postTitle = () =>
     <DeleteButton
       class="w-8! h-8!"
       :title="
-        post.status === 'deleted'
+        isPermanentDelete
           ? t('views.admin.Posts.table.actions.permanentDelete')
           : t('views.admin.Posts.table.actions.trash')
       "
-      @click="handleDeleteClick"
+      @click="showConfirm = true"
     />
   </div>
 
-  <!-- 移入回收站确认弹窗（可恢复） -->
+  <!-- 删除/移入回收站确认弹窗 -->
   <ConfirmModal
-    v-model="showTrashConfirm"
-    :icon="Trash2"
-    :title="t('views.admin.Posts.table.confirm.trash.title')"
-    :question="t('views.admin.Posts.table.confirm.trash.question', { title: postTitle() })"
-    :warning="t('views.admin.Posts.table.confirm.trash.warning')"
-    :confirm-text="t('views.admin.Posts.table.confirm.trash.confirm')"
+    v-model="showConfirm"
+    :icon="isPermanentDelete ? TriangleAlert : Trash2"
+    :title="
+      isPermanentDelete
+        ? t('views.admin.Posts.table.confirm.delete.title')
+        : t('views.admin.Posts.table.confirm.trash.title')
+    "
+    :question="
+      isPermanentDelete
+        ? t('views.admin.Posts.table.confirm.delete.question', { title: postTitle() })
+        : t('views.admin.Posts.table.confirm.trash.question', { title: postTitle() })
+    "
+    :warning="
+      isPermanentDelete
+        ? t('views.admin.Posts.table.confirm.delete.warning')
+        : t('views.admin.Posts.table.confirm.trash.warning')
+    "
+    :confirm-text="
+      isPermanentDelete
+        ? t('views.admin.Posts.table.confirm.delete.confirm')
+        : t('views.admin.Posts.table.confirm.trash.confirm')
+    "
+    :confirm-class="isPermanentDelete ? 'bg-red-500! hover:bg-red-600!' : ''"
     :loading="loading"
-    @confirm="confirmTrash"
-  />
-
-  <!-- 永久删除确认弹窗（不可恢复，红色警示） -->
-  <ConfirmModal
-    v-model="showDeleteConfirm"
-    :icon="TriangleAlert"
-    :title="t('views.admin.Posts.table.confirm.delete.title')"
-    :question="t('views.admin.Posts.table.confirm.delete.question', { title: postTitle() })"
-    :warning="t('views.admin.Posts.table.confirm.delete.warning')"
-    :confirm-text="t('views.admin.Posts.table.confirm.delete.confirm')"
-    :loading="loading"
-    confirm-class="bg-red-500! hover:bg-red-600!"
-    @confirm="confirmDelete"
+    @confirm="handleConfirm"
   />
 </template>
