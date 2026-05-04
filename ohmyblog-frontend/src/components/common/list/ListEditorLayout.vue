@@ -6,7 +6,7 @@
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import BasePagination from "@/components/base/table/BasePagination.vue";
-import AddIcon from "@/components/icon/common/Add.vue";
+import { RiAddLine } from "@remixicon/vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -55,8 +55,8 @@ const emit = defineEmits<{
         size="sm"
         @click="$emit('add')"
       >
-        <AddIcon
-          class="transition-transform duration-300 group-hover/addbtn:rotate-90"
+        <RiAddLine
+          class="w-5 h-5 transition-transform duration-300 group-hover/addbtn:rotate-90"
         />
       </ButtonSecondary>
     </div>
