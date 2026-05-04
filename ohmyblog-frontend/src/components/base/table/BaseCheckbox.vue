@@ -18,11 +18,11 @@ defineEmits<{ "update:modelValue": [value: boolean] }>();
 <template>
   <button
     type="button"
-    class="group w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent active:scale-90 cursor-pointer select-none shrink-0"
+    class="group w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg focus:ring-accent active:scale-90 cursor-pointer select-none shrink-0"
     :class="
       modelValue || indeterminate
         ? 'bg-accent shadow-md'
-        : 'bg-bg-muted border border-border shadow-inner hover:bg-bg-muted/80'
+        : 'bg-bg-muted shadow-inner hover:bg-bg-muted/80'
     "
     @click.stop="$emit('update:modelValue', !modelValue)"
   >
