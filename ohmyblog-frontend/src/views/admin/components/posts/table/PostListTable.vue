@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import { useLang } from "@/composables/lang.hook";
 import BasePagination from "@/components/base/table/BasePagination.vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
-import ListCheckbox from "@/components/common/list/ListCheckbox.vue";
+import BaseCheckbox from "@/components/base/table/BaseCheckbox.vue";
 import PostStatusBadge from "./cells/PostStatusBadge.vue";
 import PostTimeCell from "./cells/PostTimeCell.vue";
 import PostTagsCell from "./cells/PostTagsCell.vue";
@@ -80,7 +80,7 @@ const handleEdit = (uuid: string) => {
       class="flex items-center px-5 py-2.5 border-b border-border/30 text-xs font-semibold text-fg-muted uppercase tracking-wider select-none"
     >
       <div class="w-10 shrink-0">
-        <ListCheckbox
+        <BaseCheckbox
           :model-value="isAllSelected"
           :indeterminate="isPartiallySelected"
           @update:model-value="toggleSelectAll"
@@ -123,7 +123,7 @@ const handleEdit = (uuid: string) => {
         >
           <!-- 选择框 -->
           <div class="w-10 shrink-0">
-            <ListCheckbox
+            <BaseCheckbox
               :model-value="selected.includes(post.uuid)"
               @update:model-value="(val) => toggleSelect(val, post.uuid)"
             />
