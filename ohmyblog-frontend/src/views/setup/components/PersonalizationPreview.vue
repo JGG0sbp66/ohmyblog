@@ -8,8 +8,7 @@ import { uploadAvatar, uploadHero } from "@/api/upload.api";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
-import User from "@/components/icon/common/User.vue";
-import { RiGalleryFill } from "@remixicon/vue";
+import { RiGalleryFill, RiIdCardLine } from "@remixicon/vue";
 
 const { t } = useLang();
 const systemStore = useSystemStore();
@@ -77,7 +76,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           @change="(file) => onFileChange('avatar', file)"
         >
           <template #icon>
-            <User size-class="w-12 h-12 text-fg-subtle/30" />
+            <RiIdCardLine class="w-12 h-12 text-fg-subtle/30" />
           </template>
         </ImageUpload>
       </div>

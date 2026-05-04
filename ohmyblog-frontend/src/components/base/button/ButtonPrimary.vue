@@ -1,7 +1,7 @@
 <!-- src/components/base/button/ButtonPrimary.vue -->
 <script lang="ts" setup>
 import { computed } from "vue";
-import Loading from "@/components/icon/common/Loading.vue";
+import Loading from "@/components/common/item/Loading.vue";
 
 /**
  * ButtonPrimary - 主要按钮组件

@@ -11,7 +11,7 @@ import type { EmailLogItem } from "./types";
 import { getEmailLogPreviewUrl } from "@/api/email.api";
 import { useLang } from "@/composables/lang.hook";
 import { useEmailStore } from "@/stores/email.store";
-import Inbox from "@/components/icon/common/Inbox.vue";
+import { Inbox } from "lucide-vue-next";
 import EmailHeaderInfo from "./EmailHeaderInfo.vue";
 
 const props = defineProps<{
@@ -71,7 +71,7 @@ const formatTime = (raw: string | number | Date) => {
           <div
             class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0"
           >
-            <Inbox size-class="w-5 h-5" />
+            <Inbox class="w-5 h-5" />
           </div>
           <EmailHeaderInfo
             :sender-name="item.fromName"
@@ -116,7 +116,7 @@ const formatTime = (raw: string | number | Date) => {
       <div
         class="w-16 h-16 rounded-3xl bg-bg-muted flex items-center justify-center text-fg-subtle mb-4"
       >
-        <Inbox size-class="w-8 h-8 opacity-20" />
+        <Inbox class="w-8 h-8 opacity-20" />
       </div>
       <h3 class="text-lg font-bold text-fg mb-2">
         {{ t("views.emails.empty_selection_title") }}

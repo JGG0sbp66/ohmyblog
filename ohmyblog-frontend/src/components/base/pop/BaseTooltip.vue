@@ -1,6 +1,6 @@
 <!-- src/components/base/pop/BaseTooltip.vue -->
 <script setup lang="ts">
-import QuestionIcon from "@/components/icon/common/Question.vue";
+import { CircleHelp } from "lucide-vue-next";
 
 interface Props {
   content: string;
@@ -12,9 +12,8 @@ defineProps<Props>();
 <template>
   <div class="group/tooltip relative flex items-center">
     <!-- 触发图标 -->
-    <QuestionIcon
-      sizeClass="w-3.5 h-3.5"
-      class="text-fg-soft cursor-help hover:text-accent"
+    <CircleHelp
+      class="w-3.5 h-3.5 text-fg-soft cursor-help hover:text-accent"
     />
 
     <!-- Tooltip 弹窗内容 -->

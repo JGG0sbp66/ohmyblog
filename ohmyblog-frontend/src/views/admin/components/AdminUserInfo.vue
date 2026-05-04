@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import { useLang } from "@/composables/lang.hook";
 import { useAuthStore } from "@/stores/auth.store";
 import { useSystemStore } from "@/stores/system.store";
-import UserIcon from "@/components/icon/common/User.vue";
+import { RiIdCardLine } from "@remixicon/vue";
 import ConfirmModal from "@/components/base/pop/ConfirmModal.vue";
 import { TriangleAlert } from "lucide-vue-next";
 
@@ -113,7 +113,7 @@ const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
             :alt="authStore.user?.username"
             class="w-full h-full object-cover"
           />
-          <UserIcon v-else sizeClass="w-4 h-4 text-fg-muted" />
+          <RiIdCardLine v-else class="w-4 h-4 text-fg-muted" />
         </div>
       </div>
 

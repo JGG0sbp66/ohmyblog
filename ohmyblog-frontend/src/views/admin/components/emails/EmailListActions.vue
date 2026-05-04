@@ -7,9 +7,7 @@
 <script setup lang="ts">
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import DropButton from "@/components/common/button/DropButton.vue";
-import More from "@/components/icon/common/More.vue";
-import MailAll from "@/components/icon/common/MailAll.vue";
-import MailUnread from "@/components/icon/common/MailUnread.vue";
+import { Ellipsis, Mail, MailOpen } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import { emailLogTypes } from "@/api/shared";
 import type { TEmailLogType } from "@/api/shared";
@@ -49,7 +47,7 @@ const setType = (val: TEmailLogType | undefined) => {
           gap="1.5"
           @click="setIsRead(undefined)"
         >
-          <MailAll class="w-3.5 h-3.5" />
+          <Mail class="w-3.5 h-3.5" />
         </ButtonSecondary>
       </div>
       <div class="h-9">
@@ -60,7 +58,7 @@ const setType = (val: TEmailLogType | undefined) => {
           gap="1.5"
           @click="setIsRead(false)"
         >
-          <MailUnread class="w-3.5 h-3.5" />
+          <MailOpen class="w-3.5 h-3.5" />
         </ButtonSecondary>
       </div>
     </div>
@@ -82,7 +80,7 @@ const setType = (val: TEmailLogType | undefined) => {
           "
           gap="1.5"
         >
-          <More class="w-3.5 h-3.5" />
+          <Ellipsis class="w-3.5 h-3.5" />
         </ButtonSecondary>
       </template>
       <template #content>

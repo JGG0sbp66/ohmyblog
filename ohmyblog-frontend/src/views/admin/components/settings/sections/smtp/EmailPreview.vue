@@ -3,7 +3,7 @@
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import BrowserMockup from "@/components/common/container/BrowserMockup.vue";
-import Inbox from "@/components/icon/common/Inbox.vue";
+import { Inbox } from "lucide-vue-next";
 import TemplatePreview from "./TemplatePreview.vue";
 import EmailHeaderInfo from "@/views/admin/components/emails/EmailHeaderInfo.vue";
 import { computed } from "vue";
@@ -65,7 +65,7 @@ const toDisplay = computed(() =>
         <div
           class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent mt-0.5 shrink-0"
         >
-          <Inbox size-class="w-5 h-5" />
+          <Inbox class="w-5 h-5" />
         </div>
         <!-- 文字区 -->
         <EmailHeaderInfo

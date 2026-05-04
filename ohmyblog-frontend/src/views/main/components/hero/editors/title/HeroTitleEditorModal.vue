@@ -5,7 +5,7 @@ import { upsertConfig } from "@/api/config.api";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseModal from "@/components/base/pop/BaseModal.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import Heading from "@/components/icon/common/Heading.vue";
+import { RiHeading } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 import { useSystemStore } from "@/stores/system.store";
@@ -57,7 +57,7 @@ const handleSave = async () => {
   >
     <template #header>
       <div class="flex items-center gap-2">
-        <Heading sizeClass="w-5 h-5" class="text-accent" />
+        <RiHeading class="w-5 h-5 text-accent" />
         <h2 class="text-xl font-bold text-fg">
           {{ t("views.main.hero.titleEditor.modalTitle") }}
         </h2>

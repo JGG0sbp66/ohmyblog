@@ -1,6 +1,6 @@
 <!-- src/components/common/list/EmptyState.vue -->
 <script setup lang="ts">
-import InboxIcon from "@/components/icon/common/Inbox.vue";
+import { Inbox } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 
 const { t } = useLang();
@@ -20,7 +20,7 @@ withDefaults(
   >
     <div class="mb-2 flex justify-center opacity-20">
       <slot name="icon">
-        <InboxIcon class="h-8 w-8" />
+        <Inbox class="h-8 w-8" />
       </slot>
     </div>
     <p class="text-sm text-fg-muted/60">

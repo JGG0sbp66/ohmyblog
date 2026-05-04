@@ -1,7 +1,7 @@
 <!-- src/components/common/button/DeleteButton.vue -->
 <script setup lang="ts">
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import Trash from "@/components/icon/common/Trash.vue";
+import { Trash2 } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 
 const { t } = useLang();
@@ -23,7 +23,7 @@ defineEmits<{
       :title="title || t('common.delete')"
       @click="$emit('click')"
     >
-      <Trash class="h-4 w-4" />
+      <Trash2 class="h-4 w-4" />
     </ButtonSecondary>
   </div>
 </template>
