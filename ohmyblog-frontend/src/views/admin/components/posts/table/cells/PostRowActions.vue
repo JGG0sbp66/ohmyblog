@@ -34,7 +34,7 @@ const { t } = useLang();
 
 // ─── 状态计算 ────────────────────────────────────────────────────────────────
 
-/** 
+/**
  * 是否为永久删除模式
  * 业务逻辑：如果文章已在回收站，则触发永久删除弹窗
  */
@@ -49,7 +49,7 @@ const loading = ref(false);
 
 // ─── 操作逻辑 ────────────────────────────────────────────────────────────────
 
-/** 
+/**
  * 执行确认后的删除操作
  * 根据 isPermanentDelete 决定调用物理删除还是移入回收站
  */
@@ -110,8 +110,12 @@ const postTitle = () =>
     "
     :question="
       isPermanentDelete
-        ? t('views.admin.Posts.table.confirm.delete.question', { title: postTitle() })
-        : t('views.admin.Posts.table.confirm.trash.question', { title: postTitle() })
+        ? t('views.admin.Posts.table.confirm.delete.question', {
+            title: postTitle(),
+          })
+        : t('views.admin.Posts.table.confirm.trash.question', {
+            title: postTitle(),
+          })
     "
     :warning="
       isPermanentDelete

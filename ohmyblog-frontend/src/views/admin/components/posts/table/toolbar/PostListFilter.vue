@@ -4,7 +4,10 @@ import { computed } from "vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import { useLang } from "@/composables/lang.hook";
 import type { TPostStatus } from "@server/db/constants/post.constants";
-import { POST_STATUS_COLORS, POST_STATUS_LABEL_KEYS } from "../cells/PostStatusBadge.vue";
+import {
+  POST_STATUS_COLORS,
+  POST_STATUS_LABEL_KEYS,
+} from "../cells/PostStatusBadge.vue";
 
 export type PostStatusFilter = TPostStatus | null;
 

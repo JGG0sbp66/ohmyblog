@@ -8,7 +8,10 @@ import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 import { updatePostStatus, permanentDeletePost } from "@/api/post.api";
 import type { PostListItem } from "@/api/post.api";
-import { POST_STATUS_COLORS, POST_STATUS_LABEL_KEYS } from "../cells/PostStatusBadge.vue";
+import {
+  POST_STATUS_COLORS,
+  POST_STATUS_LABEL_KEYS,
+} from "../cells/PostStatusBadge.vue";
 
 const props = defineProps<{
   selectedPosts: PostListItem[];
@@ -22,7 +25,7 @@ const { t } = useLang();
 const showModal = ref(false);
 const loading = ref(false);
 
-/** 
+/**
  * 是否为永久删除模式
  * 业务逻辑：当选中的文章全部处于回收站状态时，执行物理删除，否则执行移入回收站
  */
@@ -30,7 +33,7 @@ const isPermanentDelete = computed(() =>
   props.selectedPosts.every((p) => p.status === "deleted"),
 );
 
-/** 
+/**
  * 转换列表数据为弹窗展示格式
  */
 const items = computed(() =>
@@ -42,7 +45,7 @@ const items = computed(() =>
   })),
 );
 
-/** 
+/**
  * 执行批量删除/移入回收站操作
  */
 const handleConfirm = async () => {
@@ -56,7 +59,9 @@ const handleConfirm = async () => {
     } else {
       // 执行软删除（移入回收站）
       await Promise.all(
-        props.selectedPosts.map((post) => updatePostStatus(post.uuid, "deleted")),
+        props.selectedPosts.map((post) =>
+          updatePostStatus(post.uuid, "deleted"),
+        ),
       );
     }
     showModal.value = false;
