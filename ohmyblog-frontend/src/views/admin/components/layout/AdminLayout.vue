@@ -16,14 +16,14 @@ const isEditorMode = computed(() => route.name === "post-edit");
 <template>
   <div class="h-screen flex flex-col bg-bg">
     <!-- 顶部栏容器：
-         1. 在编辑器模式下默认收缩为 1.5 (h-1.5) 的细条，以腾出更多编辑空间
-         2. 当鼠标悬停时，展开为正常高度 (h-18)
-         3. 非编辑器模式下固定为正常高度 -->
+         1. 在编辑器模式下默认收缩，通过 transform 向上移动隐藏大部分内容
+         2. 当鼠标悬停时，恢复正常位置
+         3. 非编辑器模式下固定在正常位置 -->
     <div
       :class="[
-        'shrink-0 overflow-hidden',
-        isEditorMode && !isHeaderHovered ? 'h-1.5' : 'h-18',
-        'transition-all duration-300 ease-in-out',
+        'shrink-0 z-50 h-18',
+        isEditorMode && !isHeaderHovered ? '-translate-y-[calc(100%-12px)]' : 'translate-y-0',
+        'transition-all duration-300 ease-in-out transform',
       ]"
       @mouseenter="isHeaderHovered = true"
       @mouseleave="isHeaderHovered = false"
@@ -32,13 +32,18 @@ const isEditorMode = computed(() => route.name === "post-edit");
     </div>
 
     <!-- 下方内容区 - 圆角卡片样式 -->
-    <div class="flex-1 flex gap-4 min-h-0 pr-4 pb-4 overflow-hidden">
+    <div
+      :class="[
+        'flex-1 flex min-h-0 overflow-hidden transition-all duration-300 ease-in-out',
+        isEditorMode && !isHeaderHovered ? '-mt-18 pt-3' : '',
+      ]"
+    >
       <!-- 侧边栏 -->
-      <AdminSidebar class="h-full" />
+      <AdminSidebar class="mb-4" />
 
       <!-- 主内容区 -->
       <main
-        class="flex-1 p-6 flex flex-col min-h-0 overflow-y-auto custom-scrollbar"
+        class="flex-1 p-6 pt-3 flex flex-col min-h-0 overflow-y-auto custom-scrollbar"
       >
         <div
           class="flex-1 flex flex-col min-h-0 onload-animation anim-delay-150"
