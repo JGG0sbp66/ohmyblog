@@ -134,6 +134,11 @@
           "noTags": "No tags",
           "bulk": {
             "changeStatus": "Change Status",
+            "statusModal": {
+              "title": "Bulk Change Status",
+              "question": "Select the target status for the following posts:",
+              "confirm": "Confirm Change to {status}"
+            },
             "delete": "Bulk Delete",
             "trashModal": {
               "title": "Move to Trash",

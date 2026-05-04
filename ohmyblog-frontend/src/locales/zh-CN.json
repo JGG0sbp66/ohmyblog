@@ -134,6 +134,11 @@
           "noTags": "无标签",
           "bulk": {
             "changeStatus": "修改状态",
+            "statusModal": {
+              "title": "批量修改状态",
+              "question": "请选择要将以下文章修改为的目标状态：",
+              "confirm": "确认修改为 {status}"
+            },
             "delete": "批量删除",
             "trashModal": {
               "title": "批量移入回收站",
