@@ -2,7 +2,7 @@
 <!--
   认证类页面共用布局
   - 全屏 flex 居中
-  - 左：TypingBrand 品牌打字
+  - 左：Brand 品牌打字
   - 右：BaseCard 卡片，内容由 default slot 填充
   使用方：Login / ForgotPassword 等无需 AdminLayout 包裹的认证页面
 -->

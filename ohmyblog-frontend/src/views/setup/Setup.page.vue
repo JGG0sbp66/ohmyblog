@@ -88,9 +88,9 @@ const [rightSideRef] = useAutoAnimate();
             </BaseCard>
             <Brand
               v-else
-              :line1="t('components.icon.TypingBrand.line1')"
-              :line2="t('components.icon.TypingBrand.line2')"
-              :line3="t('components.icon.TypingBrand.line3')"
+              :line1="t('components.common.item.Brand.line1')"
+              :line2="t('components.common.item.Brand.line2')"
+              :line3="t('components.common.item.Brand.line3')"
             />
           </div>
 

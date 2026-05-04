@@ -1,4 +1,4 @@
-<!-- src/components/icon/TypingBrand.vue -->
+<!-- src/components/common/item/Brand.vue -->
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from "vue";
 import { useTyping } from "@/composables/typing.hook";
