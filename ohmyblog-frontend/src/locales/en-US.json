@@ -110,6 +110,47 @@
           "published": "Published",
           "archived": "Archived",
           "deleted": "Trash"
+        },
+        "table": {
+          "col": {
+            "post": "Post",
+            "status": "Status",
+            "tags": "Tags",
+            "views": "Views",
+            "time": "Time",
+            "actions": "Actions"
+          },
+          "actions": {
+            "edit": "Edit",
+            "publish": "Publish",
+            "toDraft": "Revert to Draft",
+            "archive": "Archive",
+            "trash": "Move to Trash",
+            "restore": "Restore to Draft",
+            "permanentDelete": "Delete Permanently"
+          },
+          "untitled": "New Post",
+          "empty": "No posts yet",
+          "noTags": "No tags",
+          "timeLabel": {
+            "published": "Published",
+            "deleted": "Deleted",
+            "updated": "Updated"
+          },
+          "confirm": {
+            "trash": {
+              "title": "Move to Trash",
+              "question": "Are you sure you want to move \"{title}\" to Trash?",
+              "warning": "You can find and restore it from the Trash section at any time.",
+              "confirm": "Move to Trash"
+            },
+            "delete": {
+              "title": "Delete Permanently",
+              "question": "Are you sure you want to permanently delete \"{title}\"?",
+              "warning": "This action cannot be undone. The post will be permanently deleted and cannot be recovered.",
+              "confirm": "Delete Permanently"
+            }
+          }
         }
       },
       "Settings": {
@@ -527,7 +568,10 @@
       "SMTP 配置不存在，请先完成邮件服务配置": "SMTP is not configured. Please complete your email settings first.",
       "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP is disabled. Please enable it in Settings first.",
       "验证码无效或已过期": "Verification code is invalid or expired",
-      "账户已被封禁": "This account has been banned"
+      "账户已被封禁": "This account has been banned",
+      "文章不存在": "Post not found",
+      "只能永久删除回收站中的文章，请先将文章移入回收站": "Only posts in Trash can be permanently deleted",
+      "该 slug 已被其他文章使用": "This slug is already used by another post"
     },
     "success": {
       "保存成功": "Settings saved successfully",
