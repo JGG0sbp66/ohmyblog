@@ -3,9 +3,9 @@
 import { ref, computed } from "vue";
 import type { TSchema } from "@sinclair/typebox";
 import { useVModel } from "@vueuse/core";
-import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import { useValidator } from "@/composables/validator.hook";
 import BaseTooltip from "@/components/base/pop/BaseTooltip.vue";
+import BaseInputWrapper from "@/components/base/input/BaseInputWrapper.vue";
 
 interface Props {
   /** 输入框的绑定值 */
@@ -66,9 +66,6 @@ const handleBlur = () => {
   emit("blur");
 };
 
-// 使用 auto-animate 自动处理错误提示的显示/隐藏动画
-const [errorContainerRef] = useAutoAnimate();
-
 /** 暴露接口给父组件，支持外部手动触发校验 */
 defineExpose({ validate });
 </script>
@@ -89,15 +86,7 @@ defineExpose({ validate });
     </div>
 
     <!-- Input Wrapper：固定的最小高度，确保与旁边按钮对齐 -->
-    <div
-      class="w-full min-h-11 bg-bg-muted px-4 rounded-xl text-fg border border-transparent flex items-center"
-      :class="[
-        readonly ? 'opacity-60 cursor-not-allowed' : '',
-        displayError
-          ? 'ring-2 ring-red-500'
-          : 'focus-within:ring-2 focus-within:ring-accent/30',
-      ]"
-    >
+    <BaseInputWrapper :error="displayError" :disabled="readonly">
       <input
         :type="type || 'text'"
         v-model="innerValue"
@@ -105,18 +94,8 @@ defineExpose({ validate });
         @input="internalError && validate()"
         :placeholder="placeholder"
         :readonly="readonly"
-        class="w-full bg-transparent outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
+        class="w-full min-h-11 bg-transparent px-4 outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
       />
-    </div>
-
-    <!-- 错误提示区域：绝对定位或紧凑展示，避免大幅撑开列表行距 -->
-    <div ref="errorContainerRef" class="overflow-hidden">
-      <p
-        v-if="displayError"
-        class="mt-1 px-1 text-[10px] text-red-500 leading-tight"
-      >
-        {{ displayError }}
-      </p>
-    </div>
+    </BaseInputWrapper>
   </div>
 </template>
