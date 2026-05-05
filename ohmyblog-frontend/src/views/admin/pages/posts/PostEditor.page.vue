@@ -1,33 +1,34 @@
-<!-- src/views/admin/pages/PostEditor.page.vue -->
-<!-- TODO: 实现文章编辑器 -->
+<!-- src/views/admin/pages/posts/PostEditor.page.vue -->
 <script setup lang="ts">
-import { useRoute } from "vue-router";
+import { ref } from "vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
+import PostEditorStatusBar from "@/views/admin/components/posts/editor/PostEditorStatusBar.vue";
+import PostEditorContent from "@/views/admin/components/posts/editor/PostEditorContent.vue";
+import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostEditorSettingsPanel.vue";
 
-const route = useRoute();
+const showSettings = ref(true);
 </script>
 
 <template>
-  <BaseCard padding="none" class="flex-1 flex flex-col overflow-hidden">
-    <!-- 顶部操作栏 -->
-    <div
-      class="flex items-center justify-between px-5 pt-4 pb-3 border-b border-border/40"
-    >
-      <div class="flex items-center gap-4">
-        <h1 class="text-xl font-bold text-fg">
-          {{ route.params.uuid ? "编辑文章" : "写文章" }}
-        </h1>
-      </div>
-      <div class="flex items-center gap-2">
-        <!-- 按钮区域 -->
-      </div>
+  <BaseCard padding="none" class="flex-1 flex overflow-hidden">
+    <!-- 左侧编辑区域 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <PostEditorStatusBar
+        :settingsOpen="showSettings"
+        @toggle-settings="showSettings = !showSettings"
+      />
+      <PostEditorContent />
     </div>
 
-    <!-- 内容区域 -->
-    <div class="flex-1 overflow-y-auto p-6">
-      <div class="max-w-4xl mx-auto space-y-6">
-        <!-- 编辑器主体 -->
-      </div>
+    <!-- 右侧设置面板 wrapper：过渡 width 代替 max-width，避免 reflow 卡顿 -->
+    <div
+      class="shrink-0 overflow-hidden"
+      :style="{
+        width: showSettings ? '18rem' : '0',
+        transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+      }"
+    >
+      <PostEditorSettingsPanel />
     </div>
   </BaseCard>
 </template>
