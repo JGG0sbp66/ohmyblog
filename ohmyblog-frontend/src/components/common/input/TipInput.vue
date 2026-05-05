@@ -9,7 +9,7 @@ import BaseTooltip from "@/components/base/pop/BaseTooltip.vue";
 
 interface Props {
   /** 输入框的绑定值 */
-  modelValue: string | number;
+  modelValue?: string | number | null;
   /** 输入框上方的标题文字 */
   label?: string;
   /** 输入框未输入时的占位提示 */
