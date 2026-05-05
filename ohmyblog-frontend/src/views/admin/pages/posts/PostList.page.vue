@@ -11,6 +11,7 @@ import SearchInput from "@/components/common/input/SearchInput.vue";
 import { getPostList, getPostCounts } from "@/api/post.api";
 import type { PostListItem } from "@/api/post.api";
 import PostListTable from "@/views/admin/components/posts/table/PostListTable.vue";
+import PageToolbar from "@/views/admin/components/posts/layout/PageToolbar.vue";
 
 const activeFilter = ref<PostStatusFilter>(null);
 const searchQuery = ref("");
@@ -74,35 +75,37 @@ onMounted(() => {
 <template>
   <BaseCard padding="none" class="flex-1 flex flex-col overflow-hidden">
     <!-- 操作区域 -->
-    <div
-      class="flex items-center justify-between px-5 pt-4 pb-3 border-b border-border/40"
-    >
-      <!-- 左：分类过滤 -->
-      <PostListFilter v-model="activeFilter" :counts="counts" />
-      <!-- 右：批量操作 + 搜索框 -->
-      <div class="flex items-center gap-2">
-        <Transition name="bulk-fade">
-          <div v-if="selectedUuids.length > 0" class="flex items-center gap-2">
-            <PostBulkStatusButton
-              :selected-posts="selectedPosts"
-              @refresh="
-                fetchCounts();
-                fetchList();
-              "
-            />
-            <PostBulkDeleteButton
-              :selected-posts="selectedPosts"
-              @refresh="
-                fetchCounts();
-                fetchList();
-              "
-            />
-          </div>
-        </Transition>
-        <!-- 搜索框（与 filter 按钮自然居中对齐） -->
-        <SearchInput v-model="searchQuery" />
-      </div>
-    </div>
+    <PageToolbar>
+      <template #left>
+        <!-- 分类过滤 -->
+        <PostListFilter v-model="activeFilter" :counts="counts" />
+      </template>
+      <template #right>
+        <!-- 批量操作 + 搜索框 -->
+        <div class="flex items-center gap-2">
+          <Transition name="bulk-fade">
+            <div v-if="selectedUuids.length > 0" class="flex items-center gap-2">
+              <PostBulkStatusButton
+                :selected-posts="selectedPosts"
+                @refresh="
+                  fetchCounts();
+                  fetchList();
+                "
+              />
+              <PostBulkDeleteButton
+                :selected-posts="selectedPosts"
+                @refresh="
+                  fetchCounts();
+                  fetchList();
+                "
+              />
+            </div>
+          </Transition>
+          <!-- 搜索框（与 filter 按钮自然居中对齐） -->
+          <SearchInput v-model="searchQuery" />
+        </div>
+      </template>
+    </PageToolbar>
 
     <PostListTable
       :posts="posts"
