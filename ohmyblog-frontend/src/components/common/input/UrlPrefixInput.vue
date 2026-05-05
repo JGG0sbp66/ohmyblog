@@ -25,6 +25,7 @@ withDefaults(defineProps<Props>(), {
   placeholder: "",
 });
 
+const emit = defineEmits<{ blur: [] }>();
 const modelValue = defineModel<string>({ default: "" });
 </script>
 
@@ -48,6 +49,7 @@ const modelValue = defineModel<string>({ default: "" });
       class="flex-1 min-w-0 h-10 bg-transparent px-3 outline-none font-mono text-sm placeholder:text-fg-soft"
       spellcheck="false"
       autocomplete="off"
+      @blur="emit('blur')"
     />
   </BaseInputWrapper>
 </template>
