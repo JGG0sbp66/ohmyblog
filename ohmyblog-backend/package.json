@@ -21,9 +21,9 @@
 		"docker": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) -t ohmyblog-backend -f scripts/Dockerfile ."
 	},
 	"dependencies": {
-		"@elysiajs/jwt": "^1.4.1",
-		"@elysiajs/openapi": "^1.4.14",
-		"@elysiajs/static": "^1.4.9",
+		"@elysiajs/jwt": "^1.4.2",
+		"@elysiajs/openapi": "^1.4.15",
+		"@elysiajs/static": "^1.4.10",
 		"@napi-rs/image": "^1.12.0",
 		"@paralleldrive/cuid2": "^3.3.0",
 		"@react-email/components": "^1.0.12",
@@ -31,13 +31,13 @@
 		"culori": "^4.0.2",
 		"drizzle-orm": "^0.45.2",
 		"elysia": "^1.4.28",
-		"nodemailer": "^8.0.5",
+		"nodemailer": "^8.0.7",
 		"react": "^19.2.5",
 		"react-dom": "^19.2.5",
-		"zod": "^4.3.6"
+		"zod": "^4.4.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.12",
+		"@biomejs/biome": "^2.4.14",
 		"@react-email/ui": "6.0.1",
 		"@types/node": "^25.6.0",
 		"@types/nodemailer": "^7.0.11",
@@ -45,7 +45,7 @@
 		"@types/react-dom": "^19.2.3",
 		"bun-types": "latest",
 		"drizzle-kit": "^0.31.10",
-		"react-email": "^6.0.1"
+		"react-email": "^6.0.8"
 	},
 	"module": "src/index.js"
 }
