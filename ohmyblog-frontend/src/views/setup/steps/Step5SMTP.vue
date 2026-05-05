@@ -34,8 +34,8 @@ const handleNext = () => {
       }
 
       const configValue: TSMTPConfigUpsertDTO["configValue"] = {
-        enabled: setupStore.isSMTPEnabled,
         ...setupStore.smtpForm,
+        enabled: setupStore.isSMTPEnabled,
       };
 
       // 移除未填写的可选高级参数。
