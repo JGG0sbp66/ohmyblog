@@ -4,8 +4,8 @@ import { ref, computed } from "vue";
 import type { TSchema } from "@sinclair/typebox";
 import { useVModel } from "@vueuse/core";
 import { useValidator } from "@/composables/validator.hook";
-import BaseTooltip from "@/components/base/pop/BaseTooltip.vue";
 import BaseInputWrapper from "@/components/base/input/BaseInputWrapper.vue";
+import FieldLabel from "@/components/base/input/FieldLabel.vue";
 
 interface Props {
   /** 输入框的绑定值 */
@@ -73,17 +73,13 @@ defineExpose({ validate });
 <template>
   <div class="flex flex-col w-full text-left">
     <!-- Label 区域：仅在传入时渲染 -->
-    <div v-if="label" class="flex items-center gap-1.5 mb-2 px-1">
-      <label
-        class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
-      >
-        {{ label }}
-        <span v-if="required" class="text-red-500 ml-0.5">*</span>
-      </label>
-
-      <!-- 提示窗组件 -->
-      <BaseTooltip v-if="hint" :content="hint" />
-    </div>
+    <FieldLabel
+      v-if="label"
+      :label="label"
+      :tooltip="hint"
+      :required="required"
+      class="mb-2 px-1"
+    />
 
     <!-- Input Wrapper：固定的最小高度，确保与旁边按钮对齐 -->
     <BaseInputWrapper :error="displayError" :disabled="readonly">
