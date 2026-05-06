@@ -4,6 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Bold from "@tiptap/extension-bold";
 import Italic from "@tiptap/extension-italic";
 import Strike from "@tiptap/extension-strike";
+import Code from "@tiptap/extension-code";
 import ListItem from "@tiptap/extension-list-item";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -212,6 +213,21 @@ const CustomUnderline = Underline.extend({
   },
 });
 
+const CustomCode = Code.extend({
+  // 飞书风格：允许行内代码与其他 Mark 共存
+  excludes: "",
+
+  addInputRules() {
+    return [
+      // 匹配 `文本` 后跟一个空格
+      markInputRule({
+        find: /(?:^|[^`])(?:`)([^`]+)(?:`)\s$/,
+        type: this.type,
+      }),
+    ];
+  },
+});
+
 /**
  * useEditorExtensions — 返回 Tiptap 编辑器扩展数组
  *
@@ -226,12 +242,14 @@ export function useEditorExtensions() {
       bold: false,
       italic: false,
       strike: false,
+      code: false,
     }),
     CustomListItem,
     CustomBold,
     CustomItalic,
     CustomStrike,
     CustomUnderline,
+    CustomCode,
     Image,
     Indent,
     TextAlign.configure({ types: ["heading", "paragraph"] }),
