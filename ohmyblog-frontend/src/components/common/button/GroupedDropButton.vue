@@ -14,8 +14,7 @@ import { ChevronDown } from "lucide-vue-next";
  * 使用 @mousedown.prevent 防止编辑器失焦。
  *
  * Props:
- * - label  : 触发按钮文字（通常是当前状态名）
- * - icon   : 触发按钮左侧图标组件（可选）
+ * - icon   : 触发按钮图标组件（可选）
  * - groups : 菜单分组，组间自动插入分割线
  *
  * DropdownItem:
@@ -32,7 +31,6 @@ export type DropdownItem = {
 };
 
 const props = defineProps<{
-  label: string;
   icon?: Component;
   groups: DropdownItem[][];
 }>();
@@ -55,11 +53,13 @@ const runAction = (fn: () => void) => {
   >
     <!-- 触发器 -->
     <template #trigger="{ active }">
-      <ButtonSecondary :isActive="active" class="px-2.5 py-1.5">
-        <div class="flex items-center gap-1.5 font-medium text-sm">
+      <ButtonSecondary :isActive="active" class="px-1.5 py-1.5">
+        <div class="flex items-center gap-0.5 font-medium text-sm">
           <component v-if="icon" :is="icon" class="w-4 h-4" />
-          {{ label }}
-          <ChevronDown class="w-3.5 h-3.5 opacity-50" />
+          <ChevronDown
+            class="w-3.5 h-3.5 opacity-50 shrink-0 transition-transform duration-200"
+            :class="{ 'rotate-180': active }"
+          />
         </div>
       </ButtonSecondary>
     </template>
