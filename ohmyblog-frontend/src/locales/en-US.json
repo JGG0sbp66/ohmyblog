@@ -302,6 +302,26 @@
           },
           "body": {
             "placeholder": "Start writing, or type / to choose a block..."
+          },
+          "bubbleMenu": {
+            "bold": "Bold (Ctrl/⌘+B)\nmarkdown:**text** Space",
+            "italic": "Italic (Ctrl/⌘+I)\nmarkdown:*text* Space",
+            "strike": "Strikethrough (Ctrl/⌘+Shift+S)\nmarkdown:~~text~~ Space",
+            "underline": "Underline (Ctrl/⌘+U)\nmarkdown:~text~ Space",
+            "code": "Inline code (Ctrl/⌘+E)\nmarkdown:`code` Space",
+            "paragraph": "Paragraph",
+            "orderedList": "Ordered list",
+            "bulletList": "Bullet list",
+            "codeBlock": "Code block",
+            "quote": "Blockquote",
+            "alignLeft": "Align left",
+            "alignCenter": "Align center",
+            "alignRight": "Align right",
+            "indent": "Increase indent",
+            "outdent": "Decrease indent",
+            "link": "Insert link",
+            "linkRemove": "Remove link",
+            "linkPrompt": "Enter URL"
           }
         }
       }

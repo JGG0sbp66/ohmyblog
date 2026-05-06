@@ -300,6 +300,26 @@
           },
           "body": {
             "placeholder": "开始写作，或输入 / 选择内容块..."
+          },
+          "bubbleMenu": {
+            "bold": "粗体 (Ctrl/⌘+B)\nmarkdown:**文本** 空格",
+            "italic": "斜体 (Ctrl/⌘+I)\nmarkdown:*文本* 空格",
+            "strike": "删除线 (Ctrl/⌘+Shift+S)\nmarkdown:~~文本~~ 空格",
+            "underline": "下划线 (Ctrl/⌘+U)\nmarkdown:~文本~ 空格",
+            "code": "行内代码 (Ctrl/⌘+E)\nmarkdown:`文本` 空格",
+            "paragraph": "正文",
+            "orderedList": "有序列表",
+            "bulletList": "无序列表",
+            "codeBlock": "代码块",
+            "quote": "引用",
+            "alignLeft": "左对齐",
+            "alignCenter": "居中对齐",
+            "alignRight": "右对齐",
+            "indent": "增加缩进",
+            "outdent": "减少缩进",
+            "link": "插入链接",
+            "linkRemove": "移除链接",
+            "linkPrompt": "请输入链接 URL"
           }
         }
       }
