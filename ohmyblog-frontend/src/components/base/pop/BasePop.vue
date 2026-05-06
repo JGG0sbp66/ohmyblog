@@ -31,7 +31,7 @@ onClickOutside(panelRef, (event) => {
     <div
       v-if="modelValue"
       ref="panelRef"
-      class="bg-bg-card absolute z-50 mt-6 rounded-lg shadow-lg"
+      class="bg-bg-card absolute z-50 rounded-lg shadow-lg"
       :class="$attrs.class"
     >
       <slot></slot>
