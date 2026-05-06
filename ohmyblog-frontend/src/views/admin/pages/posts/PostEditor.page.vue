@@ -8,7 +8,7 @@ import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostE
 import { usePostEditor } from "@/composables/post-editor.hook";
 
 const showSettings = ref(true);
-const { slug, tags, status, isSaving, isDirty, save } = usePostEditor();
+const { slug, tags, status, title, content, contentMarkdown, contentText, isSaving, isDirty, save } = usePostEditor();
 </script>
 
 <template>
@@ -22,7 +22,12 @@ const { slug, tags, status, isSaving, isDirty, save } = usePostEditor();
         @toggle-settings="showSettings = !showSettings"
         @save="save"
       />
-      <PostEditorContent />
+      <PostEditorContent
+        v-model:title="title"
+        v-model:content="content"
+        v-model:contentMarkdown="contentMarkdown"
+        v-model:contentText="contentText"
+      />
     </div>
 
     <!-- 右侧设置面板 wrapper：过渡 width 代替 max-width，避免 reflow 卡顿 -->
