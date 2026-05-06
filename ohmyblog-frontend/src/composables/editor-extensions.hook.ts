@@ -1,6 +1,9 @@
 // src/composables/editor-extensions.hook.ts
-import { Extension } from "@tiptap/core";
+import { Extension, markInputRule } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
+import Bold from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+import Strike from "@tiptap/extension-strike";
 import ListItem from "@tiptap/extension-list-item";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -10,8 +13,8 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { useLang } from "@/composables/lang.hook";
 
-const INDENT_STEP = 2;   // rem per level
-const INDENT_MAX  = 8;   // max level
+const INDENT_STEP = 2;   // 每次缩进的步长 (rem)
+const INDENT_MAX  = 8;   // 最大缩进层级
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -22,6 +25,10 @@ declare module "@tiptap/core" {
   }
 }
 
+/**
+ * Indent Extension — 自定义缩进扩展
+ * 支持对段落和标题进行左边距缩进
+ */
 const Indent = Extension.create({
   name: "indent",
 
@@ -154,6 +161,58 @@ const CustomListItem = ListItem.extend({
 });
 
 /**
+ * 自定义 Mark 扩展，支持飞书风格的 Markdown 快捷键 (文本后跟空格触发)
+ * 且解决了某些情况下只能在行首触发的问题
+ */
+const CustomBold = Bold.extend({
+  addInputRules() {
+    return [
+      // 匹配 **文本** 或 __文本__ 后跟一个空格
+      markInputRule({
+        find: /(?:\*\*|__)([^*_]+)(?:\*\*|__)\s$/,
+        type: this.type,
+      }),
+    ];
+  },
+});
+
+const CustomItalic = Italic.extend({
+  addInputRules() {
+    return [
+      // 匹配 *文本* 或 _文本_ 后跟一个空格，且前面不是 * 或 _
+      markInputRule({
+        find: /(?:^|[^*_])(?:\*|_)([^*_]+)(?:\*|_)\s$/,
+        type: this.type,
+      }),
+    ];
+  },
+});
+
+const CustomStrike = Strike.extend({
+  addInputRules() {
+    return [
+      // 匹配 ~~文本~~ 后跟一个空格
+      markInputRule({
+        find: /(?:~~)([^~]+)(?:~~)\s$/,
+        type: this.type,
+      }),
+    ];
+  },
+});
+
+const CustomUnderline = Underline.extend({
+  addInputRules() {
+    return [
+      // 匹配 ~文本~ 后跟一个空格 (飞书风格下划线)
+      markInputRule({
+        find: /(?:~)([^~]+)(?:~)\s$/,
+        type: this.type,
+      }),
+    ];
+  },
+});
+
+/**
  * useEditorExtensions — 返回 Tiptap 编辑器扩展数组
  *
  * 集中管理所有扩展配置，PostEditorBody 直接调用即可。
@@ -162,12 +221,20 @@ export function useEditorExtensions() {
   const { t } = useLang();
 
   return [
-    StarterKit.configure({ listItem: false }),
+    StarterKit.configure({
+      listItem: false,
+      bold: false,
+      italic: false,
+      strike: false,
+    }),
     CustomListItem,
+    CustomBold,
+    CustomItalic,
+    CustomStrike,
+    CustomUnderline,
     Image,
     Indent,
     TextAlign.configure({ types: ["heading", "paragraph"] }),
-    Underline,
     Link.configure({ openOnClick: false }),
     Placeholder.configure({
       placeholder: t("views.admin.PostEditor.content.body.placeholder"),
