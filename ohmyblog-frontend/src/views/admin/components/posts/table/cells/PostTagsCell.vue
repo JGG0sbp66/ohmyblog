@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const { t } = useLang();
 
-const MAX_TAGS = 2;
+const MAX_TAGS = 3;
 
 /** 获取显示的标签列表 */
 const visibleTags = computed(() => props.tags.slice(0, MAX_TAGS));
