@@ -49,7 +49,7 @@ watch(() => emailStore.pendingOpenItem, consumePending);
   >
     <!-- 左侧列表 -->
     <div
-      class="w-100 border-r border-border/40 flex flex-col bg-bg-muted/10 onload-animation anim-delay-100"
+      class="w-100 border-r border-border/40 flex flex-col bg-bg-muted/10 onload-animation anim-delay-100 z-10"
     >
       <!-- 操作区域 -->
       <EmailListActions
