@@ -5,8 +5,10 @@ import BaseCard from "@/components/base/card/BaseCard.vue";
 import PostEditorStatusBar from "@/views/admin/components/posts/editor/PostEditorStatusBar.vue";
 import PostEditorContent from "@/views/admin/components/posts/editor/PostEditorContent.vue";
 import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostEditorSettingsPanel.vue";
+import { usePostEditor } from "@/composables/post-editor.hook";
 
 const showSettings = ref(true);
+const { slug, tags, status, isSaving, save } = usePostEditor();
 </script>
 
 <template>
@@ -15,7 +17,9 @@ const showSettings = ref(true);
     <div class="flex-1 flex flex-col overflow-hidden">
       <PostEditorStatusBar
         :settingsOpen="showSettings"
+        :loading="isSaving"
         @toggle-settings="showSettings = !showSettings"
+        @save="save"
       />
       <PostEditorContent />
     </div>
@@ -28,7 +32,11 @@ const showSettings = ref(true);
         transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
       }"
     >
-      <PostEditorSettingsPanel />
+      <PostEditorSettingsPanel
+        v-model:slug="slug"
+        v-model:tags="tags"
+        v-model:status="status"
+      />
     </div>
   </BaseCard>
 </template>

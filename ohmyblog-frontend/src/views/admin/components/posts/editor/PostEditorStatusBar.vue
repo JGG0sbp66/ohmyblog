@@ -21,6 +21,8 @@ const { t } = useLang();
 
 defineProps<{
   settingsOpen: boolean;
+  /** 保存中状态，用于禁用按鈕并显示加载态 */
+  loading?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -56,6 +58,7 @@ const emit = defineEmits<{
         <ButtonPrimary
           :text="t('views.admin.PostEditor.statusBar.save')"
           class="text-sm"
+          :loading="loading"
           @click="emit('save')"
         />
       </div>

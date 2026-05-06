@@ -4,8 +4,13 @@ import PostEditorTagSetting from "@/views/admin/components/posts/editor/setting/
 import PostEditorSlugSetting from "@/views/admin/components/posts/editor/setting/PostEditorSlugSetting.vue";
 import PostEditorStatusSetting from "@/views/admin/components/posts/editor/setting/PostEditorStatusSetting.vue";
 import { useLang } from "@/composables/lang.hook";
+import type { TPostStatus } from "@server/db/constants/post.constants";
 
 const { t } = useLang();
+
+const slug = defineModel<string>("slug", { default: "" });
+const tags = defineModel<string[]>("tags", { default: () => [] });
+const status = defineModel<TPostStatus>("status", { default: "draft" });
 </script>
 
 <template>
@@ -23,13 +28,13 @@ const { t } = useLang();
     <!-- 设置内容区域 -->
     <div class="flex-1 flex flex-col gap-6 p-4 overflow-y-auto">
       <!-- 文章标签 -->
-      <PostEditorTagSetting />
+      <PostEditorTagSetting v-model="tags" />
 
       <!-- 永久连接：CRUD 连接到文章的 URL Slug -->
-      <PostEditorSlugSetting required />
+      <PostEditorSlugSetting v-model="slug" required />
 
       <!-- 文章状态：草稿 / 已发布 / 归档等 -->
-      <PostEditorStatusSetting />
+      <PostEditorStatusSetting v-model="status" />
     </div>
   </div>
 </template>

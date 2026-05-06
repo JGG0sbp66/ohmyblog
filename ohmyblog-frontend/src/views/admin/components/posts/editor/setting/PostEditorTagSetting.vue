@@ -8,8 +8,8 @@ import { useLang } from "@/composables/lang.hook";
 
 const { t } = useLang();
 
-/** 当前已添加的标签列表 */
-const tags = ref<string[]>([]);
+/** 当前已选标签列表（v-model 绑定到父级） */
+const tags = defineModel<string[]>({ default: () => [] });
 /** 输入框临时内容 */
 const tagInput = ref("");
 
