@@ -3,6 +3,7 @@
 import { ref } from "vue";
 import { RiPriceTag2Line } from "@remixicon/vue";
 import TagItem from "@/components/base/tag/TagItem.vue";
+import TipInput from "@/components/common/input/TipInput.vue";
 import PostEditorSettingItem from "@/views/admin/components/posts/editor/setting/PostEditorSettingItem.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -48,16 +49,11 @@ const removeTag = (index: number) => {
         />
       </div>
       <!-- 标签输入框：按 Enter 添加，自动去重 -->
-      <div
-        class="w-full bg-bg-muted px-3 rounded-xl flex items-center focus-within:ring-2 focus-within:ring-accent/30"
-      >
-        <input
-          v-model="tagInput"
-          :placeholder="t('views.admin.PostEditor.settingsPanel.tags.placeholder')"
-          class="w-full bg-transparent outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
-          @keydown.enter.prevent="addTag"
-        />
-      </div>
+      <TipInput
+        v-model="tagInput"
+        :placeholder="t('views.admin.PostEditor.settingsPanel.tags.placeholder')"
+        @keydown.enter.prevent="addTag"
+      />
     </div>
   </PostEditorSettingItem>
 </template>
