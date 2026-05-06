@@ -8,7 +8,7 @@ import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostE
 import { usePostEditor } from "@/composables/post-editor.hook";
 
 const showSettings = ref(true);
-const { slug, tags, status, isSaving, save } = usePostEditor();
+const { slug, tags, status, isSaving, isDirty, save } = usePostEditor();
 </script>
 
 <template>
@@ -18,6 +18,7 @@ const { slug, tags, status, isSaving, save } = usePostEditor();
       <PostEditorStatusBar
         :settingsOpen="showSettings"
         :loading="isSaving"
+        :isDirty="isDirty"
         @toggle-settings="showSettings = !showSettings"
         @save="save"
       />

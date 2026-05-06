@@ -1,5 +1,5 @@
 // src/composables/post-editor.hook.ts
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import type { TPostStatus } from "@server/db/constants/post.constants";
 import { getPostById, savePost, updatePostStatus } from "@/api/post.api";
@@ -34,6 +34,8 @@ export const usePostEditor = () => {
   // --- UI 状态 ---
   const isSaving = ref(false);
   const isLoading = ref(false);
+  /** 是否有未保存的更改 */
+  const isDirty = ref(false);
 
   /** 加载已有文章数据并填充表单 */
   const loadPost = async () => {
@@ -50,6 +52,11 @@ export const usePostEditor = () => {
       useToast.error("加载文章失败");
     } finally {
       isLoading.value = false;
+      // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
+      watch([slug, tags, status], () => { isDirty.value = true; });
+      // TODO: 接入 Markdown 编辑器后，对 title/content 加防抖自动保存：
+      // watchDebounced([title, content], save, { debounce: 2000 })
+      // 参考：@vueuse/core watchDebounced
     }
   };
 
@@ -77,6 +84,7 @@ export const usePostEditor = () => {
         }),
         updatePostStatus(uuid, status.value),
       ]);
+      isDirty.value = false;
       useToast.success("保存成功");
     } catch (e) {
       useToast.error(typeof e === "string" ? e : "保存失败，请重试");
@@ -87,5 +95,5 @@ export const usePostEditor = () => {
 
   onMounted(loadPost);
 
-  return { uuid, slug, tags, status, isSaving, isLoading, save };
+  return { uuid, slug, tags, status, isSaving, isLoading, isDirty, save };
 };
