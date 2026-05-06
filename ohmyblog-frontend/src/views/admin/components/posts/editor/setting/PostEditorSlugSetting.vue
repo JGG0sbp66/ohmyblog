@@ -6,6 +6,7 @@ import PostEditorSettingItem from "./PostEditorSettingItem.vue";
 import UrlPrefixInput from "@/components/common/input/UrlPrefixInput.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useValidator } from "@/composables/validator.hook";
+import { SavePostDTO } from "@server/dtos/post.dto";
 
 /**
  * PostEditorSlugSetting — 文章 URL Slug 设置块
@@ -37,23 +38,15 @@ const props = withDefaults(
   { prefix: "/posts/" },
 );
 
-/** slug 校验：blur 后才激活，依次进行必填和格式检查 */
+/** slug 校验：blur 后才激活，依次进行必填和格式检查（格式规则直接源自后端 SavePostDTO.slug） */
 const slugError = computed(() => {
   if (!touched.value) return "";
 
-  const { isValid: requiredOk, error: requiredError } = runValidator(
-    slug.value,
-    { required: props.required },
-  );
-  if (!requiredOk) return requiredError;
-
-  const v = slug.value;
-  if (!v) return "";
-  const isValidFormat =
-    /^[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(v) || /^[a-z0-9]$/.test(v);
-  return isValidFormat
-    ? ""
-    : t("views.admin.PostEditor.settingsPanel.slug.validation.invalid");
+  const { isValid, error } = runValidator(slug.value, {
+    required: props.required,
+    schema: SavePostDTO.properties.slug,
+  });
+  return isValid ? "" : error;
 });
 
 </script>
