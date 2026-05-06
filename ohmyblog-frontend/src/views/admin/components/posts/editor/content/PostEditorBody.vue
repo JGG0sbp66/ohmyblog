@@ -1,12 +1,9 @@
 <!-- src/views/admin/components/posts/editor/content/PostEditorBody.vue -->
 <script setup lang="ts">
-import { watch, onBeforeUnmount } from "vue";
+import { watch, onBeforeUnmount, ref } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import Placeholder from "@tiptap/extension-placeholder";
-import { Markdown } from "tiptap-markdown";
-import { useLang } from "@/composables/lang.hook";
+import { useEditorExtensions } from "@/composables/editor-extensions.hook";
+import PostEditorBubbleMenu from "./menus/PostEditorBubbleMenu.vue";
 
 /**
  * PostEditorBody — Tiptap 富文本编辑区
@@ -15,26 +12,15 @@ import { useLang } from "@/composables/lang.hook";
  * v-model:markdown     → 纯 Markdown（存入 contentMarkdown 字段）
  * v-model:text         → 纯文本（存入 contentText 字段，用于搜索/预览）
  *
- * TODO: 后续在此组件内挂载 BubbleMenu / FloatingMenu / SlashMenu
+ * TODO: 后续在此组件内挂载 FloatingMenu（块操作手柄）/ SlashMenu（/ 命令）
  */
-const { t } = useLang();
-
 const json = defineModel<object | undefined>("json");
 const markdown = defineModel<string>("markdown", { default: "" });
 const text = defineModel<string>("text", { default: "" });
+const containerRef = ref<HTMLElement | null>(null);
 
 const editor = useEditor({
-  extensions: [
-    StarterKit,
-    Image,
-    Placeholder.configure({
-      placeholder: t("views.admin.PostEditor.content.body.placeholder"),
-    }),
-    Markdown.configure({
-      html: false,
-      transformPastedText: true,
-    }),
-  ],
+  extensions: useEditorExtensions(),
   content: json.value ?? "",
   onUpdate({ editor }) {
     json.value = editor.getJSON();
@@ -60,8 +46,15 @@ onBeforeUnmount(() => editor.value?.destroy());
 </script>
 
 <template>
-  <EditorContent
-    :editor="editor"
-    class="w-full min-h-[60vh] focus-within:outline-none"
-  />
+  <div class="relative" ref="containerRef">
+    <PostEditorBubbleMenu
+      v-if="editor"
+      :editor="editor"
+      :container-ref="containerRef"
+    />
+    <EditorContent
+      :editor="editor"
+      class="w-full min-h-[60vh] focus-within:outline-none"
+    />
+  </div>
 </template>
