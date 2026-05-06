@@ -37,9 +37,11 @@ const handleMouseEnter = () => {
     @mouseenter="handleMouseEnter"
     @mouseleave="isHovered = false"
   >
-    <CircleHelp
-      class="w-3.5 h-3.5 text-fg-soft cursor-help hover:text-accent transition-colors"
-    />
+    <slot name="trigger">
+      <CircleHelp
+        class="w-3.5 h-3.5 text-fg-soft cursor-help hover:text-accent transition-colors"
+      />
+    </slot>
   </div>
 
   <!-- Tooltip 内容：渲染到 body，不受任何 overflow 容器影响 -->
