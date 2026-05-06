@@ -90,7 +90,7 @@ defineExpose({ validate });
         @input="internalError && validate()"
         :placeholder="placeholder"
         :readonly="readonly"
-        class="w-full min-h-11 bg-transparent px-4 outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
+        class="w-full min-h-10 bg-transparent px-4 outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
       />
     </BaseInputWrapper>
   </div>
