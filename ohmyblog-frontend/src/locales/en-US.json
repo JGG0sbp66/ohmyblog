@@ -295,6 +295,14 @@
             "label": "Status",
             "tooltip": "Control the visibility of your post. Drafts are only visible to you"
           }
+        },
+        "content": {
+          "title": {
+            "placeholder": "Post title"
+          },
+          "body": {
+            "placeholder": "Start writing, or type / to choose a block..."
+          }
         }
       }
     },

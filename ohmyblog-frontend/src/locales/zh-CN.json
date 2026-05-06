@@ -293,6 +293,14 @@
             "label": "文章状态",
             "tooltip": "控制文章的可见性，草稿仅自己可见"
           }
+        },
+        "content": {
+          "title": {
+            "placeholder": "文章标题"
+          },
+          "body": {
+            "placeholder": "开始写作，或输入 / 选择内容块..."
+          }
         }
       }
     },
