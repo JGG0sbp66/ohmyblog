@@ -27,6 +27,7 @@ export type DropdownItem = {
   label: string;
   icon?: Component;
   active: boolean;
+  disabled?: boolean;
   action: () => void;
 };
 
@@ -38,8 +39,9 @@ const props = defineProps<{
 /** 通过 ref 调用 DropButton 暴露的 close() */
 const dropRef = ref<InstanceType<typeof DropButton>>();
 
-const runAction = (fn: () => void) => {
-  fn();
+const runAction = (item: DropdownItem) => {
+  if (item.disabled) return;
+  item.action();
   dropRef.value?.close();
 };
 </script>
@@ -77,7 +79,8 @@ const runAction = (fn: () => void) => {
             :isActive="item.active"
             :text="item.label"
             class="w-full justify-start px-3 py-1.5 text-sm"
-            @mousedown.prevent="runAction(item.action)"
+            :disabled="item.disabled ?? false"
+            @mousedown.prevent="runAction(item)"
           >
             <component v-if="item.icon" :is="item.icon" class="w-4 h-4 shrink-0" />
           </ButtonSecondary>
