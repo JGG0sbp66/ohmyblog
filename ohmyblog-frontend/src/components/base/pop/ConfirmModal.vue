@@ -25,11 +25,14 @@ const props = withDefaults(
     cancelText?: string;
     /** 确认按钮额外 class，用于覆盖颜色等样式 */
     confirmClass?: string;
+    /** 标题栏图标颜色 class，默认红色（用于危险操作） */
+    iconClass?: string;
     /** 确认按钮 loading 状态 */
     loading?: boolean;
   }>(),
   {
     icon: TriangleAlert,
+    iconClass: "text-red-500",
     confirmClass: "",
     loading: false,
   },
@@ -53,7 +56,7 @@ const { t } = useLang();
   >
     <template #header>
       <div class="flex items-center gap-2">
-        <component :is="icon" class="w-5 h-5 text-red-500" />
+        <component :is="icon" class="w-5 h-5" :class="iconClass" />
         <h2 class="text-xl font-bold text-fg">{{ title }}</h2>
       </div>
     </template>

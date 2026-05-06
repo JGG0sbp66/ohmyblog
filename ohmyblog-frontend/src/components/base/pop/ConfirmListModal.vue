@@ -25,8 +25,10 @@ withDefaults(
     confirmText?: string;
     /** 取消按钮文字 */
     cancelText?: string;
-    /** 确认按钮额外 class */
+    /** 确认按钮颜色等样式 */
     confirmClass?: string;
+    /** 标题栏图标颜色 class */
+    iconClass?: string;
     /** 确认按钮 loading 状态 */
     loading?: boolean;
     /** 列表条目：key 用于 v-for，label 为显示文字 */
@@ -61,6 +63,7 @@ const emit = defineEmits<{
     :confirm-text="confirmText"
     :cancel-text="cancelText"
     :confirm-class="confirmClass"
+    :icon-class="iconClass"
     :loading="loading"
     @update:model-value="emit('update:modelValue', $event)"
     @confirm="emit('confirm')"
