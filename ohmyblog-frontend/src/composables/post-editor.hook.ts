@@ -23,11 +23,11 @@ export const usePostEditor = () => {
   const slug = ref("");
   const tags = ref<string[]>([]);
   const status = ref<TPostStatus>("draft");
-  // TODO: 以下字段待 Markdown 编辑器开发完成后接入
-  // const title = ref("");
-  // const content = ref<object | undefined>(undefined);
-  // const contentMarkdown = ref("");
-  // const contentText = ref("");
+  const title = ref("");
+  const content = ref<object | undefined>(undefined);
+  const contentMarkdown = ref("");
+  const contentText = ref("");
+  // TODO: 以下字段待对应设置项开发完成后接入
   // const excerpt = ref("");
   // const coverImage = ref("");
 
@@ -47,13 +47,14 @@ export const usePostEditor = () => {
       slug.value = post.slug ?? "";
       tags.value = post.tags ?? [];
       status.value = post.status as TPostStatus;
-      // TODO: title.value = post.title ?? "";
+      title.value = post.title ?? "";
+      content.value = post.content as object ?? undefined;
     } catch {
       useToast.error("加载文章失败");
     } finally {
       isLoading.value = false;
       // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
-      watch([slug, tags, status], () => { isDirty.value = true; });
+      watch([slug, tags, status, title, content], () => { isDirty.value = true; });
       // TODO: 接入 Markdown 编辑器后，对 title/content 加防抖自动保存：
       // watchDebounced([title, content], save, { debounce: 2000 })
       // 参考：@vueuse/core watchDebounced
@@ -75,10 +76,10 @@ export const usePostEditor = () => {
         savePost(uuid, {
           slug: slug.value || undefined,
           tags: tags.value,
-          // TODO: title: title.value || undefined,
-          // TODO: content: content.value,
-          // TODO: contentMarkdown: contentMarkdown.value || undefined,
-          // TODO: contentText: contentText.value || undefined,
+          title: title.value || undefined,
+          content: content.value,
+          contentMarkdown: contentMarkdown.value || undefined,
+          contentText: contentText.value || undefined,
           // TODO: excerpt: excerpt.value || undefined,
           // TODO: coverImage: coverImage.value || undefined,
         }),
@@ -95,5 +96,5 @@ export const usePostEditor = () => {
 
   onMounted(loadPost);
 
-  return { uuid, slug, tags, status, isSaving, isLoading, isDirty, save };
+  return { uuid, slug, tags, status, title, content, contentMarkdown, contentText, isSaving, isLoading, isDirty, save };
 };
