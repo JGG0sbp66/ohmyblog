@@ -271,6 +271,29 @@
             "noRecipient": "Please add at least one recipient"
           }
         }
+      },
+      "PostEditor": {
+        "statusBar": {
+          "unsaved": "Unsaved",
+          "save": "Save"
+        },
+        "settingsPanel": {
+          "title": "Post Settings",
+          "tags": {
+            "label": "Tags",
+            "tooltip": "Add tags to your post to help with categorization and content discovery",
+            "placeholder": "Type and press Enter to add"
+          },
+          "slug": {
+            "label": "Permalink",
+            "tooltip": "Auto-generated from the title; you can edit it manually. Required before publishing.",
+            "placeholder": "article-url-slug"
+          },
+          "status": {
+            "label": "Status",
+            "tooltip": "Control the visibility of your post. Drafts are only visible to you"
+          }
+        }
       }
     },
     "login": {
@@ -546,6 +569,9 @@
       },
       "config": {
         "description_range": "Description must be under 255 characters"
+      },
+      "post": {
+        "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post"
       }
     },
     "next": "Next Step",

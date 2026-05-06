@@ -269,6 +269,29 @@
             "noRecipient": "请添加至少一位收件人"
           }
         }
+      },
+      "PostEditor": {
+        "statusBar": {
+          "unsaved": "未保存",
+          "save": "保存"
+        },
+        "settingsPanel": {
+          "title": "文章设置",
+          "tags": {
+            "label": "文章标签",
+            "tooltip": "为文章添加标签，有助于分类和内容检索",
+            "placeholder": "输入后按 Enter 添加"
+          },
+          "slug": {
+            "label": "永久连接",
+            "tooltip": "将根据标题自动填写，你也可以手动修改；发布前不能为空",
+            "placeholder": "article-url-slug"
+          },
+          "status": {
+            "label": "文章状态",
+            "tooltip": "控制文章的可见性，草稿仅自己可见"
+          }
+        }
       }
     },
     "login": {
@@ -544,6 +567,9 @@
       },
       "config": {
         "description_range": "配置描述长度不能超过255个字符"
+      },
+      "post": {
+        "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post"
       }
     },
     "next": "下一步",
