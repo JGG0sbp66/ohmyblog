@@ -273,6 +273,8 @@
       "PostEditor": {
         "statusBar": {
           "unsaved": "未保存",
+          "saved": "已保存",
+          "saving": "保存中",
           "save": "保存"
         },
         "settingsPanel": {

@@ -275,6 +275,8 @@
       "PostEditor": {
         "statusBar": {
           "unsaved": "Unsaved",
+          "saved": "Saved",
+          "saving": "Saving",
           "save": "Save"
         },
         "settingsPanel": {
