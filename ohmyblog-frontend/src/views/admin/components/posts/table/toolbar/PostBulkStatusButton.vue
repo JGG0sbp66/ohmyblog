@@ -82,6 +82,7 @@ const handleConfirm = async () => {
   <ConfirmListModal
     v-model="showModal"
     :icon="ListRestart"
+    icon-class="text-accent"
     :title="t('views.admin.Posts.table.bulk.statusModal.title')"
     :question="t('views.admin.Posts.table.bulk.statusModal.question')"
     :confirm-text="
