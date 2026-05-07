@@ -1,6 +1,7 @@
 // src/composables/post-editor.hook.ts
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import limax from "limax";
 import type { TPostStatus } from "@server/db/constants/post.constants";
 import { getPostById, savePost, updatePostStatus } from "@/api/post.api";
 import { useToast } from "@/composables/toast.hook";
@@ -58,6 +59,16 @@ export const usePostEditor = () => {
       watch([slug, tags, status, title, content], () => {
         isDirty.value = true;
       }, { deep: true });
+      // 标题变化时自动同步 slug：
+      // - slug 为空，或 slug 仍等于上次自动生成的值 → 继续同步（用户一直在打标题）
+      // - slug 与上次生成值不同 → 说明用户手动修改过，停止同步
+      let lastAutoSlug = slug.value; // 记录上次自动生成的 slug
+      watch(title, (newTitle) => {
+        if (slug.value === "" || slug.value === lastAutoSlug) {
+          lastAutoSlug = limax(newTitle);
+          slug.value = lastAutoSlug;
+        }
+      });
       // TODO: 接入 Markdown 编辑器后，对 title/content 加防抖自动保存：
       // watchDebounced([title, content], save, { debounce: 2000 })
       // 参考：@vueuse/core watchDebounced
