@@ -54,9 +54,10 @@ export const usePostEditor = () => {
     } finally {
       isLoading.value = false;
       // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
+      // deep: true — 捕获 tags 数组的 push/splice 就地变更（浅监听感知不到引用未变的数组修改）
       watch([slug, tags, status, title, content], () => {
         isDirty.value = true;
-      });
+      }, { deep: true });
       // TODO: 接入 Markdown 编辑器后，对 title/content 加防抖自动保存：
       // watchDebounced([title, content], save, { debounce: 2000 })
       // 参考：@vueuse/core watchDebounced
