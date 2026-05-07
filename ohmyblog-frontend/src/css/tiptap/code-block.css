@@ -35,6 +35,35 @@
   opacity: 0.8;
 }
 
+/* 悬浮复制按钮：默认隐藏，容器 hover 时淡入到右上角 */
+.tiptap .code-block-copy-btn {
+  position: absolute;
+  top: 2.1rem;   /* header 底部（padding 0.5rem + 内容 ~1rem + padding 0.5rem ≈ 2rem） */
+  right: 0.75rem;
+  z-index: 10;
+  background: oklch(0.24 0.015 var(--app-hue));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  color: oklch(0.6 0.04 var(--app-hue));
+  padding: 0.3rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+.tiptap .code-block-container:hover .code-block-copy-btn {
+  opacity: 1;
+}
+.tiptap .code-block-copy-btn:hover {
+  color: oklch(0.88 0.06 var(--app-hue));
+  background: oklch(0.28 0.015 var(--app-hue));
+}
+.tiptap .code-block-copy-btn.copied {
+  opacity: 1;        /* 复制成功期间保持可见 */
+  color: #4ade80;    /* 绿色反馈 */
+}
+
 .tiptap .code-block-lang-input {
   background: transparent;
   border: none;
