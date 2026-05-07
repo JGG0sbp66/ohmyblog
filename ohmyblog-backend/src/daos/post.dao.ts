@@ -193,7 +193,7 @@ class PostDao {
 	async countByStatus() {
 		const result = await db
 			.select({
-				all: count(),
+				all: count(sql`CASE WHEN ${post.status} <> 'deleted' THEN 1 END`),
 				draft: count(sql`CASE WHEN ${post.status} = 'draft' THEN 1 END`),
 				published: count(
 					sql`CASE WHEN ${post.status} = 'published' THEN 1 END`,

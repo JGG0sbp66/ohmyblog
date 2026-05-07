@@ -15,6 +15,7 @@ import PageToolbar from "@/views/admin/components/posts/layout/PageToolbar.vue";
 
 const activeFilter = ref<PostStatusFilter>(null);
 const searchQuery = ref("");
+const pageSize = 10;
 
 const counts = ref({ all: 0, draft: 0, published: 0, archived: 0, deleted: 0 });
 const posts = ref<PostListItem[]>([]);
@@ -39,12 +40,20 @@ const fetchList = async () => {
   try {
     const data = await getPostList({
       page: page.value,
+      pageSize,
       ...(activeFilter.value ? { status: activeFilter.value } : {}),
       ...(searchQuery.value ? { search: searchQuery.value } : {}),
     });
     if (data) {
       posts.value = data.list ?? [];
       total.value = data.total ?? 0;
+
+      const totalPages = Math.max(1, Math.ceil(total.value / pageSize));
+      if (page.value > totalPages) {
+        page.value = totalPages;
+        await fetchList();
+        return;
+      }
     }
   } catch {
   } finally {
@@ -115,6 +124,7 @@ onMounted(() => {
       :loading="loading"
       :total="total"
       :page="page"
+      :page-size="pageSize"
       v-model:selected="selectedUuids"
       @update:page="
         page = $event;
