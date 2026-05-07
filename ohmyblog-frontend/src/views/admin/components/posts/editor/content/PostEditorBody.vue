@@ -2,8 +2,12 @@
 <script setup lang="ts">
 import { watch, onBeforeUnmount, ref } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
+import { useRoute } from "vue-router";
 import { useEditorExtensions } from "@/composables/editor-extensions";
 import PostEditorBubbleMenu from "./menus/PostEditorBubbleMenu.vue";
+import { uploadPostImage } from "@/api/upload.api";
+import { useToast } from "@/composables/toast.hook";
+import { useLang } from "@/composables/lang.hook";
 
 /**
  * PostEditorBody — Tiptap 富文本编辑区
@@ -19,6 +23,9 @@ const markdown = defineModel<string>("markdown", { default: "" });
 const text = defineModel<string>("text", { default: "" });
 const containerRef = ref<HTMLElement | null>(null);
 
+const { t } = useLang();
+const uuid = useRoute().params.uuid as string;
+
 const editor = useEditor({
   extensions: useEditorExtensions(),
   content: json.value ?? "",
@@ -26,6 +33,27 @@ const editor = useEditor({
     attributes: {
       // spellcheck 会向下继承，统一在根元素关闭，正文 / 代码块全部生效
       spellcheck: "false",
+    },
+    handlePaste(_view, event) {
+      const items = Array.from(event.clipboardData?.items ?? []);
+      const imageItems = items.filter((item) => item.type.startsWith("image/"));
+      if (imageItems.length === 0) return false;
+
+      event.preventDefault();
+      for (const item of imageItems) {
+        const file = item.getAsFile();
+        if (!file) continue;
+        uploadPostImage(uuid, { image: file })
+          .then((result) => {
+            if (!result?.url) return;
+            editor.value?.chain().focus().setImage({ src: result.url }).run();
+          })
+          .catch((e: unknown) => {
+            const msg = typeof e === "string" ? e : (e as any)?.message || "Error";
+            useToast.error(t(`api.errors.${msg}`));
+          });
+      }
+      return true;
     },
   },
   onUpdate({ editor }) {

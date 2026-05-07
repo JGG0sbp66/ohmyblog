@@ -1,6 +1,5 @@
 // src/composables/editor-extensions/index.ts
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Markdown } from "tiptap-markdown";
 import TextAlign from "@tiptap/extension-text-align";
@@ -11,6 +10,7 @@ import { CustomListItem } from "./list-item.extension";
 import { CustomBold, CustomItalic, CustomStrike, CustomUnderline, CustomCode } from "./marks.extension";
 import { CustomCodeBlock } from "./code-block.extension";
 import { TextStyle, Color, CustomHighlight } from "./color.extension";
+import { ResizableImage } from "./image.extension";
 
 /**
  * useEditorExtensions — 返回 Tiptap 编辑器扩展数组
@@ -39,7 +39,7 @@ export function useEditorExtensions() {
     TextStyle,      // Color 的依赖 mark，必须在 Color 之前注册
     Color,          // 文字颜色，依赖 TextStyle mark
     CustomHighlight, // 背景高亮（多色）
-    Image,
+    ResizableImage,
     Indent,
     TextAlign.configure({ types: ["heading", "paragraph"] }),
     Link.configure({ openOnClick: false }),
