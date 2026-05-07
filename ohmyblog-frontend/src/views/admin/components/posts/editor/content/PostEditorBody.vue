@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { watch, onBeforeUnmount, ref } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
-import { useEditorExtensions } from "@/composables/editor-extensions.hook";
+import { useEditorExtensions } from "@/composables/editor-extensions";
 import PostEditorBubbleMenu from "./menus/PostEditorBubbleMenu.vue";
 
 /**
