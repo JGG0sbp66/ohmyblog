@@ -3,7 +3,7 @@
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import AdvancedToggle from "@/components/icon/ui/AdvancedToggle.vue";
+import { ChevronDown } from "lucide-vue-next";
 import SMTPTestButton from "./SMTPTestButton.vue";
 import { useLang } from "@/composables/lang.hook";
 import { type Validatable } from "@/composables/setup-step.hook";
@@ -142,7 +142,10 @@ const updateField = (key: string, value: any) => {
         "
         @click="emit('update:isAdvancedExpanded', !isAdvancedExpanded)"
       >
-        <AdvancedToggle :expanded="isAdvancedExpanded" />
+        <ChevronDown
+          class="w-4 h-4 transition-transform duration-200"
+          :class="isAdvancedExpanded ? 'rotate-180' : 'rotate-0'"
+        />
       </ButtonSecondary>
 
       <div ref="advancedContentRef">

@@ -2,20 +2,9 @@
 import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { emailLog } from "../../db/schema";
-import type {
-	TEmailLogStatus,
-	TEmailLogType,
-} from "../../db/constants/email-log.constants";
+import type { TEmailLogQueryDTO } from "../dtos/email.dto";
 
 export type NewEmailLog = typeof emailLog.$inferInsert;
-
-export interface EmailLogQueryOptions {
-	page?: number;
-	pageSize?: number;
-	type?: TEmailLogType;
-	status?: TEmailLogStatus;
-	isRead?: boolean;
-}
 
 class EmailLogDao {
 	/**
@@ -33,8 +22,9 @@ class EmailLogDao {
 	 * @param options 分页与过滤参数
 	 * @returns { list, total }
 	 */
-	async findAll(options: EmailLogQueryOptions = {}) {
-		const { page = 1, pageSize = 20, type, status, isRead } = options;
+	async findAll(options: TEmailLogQueryDTO = {}) {
+		const { page, pageSize, type, status, isRead } =
+			options as Required<TEmailLogQueryDTO>;
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [];

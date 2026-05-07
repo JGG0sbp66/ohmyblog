@@ -4,7 +4,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
-import BellIcon from "@/components/icon/ui/Bell.vue";
+import { RiNotification3Line } from "@remixicon/vue";
 import DropButton from "@/components/common/button/DropButton.vue";
 import UnreadBadge from "@/components/base/tag/UnreadBadge.vue";
 import EmailListCard from "@/views/admin/components/emails/EmailListCard.vue";
@@ -85,7 +85,7 @@ const handleViewAll = () => {
   >
     <template #trigger="{ active }">
       <ButtonSecondary :isActive="active" class="w-full h-full">
-        <BellIcon />
+        <RiNotification3Line class="w-5 h-5" />
       </ButtonSecondary>
       <UnreadBadge :count="emailStore.unreadCount" :isExpanded="false" />
     </template>
@@ -109,7 +109,10 @@ const handleViewAll = () => {
       </div>
 
       <!-- Section 2: Unread email list -->
-      <div ref="scrollContainer" class="overflow-y-auto max-h-80 border-t border-fg-muted/10 notification-list">
+      <div
+        ref="scrollContainer"
+        class="overflow-y-auto max-h-80 border-t border-fg-muted/10 notification-list"
+      >
         <!-- Loading skeleton -->
         <div v-if="isLoading" class="flex flex-col">
           <div

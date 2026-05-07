@@ -4,6 +4,8 @@ import {
 	UploadAvatarDTO,
 	UploadHeroDTO,
 	UploadIconDTO,
+	UploadPostCoverDTO,
+	UploadPostImageDTO,
 	UploadSocialIconDTO,
 } from "../dtos/upload.dto";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
@@ -103,6 +105,52 @@ export const uploadRoute = new Elysia({ name: "uploadRoute" })
 					detail: {
 						summary: "上传社交链接图标 (POST)",
 						description: "仅限管理员操作，上传后自动处理为 PNG 格式",
+					},
+				},
+			)
+			/**
+			 * POST /upload/post-cover/:uuid
+			 * - 上传文章封面图，固定存为 cover.webp，重复上传直接覆盖
+			 */
+			.post(
+				"/post-cover/:uuid",
+				async ({ params: { uuid }, body: { cover } }) => {
+					const result = await uploadService.uploadPostCover(cover, uuid);
+					return {
+						message: "封面图上传成功",
+						...result,
+					};
+				},
+				{
+					beforeHandle: ensureAdminIfExists,
+					body: UploadPostCoverDTO,
+					detail: {
+						summary: "上传文章封面图 (POST)",
+						description:
+							"仅限管理员操作，上传后自动处理为 WebP 格式，同一文章重复上传会覆盖原封面",
+					},
+				},
+			)
+			/**
+			 * POST /upload/post-image/:uuid
+			 * - 编辑器粘贴/插入图片时调用，每次生成独立 cuid 文件名，返回 URL 供编辑器插入
+			 */
+			.post(
+				"/post-image/:uuid",
+				async ({ params: { uuid }, body: { image } }) => {
+					const result = await uploadService.uploadPostImage(image, uuid);
+					return {
+						message: "图片上传成功",
+						...result,
+					};
+				},
+				{
+					beforeHandle: ensureAdminIfExists,
+					body: UploadPostImageDTO,
+					detail: {
+						summary: "上传文章行内图 (POST)",
+						description:
+							"仅限管理员操作，编辑器粘贴图片时调用，返回 URL 直接插入编辑器",
 					},
 				},
 			),

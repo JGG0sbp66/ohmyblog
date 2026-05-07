@@ -18,7 +18,7 @@ defineProps<{
     <!-- 收缩态：icon 右上角小红点 -->
     <span
       v-if="!isExpanded"
-      class="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-red-500 z-20 ring-2 ring-bg-card"
+      class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 z-20 ring-2 ring-bg-card"
     />
     <!-- 展开态：文字后数字气泡 -->
     <span

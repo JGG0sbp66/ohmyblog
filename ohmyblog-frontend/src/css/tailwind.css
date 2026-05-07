@@ -104,6 +104,16 @@
     scrollbar-gutter: stable;
   }
 
+  /* 文字选中高亮 — 使用主题主色调替换浏览器默认蓝色 */
+  ::selection {
+    background-color: oklch(0.6 0.18 var(--app-hue) / 0.28);
+    color: inherit;
+  }
+  .dark ::selection {
+    background-color: oklch(0.65 0.18 var(--app-hue) / 0.35);
+    color: inherit;
+  }
+
   *,
   ::after,
   ::before {

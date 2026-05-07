@@ -1,0 +1,131 @@
+/* src/css/tiptap/code-block.css */
+/* 代码块 NodeView 样式：容器、header、行号列、pre/code 区域 */
+.tiptap .code-block-container {
+  position: relative;
+  margin: 1.5rem 0;
+  background: oklch(0.17 0.015 var(--app-hue)); /* 锁定深色背景 */
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.tiptap .code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: oklch(0.17 0.015 var(--app-hue)); /* 统一背景色 */
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  user-select: none;
+}
+
+/* 模拟 Fuwari/MacOS 的三个小圆点 */
+.tiptap .code-block-header::before {
+  content: '';
+  display: flex;
+  width: 40px;
+  height: 10px;
+  background: radial-gradient(circle, #ff5f56 4px, transparent 5px),
+              radial-gradient(circle, #ffbd2e 4px, transparent 5px),
+              radial-gradient(circle, #27c93f 4px, transparent 5px);
+  background-size: 14px 10px;
+  background-repeat: no-repeat;
+  background-position: 0 center, 14px center, 28px center;
+  opacity: 0.8;
+}
+
+/* 悬浮复制按钮：默认隐藏，容器 hover 时淡入到右上角 */
+.tiptap .code-block-copy-btn {
+  position: absolute;
+  top: 2.1rem;   /* header 底部（padding 0.5rem + 内容 ~1rem + padding 0.5rem ≈ 2rem） */
+  right: 0.75rem;
+  z-index: 10;
+  background: oklch(0.24 0.015 var(--app-hue));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  color: oklch(0.6 0.04 var(--app-hue));
+  padding: 0.3rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+}
+.tiptap .code-block-container:hover .code-block-copy-btn {
+  opacity: 1;
+}
+.tiptap .code-block-copy-btn:hover {
+  color: oklch(0.88 0.06 var(--app-hue));
+  background: oklch(0.28 0.015 var(--app-hue));
+}
+.tiptap .code-block-copy-btn.copied {
+  opacity: 1;        /* 复制成功期间保持可见 */
+  color: #4ade80;    /* 绿色反馈 */
+}
+
+.tiptap .code-block-lang-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: oklch(0.7 0.1 var(--app-hue)); /* 浅色文字 */
+  font-weight: 600;
+  text-align: right;
+  width: 80px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tiptap .code-block-content {
+  display: flex;
+  line-height: 1.5rem; /* 行高单一来源，两侧共同继承 */
+}
+
+.tiptap .line-numbers {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  width: 3.5rem;
+  background: oklch(0.17 0.015 var(--app-hue));
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  color: oklch(0.45 0.01 var(--app-hue));
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-size: 0.875rem;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.tiptap .line-numbers span {
+  height: 1.5rem; /* 与行高严格等高 */
+  display: flex;
+  align-items: center; /* 数字在格内垂直居中 */
+  justify-content: center;
+  padding: 0 0.75rem;
+}
+
+.tiptap pre {
+  background: transparent;
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
+  flex-grow: 1;
+}
+
+/* 移除旧的模拟行号列背景 */
+.tiptap pre::before {
+  display: none;
+}
+
+.tiptap code {
+  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.tiptap pre code {
+  display: block; /* 消除 inline 基线对齐偏移 */
+  background: none;
+  color: #e5e7eb;
+  padding: 0;
+  font-size: 0.875rem;
+  /* 继承 .code-block-content 的 line-height: 1.5rem */
+}

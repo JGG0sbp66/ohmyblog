@@ -11,13 +11,13 @@
         }
       },
       "admin": {
-        "AdminSidebar": {
+        "PostsNav": {
           "nav": {
-            "dashboard": "仪表盘",
-            "posts": "写文章",
-            "emails": "邮件内容",
-            "settings": "系统配置"
-          },
+            "list": "文章管理",
+            "editor": "写文章"
+          }
+        },
+        "AdminSidebar": {
           "user": {
             "logout": "点击退出登录",
             "modal": {
@@ -31,6 +31,7 @@
           "pages": {
             "dashboard": "仪表盘",
             "posts": "文章管理",
+            "post-edit": "文章编辑",
             "emails": "邮件管理",
             "settings": "系统设置",
             "default": "管理后台"
@@ -43,6 +44,9 @@
       "input": {
         "TipInput": {
           "required": "此项不能为空"
+        },
+        "SearchInput": {
+          "placeholder": "搜索..."
         }
       },
       "button": {
@@ -54,6 +58,13 @@
       },
       "BrowserMockup": {
         "preview": "实时预览"
+      },
+      "item": {
+        "Brand": {
+          "line1": "欢迎使用",
+          "line2": "ohmyblog",
+          "line3": "让我们开始配置吧"
+        }
       }
     },
     "base": {
@@ -71,13 +82,6 @@
         "light": "浅色",
         "dark": "深色",
         "auto": "系统"
-      }
-    },
-    "icon": {
-      "TypingBrand": {
-        "line1": "欢迎使用",
-        "line2": "ohmyblog",
-        "line3": "让我们开始配置吧"
       }
     }
   },
@@ -99,6 +103,79 @@
       }
     },
     "admin": {
+      "Posts": {
+        "filter": {
+          "all": "全部",
+          "draft": "草稿",
+          "published": "已发布",
+          "archived": "归档",
+          "deleted": "回收站"
+        },
+        "table": {
+          "col": {
+            "post": "文章",
+            "status": "状态",
+            "tags": "标签",
+            "views": "浏览",
+            "time": "时间",
+            "actions": "操作"
+          },
+          "actions": {
+            "edit": "编辑",
+            "publish": "发布",
+            "toDraft": "转为草稿",
+            "archive": "归档",
+            "trash": "移入回收站",
+            "restore": "恢复为草稿",
+            "permanentDelete": "永久删除"
+          },
+          "untitled": "新文章",
+          "empty": "暂无文章",
+          "noTags": "无标签",
+          "bulk": {
+            "changeStatus": "修改状态",
+            "statusModal": {
+              "title": "批量修改状态",
+              "question": "请选择要将以下文章修改为的目标状态：",
+              "confirm": "确认修改为 {status}"
+            },
+            "delete": "批量删除",
+            "trashModal": {
+              "title": "批量移入回收站",
+              "question": "您确定要将以下文章移入回收站吗？",
+              "listHeader": "即将移入回收站",
+              "warning": "移入回收站的文章可在「回收站」中找回并恢复",
+              "confirm": "全部移入回收站"
+            },
+            "deleteModal": {
+              "title": "批量永久删除",
+              "question": "您确定要永久删除以下文章吗？",
+              "listHeader": "即将永久删除",
+              "warning": "此操作不可撤销，文章将被彻底删除，无法恢复",
+              "confirm": "全部永久删除"
+            }
+          },
+          "timeLabel": {
+            "published": "发布于",
+            "deleted": "删除于",
+            "updated": "修改于"
+          },
+          "confirm": {
+            "trash": {
+              "title": "移入回收站",
+              "question": "您确定要将「{title}」移入回收站吗？",
+              "warning": "移入回收站的文章可在「回收站」中找回并恢复",
+              "confirm": "移入回收站"
+            },
+            "delete": {
+              "title": "永久删除文章",
+              "question": "您确定要永久删除「{title}」吗？",
+              "warning": "此操作不可撤销，文章将被彻底删除，无法恢复",
+              "confirm": "永久删除"
+            }
+          }
+        }
+      },
       "Settings": {
         "nav": {
           "appearance": "界面外观",
@@ -190,6 +267,66 @@
             },
             "button": "发送邮件",
             "noRecipient": "请添加至少一位收件人"
+          }
+        }
+      },
+      "PostEditor": {
+        "statusBar": {
+          "unsaved": "未保存",
+          "saved": "已保存",
+          "saving": "保存中",
+          "save": "保存"
+        },
+        "settingsPanel": {
+          "title": "文章设置",
+          "tags": {
+            "label": "文章标签",
+            "tooltip": "为文章添加标签，有助于分类和内容检索",
+            "placeholder": "输入后按 Enter 添加"
+          },
+          "slug": {
+            "label": "永久连接",
+            "tooltip": "将根据标题自动填写，你也可以手动修改；发布前不能为空",
+            "placeholder": "article-url-slug"
+          },
+          "status": {
+            "label": "文章状态",
+            "tooltip": "控制文章的可见性，草稿仅自己可见"
+          },
+          "coverImage": {
+            "label": "封面图",
+            "tooltip": "设置文章封面图，将在列表与详情页展示",
+            "hint": "点击上传，建议 16:9"
+          }
+        },
+        "content": {
+          "title": {
+            "placeholder": "文章标题"
+          },
+          "body": {
+            "placeholder": "开始写作，或输入 / 选择内容块..."
+          },
+          "bubbleMenu": {
+            "bold": "粗体 (Ctrl/⌘+B)\nmarkdown:**文本** 空格",
+            "italic": "斜体 (Ctrl/⌘+I)\nmarkdown:*文本* 空格",
+            "strike": "删除线 (Ctrl/⌘+Shift+S)\nmarkdown:~~文本~~ 空格",
+            "underline": "下划线 (Ctrl/⌘+U)\nmarkdown:~文本~ 空格",
+            "code": "行内代码 (Ctrl/⌘+E)\nmarkdown:`文本` 空格",
+            "paragraph": "正文",
+            "orderedList": "有序列表",
+            "bulletList": "无序列表",
+            "codeBlock": "代码块",
+            "quote": "引用",
+            "alignLeft": "左对齐",
+            "alignCenter": "居中对齐",
+            "alignRight": "右对齐",
+            "indent": "增加缩进",
+            "outdent": "减少缩进",
+            "link": "插入链接 (Ctrl/⌘+K)",
+            "linkEdit": "编辑链接",
+            "linkRemove": "移除链接",
+            "linkUrlPlaceholder": "https://...",
+            "linkConfirm": "插入"
           }
         }
       }
@@ -467,6 +604,9 @@
       },
       "config": {
         "description_range": "配置描述长度不能超过255个字符"
+      },
+      "post": {
+        "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post"
       }
     },
     "next": "下一步",
@@ -512,7 +652,10 @@
       "SMTP 配置不存在，请先完成邮件服务配置": "SMTP 配置不存在，请先完成邮件服务配置",
       "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP 服务未启用，请先在设置中开启邮件服务",
       "验证码无效或已过期": "验证码无效或已过期",
-      "账户已被封禁": "账户已被封禁"
+      "账户已被封禁": "账户已被封禁",
+      "文章不存在": "文章不存在",
+      "只能永久删除回收站中的文章，请先将文章移入回收站": "只能永久删除回收站中的文章，请先将文章移入回收站",
+      "该 slug 已被其他文章使用": "该 slug 已被其他文章使用"
     },
     "success": {
       "保存成功": "保存成功",
@@ -523,6 +666,9 @@
       "图标上传成功": "图标上传成功",
       "横幅上传成功": "横幅上传成功",
       "头像上传成功": "头像上传成功",
+      "社交图标上传成功": "社交图标上传成功",
+      "封面图上传成功": "封面图上传成功",
+      "图片上传成功": "图片上传成功",
       "邮件发送成功": "邮件发送成功",
       "若邮箱存在，验证码已发送，请注意查收": "若邮箱存在，验证码已发送，请注意查收",
       "密码重置成功，请使用新密码登录": "密码重置成功，请使用新密码登录"

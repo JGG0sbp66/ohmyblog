@@ -8,8 +8,8 @@ import { uploadAvatar } from "@/api/upload.api";
 import { upsertConfig } from "@/api/config.api";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
-import User from "@/components/icon/common/User.vue";
-import Loading from "@/components/icon/common/Loading.vue";
+import { RiIdCardLine } from "@remixicon/vue";
+import Loading from "@/components/common/item/Loading.vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
@@ -37,20 +37,24 @@ const triggerUpload = () => {
  * 处理头像文件选择
  */
 const handleFileChange = (file: File) => {
-  handleUpload(file, uploadAvatar, async (url) => {
-    // 1. 更新全局 store 中的头像链接
-    systemStore.personalInfo.avatar = url;
+  handleUpload(
+    file,
+    (f) => uploadAvatar({ avatar: f }),
+    async (url) => {
+      // 1. 更新全局 store 中的头像链接
+      systemStore.personalInfo.avatar = url;
 
-    // 2. 同步到后端配置
-    try {
-      await upsertConfig({
-        configKey: "personal_info",
-        configValue: systemStore.personalInfo,
-      } as any);
-    } catch (error) {
-      useToast.error(t("api.errors.获取个性化配置失败"));
-    }
-  });
+      // 2. 同步到后端配置
+      try {
+        await upsertConfig({
+          configKey: "personal_info",
+          configValue: systemStore.personalInfo,
+        } as any);
+      } catch (error) {
+        useToast.error(t("api.errors.获取个性化配置失败"));
+      }
+    },
+  );
 };
 </script>
 
@@ -83,7 +87,7 @@ const handleFileChange = (file: File) => {
           class="w-full h-full object-cover"
         />
         <div v-else class="w-full h-full flex items-center justify-center">
-          <User sizeClass="w-16 h-16 text-fg-soft" />
+          <RiIdCardLine class="w-16 h-16 text-fg-soft" />
         </div>
 
         <!-- 管理员悬浮遮罩 -->
@@ -95,7 +99,7 @@ const handleFileChange = (file: File) => {
             class="transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 ease-spring"
           >
             <Loading v-if="uploading" sizeClass="w-12 h-12 text-white" />
-            <User v-else sizeClass="w-12 h-12 text-white" />
+            <RiIdCardLine v-else class="w-12 h-12 text-white" />
           </div>
         </div>
       </div>
@@ -123,7 +127,10 @@ const handleFileChange = (file: File) => {
 
     <!-- 社交链接区域 -->
     <div
-      v-if="systemStore.personalInfo.socialLinks.length > 0"
+      v-if="
+        systemStore.personalInfo.socialLinks &&
+        systemStore.personalInfo.socialLinks.length > 0
+      "
       class="flex flex-wrap justify-center gap-3 mt-2"
     >
       <a

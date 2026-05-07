@@ -11,7 +11,7 @@ import type { EmailLogItem } from "./types";
 import { getEmailLogPreviewUrl } from "@/api/email.api";
 import { useLang } from "@/composables/lang.hook";
 import { useEmailStore } from "@/stores/email.store";
-import Inbox from "@/components/icon/common/Inbox.vue";
+import { Inbox } from "lucide-vue-next";
 import EmailHeaderInfo from "./EmailHeaderInfo.vue";
 
 const props = defineProps<{
@@ -68,8 +68,10 @@ const formatTime = (raw: string | number | Date) => {
         </div>
 
         <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0">
-            <Inbox size-class="w-5 h-5" />
+          <div
+            class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent shrink-0"
+          >
+            <Inbox class="w-5 h-5" />
           </div>
           <EmailHeaderInfo
             :sender-name="item.fromName"
@@ -91,8 +93,13 @@ const formatTime = (raw: string | number | Date) => {
       </div>
 
       <!-- Footer / Error Message if failed -->
-      <div v-if="item.status === 'failed' && item.errorMessage" class="p-4 bg-red-500/5 border-t border-red-500/20">
-        <div class="text-[10px] font-bold uppercase tracking-wider text-red-500 mb-1">
+      <div
+        v-if="item.status === 'failed' && item.errorMessage"
+        class="p-4 bg-red-500/5 border-t border-red-500/20"
+      >
+        <div
+          class="text-[10px] font-bold uppercase tracking-wider text-red-500 mb-1"
+        >
           {{ t("views.emails.preview.errorMessageLabel") }}
         </div>
         <div class="font-mono text-xs text-red-500 break-all leading-relaxed">
@@ -102,13 +109,20 @@ const formatTime = (raw: string | number | Date) => {
     </template>
 
     <!-- Empty State -->
-    <div v-else class="h-full flex flex-col items-center justify-center p-12 text-center">
-      <div class="w-16 h-16 rounded-3xl bg-bg-muted flex items-center justify-center text-fg-subtle mb-4">
-        <Inbox size-class="w-8 h-8 opacity-20" />
+    <div
+      v-else
+      class="h-full flex flex-col items-center justify-center p-12 text-center"
+    >
+      <div
+        class="w-16 h-16 rounded-3xl bg-bg-muted flex items-center justify-center text-fg-subtle mb-4"
+      >
+        <Inbox class="w-8 h-8 opacity-20" />
       </div>
-      <h3 class="text-lg font-bold text-fg mb-2">{{ t('views.emails.empty_selection_title') }}</h3>
+      <h3 class="text-lg font-bold text-fg mb-2">
+        {{ t("views.emails.empty_selection_title") }}
+      </h3>
       <p class="text-sm text-fg-subtle max-w-xs mx-auto">
-        {{ t('views.emails.empty_selection_desc') }}
+        {{ t("views.emails.empty_selection_desc") }}
       </p>
     </div>
   </div>

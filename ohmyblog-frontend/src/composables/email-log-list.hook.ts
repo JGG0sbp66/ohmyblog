@@ -3,7 +3,10 @@ import { useInfiniteScroll } from "@vueuse/core";
 import { getEmailLogs } from "@/api/email.api";
 import { useLang } from "./lang.hook";
 import { useToast } from "./toast.hook";
-import type { EmailLogFilters, EmailLogItem } from "@/views/admin/components/emails/types";
+import type {
+  EmailLogFilters,
+  EmailLogItem,
+} from "@/views/admin/components/emails/types";
 
 interface UseEmailLogListOptions {
   pageSize?: number;
@@ -31,37 +34,37 @@ export function useEmailLogList(
   const fetchList = async (reset = false) => {
     if (isLoading.value || (isFinished.value && !reset)) return;
     isLoading.value = true;
-    
+
     // 重置分页状态
     if (reset) {
       currentPage.value = 1;
       isFinished.value = false;
     }
-    
+
     try {
       const res = await getEmailLogs({
         page: currentPage.value,
         pageSize,
         ...getFilters(),
       });
-      
+
       const newItems = (res?.list ?? []) as EmailLogItem[];
-      
+
       if (reset) {
         list.value = newItems;
       } else {
         list.value.push(...newItems);
       }
-      
+
       total.value = res?.total ?? 0;
-      
+
       // 判断是否加载完毕
       if (list.value.length >= total.value || newItems.length < pageSize) {
         isFinished.value = true;
       } else {
         currentPage.value++;
       }
-      
+
       onFetch?.(newItems);
     } catch (error: any) {
       useToast.error(t(`api.errors.${error}`));

@@ -5,11 +5,9 @@ import { useRouter } from "vue-router";
 import { useLang } from "@/composables/lang.hook";
 import { useAuthStore } from "@/stores/auth.store";
 import { useSystemStore } from "@/stores/system.store";
-import UserIcon from "@/components/icon/common/User.vue";
-import BaseModal from "@/components/base/pop/BaseModal.vue";
-import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
-import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import { TriangleAlert, Info } from "lucide-vue-next";
+import { RiIdCardLine } from "@remixicon/vue";
+import ConfirmModal from "@/components/base/pop/ConfirmModal.vue";
+import { TriangleAlert } from "lucide-vue-next";
 
 const props = withDefaults(
   defineProps<{
@@ -115,7 +113,7 @@ const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
             :alt="authStore.user?.username"
             class="w-full h-full object-cover"
           />
-          <UserIcon v-else sizeClass="w-4 h-4 text-fg-muted" />
+          <RiIdCardLine v-else class="w-4 h-4 text-fg-muted" />
         </div>
       </div>
 
@@ -136,42 +134,15 @@ const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
     </button>
 
     <!-- 用户信息弹窗 -->
-    <BaseModal v-model="isModalOpen" maxWidth="max-w-lg">
-      <template #header>
-        <div class="flex items-center gap-2">
-          <TriangleAlert class="w-5 h-5 text-red-500" />
-          <h2 class="text-xl font-bold text-fg">
-            {{ t("components.common.admin.AdminSidebar.user.modal.title") }}
-          </h2>
-        </div>
-      </template>
-
-      <div class="flex flex-col gap-3">
-        <p class="text-fg text-sm">
-          {{ t("components.common.admin.AdminSidebar.user.modal.question") }}
-        </p>
-        <div class="flex items-center gap-1 text-red-500">
-          <Info class="w-3.5 h-3.5 shrink-0" />
-          <p class="text-xs">
-            {{ t("components.common.admin.AdminSidebar.user.modal.warning") }}
-          </p>
-        </div>
-      </div>
-
-      <template #footer>
-        <ButtonSecondary
-          :text="t('common.cancel')"
-          @click="isModalOpen = false"
-          class="min-w-24 py-2"
-        />
-        <ButtonPrimary
-          :text="t('common.confirm')"
-          :loading="isLoggingOut"
-          @click="handleLogout"
-          class="min-w-24 py-2"
-        />
-      </template>
-    </BaseModal>
+    <ConfirmModal
+      v-model="isModalOpen"
+      :icon="TriangleAlert"
+      :title="t('components.common.admin.AdminSidebar.user.modal.title')"
+      :question="t('components.common.admin.AdminSidebar.user.modal.question')"
+      :warning="t('components.common.admin.AdminSidebar.user.modal.warning')"
+      :loading="isLoggingOut"
+      @confirm="handleLogout"
+    />
   </div>
 </template>
 

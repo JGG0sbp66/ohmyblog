@@ -1,0 +1,56 @@
+/* src/css/tiptap/inline.css */
+/* 行内元素：行内代码、分隔线、超链接、图片 */
+
+/* 行内代码 */
+.tiptap :not(pre) > code {
+  background: var(--theme-bg-muted);
+  color: var(--theme-fg-subtle);
+  border-radius: 0.375rem;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.875em;
+}
+
+.tiptap hr {
+  border: none;
+  border-top: 1px dashed var(--theme-border);
+  margin: 1.5rem 0;
+}
+
+/* 超链接：虚线下划线 + hover 浮层背景 */
+.tiptap a {
+  color: var(--theme-accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: color-mix(in oklch, var(--theme-accent) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  cursor: pointer;
+  display: inline;
+  border-radius: 0.25rem;
+  padding: 0 2px;
+  margin: 0 -2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.tiptap a:hover {
+  background: var(--theme-bg-muted);
+  padding: 0 5px;  /* 比默认 2px 稍宽，让背景左右多延伸一点 */
+  margin: 0 -5px;  /* 补偿 padding 避免文字位移 */
+}
+
+/* 背景高亮（Highlight 扩展生成的 <mark>） */
+.tiptap mark {
+  border-radius: 0.2em;
+  padding: 0.1em 0.2em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* 图片：更大圆角 */
+.tiptap img {
+  max-width: 100%;
+  border-radius: 0.75rem;
+  display: block;
+  margin: 0.75rem 0;
+}

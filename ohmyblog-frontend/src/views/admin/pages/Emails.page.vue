@@ -34,35 +34,33 @@ const consumePending = () => {
 
 onMounted(consumePending);
 
-/** 
+/**
  * 已在邮件页时再次点击通知面板卡片，路由不会触发组件重载。
  * 通过监听 store 中的 pendingOpenItem 来响应重复点击或页面内跳转。
  */
 watch(() => emailStore.pendingOpenItem, consumePending);
-
 </script>
 
 <template>
   <!-- 主容器 -->
-  <BaseCard padding="none" class="flex-1 overflow-hidden flex">
-      <!-- 左侧列表 -->
-      <div class="w-100 border-r border-border/40 flex flex-col bg-bg-muted/10">
-        <!-- 操作区域 -->
-        <EmailListActions 
-          v-model:isRead="filters.isRead"
-          v-model:type="filters.type"
-        />
+  <BaseCard padding="none" class="flex-1 overflow-hidden flex onload-animation">
+    <!-- 左侧列表 -->
+    <div
+      class="w-100 border-r border-border/40 flex flex-col bg-bg-muted/10 onload-animation anim-delay-100 z-10"
+    >
+      <!-- 操作区域 -->
+      <EmailListActions
+        v-model:isRead="filters.isRead"
+        v-model:type="filters.type"
+      />
 
-        <!-- 消息列表组件 -->
-        <EmailList
-          v-model="selectedItem"
-          :filters="filters"
-        />
-      </div>
+      <!-- 消息列表组件 -->
+      <EmailList v-model="selectedItem" :filters="filters" />
+    </div>
 
-      <!-- 右侧展示区域 -->
-      <div class="flex-1 overflow-hidden">
-        <EmailDetailView :item="selectedItem" />
-      </div>
-    </BaseCard>
+    <!-- 右侧展示区域 -->
+    <div class="flex-1 overflow-hidden onload-animation anim-delay-150">
+      <EmailDetailView :item="selectedItem" />
+    </div>
+  </BaseCard>
 </template>

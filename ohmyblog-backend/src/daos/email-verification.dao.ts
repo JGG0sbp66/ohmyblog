@@ -12,8 +12,8 @@
 // 攻击者只要拿到任意一条就能完成重置。
 import { and, eq, gt, isNull } from "drizzle-orm";
 import { db } from "../../db/connection";
-import { emailVerification } from "../../db/schema";
 import type { TEmailVerificationType } from "../../db/constants/email-verification.constants";
+import { emailVerification } from "../../db/schema";
 
 export type NewEmailVerification = typeof emailVerification.$inferInsert;
 

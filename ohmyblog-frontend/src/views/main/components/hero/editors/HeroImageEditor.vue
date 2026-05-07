@@ -2,8 +2,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ExpandButton from "@/components/common/button/ExpandButton.vue";
-import Picture from "@/components/icon/common/Picture.vue";
-import Loading from "@/components/icon/common/Loading.vue";
+import { RiImageAddFill } from "@remixicon/vue";
+import Loading from "@/components/common/item/Loading.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useImageUpload } from "@/composables/upload.hook";
 import { uploadHero } from "@/api/upload.api";
@@ -32,23 +32,27 @@ const triggerUpload = () => {
  * 处理文件选择
  */
 const handleFileChange = (file: File) => {
-  handleUpload(file, uploadHero, async (url) => {
-    // 1. 更新全局 store 中的 hero 链接
-    systemStore.personalInfo.hero = url;
+  handleUpload(
+    file,
+    (f) => uploadHero({ hero: f }),
+    async (url) => {
+      // 1. 更新全局 store 中的 hero 链接
+      systemStore.personalInfo.hero = url;
 
-    // 2. 调用配置更新 API 同步到后端
-    try {
-      await upsertConfig({
-        configKey: "personal_info",
-        configValue: {
-          ...systemStore.personalInfo,
-          hero: url,
-        },
-      });
-    } catch (error) {
-      useToast.error(t("api.errors.获取个性化配置失败"));
-    }
-  });
+      // 2. 调用配置更新 API 同步到后端
+      try {
+        await upsertConfig({
+          configKey: "personal_info",
+          configValue: {
+            ...systemStore.personalInfo,
+            hero: url,
+          },
+        });
+      } catch (error) {
+        useToast.error(t("api.errors.获取个性化配置失败"));
+      }
+    },
+  );
 };
 </script>
 
@@ -73,7 +77,7 @@ const handleFileChange = (file: File) => {
     <ExpandButton :text="t('views.setup.steps.step4.hero.change')">
       <template #icon-start>
         <Loading v-if="uploading" />
-        <Picture v-else />
+        <RiImageAddFill v-else class="w-4 h-4" />
       </template>
     </ExpandButton>
   </button>

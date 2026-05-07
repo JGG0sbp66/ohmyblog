@@ -66,7 +66,7 @@ withDefaults(defineProps<Props>(), {
       </div>
 
       <!-- 右侧状态标签 -->
-      <BaseTag class="font-bold uppercase tracking-wider">
+      <BaseTag type="primary" class="font-bold uppercase tracking-wider">
         {{ t("components.common.BrowserMockup.preview") }}
       </BaseTag>
     </div>

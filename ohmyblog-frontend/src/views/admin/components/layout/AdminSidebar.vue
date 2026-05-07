@@ -3,7 +3,8 @@
 import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useRouter, useRoute } from "vue-router";
-import { LayoutDashboard, PenLine, Mail, Settings } from "lucide-vue-next";
+import { LayoutDashboard, Mail, Settings } from "lucide-vue-next";
+import { RiQuillPenLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import SidebarButton from "@/components/base/button/SidebarButton.vue";
 import AdminUserInfo from "../AdminUserInfo.vue";
@@ -25,7 +26,7 @@ onMounted(() => {
 const menuGroups = computed(() => [
   [
     {
-      name: t("components.common.admin.AdminSidebar.nav.dashboard"),
+      name: t("components.common.admin.AdminHeader.pages.dashboard"),
       icon: LayoutDashboard,
       path: "/admin/dashboard",
       exact: true,
@@ -33,19 +34,19 @@ const menuGroups = computed(() => [
   ],
   [
     {
-      name: t("components.common.admin.AdminSidebar.nav.posts"),
-      icon: PenLine,
+      name: t("components.common.admin.AdminHeader.pages.posts"),
+      icon: RiQuillPenLine,
       path: "/admin/posts",
     },
     {
-      name: t("components.common.admin.AdminSidebar.nav.emails"),
+      name: t("components.common.admin.AdminHeader.pages.emails"),
       icon: Mail,
       path: "/admin/emails",
     },
   ],
   [
     {
-      name: t("components.common.admin.AdminSidebar.nav.settings"),
+      name: t("components.common.admin.AdminHeader.pages.settings"),
       icon: Settings,
       path: "/admin/settings",
     },
@@ -86,7 +87,9 @@ const isItemActive = (item: MenuItem) => {
             :text="item.name"
             :isActive="isItemActive(item)"
             :isExpanded="isExpanded"
-            :badge="item.path === '/admin/emails' ? emailUnreadCount : undefined"
+            :badge="
+              item.path === '/admin/emails' ? emailUnreadCount : undefined
+            "
             @click="handleNavClick(item.path)"
           />
         </div>

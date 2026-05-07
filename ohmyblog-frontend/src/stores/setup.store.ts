@@ -2,6 +2,8 @@
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import { useLang } from "@/composables/lang.hook";
+import type { TRegisterDTO } from "@server/dtos/auth.dto";
+import type { TSMTPConfigUpsertDTO } from "@server/dtos/config.dto";
 
 /** Step5 SMTP 表单校验函数类型 */
 type SmtpFormValidator = (() => boolean) | null;
@@ -54,7 +56,7 @@ export const useSetupStore = defineStore("setup", () => {
    * Step3：管理员注册表单。
    * 字段与 Step3 页面输入项一一对应。
    */
-  const adminForm = ref({
+  const adminForm = ref<TRegisterDTO & { confirmPassword: string }>({
     username: "",
     email: "",
     password: "",
@@ -92,7 +94,8 @@ export const useSetupStore = defineStore("setup", () => {
    * Step5：SMTP 表单数据。
    * 字段与 SMTPForm 组件输入项一一对应。
    */
-  const smtpForm = ref({
+  const smtpForm = ref<TSMTPConfigUpsertDTO["configValue"]>({
+    enabled: true,
     host: "",
     port: 587,
     username: "",

@@ -86,4 +86,6 @@ export const ResetPasswordEmailParamsDTO = t.Object({
 
 export type TSMTPTestEmailParams = Static<typeof SMTPTestEmailParamsDTO>;
 export type TLoginAlertEmailParams = Static<typeof LoginAlertEmailParamsDTO>;
-export type TResetPasswordEmailParams = Static<typeof ResetPasswordEmailParamsDTO>;
+export type TResetPasswordEmailParams = Static<
+	typeof ResetPasswordEmailParamsDTO
+>;

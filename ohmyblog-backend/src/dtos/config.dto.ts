@@ -1,7 +1,10 @@
 // src/dtos/config.dto.ts
 import { type Static, t } from "elysia";
+import {
+	supportedLanguages,
+	themeModes,
+} from "../../db/constants/config.constants";
 import { tStringEnum } from "../utils/typebox";
-import { themeModes, supportedLanguages } from "../../db/constants/config.constants";
 
 const ConfigMetaDTO = {
 	description: t.Optional(
@@ -52,9 +55,8 @@ export const SiteInfoConfigUpsertDTO = t.Object({
 		}),
 		favicon: t.Optional(
 			t.String({
-				maxLength: 500,
 				description: "站点图标 URL",
-				error: "site_info.favicon_range",
+				error: "site_info.favicon_invalid",
 			}),
 		),
 		footer: t.Optional(
@@ -82,9 +84,8 @@ export const SiteInfoConfigUpsertDTO = t.Object({
 					}),
 					url: t.String({
 						minLength: 1,
-						maxLength: 500,
 						description: "链接地址",
-						error: "site_info.footer_link_url_range",
+						error: "site_info.footer_link_url_invalid",
 					}),
 				}),
 				{
@@ -109,9 +110,8 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 		),
 		avatar: t.Optional(
 			t.String({
-				maxLength: 500,
 				description: "头像 URL",
-				error: "personal_info.avatar_range",
+				error: "personal_info.avatar_invalid",
 			}),
 		),
 		bio: t.Optional(
@@ -132,9 +132,8 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 					}),
 					url: t.String({
 						minLength: 1,
-						maxLength: 500,
 						description: "社交链接地址",
-						error: "personal_info.social_url_range",
+						error: "personal_info.social_url_invalid",
 					}),
 					iconLight: t.Optional(
 						t.String({
@@ -156,9 +155,8 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 		),
 		hero: t.Optional(
 			t.String({
-				maxLength: 500,
 				description: "首页横幅 URL",
-				error: "personal_info.hero_range",
+				error: "personal_info.hero_invalid",
 			}),
 		),
 		heroTitle: t.Optional(

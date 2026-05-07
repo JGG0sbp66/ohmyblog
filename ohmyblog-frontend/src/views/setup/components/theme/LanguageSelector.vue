@@ -1,7 +1,7 @@
 <!-- src/components/theme/LanguageSelector.vue -->
 <script setup lang="ts">
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import LanguagePicker from "@/components/icon/theme/LanguagePicker.vue";
+import { RiEmphasisCn, RiEnglishInput } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 
 const { locale, setLocale, SUPPORTED_LOCALES } = useLang();
@@ -17,7 +17,8 @@ const { locale, setLocale, SUPPORTED_LOCALES } = useLang();
       @click="setLocale(lang.value)"
     >
       <div class="flex items-center gap-2">
-        <LanguagePicker :language="lang.value" />
+        <RiEmphasisCn v-if="lang.value === 'zh-CN'" class="w-5 h-5" />
+        <RiEnglishInput v-if="lang.value === 'en-US'" class="w-5 h-5" />
         <span>{{ lang.label }}</span>
       </div>
     </ButtonSecondary>

@@ -3,8 +3,7 @@
 import { useI18n } from "vue-i18n";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import Monitor from "@/components/icon/ui/Monitor.vue";
-import Smartphone from "@/components/icon/ui/Smartphone.vue";
+import { RiComputerLine, RiSmartphoneLine } from "@remixicon/vue";
 
 defineProps<{
   modelValue: "pc" | "mobile";
@@ -32,7 +31,7 @@ const { t } = useI18n();
         @click="$emit('update:modelValue', 'pc')"
       >
         <div class="flex items-center gap-2">
-          <Monitor class="w-4 h-4" />
+          <RiComputerLine class="w-4 h-4" />
           <span class="text-xs font-bold">{{
             t("views.admin.Settings.appearance.viewport.desktop")
           }}</span>
@@ -44,7 +43,7 @@ const { t } = useI18n();
         @click="$emit('update:modelValue', 'mobile')"
       >
         <div class="flex items-center gap-2">
-          <Smartphone class="w-4 h-4" />
+          <RiSmartphoneLine class="w-4 h-4" />
           <span class="text-xs font-bold">{{
             t("views.admin.Settings.appearance.viewport.mobile")
           }}</span>

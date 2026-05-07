@@ -11,13 +11,13 @@
         }
       },
       "admin": {
-        "AdminSidebar": {
+        "PostsNav": {
           "nav": {
-            "dashboard": "Dashboard",
-            "posts": "Write",
-            "emails": "Mailbox",
-            "settings": "Preferences"
-          },
+            "list": "Posts",
+            "editor": "Write"
+          }
+        },
+        "AdminSidebar": {
           "user": {
             "logout": "Click to logout",
             "modal": {
@@ -31,6 +31,7 @@
           "pages": {
             "dashboard": "Dashboard",
             "posts": "Posts",
+            "post-edit": "Edit Post",
             "emails": "Emails",
             "settings": "Settings",
             "default": "Admin"
@@ -43,6 +44,9 @@
       "input": {
         "TipInput": {
           "required": "This field cannot be empty"
+        },
+        "SearchInput": {
+          "placeholder": "Search..."
         }
       },
       "button": {
@@ -54,6 +58,13 @@
       },
       "BrowserMockup": {
         "preview": "Live Preview"
+      },
+      "item": {
+        "Brand": {
+          "line1": "Welcome to",
+          "line2": "ohmyblog",
+          "line3": "Let's start configuring"
+        }
       }
     },
     "base": {
@@ -71,13 +82,6 @@
         "light": "Light",
         "dark": "Dark",
         "auto": "System"
-      }
-    },
-    "icon": {
-      "TypingBrand": {
-        "line1": "Welcome to",
-        "line2": "ohmyblog",
-        "line3": "Let's start configuring"
       }
     }
   },
@@ -99,6 +103,79 @@
       }
     },
     "admin": {
+      "Posts": {
+        "filter": {
+          "all": "All",
+          "draft": "Draft",
+          "published": "Published",
+          "archived": "Archived",
+          "deleted": "Trash"
+        },
+        "table": {
+          "col": {
+            "post": "Post",
+            "status": "Status",
+            "tags": "Tags",
+            "views": "Views",
+            "time": "Time",
+            "actions": "Actions"
+          },
+          "actions": {
+            "edit": "Edit",
+            "publish": "Publish",
+            "toDraft": "Revert to Draft",
+            "archive": "Archive",
+            "trash": "Move to Trash",
+            "restore": "Restore to Draft",
+            "permanentDelete": "Delete Permanently"
+          },
+          "untitled": "New Post",
+          "empty": "No posts yet",
+          "noTags": "No tags",
+          "bulk": {
+            "changeStatus": "Change Status",
+            "statusModal": {
+              "title": "Bulk Change Status",
+              "question": "Select the target status for the following posts:",
+              "confirm": "Confirm Change to {status}"
+            },
+            "delete": "Bulk Delete",
+            "trashModal": {
+              "title": "Move to Trash",
+              "question": "Are you sure you want to move the following posts to Trash?",
+              "listHeader": "Posts to be moved",
+              "warning": "You can find and restore them from the Trash section at any time.",
+              "confirm": "Move All to Trash"
+            },
+            "deleteModal": {
+              "title": "Permanent Bulk Delete",
+              "question": "Are you sure you want to permanently delete the following posts?",
+              "listHeader": "Posts to be permanently deleted",
+              "warning": "This action cannot be undone. The posts will be permanently deleted and cannot be recovered.",
+              "confirm": "Delete All Permanently"
+            }
+          },
+          "timeLabel": {
+            "published": "Published",
+            "deleted": "Deleted",
+            "updated": "Updated"
+          },
+          "confirm": {
+            "trash": {
+              "title": "Move to Trash",
+              "question": "Are you sure you want to move \"{title}\" to Trash?",
+              "warning": "You can find and restore it from the Trash section at any time.",
+              "confirm": "Move to Trash"
+            },
+            "delete": {
+              "title": "Delete Permanently",
+              "question": "Are you sure you want to permanently delete \"{title}\"?",
+              "warning": "This action cannot be undone. The post will be permanently deleted and cannot be recovered.",
+              "confirm": "Delete Permanently"
+            }
+          }
+        }
+      },
       "Settings": {
         "nav": {
           "appearance": "Appearance",
@@ -192,6 +269,66 @@
             },
             "button": "Send Email",
             "noRecipient": "Please add at least one recipient"
+          }
+        }
+      },
+      "PostEditor": {
+        "statusBar": {
+          "unsaved": "Unsaved",
+          "saved": "Saved",
+          "saving": "Saving",
+          "save": "Save"
+        },
+        "settingsPanel": {
+          "title": "Post Settings",
+          "tags": {
+            "label": "Tags",
+            "tooltip": "Add tags to your post to help with categorization and content discovery",
+            "placeholder": "Type and press Enter to add"
+          },
+          "slug": {
+            "label": "Permalink",
+            "tooltip": "Auto-generated from the title; you can edit it manually. Required before publishing.",
+            "placeholder": "article-url-slug"
+          },
+          "status": {
+            "label": "Status",
+            "tooltip": "Control the visibility of your post. Drafts are only visible to you"
+          },
+          "coverImage": {
+            "label": "Cover Image",
+            "tooltip": "Set the post cover image, displayed on listing and detail pages",
+            "hint": "Click to upload · 16:9 recommended"
+          }
+        },
+        "content": {
+          "title": {
+            "placeholder": "Post title"
+          },
+          "body": {
+            "placeholder": "Start writing, or type / to choose a block..."
+          },
+          "bubbleMenu": {
+            "bold": "Bold (Ctrl/⌘+B)\nmarkdown:**text** Space",
+            "italic": "Italic (Ctrl/⌘+I)\nmarkdown:*text* Space",
+            "strike": "Strikethrough (Ctrl/⌘+Shift+S)\nmarkdown:~~text~~ Space",
+            "underline": "Underline (Ctrl/⌘+U)\nmarkdown:~text~ Space",
+            "code": "Inline code (Ctrl/⌘+E)\nmarkdown:`code` Space",
+            "paragraph": "Paragraph",
+            "orderedList": "Ordered list",
+            "bulletList": "Bullet list",
+            "codeBlock": "Code block",
+            "quote": "Blockquote",
+            "alignLeft": "Align left",
+            "alignCenter": "Align center",
+            "alignRight": "Align right",
+            "indent": "Increase indent",
+            "outdent": "Decrease indent",
+            "link": "Insert link (Ctrl/⌘+K)",
+            "linkEdit": "Edit link",
+            "linkRemove": "Remove link",
+            "linkUrlPlaceholder": "https://...",
+            "linkConfirm": "Insert"
           }
         }
       }
@@ -469,6 +606,9 @@
       },
       "config": {
         "description_range": "Description must be under 255 characters"
+      },
+      "post": {
+        "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post"
       }
     },
     "next": "Next Step",
@@ -514,7 +654,10 @@
       "SMTP 配置不存在，请先完成邮件服务配置": "SMTP is not configured. Please complete your email settings first.",
       "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP is disabled. Please enable it in Settings first.",
       "验证码无效或已过期": "Verification code is invalid or expired",
-      "账户已被封禁": "This account has been banned"
+      "账户已被封禁": "This account has been banned",
+      "文章不存在": "Post not found",
+      "只能永久删除回收站中的文章，请先将文章移入回收站": "Only posts in Trash can be permanently deleted",
+      "该 slug 已被其他文章使用": "This slug is already used by another post"
     },
     "success": {
       "保存成功": "Settings saved successfully",
@@ -525,6 +668,9 @@
       "图标上传成功": "Icon uploaded successfully",
       "横幅上传成功": "Banner uploaded successfully",
       "头像上传成功": "Avatar uploaded successfully",
+      "社交图标上传成功": "Social icon uploaded successfully",
+      "封面图上传成功": "Cover image uploaded successfully",
+      "图片上传成功": "Image uploaded successfully",
       "邮件发送成功": "Email sent successfully",
       "若邮箱存在，验证码已发送，请注意查收": "If the email exists, a verification code has been sent",
       "密码重置成功，请使用新密码登录": "Password reset successfully. Please sign in with your new password"

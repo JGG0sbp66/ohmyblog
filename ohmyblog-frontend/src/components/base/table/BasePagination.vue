@@ -2,8 +2,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import ChevronLeft from "@/components/icon/common/ChevronLeft.vue";
-import ChevronRight from "@/components/icon/common/ChevronRight.vue";
+import { ChevronLeft, ChevronRight } from "lucide-vue-next";
 
 const props = defineProps<{
   currentPage: number;
@@ -62,7 +61,7 @@ const pages = computed<(number | string)[]>(() => {
       @click="goTo(currentPage - 1)"
       aria-label="上一页"
     >
-      <ChevronLeft sizeClass="w-5 h-5" />
+      <ChevronLeft class="w-5 h-5" />
     </ButtonSecondary>
 
     <template v-for="(page, index) in pages" :key="`page-${index}-${page}`">
@@ -90,7 +89,7 @@ const pages = computed<(number | string)[]>(() => {
       @click="goTo(currentPage + 1)"
       aria-label="下一页"
     >
-      <ChevronRight sizeClass="w-5 h-5" />
+      <ChevronRight class="w-5 h-5" />
     </ButtonSecondary>
   </div>
 </template>

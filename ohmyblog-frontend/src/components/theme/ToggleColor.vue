@@ -2,7 +2,7 @@
 <script lang="ts" setup>
 import { useTheme } from "@/composables/theme.hook";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import ColorPicker from "../icon/theme/ColorPicker.vue";
+import { Palette } from "lucide-vue-next";
 import DropButton from "../common/button/DropButton.vue";
 import ColorSlider from "../base/slider/ColorSlider.vue";
 
@@ -16,7 +16,7 @@ const { currentHue } = useTheme();
   >
     <template #trigger="{ active }">
       <ButtonSecondary :isActive="active" class="w-full h-full">
-        <ColorPicker />
+        <Palette class="w-5 h-5" />
       </ButtonSecondary>
     </template>
 

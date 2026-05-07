@@ -1,12 +1,12 @@
 // src/routes/email.route.ts
 import { Elysia, t } from "elysia";
+import { emailLogDao } from "../daos/email-log.dao";
 import { SMTPConfigUpsertDTO } from "../dtos/config.dto";
 import { EmailLogQueryDTO, EmailTestDTO } from "../dtos/email.dto";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 import { authPlugin } from "../plugins/auth.plugin";
-import { emailSenderService } from "../services/email/email-sender.service";
 import { emailDispatchService } from "../services/email/email-dispatch.service";
-import { emailLogDao } from "../daos/email-log.dao";
+import { emailSenderService } from "../services/email/email-sender.service";
 
 export const emailRoute = new Elysia({ name: "emailRoute" })
 	.use(authPlugin)

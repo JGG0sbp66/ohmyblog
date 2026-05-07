@@ -1,0 +1,5 @@
+/* src/css/tiptap/paragraph.css */
+/* 段落边距 */
+.tiptap p {
+  margin: 0.25rem 0;
+}

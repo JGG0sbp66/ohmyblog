@@ -25,3 +25,8 @@ export const ENV_PATH = join(DATA_DIR, ".env");
 
 /** SQLite 数据库文件的物理存储路径 */
 export const DB_PATH = join(DATA_DIR, "sqlite.db");
+
+/** 文章图片的存放根目录，按文章 UUID 分子目录存储
+ *  结构：posts/{post-uuid}/cover.webp（封面）、{cuid}.webp（行内图）
+ */
+export const POST_UPLOADS_DIR = join(UPLOADS_DIR, "posts");

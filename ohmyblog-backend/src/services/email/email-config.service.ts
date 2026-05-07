@@ -1,7 +1,11 @@
 // src/services/email/email-config.service.ts
 import { configDao } from "../../daos/config.dao";
 import { userDao } from "../../daos/user.dao";
-import type { TAppearanceConfigUpsertDTO, TSMTPConfigUpsertDTO } from "../../dtos/config.dto";
+import type {
+	TAppearanceConfigUpsertDTO,
+	TSiteInfoConfigUpsertDTO,
+	TSMTPConfigUpsertDTO,
+} from "../../dtos/config.dto";
 import { BusinessError } from "../../plugins/errors";
 import type { SiteConfig } from "./types";
 
@@ -44,10 +48,9 @@ class EmailConfigService {
 	 */
 	async getSiteConfig(): Promise<SiteConfig> {
 		const record = await configDao.findByKey("site_info");
-		const raw = record?.configValue as {
-			title?: string;
-			footer?: string;
-		} | null;
+		const raw = record?.configValue as
+			| TSiteInfoConfigUpsertDTO["configValue"]
+			| null;
 		return {
 			title: raw?.title ?? "ohmyblog",
 			footer: raw?.footer ?? "",
@@ -60,7 +63,10 @@ class EmailConfigService {
 	 */
 	async getAdminName(): Promise<string> {
 		const personalRecord = await configDao.findByKey("personal_info");
-		return (personalRecord?.configValue as { username?: string } | null)?.username ?? "Admin";
+		return (
+			(personalRecord?.configValue as { username?: string } | null)?.username ??
+			"Admin"
+		);
 	}
 
 	/**

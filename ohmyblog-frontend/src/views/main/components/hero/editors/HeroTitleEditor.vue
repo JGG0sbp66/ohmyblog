@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ExpandButton from "@/components/common/button/ExpandButton.vue";
-import Heading from "@/components/icon/common/Heading.vue";
+import { RiHeading } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import HeroTitleEditorModal from "./title/HeroTitleEditorModal.vue";
@@ -31,7 +31,7 @@ const openModal = () => {
   >
     <ExpandButton :text="t('views.main.hero.titleEditor.triggerText')">
       <template #icon-start>
-        <Heading />
+        <RiHeading class="w-5 h-5" />
       </template>
     </ExpandButton>
   </button>

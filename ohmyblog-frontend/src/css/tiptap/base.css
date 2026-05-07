@@ -1,0 +1,17 @@
+/* src/css/tiptap/base.css */
+/* 基础容器样式：字号、行高、字色，以及空编辑器占位文字 */
+
+.tiptap {
+  outline: none;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--theme-fg);
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--theme-fg-soft);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}

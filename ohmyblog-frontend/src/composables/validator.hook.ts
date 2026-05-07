@@ -41,7 +41,7 @@ export function useValidator() {
    * @param options 校验配置（必填、Schema等）
    */
   const validate = (
-    value: string | number | undefined,
+    value: string | number | null | undefined,
     options: {
       required?: boolean;
       schema?: TSchema;

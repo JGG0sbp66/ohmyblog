@@ -8,8 +8,7 @@ import { uploadAvatar, uploadHero } from "@/api/upload.api";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
-import User from "@/components/icon/common/User.vue";
-import PanelTop from "@/components/icon/ui/PanelTop.vue";
+import { RiGalleryFill, RiIdCardLine } from "@remixicon/vue";
 
 const { t } = useLang();
 const systemStore = useSystemStore();
@@ -47,11 +46,15 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
   const config = UPLOAD_CONFIGS[type];
   const hook = type === "avatar" ? avatar : hero;
 
-  hook.handleUpload(file, config.api, (url) => {
-    // handleUpload 已自动添加时间戳，直接赋值即可
-    const info = systemStore.personalInfo as any;
-    info[config.storeKey] = url;
-  });
+  hook.handleUpload(
+    file,
+    (f) => config.api({ [config.fileName]: f } as any),
+    (url) => {
+      // handleUpload 已自动添加时间戳，直接赋值即可
+      const info = systemStore.personalInfo as any;
+      info[config.storeKey] = url;
+    },
+  );
 };
 </script>
 
@@ -73,7 +76,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           @change="(file) => onFileChange('avatar', file)"
         >
           <template #icon>
-            <User size-class="w-12 h-12 text-fg-subtle/30" />
+            <RiIdCardLine class="w-12 h-12 text-fg-subtle/30" />
           </template>
         </ImageUpload>
       </div>
@@ -157,7 +160,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         >
           <template #icon>
             <div class="flex flex-col items-center gap-3">
-              <PanelTop size-class="w-10 h-10 text-fg-subtle/30" />
+              <RiGalleryFill class="w-10 h-10 text-fg-subtle/30" />
               <p class="text-xs text-fg-subtle/60">
                 {{ t("views.setup.steps.step4.hero.recommend") }}
               </p>

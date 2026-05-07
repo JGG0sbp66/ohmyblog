@@ -48,7 +48,6 @@ const messages = Object.fromEntries(
   Object.entries(LOCALE_CONFIG).map(([key, value]) => [key, value.message]),
 );
 
-
 const localeStorage = useStorage<TLanguage>("locale", getBestLocale());
 
 // 创建 i18n 实例

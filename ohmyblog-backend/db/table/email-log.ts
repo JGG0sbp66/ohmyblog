@@ -47,4 +47,3 @@ export const emailLog = sqliteTable("email_log", {
 
 /** 邮件日志推断类型（供前端使用） */
 export type TEmailLog = typeof emailLog.$inferSelect;
-

@@ -1,0 +1,49 @@
+/* src/css/tiptap/lists.css */
+/* 有序 / 无序列表：自定义标记符、嵌套缩进、列表项内含标题的字号修正 */
+
+/* 标记符内联在首个子元素 ::before，随 text-align 同步移动 */
+.tiptap ul,
+.tiptap ol {
+  padding-left: 0;
+  margin: 0.5rem 0;
+  list-style: none;
+}
+.tiptap li {
+  margin: 0.125rem 0;
+}
+
+.tiptap ul > li > :first-child::before {
+  content: "• ";
+  color: var(--theme-accent);
+}
+
+.tiptap ol {
+  counter-reset: tiptap-counter;
+}
+.tiptap ol > li {
+  counter-increment: tiptap-counter;
+}
+.tiptap ol > li > :first-child::before {
+  content: counter(tiptap-counter) ". ";
+  color: var(--theme-accent);
+  font-weight: 600;
+}
+
+/* 嵌套列表缩进 */
+.tiptap :is(ul, ol) :is(ul, ol) {
+  padding-left: 1.5em;
+}
+
+/* 列表项内含标题时，规范化 li 字号，并移除标题上边距避免与标记符错位 */
+.tiptap :is(ul, ol) > li:has(h1) {
+  font-size: 1.875rem;
+}
+.tiptap :is(ul, ol) > li:has(h2) {
+  font-size: 1.5rem;
+}
+.tiptap :is(ul, ol) > li:has(h3) {
+  font-size: 1.25rem;
+}
+.tiptap :is(ul, ol) li :is(h1, h2, h3, h4, h5, h6) {
+  margin-top: 0;
+}

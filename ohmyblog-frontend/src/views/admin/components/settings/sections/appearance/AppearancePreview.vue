@@ -4,7 +4,7 @@ import { ref, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
-import Loading from "@/components/icon/common/Loading.vue";
+import Loading from "@/components/common/item/Loading.vue";
 import BrowserMockup from "@/components/common/container/BrowserMockup.vue";
 
 const { t } = useI18n();

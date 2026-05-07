@@ -1,8 +1,8 @@
 <!-- src/components/base/upload/ImageUpload.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
-import Picture from "@/components/icon/common/Picture.vue";
-import Loading from "@/components/icon/common/Loading.vue";
+import { RiImageAddFill } from "@remixicon/vue";
+import Loading from "@/components/common/item/Loading.vue";
 
 /**
  * 通用图片上传预览组件
@@ -96,7 +96,7 @@ defineExpose({
       <!-- 默认内容 (图标 + 说明文字) -->
       <div v-else class="flex flex-col items-center gap-2 p-2">
         <slot name="icon">
-          <Picture size-class="w-8 h-8 text-fg-subtle opacity-40" />
+          <RiImageAddFill class="w-8 h-8 text-fg-subtle opacity-40" />
         </slot>
         <p
           v-if="description"
@@ -111,7 +111,7 @@ defineExpose({
         v-if="!loading && modelValue"
         class="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 group-hover/image:opacity-100 transition-opacity"
       >
-        <Picture size-class="w-6 h-6 text-white drop-shadow-sm" />
+        <RiImageAddFill class="w-6 h-6 text-white drop-shadow-sm" />
       </div>
 
       <!-- 加载中遮罩 -->

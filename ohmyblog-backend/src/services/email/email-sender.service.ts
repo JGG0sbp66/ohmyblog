@@ -3,18 +3,18 @@ import { randomInt } from "node:crypto";
 import { render } from "@react-email/components";
 import { createElement } from "react";
 import { emailLogDao } from "../../daos/email-log.dao";
-import { geoService, type GeoInfo } from "../../services/geo.service";
-import { BusinessError } from "../../plugins/errors";
-import { LoginAlertEmail } from "../../templates/LoginAlertEmail";
-import { ResetPasswordEmail } from "../../templates/ResetPasswordEmail";
-import { SMTPTestEmail } from "../../templates/SMTPTestEmail";
-import { emailConfigService } from "./email-config.service";
-import { emailDispatchService } from "./email-dispatch.service";
 import type {
 	TLoginAlertEmailParams,
 	TResetPasswordEmailParams,
 	TSMTPTestEmailParams,
 } from "../../dtos/email.dto";
+import { BusinessError } from "../../plugins/errors";
+import { type GeoInfo, geoService } from "../../services/geo.service";
+import { LoginAlertEmail } from "../../templates/LoginAlertEmail";
+import { ResetPasswordEmail } from "../../templates/ResetPasswordEmail";
+import { SMTPTestEmail } from "../../templates/SMTPTestEmail";
+import { emailConfigService } from "./email-config.service";
+import { emailDispatchService } from "./email-dispatch.service";
 import type { SendLoginAlertParams, SendResetPasswordParams } from "./types";
 
 class EmailSenderService {
@@ -25,7 +25,8 @@ class EmailSenderService {
 	 */
 	async sendSMTPTestEmail(to: string[]) {
 		const smtpConfig = await emailConfigService.getSmtpConfig();
-		const { title: siteTitle, footer: siteFooter } = await emailConfigService.getSiteConfig();
+		const { title: siteTitle, footer: siteFooter } =
+			await emailConfigService.getSiteConfig();
 		const adminName = await emailConfigService.getAdminName();
 		const { hue } = await emailConfigService.getAppearanceConfig();
 
@@ -89,9 +90,14 @@ class EmailSenderService {
 	 * @param prevGeo 上次位置信息
 	 * @returns 发送结果
 	 */
-	async sendLoginAlertEmail(params: SendLoginAlertParams, currGeo: GeoInfo, prevGeo: GeoInfo) {
+	async sendLoginAlertEmail(
+		params: SendLoginAlertParams,
+		currGeo: GeoInfo,
+		prevGeo: GeoInfo,
+	) {
 		const smtpConfig = await emailConfigService.getSmtpConfig();
-		const { title: siteTitle, footer: siteFooter } = await emailConfigService.getSiteConfig();
+		const { title: siteTitle, footer: siteFooter } =
+			await emailConfigService.getSiteConfig();
 		const { hue } = await emailConfigService.getAppearanceConfig();
 
 		// 1. 获取管理员名称
@@ -141,7 +147,8 @@ class EmailSenderService {
 	 */
 	async sendResetPasswordEmail(params: SendResetPasswordParams) {
 		const smtpConfig = await emailConfigService.getSmtpConfig();
-		const { title: siteTitle, footer: siteFooter } = await emailConfigService.getSiteConfig();
+		const { title: siteTitle, footer: siteFooter } =
+			await emailConfigService.getSiteConfig();
 		const { hue } = await emailConfigService.getAppearanceConfig();
 
 		// 1. 获取管理员名称
@@ -151,7 +158,9 @@ class EmailSenderService {
 		const code = String(randomInt(100000, 1000000));
 
 		// 3. 解析请求 IP 的位置（用于模板展示和日志 params 快照）
-		const location = geoService.formatLocation(await geoService.lookup(params.ip));
+		const location = geoService.formatLocation(
+			await geoService.lookup(params.ip),
+		);
 
 		const templateProps = {
 			siteTitle,
@@ -194,11 +203,20 @@ class EmailSenderService {
 		// 根据日志类型渲染对应模板
 		switch (log.type) {
 			case "smtp_test":
-				return render(createElement(SMTPTestEmail, params as TSMTPTestEmailParams));
+				return render(
+					createElement(SMTPTestEmail, params as TSMTPTestEmailParams),
+				);
 			case "login_alert":
-				return render(createElement(LoginAlertEmail, params as TLoginAlertEmailParams));
+				return render(
+					createElement(LoginAlertEmail, params as TLoginAlertEmailParams),
+				);
 			case "reset_password":
-				return render(createElement(ResetPasswordEmail, params as TResetPasswordEmailParams));
+				return render(
+					createElement(
+						ResetPasswordEmail,
+						params as TResetPasswordEmailParams,
+					),
+				);
 			default:
 				throw new BusinessError(`未知的邮件类型: ${log.type}`, { status: 400 });
 		}

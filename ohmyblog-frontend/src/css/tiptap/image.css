@@ -1,0 +1,64 @@
+/* src/css/tiptap/image.css */
+/* 可调整宽度的图片块 NodeView 样式 */
+
+.image-block-wrapper {
+  display: inline-block;
+  vertical-align: bottom;
+  margin: 0.125rem 0.25rem 0.125rem 0;
+  line-height: 0;
+  font-size: 0;
+}
+
+.image-block {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 0.375rem;
+  transition: outline 0.1s;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  cursor: default;
+}
+
+.image-block--selected {
+  outline-color: var(--theme-accent);
+}
+
+.image-block-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.375rem;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 右侧拖拽 handle：默认隐藏，hover / 选中时显示 */
+.image-resize-handle {
+  position: absolute;
+  right: -4px;
+  top: 0;
+  width: 8px;
+  height: 100%;
+  cursor: ew-resize;
+  opacity: 0;
+  transition: opacity 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-resize-handle::after {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 32px;
+  border-radius: 2px;
+  background: var(--theme-accent);
+}
+
+.image-block:hover .image-resize-handle,
+.image-block--selected .image-resize-handle {
+  opacity: 1;
+}
