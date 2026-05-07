@@ -5,6 +5,7 @@ import { Bold, Italic, Strikethrough, Underline, Code } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
 import BubbleLinkButton from "./BubbleLinkButton.vue";
+import BubbleColorButton from "./BubbleColorButton.vue";
 
 /**
  * BubbleFormatSection — 气泡菜单区域三：行内格式按钮组
@@ -58,5 +59,6 @@ const { t } = useLang();
     </IconTipButton>
 
     <BubbleLinkButton :editor="editor" />
+    <BubbleColorButton :editor="editor" />
   </div>
 </template>
