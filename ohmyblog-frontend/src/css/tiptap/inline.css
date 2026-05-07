@@ -35,8 +35,8 @@
 }
 .tiptap a:hover {
   background: var(--theme-bg-muted);
-  text-decoration: none;
-  border-bottom: 1px dashed color-mix(in oklch, var(--theme-accent) 65%, transparent);
+  padding: 0 5px;  /* 比默认 2px 稍宽，让背景左右多延伸一点 */
+  margin: 0 -5px;  /* 补偿 padding 避免文字位移 */
 }
 
 /* 图片：更大圆角 */
