@@ -12,11 +12,14 @@
         "@tiptap/extension-bubble-menu": "^3.22.5",
         "@tiptap/extension-character-count": "^3.22.5",
         "@tiptap/extension-code-block-lowlight": "^3.22.5",
+        "@tiptap/extension-color": "^3.22.5",
         "@tiptap/extension-floating-menu": "^3.22.5",
+        "@tiptap/extension-highlight": "^3.22.5",
         "@tiptap/extension-image": "^3.22.5",
         "@tiptap/extension-link": "^3.22.5",
         "@tiptap/extension-placeholder": "^3.22.5",
         "@tiptap/extension-text-align": "^3.22.5",
+        "@tiptap/extension-text-style": "^3.22.5",
         "@tiptap/extension-underline": "^3.22.5",
         "@tiptap/starter-kit": "^3.22.5",
         "@tiptap/vue-3": "^3.22.5",
@@ -289,6 +292,8 @@
 
     "@tiptap/extension-code-block-lowlight": ["@tiptap/extension-code-block-lowlight@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-code-block-lowlight/-/extension-code-block-lowlight-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5", "@tiptap/extension-code-block": "3.22.5", "@tiptap/pm": "3.22.5", "highlight.js": "^11", "lowlight": "^2 || ^3" } }, "sha512-lT0SxhjkDL1tKSeVDduV+SJ6kHdNFcbYBaUAwTufRtDt8FIYcSX6tWj5cPEXOFrC0PlJu7ybCnTEbXBdFP8Bnw=="],
 
+    "@tiptap/extension-color": ["@tiptap/extension-color@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-color/-/extension-color-3.22.5.tgz", { "peerDependencies": { "@tiptap/extension-text-style": "3.22.5" } }, "sha512-4aTygOUlTFBYCvJy67SeKVdXCQw7du3Rj+N5ZutVnDnrpfzUBWsO7f+I+iDS8eMQFbWxVFLlWxGMcTbjtk1a+Q=="],
+
     "@tiptap/extension-document": ["@tiptap/extension-document@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-document/-/extension-document-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5" } }, "sha512-8NJERd+pCtvSuEP4C4WMGYmRRCV12ePZL7bC+QUdFlbdXg+kNZS0zZ7hh879tYA0Kidbi8rWWD1Tx+H2ezkmMw=="],
 
     "@tiptap/extension-dropcursor": ["@tiptap/extension-dropcursor@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-dropcursor/-/extension-dropcursor-3.22.5.tgz", { "peerDependencies": { "@tiptap/extensions": "3.22.5" } }, "sha512-Mp40DaFrY3sEUVtFqmxrR0BmU4G3k8GCYYNGqNa9OqWv7BrcFDC03V2n3okESDKt4MKkzhQQmypq+ouLy8dLfA=="],
@@ -300,6 +305,8 @@
     "@tiptap/extension-hard-break": ["@tiptap/extension-hard-break@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-hard-break/-/extension-hard-break-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5" } }, "sha512-n0R2mUVYZU2AVbJhg/WcY9+zx690wVwvsItHJf0DrYbf1tCYHx+PRHUt/AoXk6u8BSmnkb8/FDziS8m3mjfpSg=="],
 
     "@tiptap/extension-heading": ["@tiptap/extension-heading@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-heading/-/extension-heading-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5" } }, "sha512-hjyEG4947PAhMBfP1G6B0QAh6+y9mp2C5BQmNjprA05/lQzDAT7KFZzNh8ZVp3ol6aICKq/N1gFOW9Dc/9FUOw=="],
+
+    "@tiptap/extension-highlight": ["@tiptap/extension-highlight@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-highlight/-/extension-highlight-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5" } }, "sha512-byWruAOKcqRN0OuzVSKqLLrced3M9AZaR2pD1BV3aUZHzMzeBjLBfByh8s4lExH2Z547xQUdHHnUflBQ572I5A=="],
 
     "@tiptap/extension-horizontal-rule": ["@tiptap/extension-horizontal-rule@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-horizontal-rule/-/extension-horizontal-rule-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5", "@tiptap/pm": "3.22.5" } }, "sha512-vUV0/ugIbXOc8SJib0h8UMhgcqZXWu/dkEhlswZN4VVven1o5enkfxEiDw+OyIJHi5rUkrdhsQ/KTxG/Xb7X8A=="],
 
@@ -326,6 +333,8 @@
     "@tiptap/extension-text": ["@tiptap/extension-text@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-text/-/extension-text-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5" } }, "sha512-bzpDOdAEo1JeoVZDIyV0oY0jGXkEG+AzF70SzHoRSjOvFDtKWunyXf9eO1OnOr2/fmMcckT2qwUBNBMQplWBzw=="],
 
     "@tiptap/extension-text-align": ["@tiptap/extension-text-align@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-text-align/-/extension-text-align-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5" } }, "sha512-LNUinhsZJC+/Vm7ugtghSjqlO64FQuww8oJkHq54Oh135fJ+kY2yBRakYFeH0P0gl4VPJH13AUetLF696CM2UQ=="],
+
+    "@tiptap/extension-text-style": ["@tiptap/extension-text-style@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-text-style/-/extension-text-style-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5" } }, "sha512-jt63jy8YbhZJUGMxTUzeivLhowGtFp6YbCFrrmZJ7G6IHu8X8LJzO81ksz5nT5l8DKpldGwnINUfA6iE91JIAg=="],
 
     "@tiptap/extension-underline": ["@tiptap/extension-underline@3.22.5", "https://registry.npmmirror.com/@tiptap/extension-underline/-/extension-underline-3.22.5.tgz", { "peerDependencies": { "@tiptap/core": "3.22.5" } }, "sha512-9ut09rJD0iEbS6sk7yd2j6IwuFDLTNmDEGTDLodvqAfi+bq7ddsTDv0YviXoZaA9sdHAdTEVr2ITy2m6WK5jpA=="],
 
