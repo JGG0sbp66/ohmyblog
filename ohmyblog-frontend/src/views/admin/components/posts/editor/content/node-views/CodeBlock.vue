@@ -7,7 +7,8 @@
 -->
 <script setup lang="ts">
 import { nodeViewProps, NodeViewWrapper, NodeViewContent } from '@tiptap/vue-3'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { Copy, Check } from 'lucide-vue-next'
 
 const props = defineProps(nodeViewProps)
 
@@ -16,6 +17,14 @@ const updateLanguage = (event: Event) => {
   props.updateAttributes({
     language: target.value,
   })
+}
+
+// 复制按钮：点击后复制代码内容，1.5s 后恢复图标
+const copied = ref(false)
+const copyCode = async () => {
+  await navigator.clipboard.writeText(props.node.textContent)
+  copied.value = true
+  setTimeout(() => { copied.value = false }, 1500)
 }
 
 // 计算行数
@@ -30,6 +39,17 @@ const lineCount = computed(() => {
 
 <template>
   <node-view-wrapper class="code-block-container">
+    <!-- 悬浮复制按钮：默认隐藏，鼠标移入容器时显示于右上角 -->
+    <button
+      class="code-block-copy-btn"
+      :class="{ copied }"
+      contenteditable="false"
+      @click="copyCode"
+    >
+      <Check v-if="copied" :size="13" />
+      <Copy v-else :size="13" />
+    </button>
+
     <!-- header：三圆点 (CSS ::before) + 语言标签输入框 -->
     <div class="code-block-header" contenteditable="false">
       <input
