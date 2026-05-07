@@ -317,9 +317,11 @@
             "alignRight": "右对齐",
             "indent": "增加缩进",
             "outdent": "减少缩进",
-            "link": "插入链接",
+            "link": "插入链接 (Ctrl/⌘+K)",
+            "linkEdit": "编辑链接",
             "linkRemove": "移除链接",
-            "linkPrompt": "请输入链接 URL"
+            "linkUrlPlaceholder": "https://...",
+            "linkConfirm": "插入"
           }
         }
       }

@@ -319,9 +319,11 @@
             "alignRight": "Align right",
             "indent": "Increase indent",
             "outdent": "Decrease indent",
-            "link": "Insert link",
+            "link": "Insert link (Ctrl/⌘+K)",
+            "linkEdit": "Edit link",
             "linkRemove": "Remove link",
-            "linkPrompt": "Enter URL"
+            "linkUrlPlaceholder": "https://...",
+            "linkConfirm": "Insert"
           }
         }
       }
