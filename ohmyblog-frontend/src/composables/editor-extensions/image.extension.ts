@@ -11,6 +11,9 @@ import ImageBlock from "@/views/admin/components/posts/editor/content/node-views
  * - 挂载 Vue NodeView（ImageBlock.vue），提供拖拽 resize handle
  */
 export const ResizableImage = Image.extend({
+  inline: true,
+  group: "inline",
+
   addAttributes() {
     return {
       ...this.parent?.(),

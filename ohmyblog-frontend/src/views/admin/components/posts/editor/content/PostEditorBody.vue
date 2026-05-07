@@ -5,6 +5,7 @@ import { useEditor, EditorContent } from "@tiptap/vue-3";
 import { useRoute } from "vue-router";
 import { useEditorExtensions } from "@/composables/editor-extensions";
 import PostEditorBubbleMenu from "./menus/PostEditorBubbleMenu.vue";
+import PostEditorImageBubbleMenu from "./menus/PostEditorImageBubbleMenu.vue";
 import { uploadPostImage } from "@/api/upload.api";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
@@ -82,6 +83,11 @@ onBeforeUnmount(() => editor.value?.destroy());
 <template>
   <div class="relative" ref="containerRef">
     <PostEditorBubbleMenu
+      v-if="editor"
+      :editor="editor"
+      :container-ref="containerRef"
+    />
+    <PostEditorImageBubbleMenu
       v-if="editor"
       :editor="editor"
       :container-ref="containerRef"

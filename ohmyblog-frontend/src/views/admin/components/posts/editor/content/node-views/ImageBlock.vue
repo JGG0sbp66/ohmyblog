@@ -40,8 +40,8 @@ useEventListener(document, "mouseup", () => {
 </script>
 
 <template>
-  <NodeViewWrapper as="div" class="image-block-wrapper">
-    <div
+  <NodeViewWrapper as="span" class="image-block-wrapper">
+    <span
       ref="containerRef"
       class="image-block"
       :class="{ 'image-block--selected': selected }"
@@ -56,6 +56,6 @@ useEventListener(document, "mouseup", () => {
       />
       <!-- 右侧拖拽 handle -->
       <div class="image-resize-handle" @mousedown.stop="onResizeStart" />
-    </div>
+    </span>
   </NodeViewWrapper>
 </template>

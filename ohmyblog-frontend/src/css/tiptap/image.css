@@ -2,8 +2,11 @@
 /* 可调整宽度的图片块 NodeView 样式 */
 
 .image-block-wrapper {
-  display: block;
-  margin: 0.25rem 0;
+  display: inline-block;
+  vertical-align: bottom;
+  margin: 0.125rem 0.25rem 0.125rem 0;
+  line-height: 0;
+  font-size: 0;
 }
 
 .image-block {
