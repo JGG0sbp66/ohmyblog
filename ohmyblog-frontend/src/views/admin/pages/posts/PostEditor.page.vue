@@ -9,6 +9,7 @@ import { usePostEditor } from "@/composables/post-editor.hook";
 
 const showSettings = ref(true);
 const {
+  uuid,
   slug,
   tags,
   status,
@@ -16,6 +17,7 @@ const {
   content,
   contentMarkdown,
   contentText,
+  coverImage,
   isSaving,
   isDirty,
   save,
@@ -50,9 +52,11 @@ const {
       }"
     >
       <PostEditorSettingsPanel
+        :uuid="uuid"
         v-model:slug="slug"
         v-model:tags="tags"
         v-model:status="status"
+        v-model:coverImage="coverImage"
       />
     </div>
   </BaseCard>
