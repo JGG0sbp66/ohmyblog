@@ -294,6 +294,11 @@
           "status": {
             "label": "Status",
             "tooltip": "Control the visibility of your post. Drafts are only visible to you"
+          },
+          "coverImage": {
+            "label": "Cover Image",
+            "tooltip": "Set the post cover image, displayed on listing and detail pages",
+            "hint": "Click to upload · 16:9 recommended"
           }
         },
         "content": {
@@ -663,6 +668,9 @@
       "图标上传成功": "Icon uploaded successfully",
       "横幅上传成功": "Banner uploaded successfully",
       "头像上传成功": "Avatar uploaded successfully",
+      "社交图标上传成功": "Social icon uploaded successfully",
+      "封面图上传成功": "Cover image uploaded successfully",
+      "图片上传成功": "Image uploaded successfully",
       "邮件发送成功": "Email sent successfully",
       "若邮箱存在，验证码已发送，请注意查收": "If the email exists, a verification code has been sent",
       "密码重置成功，请使用新密码登录": "Password reset successfully. Please sign in with your new password"
