@@ -28,9 +28,9 @@ export const usePostEditor = () => {
   const content = ref<object | undefined>(undefined);
   const contentMarkdown = ref("");
   const contentText = ref("");
+  const coverImage = ref<string | null>(null);
   // TODO: 以下字段待对应设置项开发完成后接入
   // const excerpt = ref("");
-  // const coverImage = ref("");
 
   // --- UI 状态 ---
   const isSaving = ref(false);
@@ -50,6 +50,7 @@ export const usePostEditor = () => {
       status.value = post.status as TPostStatus;
       title.value = post.title ?? "";
       content.value = (post.content as object) ?? undefined;
+      coverImage.value = post.coverImage ?? null;
     } catch {
       useToast.error("加载文章失败");
     } finally {
@@ -94,8 +95,8 @@ export const usePostEditor = () => {
           content: content.value,
           contentMarkdown: contentMarkdown.value || undefined,
           contentText: contentText.value || undefined,
+          coverImage: coverImage.value ?? undefined,
           // TODO: excerpt: excerpt.value || undefined,
-          // TODO: coverImage: coverImage.value || undefined,
         }),
         updatePostStatus(uuid, status.value),
       ]);
@@ -119,6 +120,7 @@ export const usePostEditor = () => {
     content,
     contentMarkdown,
     contentText,
+    coverImage,
     isSaving,
     isLoading,
     isDirty,
