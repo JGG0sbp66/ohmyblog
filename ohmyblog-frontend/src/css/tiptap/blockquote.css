@@ -1,0 +1,25 @@
+/* src/css/tiptap/blockquote.css */
+/* 引用块：左侧圆形彩条装饰，去掉默认斜体 */
+.tiptap blockquote {
+  border-left: none;
+  padding-left: 1.25rem;
+  margin: 0.75rem 0;
+  color: var(--theme-fg-muted);
+  font-style: normal;
+  font-weight: inherit;
+  position: relative;
+}
+.tiptap blockquote::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  border-radius: 9999px;
+  background: var(--theme-bg-muted);
+}
+.tiptap blockquote p::before,
+.tiptap blockquote p::after {
+  content: none;
+}
