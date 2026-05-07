@@ -1,0 +1,109 @@
+/* src/css/tiptap/syntax.css */
+/* lowlight (highlight.js) 语法高亮 token 配色 — 深色主题（仿 VS Code Dark+） */
+
+/* 消除 highlight.js 主题自带的背景，由 code-block-container 统一管理 */
+.tiptap pre code.hljs {
+  background: transparent;
+}
+
+/* 注释 */
+.hljs-comment,
+.hljs-quote {
+  color: #6a9955;
+  font-style: italic;
+}
+
+/* 关键字 */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #569cd6;
+}
+
+/* 内置类型 / 字面量 */
+.hljs-built_in,
+.hljs-literal,
+.hljs-type {
+  color: #4ec9b0;
+}
+
+/* 数字 */
+.hljs-number {
+  color: #b5cea8;
+}
+
+/* 字符串 */
+.hljs-string,
+.hljs-doctag,
+.hljs-addition {
+  color: #ce9178;
+}
+
+/* 函数名 / 标题 */
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #dcdcaa;
+}
+
+/* 变量 / 属性 / 参数 */
+.hljs-variable,
+.hljs-attr,
+.hljs-params {
+  color: #9cdcfe;
+}
+
+/* 类名 */
+.hljs-name,
+.hljs-class .hljs-title {
+  color: #4ec9b0;
+}
+
+/* 标签（HTML/XML） */
+.hljs-tag {
+  color: #569cd6;
+}
+
+/* 属性名（HTML/XML） */
+.hljs-attribute {
+  color: #9cdcfe;
+}
+
+/* 模板字符串插值 / 正则 */
+.hljs-template-variable,
+.hljs-regexp {
+  color: #d16969;
+}
+
+/* 操作符 / 标点 */
+.hljs-operator,
+.hljs-punctuation {
+  color: #d4d4d4;
+}
+
+/* 元信息 / 注解 */
+.hljs-meta,
+.hljs-meta .hljs-keyword {
+  color: #c586c0;
+}
+
+/* 删除行（diff） */
+.hljs-deletion {
+  color: #f44747;
+}
+
+/* 链接 */
+.hljs-link {
+  color: #569cd6;
+  text-decoration: underline;
+}
+
+/* 加粗强调 */
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* 斜体强调 */
+.hljs-emphasis {
+  font-style: italic;
+}
