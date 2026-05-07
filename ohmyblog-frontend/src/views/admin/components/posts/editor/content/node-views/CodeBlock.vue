@@ -47,7 +47,7 @@ const lineCount = computed(() => {
       <div class="line-numbers" contenteditable="false">
         <span v-for="n in lineCount" :key="n">{{ n }}</span>
       </div>
-      <pre spellcheck="false"><node-view-content as="code" /></pre>
+      <pre><node-view-content as="code" /></pre>
     </div>
   </node-view-wrapper>
 </template>

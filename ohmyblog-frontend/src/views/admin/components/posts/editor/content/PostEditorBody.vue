@@ -22,6 +22,12 @@ const containerRef = ref<HTMLElement | null>(null);
 const editor = useEditor({
   extensions: useEditorExtensions(),
   content: json.value ?? "",
+  editorProps: {
+    attributes: {
+      // spellcheck 会向下继承，统一在根元素关闭，正文 / 代码块全部生效
+      spellcheck: "false",
+    },
+  },
   onUpdate({ editor }) {
     json.value = editor.getJSON();
     markdown.value = (editor.storage as any).markdown.getMarkdown();
