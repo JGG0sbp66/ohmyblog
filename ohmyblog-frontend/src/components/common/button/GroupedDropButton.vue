@@ -82,7 +82,11 @@ const runAction = (item: DropdownItem) => {
             :disabled="item.disabled ?? false"
             @mousedown.prevent="runAction(item)"
           >
-            <component v-if="item.icon" :is="item.icon" class="w-4 h-4 shrink-0" />
+            <component
+              v-if="item.icon"
+              :is="item.icon"
+              class="w-4 h-4 shrink-0"
+            />
           </ButtonSecondary>
         </template>
       </div>

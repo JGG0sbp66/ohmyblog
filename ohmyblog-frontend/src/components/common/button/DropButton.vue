@@ -24,8 +24,12 @@ const {
 const isShow = ref(false);
 const btnRef = ref(null);
 
-const showPop = () => { isShow.value = true; };
-const hidePop = () => { isShow.value = false; };
+const showPop = () => {
+  isShow.value = true;
+};
+const hidePop = () => {
+  isShow.value = false;
+};
 
 defineExpose({ close: hidePop });
 </script>

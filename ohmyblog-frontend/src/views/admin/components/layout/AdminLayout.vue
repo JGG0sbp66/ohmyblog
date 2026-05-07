@@ -22,7 +22,9 @@ const isEditorMode = computed(() => route.name === "post-edit");
     <div
       :class="[
         'shrink-0 z-50 h-18',
-        isEditorMode && !isHeaderHovered ? '-translate-y-[calc(100%-12px)]' : 'translate-y-0',
+        isEditorMode && !isHeaderHovered
+          ? '-translate-y-[calc(100%-12px)]'
+          : 'translate-y-0',
         'transition-all duration-300 ease-in-out transform',
       ]"
       @mouseenter="isHeaderHovered = true"

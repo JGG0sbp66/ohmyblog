@@ -14,14 +14,14 @@ const status = defineModel<TPostStatus>("status", { default: "draft" });
 </script>
 
 <template>
-  <div
-    class="w-72 h-full shrink-0 border-l border-border/40 flex flex-col"
-  >
+  <div class="w-72 h-full shrink-0 border-l border-border/40 flex flex-col">
     <!-- 面板标题 -->
-    <h2 class="shrink-0 flex items-center px-5 pt-4 pb-3 border-b border-border/40">
+    <h2
+      class="shrink-0 flex items-center px-5 pt-4 pb-3 border-b border-border/40"
+    >
       <!-- h-9 与工具栏按钮等高，确保在任意 DPR 下两侧行高精确对齐 -->
       <span class="inline-flex items-center h-9 text-lg font-bold text-fg">
-        {{ t('views.admin.PostEditor.settingsPanel.title') }}
+        {{ t("views.admin.PostEditor.settingsPanel.title") }}
       </span>
     </h2>
 

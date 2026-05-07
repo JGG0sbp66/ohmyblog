@@ -84,7 +84,10 @@ onMounted(() => {
         <!-- 批量操作 + 搜索框 -->
         <div class="flex items-center gap-2">
           <Transition name="bulk-fade">
-            <div v-if="selectedUuids.length > 0" class="flex items-center gap-2">
+            <div
+              v-if="selectedUuids.length > 0"
+              class="flex items-center gap-2"
+            >
               <PostBulkStatusButton
                 :selected-posts="selectedPosts"
                 @refresh="

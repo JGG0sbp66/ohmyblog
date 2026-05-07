@@ -26,7 +26,9 @@ const { validate: runValidator } = useValidator();
 const slug = defineModel<string>({ default: "" });
 /** 用户首次离开输入框后才激活校验（同 TipInput 的 blur-first 模式） */
 const touched = ref(false);
-const handleBlur = () => { touched.value = true; };
+const handleBlur = () => {
+  touched.value = true;
+};
 
 const props = withDefaults(
   defineProps<{
@@ -48,7 +50,6 @@ const slugError = computed(() => {
   });
   return isValid ? "" : error;
 });
-
 </script>
 
 <template>
@@ -70,4 +71,3 @@ const slugError = computed(() => {
     />
   </PostEditorSettingItem>
 </template>
-

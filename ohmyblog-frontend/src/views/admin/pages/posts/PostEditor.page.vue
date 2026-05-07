@@ -8,7 +8,18 @@ import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostE
 import { usePostEditor } from "@/composables/post-editor.hook";
 
 const showSettings = ref(true);
-const { slug, tags, status, title, content, contentMarkdown, contentText, isSaving, isDirty, save } = usePostEditor();
+const {
+  slug,
+  tags,
+  status,
+  title,
+  content,
+  contentMarkdown,
+  contentText,
+  isSaving,
+  isDirty,
+  save,
+} = usePostEditor();
 </script>
 
 <template>

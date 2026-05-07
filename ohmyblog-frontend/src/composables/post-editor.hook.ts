@@ -48,13 +48,15 @@ export const usePostEditor = () => {
       tags.value = post.tags ?? [];
       status.value = post.status as TPostStatus;
       title.value = post.title ?? "";
-      content.value = post.content as object ?? undefined;
+      content.value = (post.content as object) ?? undefined;
     } catch {
       useToast.error("加载文章失败");
     } finally {
       isLoading.value = false;
       // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
-      watch([slug, tags, status, title, content], () => { isDirty.value = true; });
+      watch([slug, tags, status, title, content], () => {
+        isDirty.value = true;
+      });
       // TODO: 接入 Markdown 编辑器后，对 title/content 加防抖自动保存：
       // watchDebounced([title, content], save, { debounce: 2000 })
       // 参考：@vueuse/core watchDebounced
@@ -96,5 +98,18 @@ export const usePostEditor = () => {
 
   onMounted(loadPost);
 
-  return { uuid, slug, tags, status, title, content, contentMarkdown, contentText, isSaving, isLoading, isDirty, save };
+  return {
+    uuid,
+    slug,
+    tags,
+    status,
+    title,
+    content,
+    contentMarkdown,
+    contentText,
+    isSaving,
+    isLoading,
+    isDirty,
+    save,
+  };
 };

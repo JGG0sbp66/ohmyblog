@@ -3,8 +3,17 @@
 import { computed } from "vue";
 import type { Editor } from "@tiptap/core";
 import {
-  Type, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
-  List, ListOrdered, Quote, Code2,
+  Type,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
+  List,
+  ListOrdered,
+  Quote,
+  Code2,
 } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import GroupedDropButton from "@/components/common/button/GroupedDropButton.vue";
@@ -60,10 +69,10 @@ const currentIcon = computed(() => {
   if (e.isActive("heading", { level: 4 })) return Heading4;
   if (e.isActive("heading", { level: 5 })) return Heading5;
   if (e.isActive("heading", { level: 6 })) return Heading6;
-  if (e.isActive("bulletList"))  return List;
+  if (e.isActive("bulletList")) return List;
   if (e.isActive("orderedList")) return ListOrdered;
-  if (e.isActive("codeBlock"))   return Code2;
-  if (e.isActive("blockquote"))  return Quote;
+  if (e.isActive("codeBlock")) return Code2;
+  if (e.isActive("blockquote")) return Quote;
   return Type;
 });
 
@@ -71,19 +80,74 @@ const groups = computed<DropdownItem[][]>(() => {
   const e = props.editor;
   return [
     [
-      { label: t("views.admin.PostEditor.content.bubbleMenu.paragraph"), icon: Type,     active: e.isActive("paragraph"),             action: () => e.chain().focus().setParagraph().run() },
-      { label: "H1", icon: Heading1, active: e.isActive("heading", { level: 1 }), action: () => e.chain().focus().toggleHeading({ level: 1 }).run() },
-      { label: "H2", icon: Heading2, active: e.isActive("heading", { level: 2 }), action: () => e.chain().focus().toggleHeading({ level: 2 }).run() },
-      { label: "H3", icon: Heading3, active: e.isActive("heading", { level: 3 }), action: () => e.chain().focus().toggleHeading({ level: 3 }).run() },
-      { label: "H4", icon: Heading4, active: e.isActive("heading", { level: 4 }), action: () => e.chain().focus().toggleHeading({ level: 4 }).run() },
-      { label: "H5", icon: Heading5, active: e.isActive("heading", { level: 5 }), action: () => e.chain().focus().toggleHeading({ level: 5 }).run() },
-      { label: "H6", icon: Heading6, active: e.isActive("heading", { level: 6 }), action: () => e.chain().focus().toggleHeading({ level: 6 }).run() },
+      {
+        label: t("views.admin.PostEditor.content.bubbleMenu.paragraph"),
+        icon: Type,
+        active: e.isActive("paragraph"),
+        action: () => e.chain().focus().setParagraph().run(),
+      },
+      {
+        label: "H1",
+        icon: Heading1,
+        active: e.isActive("heading", { level: 1 }),
+        action: () => e.chain().focus().toggleHeading({ level: 1 }).run(),
+      },
+      {
+        label: "H2",
+        icon: Heading2,
+        active: e.isActive("heading", { level: 2 }),
+        action: () => e.chain().focus().toggleHeading({ level: 2 }).run(),
+      },
+      {
+        label: "H3",
+        icon: Heading3,
+        active: e.isActive("heading", { level: 3 }),
+        action: () => e.chain().focus().toggleHeading({ level: 3 }).run(),
+      },
+      {
+        label: "H4",
+        icon: Heading4,
+        active: e.isActive("heading", { level: 4 }),
+        action: () => e.chain().focus().toggleHeading({ level: 4 }).run(),
+      },
+      {
+        label: "H5",
+        icon: Heading5,
+        active: e.isActive("heading", { level: 5 }),
+        action: () => e.chain().focus().toggleHeading({ level: 5 }).run(),
+      },
+      {
+        label: "H6",
+        icon: Heading6,
+        active: e.isActive("heading", { level: 6 }),
+        action: () => e.chain().focus().toggleHeading({ level: 6 }).run(),
+      },
     ],
     [
-      { label: t("views.admin.PostEditor.content.bubbleMenu.orderedList"), icon: ListOrdered, active: e.isActive("orderedList"), action: () => doSwitchListType("orderedList") },
-      { label: t("views.admin.PostEditor.content.bubbleMenu.bulletList"),  icon: List,        active: e.isActive("bulletList"),  action: () => doSwitchListType("bulletList") },
-      { label: t("views.admin.PostEditor.content.bubbleMenu.codeBlock"),   icon: Code2,       active: e.isActive("codeBlock"),   action: () => e.chain().focus().toggleCodeBlock().run() },
-      { label: t("views.admin.PostEditor.content.bubbleMenu.quote"),       icon: Quote,       active: e.isActive("blockquote"),  action: () => e.chain().focus().toggleBlockquote().run() },
+      {
+        label: t("views.admin.PostEditor.content.bubbleMenu.orderedList"),
+        icon: ListOrdered,
+        active: e.isActive("orderedList"),
+        action: () => doSwitchListType("orderedList"),
+      },
+      {
+        label: t("views.admin.PostEditor.content.bubbleMenu.bulletList"),
+        icon: List,
+        active: e.isActive("bulletList"),
+        action: () => doSwitchListType("bulletList"),
+      },
+      {
+        label: t("views.admin.PostEditor.content.bubbleMenu.codeBlock"),
+        icon: Code2,
+        active: e.isActive("codeBlock"),
+        action: () => e.chain().focus().toggleCodeBlock().run(),
+      },
+      {
+        label: t("views.admin.PostEditor.content.bubbleMenu.quote"),
+        icon: Quote,
+        active: e.isActive("blockquote"),
+        action: () => e.chain().focus().toggleBlockquote().run(),
+      },
     ],
   ];
 });

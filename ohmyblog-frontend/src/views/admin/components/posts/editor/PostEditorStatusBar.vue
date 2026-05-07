@@ -49,10 +49,20 @@ const emit = defineEmits<{
       <div class="flex items-center gap-2">
         <BaseTag
           size="sm"
-          :type="saveStatus === 'saved' ? 'success' : saveStatus === 'saving' ? 'info' : 'warn'"
+          :type="
+            saveStatus === 'saved'
+              ? 'success'
+              : saveStatus === 'saving'
+                ? 'info'
+                : 'warn'
+          "
         >
           <template #icon>
-            <Loading v-if="saveStatus === 'saving'" size-class="w-3 h-3" color-class="text-fg-subtle" />
+            <Loading
+              v-if="saveStatus === 'saving'"
+              size-class="w-3 h-3"
+              color-class="text-fg-subtle"
+            />
             <PencilLine v-else-if="saveStatus === 'unsaved'" class="w-3 h-3" />
             <Check v-else class="w-3 h-3" />
           </template>

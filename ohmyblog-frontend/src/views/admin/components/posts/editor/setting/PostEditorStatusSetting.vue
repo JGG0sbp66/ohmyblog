@@ -6,9 +6,7 @@ import PostEditorSettingItem from "./PostEditorSettingItem.vue";
 import SegmentedControl from "@/components/base/control/SegmentedControl.vue";
 import { useLang } from "@/composables/lang.hook";
 import type { TPostStatus } from "@server/db/constants/post.constants";
-import {
-  POST_STATUS_LABEL_KEYS,
-} from "@/views/admin/components/posts/table/cells/PostStatusBadge.vue";
+import { POST_STATUS_LABEL_KEYS } from "@/views/admin/components/posts/table/cells/PostStatusBadge.vue";
 
 /**
  * PostEditorStatusSetting — 文章状态设置块

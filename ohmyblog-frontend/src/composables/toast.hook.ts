@@ -1,12 +1,7 @@
 // src/composables/toast.hook.ts
 import { h } from "vue";
 import { toast, type ToastContainerOptions } from "vue3-toastify";
-import {
-  CircleCheck,
-  CircleX,
-  Info,
-  TriangleAlert,
-} from "lucide-vue-next";
+import { CircleCheck, CircleX, Info, TriangleAlert } from "lucide-vue-next";
 
 /**
  * Toastify 全局配置

@@ -14,13 +14,13 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { useLang } from "@/composables/lang.hook";
 
-const INDENT_STEP = 2;   // 每次缩进的步长 (rem)
-const INDENT_MAX  = 8;   // 最大缩进层级
+const INDENT_STEP = 2; // 每次缩进的步长 (rem)
+const INDENT_MAX = 8; // 最大缩进层级
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     indent: {
-      indent:  () => ReturnType;
+      indent: () => ReturnType;
       outdent: () => ReturnType;
     };
   }
@@ -42,7 +42,9 @@ const Indent = Extension.create({
             default: 0,
             parseHTML: (el) => {
               const ml = el.style.marginLeft;
-              return ml ? Math.max(0, Math.round(parseFloat(ml) / INDENT_STEP)) : 0;
+              return ml
+                ? Math.max(0, Math.round(parseFloat(ml) / INDENT_STEP))
+                : 0;
             },
             renderHTML: (attrs) => {
               if (!attrs.indent) return {};
@@ -62,10 +64,16 @@ const Indent = Extension.create({
           const { from, to } = state.selection;
           let changed = false;
           state.doc.nodesBetween(from, to, (node, pos) => {
-            if (node.type.name === "paragraph" || node.type.name === "heading") {
+            if (
+              node.type.name === "paragraph" ||
+              node.type.name === "heading"
+            ) {
               const cur = node.attrs.indent ?? 0;
               if (cur < INDENT_MAX) {
-                tr.setNodeMarkup(pos, undefined, { ...node.attrs, indent: cur + 1 });
+                tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  indent: cur + 1,
+                });
                 changed = true;
               }
             }
@@ -80,10 +88,16 @@ const Indent = Extension.create({
           const { from, to } = state.selection;
           let changed = false;
           state.doc.nodesBetween(from, to, (node, pos) => {
-            if (node.type.name === "paragraph" || node.type.name === "heading") {
+            if (
+              node.type.name === "paragraph" ||
+              node.type.name === "heading"
+            ) {
               const cur = node.attrs.indent ?? 0;
               if (cur > 0) {
-                tr.setNodeMarkup(pos, undefined, { ...node.attrs, indent: cur - 1 });
+                tr.setNodeMarkup(pos, undefined, {
+                  ...node.attrs,
+                  indent: cur - 1,
+                });
                 changed = true;
               }
             }
@@ -121,7 +135,11 @@ const CustomListItem = ListItem.extend({
         }
         // 空标题列表项：直接 lift 出列表并转为正文，不产生多余空行
         if (headingLevel !== null && headingIsEmpty) {
-          return this.editor.chain().liftListItem(this.name).setParagraph().run();
+          return this.editor
+            .chain()
+            .liftListItem(this.name)
+            .setParagraph()
+            .run();
         }
         // 非空标题列表项：换行后延续相同标题级别
         if (headingLevel !== null) {
@@ -142,7 +160,8 @@ const CustomListItem = ListItem.extend({
         for (let depth = $from.depth; depth > 0; depth--) {
           const node = $from.node(depth);
           if (node.type.name === "heading") {
-            headingIsEmpty = node.textContent === "" && $from.parentOffset === 0;
+            headingIsEmpty =
+              node.textContent === "" && $from.parentOffset === 0;
           }
           if (node.type.name === this.name) {
             insideListItem = true;
@@ -151,7 +170,11 @@ const CustomListItem = ListItem.extend({
         }
         // 空标题列表项行首退格：退出列表并转为正文，一步到位
         if (insideListItem && headingIsEmpty) {
-          return this.editor.chain().liftListItem(this.name).setParagraph().run();
+          return this.editor
+            .chain()
+            .liftListItem(this.name)
+            .setParagraph()
+            .run();
         }
         return false;
       },

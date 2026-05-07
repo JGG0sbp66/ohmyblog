@@ -77,16 +77,23 @@ const handleAction = () => {
       class="top-full right-0 mt-3 p-2 min-w-72 border border-border/40"
     >
       <!-- 左：URL 输入框；右：操作按钮（样式随状态切换） -->
-      <div class="flex items-center gap-2" @keydown.enter.prevent="handleAction">
+      <div
+        class="flex items-center gap-2"
+        @keydown.enter.prevent="handleAction"
+      >
         <TipInput
           v-model="linkUrl"
-          :placeholder="t('views.admin.PostEditor.content.bubbleMenu.linkUrlPlaceholder')"
+          :placeholder="
+            t('views.admin.PostEditor.content.bubbleMenu.linkUrlPlaceholder')
+          "
         />
         <ButtonPrimary
           :class="isRemoveMode ? 'bg-red-500 hover:bg-red-600' : ''"
-          :text="isRemoveMode
-            ? t('views.admin.PostEditor.content.bubbleMenu.linkRemove')
-            : t('views.admin.PostEditor.content.bubbleMenu.linkConfirm')"
+          :text="
+            isRemoveMode
+              ? t('views.admin.PostEditor.content.bubbleMenu.linkRemove')
+              : t('views.admin.PostEditor.content.bubbleMenu.linkConfirm')
+          "
           @click="handleAction"
         />
       </div>

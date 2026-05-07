@@ -46,10 +46,7 @@ const handleMouseEnter = () => {
 
   <!-- Tooltip 内容：渲染到 body，不受任何 overflow 容器影响 -->
   <Teleport to="body">
-    <Transition
-      enter-from-class="opacity-0"
-      leave-to-class="opacity-0"
-    >
+    <Transition enter-from-class="opacity-0" leave-to-class="opacity-0">
       <div
         v-if="isHovered"
         class="fixed z-9999 w-48 pointer-events-none"
@@ -58,7 +55,9 @@ const handleMouseEnter = () => {
         <div
           class="bg-bg-card border border-fg-subtle/10 shadow-xl rounded-lg px-3 py-2"
         >
-          <p class="text-[11px] leading-relaxed text-fg normal-case font-medium whitespace-pre-line">
+          <p
+            class="text-[11px] leading-relaxed text-fg normal-case font-medium whitespace-pre-line"
+          >
             {{ content }}
           </p>
         </div>
@@ -74,4 +73,3 @@ const handleMouseEnter = () => {
     </Transition>
   </Teleport>
 </template>
-

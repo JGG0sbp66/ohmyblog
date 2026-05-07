@@ -17,9 +17,6 @@ const title = defineModel<string>({ default: "" });
     v-model="title"
     type="text"
     :placeholder="t('views.admin.PostEditor.content.title.placeholder')"
-    class="w-full bg-transparent outline-none resize-none
-           text-3xl font-bold text-fg leading-tight
-           placeholder:text-fg-soft
-           border-none"
+    class="w-full bg-transparent outline-none resize-none text-3xl font-bold text-fg leading-tight placeholder:text-fg-soft border-none"
   />
 </template>

@@ -51,7 +51,9 @@ const removeTag = (index: number) => {
       <!-- 标签输入框：按 Enter 添加，自动去重 -->
       <TipInput
         v-model="tagInput"
-        :placeholder="t('views.admin.PostEditor.settingsPanel.tags.placeholder')"
+        :placeholder="
+          t('views.admin.PostEditor.settingsPanel.tags.placeholder')
+        "
         @keydown.enter.prevent="addTag"
       />
     </div>

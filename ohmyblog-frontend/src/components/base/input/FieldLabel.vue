@@ -26,7 +26,9 @@ defineProps<{
 <template>
   <div class="flex items-center gap-1.5">
     <slot name="icon" />
-    <span class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none">
+    <span
+      class="text-sm font-bold text-fg-subtle uppercase tracking-wider select-none"
+    >
       {{ label }}<span v-if="required" class="text-red-500 ml-0.5">*</span>
     </span>
     <BaseTooltip v-if="tooltip" :content="tooltip" />

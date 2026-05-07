@@ -75,7 +75,9 @@ const hideMenu = ({ event }: { editor: Editor; event: FocusEvent }) => {
 };
 
 /** 页面滚动或 resize 时同步更新菜单坐标 */
-const onScrollOrResize = () => { if (isVisible.value) updateMenu(); };
+const onScrollOrResize = () => {
+  if (isVisible.value) updateMenu();
+};
 
 onMounted(() => {
   props.editor.on("selectionUpdate", updateMenu);
@@ -99,10 +101,7 @@ onBeforeUnmount(() => {
     <div
       v-if="isVisible"
       ref="menuRef"
-      class="absolute z-50 pointer-events-auto
-             flex items-center gap-1 px-2 py-1.5
-             bg-bg-card border border-border/40 rounded-xl shadow-lg
-             origin-bottom"
+      class="absolute z-50 pointer-events-auto flex items-center gap-1 px-2 py-1.5 bg-bg-card border border-border/40 rounded-xl shadow-lg origin-bottom"
       :style="menuStyle"
     >
       <!-- 区域一：文本块类型 -->
