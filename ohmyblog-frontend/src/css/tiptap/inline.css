@@ -39,6 +39,14 @@
   margin: 0 -5px;  /* 补偿 padding 避免文字位移 */
 }
 
+/* 背景高亮（Highlight 扩展生成的 <mark>） */
+.tiptap mark {
+  border-radius: 0.2em;
+  padding: 0.1em 0.2em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 /* 图片：更大圆角 */
 .tiptap img {
   max-width: 100%;
