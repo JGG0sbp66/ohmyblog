@@ -21,15 +21,15 @@ const props = withDefaults(
     isExpanded?: boolean;
     icon: Component;
     text: string;
-    iconSize?: number;
-    iconStrokeWidth?: number;
+    iconSize?: string | number;
+    iconStrokeWidth?: string | number;
     badge?: number;
   }>(),
   {
     isActive: false,
     isExpanded: false,
-    iconSize: 24,
-    iconStrokeWidth: 2,
+    iconSize: "24",
+    iconStrokeWidth: "2",
     badge: undefined,
   },
 );
