@@ -4,8 +4,9 @@ import { watch, onBeforeUnmount, ref } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 import { useRoute } from "vue-router";
 import { useEditorExtensions } from "@/composables/editor-extensions";
-import PostEditorBubbleMenu from "./menus/PostEditorBubbleMenu.vue";
-import PostEditorImageBubbleMenu from "./menus/PostEditorImageBubbleMenu.vue";
+import PostEditorBubbleMenu from "./menus/bubble/PostEditorBubbleMenu.vue";
+import PostEditorImageBubbleMenu from "./menus/bubble/PostEditorImageBubbleMenu.vue";
+import PostEditorFloatingHandle from "./menus/PostEditorFloatingHandle.vue";
 import { uploadPostImage } from "@/api/upload.api";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
@@ -92,6 +93,7 @@ onBeforeUnmount(() => editor.value?.destroy());
       :editor="editor"
       :container-ref="containerRef"
     />
+    <PostEditorFloatingHandle v-if="editor" :editor="editor" />
     <EditorContent
       :editor="editor"
       class="w-full min-h-[60vh] focus-within:outline-none"

@@ -1,4 +1,4 @@
-<!-- src/views/admin/components/posts/editor/content/menus/PostEditorImageBubbleMenu.vue -->
+<!-- src/views/admin/components/posts/editor/content/menus/bubble/PostEditorImageBubbleMenu.vue -->
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import type { Editor } from "@tiptap/core";

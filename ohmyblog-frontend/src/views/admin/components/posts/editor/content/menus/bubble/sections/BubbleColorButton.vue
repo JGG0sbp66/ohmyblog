@@ -1,4 +1,4 @@
-<!-- src/views/admin/components/posts/editor/content/menus/bubble/BubbleColorButton.vue -->
+<!-- src/views/admin/components/posts/editor/content/menus/bubble/sections/BubbleColorButton.vue -->
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import type { Editor } from "@tiptap/core";

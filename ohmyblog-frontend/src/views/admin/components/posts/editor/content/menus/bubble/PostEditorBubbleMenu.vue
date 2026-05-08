@@ -1,11 +1,11 @@
-<!-- src/views/admin/components/posts/editor/content/menus/PostEditorBubbleMenu.vue -->
+<!-- src/views/admin/components/posts/editor/content/menus/bubble/PostEditorBubbleMenu.vue -->
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import type { Editor } from "@tiptap/core";
 import { NodeSelection } from "@tiptap/pm/state";
-import BubbleBlockSection from "./bubble/BubbleBlockSection.vue";
-import BubbleAlignSection from "./bubble/BubbleAlignSection.vue";
-import BubbleFormatSection from "./bubble/BubbleFormatSection.vue";
+import BubbleBlockSection from "./sections/BubbleBlockSection.vue";
+import BubbleAlignSection from "./sections/BubbleAlignSection.vue";
+import BubbleFormatSection from "./sections/BubbleFormatSection.vue";
 
 /**
  * PostEditorBubbleMenu — 气泡菜单主板
