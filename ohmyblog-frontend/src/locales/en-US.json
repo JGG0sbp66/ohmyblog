@@ -260,7 +260,7 @@
             "recipient": {
               "label": "Recipients",
               "hint": "Enter multiple addresses separated by commas (,), semicolons (;), or spaces. The list will sync automatically.",
-              "placeholder": "user1@example.com, user2@example.com"
+              "placeholder": "user1{'@'}example.com, user2{'@'}example.com"
             },
             "list": {
               "title": "Recipient List",

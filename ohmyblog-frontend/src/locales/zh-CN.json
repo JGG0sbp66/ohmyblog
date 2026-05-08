@@ -258,7 +258,7 @@
             "recipient": {
               "label": "收件人",
               "hint": "支持同时输入多个邮箱地址，使用英文逗号（,）、分号（;）或空格分隔，列表将自动同步",
-              "placeholder": "user1@example.com, user2@example.com"
+              "placeholder": "user1{'@'}example.com, user2{'@'}example.com"
             },
             "list": {
               "title": "收件人列表",
