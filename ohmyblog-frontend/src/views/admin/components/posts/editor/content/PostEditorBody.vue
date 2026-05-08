@@ -6,7 +6,7 @@ import { useRoute } from "vue-router";
 import { useEditorExtensions } from "@/composables/editor-extensions";
 import PostEditorBubbleMenu from "./menus/bubble/PostEditorBubbleMenu.vue";
 import PostEditorImageBubbleMenu from "./menus/bubble/PostEditorImageBubbleMenu.vue";
-import PostEditorFloatingHandle from "./menus/PostEditorFloatingHandle.vue";
+import PostEditorFloatingHandle from "./menus/handle/PostEditorFloatingHandle.vue";
 import { uploadPostImage } from "@/api/upload.api";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
