@@ -28,6 +28,8 @@ export function useEditorExtensions() {
       strike: false,     // 由 CustomStrike 替代，同上
       code: false,       // 由 CustomCode 替代，允许行内代码与其他 Mark 共存
       codeBlock: false,  // 由 CustomCodeBlock 替代，挂载 Vue NodeView + lowlight 语法高亮
+      link: false,       // 由下方 Link.configure 替代（v3 StarterKit 已内置，需显式禁用）
+      underline: false,  // 由 CustomUnderline 替代（v3 StarterKit 已内置，需显式禁用）
     }),
     CustomListItem,
     CustomBold,
