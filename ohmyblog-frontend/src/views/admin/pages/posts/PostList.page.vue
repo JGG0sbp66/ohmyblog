@@ -82,9 +82,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <BaseCard padding="none" class="flex-1 flex flex-col overflow-hidden">
+  <BaseCard padding="none" class="flex-1 flex flex-col overflow-hidden onload-animation">
     <!-- 操作区域 -->
-    <PageToolbar>
+    <PageToolbar class="onload-animation anim-delay-100">
       <template #left>
         <!-- 分类过滤 -->
         <PostListFilter v-model="activeFilter" :counts="counts" />
@@ -120,6 +120,7 @@ onMounted(() => {
     </PageToolbar>
 
     <PostListTable
+      class="onload-animation anim-delay-150"
       :posts="posts"
       :loading="loading"
       :total="total"

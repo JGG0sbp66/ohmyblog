@@ -25,10 +25,11 @@ const {
 </script>
 
 <template>
-  <BaseCard padding="none" class="flex-1 flex overflow-hidden">
+  <BaseCard padding="none" class="flex-1 flex overflow-hidden onload-animation">
     <!-- 左侧编辑区域 -->
     <div class="flex-1 flex flex-col overflow-hidden">
       <PostEditorStatusBar
+        class="onload-animation anim-delay-100"
         :settingsOpen="showSettings"
         :loading="isSaving"
         :isDirty="isDirty"
@@ -36,6 +37,7 @@ const {
         @save="save"
       />
       <PostEditorContent
+        class="onload-animation anim-delay-150"
         v-model:title="title"
         v-model:content="content"
         v-model:contentMarkdown="contentMarkdown"
@@ -45,7 +47,7 @@ const {
 
     <!-- 右侧设置面板 wrapper：过渡 width 代替 max-width，避免 reflow 卡顿 -->
     <div
-      class="shrink-0 overflow-hidden"
+      class="shrink-0 overflow-hidden onload-animation anim-delay-200"
       :style="{
         width: showSettings ? '18rem' : '0',
         transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
