@@ -103,7 +103,7 @@ export const usePostEditor = () => {
       await savePost(uuid, buildSavePayload());
       isDirty.value = false;
     } catch (error: any) {
-      useToast.error(t(`api.errors.${error}`));
+      useToast.error(t(`common.validation.${error}`));
     } finally {
       isSaving.value = false;
     }
@@ -127,7 +127,7 @@ export const usePostEditor = () => {
       isDirty.value = false;
       useToast.success(t("api.success.保存成功"));
     } catch (error: any) {
-      useToast.error(t(`api.errors.${error}`));
+      useToast.error(t(`common.validation.${error}`));
     } finally {
       isSaving.value = false;
     }
