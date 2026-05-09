@@ -63,9 +63,9 @@ export const UploadPostCoverDTO = t.Object({
 export const UploadPostImageDTO = t.Object({
 	image: t.File({
 		type: "image",
-		maxSize: "10m",
-		description: "文章内图片，最大 10MB，上传后自动转为 WebP",
-		error: "请上传 10MB 以内的有效图片",
+		maxSize: "100m",
+		description: "文章内图片，最大 100MB，上传后自动转为 WebP",
+		error: "请上传 100MB 以内的有效图片",
 	}),
 });
 
