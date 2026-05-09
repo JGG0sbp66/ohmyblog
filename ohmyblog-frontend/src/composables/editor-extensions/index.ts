@@ -44,7 +44,7 @@ export function useEditorExtensions() {
     ResizableImage,
     Indent,
     TextAlign.configure({ types: ["heading", "paragraph"] }),
-    Link.configure({ openOnClick: false }),
+    Link.configure({ openOnClick: true }),
     Placeholder.configure({
       placeholder: t("views.admin.PostEditor.content.body.placeholder"),
     }),

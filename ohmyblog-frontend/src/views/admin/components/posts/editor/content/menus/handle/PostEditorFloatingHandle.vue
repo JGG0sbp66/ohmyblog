@@ -1,6 +1,7 @@
 <!-- src/views/admin/components/posts/editor/content/menus/handle/PostEditorFloatingHandle.vue -->
 <script setup lang="ts">
 import { ref, nextTick, onMounted, onBeforeUnmount } from "vue";
+import type { Component } from "vue";
 import type { Editor } from "@tiptap/core";
 import type { Node } from "@tiptap/pm/model";
 import { Fragment, Slice } from "@tiptap/pm/model";
@@ -39,7 +40,7 @@ const isVisible = ref(false);
 const fixedTop = ref(0);
 const fixedLeft = ref(0);
 const isEmpty = ref(false);
-const blockIcon = ref<object>(Type);
+const blockIcon = ref<Component>(Type);
 const handleRef = ref<HTMLElement | null>(null);
 const transitionTop = ref(false);
 let editorEl: HTMLElement | null = null;
@@ -49,7 +50,7 @@ const HANDLE_HEIGHT = 32;
 const HANDLE_OFFSET = 6;
 
 /** 根据节点类型返回对应图标 */
-const getNodeIcon = (node: Node): object => {
+const getNodeIcon = (node: Node): Component => {
   const name = node.type.name;
   if (name === "heading") {
     const icons = [Heading1, Heading2, Heading3, Heading4, Heading5, Heading6];

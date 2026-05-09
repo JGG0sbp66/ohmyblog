@@ -1,6 +1,7 @@
 <!-- src/views/admin/components/posts/editor/content/menus/handle/states/HandleBlockState.vue -->
 <script setup lang="ts">
 import { GripVertical } from "lucide-vue-next";
+import type { Component } from "vue";
 import type { Editor } from "@tiptap/core";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import DropButton from "@/components/common/button/DropButton.vue";
@@ -13,7 +14,7 @@ import HandleBlockMenu from "./HandleBlockMenu.vue";
  * - icon  : 当前块类型对应的 Lucide 图标组件
  * - editor: Tiptap 编辑器实例，供菜单执行命令
  */
-defineProps<{ icon: object; editor: Editor }>();
+defineProps<{ icon: Component; editor: Editor }>();
 defineEmits<{ gripDragStart: [event: DragEvent]; gripDragEnd: [] }>();
 </script>
 
