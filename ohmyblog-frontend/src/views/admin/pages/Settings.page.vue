@@ -1,5 +1,4 @@
 <!-- src/views/admin/pages/Settings.page.vue -->
-<!-- TODO: 实现设置页面功能 -->
 <script setup lang="ts">
 import { ref, markRaw, computed } from "vue";
 import AppearanceSection from "../components/settings/sections/appearance/AppearanceSection.vue";
