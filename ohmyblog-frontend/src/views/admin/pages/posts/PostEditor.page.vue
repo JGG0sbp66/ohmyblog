@@ -18,6 +18,7 @@ const {
   contentMarkdown,
   contentText,
   coverImage,
+  excerpt,
   isSaving,
   isDirty,
   save,
@@ -58,6 +59,7 @@ const {
         v-model:slug="slug"
         v-model:tags="tags"
         v-model:status="status"
+        v-model:excerpt="excerpt"
         v-model:coverImage="coverImage"
       />
     </div>

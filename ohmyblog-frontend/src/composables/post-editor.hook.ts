@@ -29,8 +29,7 @@ export const usePostEditor = () => {
   const contentMarkdown = ref("");
   const contentText = ref("");
   const coverImage = ref<string | null>(null);
-  // TODO: 以下字段待对应设置项开发完成后接入
-  // const excerpt = ref("");
+  const excerpt = ref("");
 
   // --- UI 状态 ---
   const isSaving = ref(false);
@@ -51,13 +50,14 @@ export const usePostEditor = () => {
       title.value = post.title ?? "";
       content.value = (post.content as object) ?? undefined;
       coverImage.value = post.coverImage ?? null;
+      excerpt.value = post.excerpt ?? "";
     } catch {
       useToast.error("加载文章失败");
     } finally {
       isLoading.value = false;
       // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
       // deep: true — 捕获 tags 数组的 push/splice 就地变更（浅监听感知不到引用未变的数组修改）
-      watch([slug, tags, status, title, content], () => {
+      watch([slug, tags, status, title, content, excerpt], () => {
         isDirty.value = true;
       }, { deep: true });
       // 标题变化时自动同步 slug：
@@ -96,7 +96,7 @@ export const usePostEditor = () => {
           contentMarkdown: contentMarkdown.value || undefined,
           contentText: contentText.value || undefined,
           coverImage: coverImage.value ?? undefined,
-          // TODO: excerpt: excerpt.value || undefined,
+          excerpt: excerpt.value || undefined,
         }),
         updatePostStatus(uuid, status.value),
       ]);
@@ -121,6 +121,7 @@ export const usePostEditor = () => {
     contentMarkdown,
     contentText,
     coverImage,
+    excerpt,
     isSaving,
     isLoading,
     isDirty,

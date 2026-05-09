@@ -293,6 +293,11 @@
             "label": "文章状态",
             "tooltip": "控制文章的可见性，草稿仅自己可见"
           },
+          "excerpt": {
+            "label": "文章摘要",
+            "tooltip": "手动填写摘要，未填则由系统自动截取正文前段",
+            "placeholder": "简短介绍这篇文章的内容…"
+          },
           "coverImage": {
             "label": "封面图",
             "tooltip": "设置文章封面图，将在列表与详情页展示",
@@ -609,7 +614,8 @@
         "description_range": "配置描述长度不能超过255个字符"
       },
       "post": {
-        "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post"
+        "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post",
+        "excerpt_range": "摘要不能超过 500 字"
       }
     },
     "next": "下一步",

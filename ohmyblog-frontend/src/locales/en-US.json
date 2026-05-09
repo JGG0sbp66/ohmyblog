@@ -295,6 +295,11 @@
             "label": "Status",
             "tooltip": "Control the visibility of your post. Drafts are only visible to you"
           },
+          "excerpt": {
+            "label": "Excerpt",
+            "tooltip": "Manually write a summary; if left empty, the system will auto-generate one from the post content",
+            "placeholder": "A brief description of this post…"
+          },
           "coverImage": {
             "label": "Cover Image",
             "tooltip": "Set the post cover image, displayed on listing and detail pages",
@@ -611,7 +616,8 @@
         "description_range": "Description must be under 255 characters"
       },
       "post": {
-        "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post"
+        "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post",
+        "excerpt_range": "Excerpt cannot exceed 500 characters"
       }
     },
     "next": "Next Step",

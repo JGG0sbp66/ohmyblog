@@ -4,6 +4,7 @@ import PostEditorTagSetting from "@/views/admin/components/posts/editor/setting/
 import PostEditorSlugSetting from "@/views/admin/components/posts/editor/setting/PostEditorSlugSetting.vue";
 import PostEditorStatusSetting from "@/views/admin/components/posts/editor/setting/PostEditorStatusSetting.vue";
 import PostEditorCoverSetting from "@/views/admin/components/posts/editor/setting/PostEditorCoverSetting.vue";
+import PostEditorExcerptSetting from "@/views/admin/components/posts/editor/setting/PostEditorExcerptSetting.vue";
 import { useLang } from "@/composables/lang.hook";
 import type { TPostStatus } from "@server/db/constants/post.constants";
 
@@ -16,6 +17,7 @@ const props = defineProps<{
 const slug = defineModel<string>("slug", { default: "" });
 const tags = defineModel<string[]>("tags", { default: () => [] });
 const status = defineModel<TPostStatus>("status", { default: "draft" });
+const excerpt = defineModel<string>("excerpt", { default: "" });
 const coverImage = defineModel<string | null>("coverImage", { default: null });
 </script>
 
@@ -41,6 +43,9 @@ const coverImage = defineModel<string | null>("coverImage", { default: null });
 
       <!-- 文章状态：草稿 / 已发布 / 归档等 -->
       <PostEditorStatusSetting v-model="status" />
+
+      <!-- 文章摘要 -->
+      <PostEditorExcerptSetting v-model="excerpt" />
 
       <!-- 封面图上传 -->
       <PostEditorCoverSetting v-model="coverImage" :uuid="props.uuid" />
