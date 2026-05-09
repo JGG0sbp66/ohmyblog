@@ -1,5 +1,7 @@
 // src/composables/editor-extensions/list-item.extension.ts
 import ListItem from "@tiptap/extension-list-item";
+import { Plugin } from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
 
 /**
  * CustomListItem — 扩展 ListItem，支持列表项内包含标题节点
@@ -73,5 +75,38 @@ export const CustomListItem = ListItem.extend({
       Tab: () => this.editor.commands.sinkListItem(this.name),
       "Shift-Tab": () => this.editor.commands.liftListItem(this.name),
     };
+  },
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        props: {
+          decorations(state) {
+            const decorations: Decoration[] = [];
+            state.doc.descendants((node, pos) => {
+              if (
+                node.type.name !== "bulletList" &&
+                node.type.name !== "orderedList"
+              ) {
+                return;
+              }
+              const $pos = state.doc.resolve(pos);
+              let depth = 0;
+              for (let d = 0; d <= $pos.depth; d++) {
+                if ($pos.node(d).type.name === node.type.name) depth++;
+              }
+              const attr =
+                node.type.name === "bulletList" ? "data-ul-mod" : "data-ol-mod";
+              decorations.push(
+                Decoration.node(pos, pos + node.nodeSize, {
+                  [attr]: String(depth % 3),
+                }),
+              );
+            });
+            return DecorationSet.create(state.doc, decorations);
+          },
+        },
+      }),
+    ];
   },
 });
