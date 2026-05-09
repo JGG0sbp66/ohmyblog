@@ -47,8 +47,8 @@ watch(excerpt, (val) => {
         v-model="excerpt"
         rows="4"
         :placeholder="t('views.admin.PostEditor.settingsPanel.excerpt.placeholder')"
-        class="w-full bg-transparent px-3 py-2.5 text-sm text-fg placeholder-fg-subtle/50
-               resize-none outline-none leading-relaxed"
+        class="w-full min-h-10 bg-transparent px-4 py-2.5 outline-none placeholder:text-fg-soft text-sm font-medium
+               resize-none leading-relaxed"
       />
     </BaseInputWrapper>
 
