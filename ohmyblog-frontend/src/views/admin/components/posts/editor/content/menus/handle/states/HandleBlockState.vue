@@ -14,7 +14,7 @@ import HandleBlockMenu from "./HandleBlockMenu.vue";
  * - editor: Tiptap 编辑器实例，供菜单执行命令
  */
 defineProps<{ icon: object; editor: Editor }>();
-defineEmits<{ clickGrip: [] }>();
+defineEmits<{ gripDragStart: [event: DragEvent]; gripDragEnd: [] }>();
 </script>
 
 <template>
@@ -31,10 +31,12 @@ defineEmits<{ clickGrip: [] }>();
       </template>
     </DropButton>
 
-    <!-- 拖拽手柄（贴近内容侧，未来支持拖拽排序） -->
+    <!-- 拖拽手柄（draggable 启动 HTML5 DnD，由父组件配置 ProseMirror drag 状态） -->
     <ButtonSecondary
+      draggable="true"
       class="w-6 h-7 p-0 shrink-0 cursor-grab"
-      @mousedown.prevent="$emit('clickGrip')"
+      @dragstart="$emit('gripDragStart', $event)"
+      @dragend="$emit('gripDragEnd')"
     >
       <GripVertical class="w-3.5 h-3.5" />
     </ButtonSecondary>

@@ -3,6 +3,8 @@
 import { ref, nextTick, onMounted, onBeforeUnmount } from "vue";
 import type { Editor } from "@tiptap/core";
 import type { Node } from "@tiptap/pm/model";
+import { Fragment, Slice } from "@tiptap/pm/model";
+import { NodeSelection } from "@tiptap/pm/state";
 import {
   Type,
   Image,
@@ -41,6 +43,7 @@ const blockIcon = ref<object>(Type);
 const handleRef = ref<HTMLElement | null>(null);
 const transitionTop = ref(false);
 let editorEl: HTMLElement | null = null;
+let hoveredDragPos = -1; // 深度 1 的顶层块位置，供拖拽使用
 
 const HANDLE_HEIGHT = 32;
 const HANDLE_OFFSET = 6;
@@ -152,6 +155,16 @@ const onMouseMove = (event: MouseEvent) => {
       }
     }
 
+    // 列表项内取 listItem 位置，其他取深度 1 顶层块
+    let dragPos = $pos.before(1);
+    for (let d = $pos.depth; d >= 1; d--) {
+      if ($pos.node(d).type.name === "listItem") {
+        dragPos = $pos.before(d);
+        break;
+      }
+    }
+    hoveredDragPos = dragPos;
+
     const newTop = lineTop + (lineHeight - HANDLE_HEIGHT) / 2;
     const wasVisible = isVisible.value;
 
@@ -167,6 +180,45 @@ const onMouseMove = (event: MouseEvent) => {
     }
   } catch {
     scheduleHide();
+  }
+};
+
+/** 拖拽开始：选中块并设置 ProseMirror dragging 状态 */
+const onGripDragStart = (event: DragEvent) => {
+  if (hoveredDragPos < 0) return;
+  const view = props.editor.view;
+  const { state } = view;
+  try {
+    const node = state.doc.nodeAt(hoveredDragPos);
+    if (!node) return;
+
+    const sel = NodeSelection.create(state.doc, hoveredDragPos);
+    view.dispatch(state.tr.setSelection(sel));
+
+    let slice: Slice;
+    if (node.type.name === "listItem") {
+      // 用父列表类型包装 listItem，并设置 openStart/openEnd=1
+      // 落入列表内：作为条目合并；落入列表外：独立成新列表（编号从 1 开始）
+      const $nodePos = state.doc.resolve(hoveredDragPos);
+      const parentListType = $nodePos.parent.type;
+      const wrappedList = parentListType.create(null, node);
+      slice = new Slice(Fragment.from(wrappedList), 1, 1);
+    } else {
+      slice = sel.content();
+    }
+
+    view.dragging = { slice, move: true };
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/html", "");
+    }
+  } catch { /* ignore invalid positions */ }
+};
+
+/** 拖拽结束：若未落入编辑器则清理 dragging 状态，防止残留 */
+const onGripDragEnd = () => {
+  if (props.editor.view.dragging) {
+    props.editor.view.dragging = null;
   }
 };
 
@@ -204,7 +256,13 @@ onBeforeUnmount(() => {
       @mouseleave="scheduleHide"
     >
       <HandleEmptyState v-if="isEmpty" :editor="editor" />
-      <HandleBlockState v-else :icon="blockIcon" :editor="editor" />
+      <HandleBlockState
+        v-else
+        :icon="blockIcon"
+        :editor="editor"
+        @grip-drag-start="onGripDragStart"
+        @grip-drag-end="onGripDragEnd"
+      />
     </div>
   </Teleport>
 </template>
