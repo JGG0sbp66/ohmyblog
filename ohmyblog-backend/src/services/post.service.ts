@@ -32,8 +32,8 @@ class PostService {
 	}
 
 	/**
-	 * 获取各状态文章数量（用于列表页 filter badge 显示）
-	 * @returns { all, draft, published, archived, deleted }
+	 * 获取各状态文章数量与总访问量（用于列表页 filter badge / 仪表盘统计）
+	 * @returns { all, draft, published, archived, deleted, totalViews }
 	 */
 	async getCounts() {
 		return postDao.countByStatus();

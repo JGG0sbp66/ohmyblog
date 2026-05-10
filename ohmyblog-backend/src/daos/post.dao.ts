@@ -1,5 +1,5 @@
 // src/daos/post.dao.ts
-import { and, count, desc, eq, like, ne, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, like, ne, or, sql, sum } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { post } from "../../db/schema";
 import type { TPostListQueryDTO } from "../dtos/post.dto";
@@ -187,8 +187,8 @@ class PostDao {
 	}
 
 	/**
-	 * 一次查询获取各状态的文章数量（用于列表页 filter badge）
-	 * @returns { all, draft, published, archived, deleted }
+	 * 一次查询获取各状态的文章数量与总访问量（用于列表页 filter badge / 仪表盘统计）
+	 * @returns { all, draft, published, archived, deleted, totalViews }
 	 */
 	async countByStatus() {
 		const result = await db
@@ -200,9 +200,13 @@ class PostDao {
 				),
 				archived: count(sql`CASE WHEN ${post.status} = 'archived' THEN 1 END`),
 				deleted: count(sql`CASE WHEN ${post.status} = 'deleted' THEN 1 END`),
+				totalViews: sum(post.viewCount),
 			})
 			.from(post);
-		return result[0];
+		return {
+			...result[0],
+			totalViews: Number(result[0].totalViews ?? 0),
+		};
 	}
 
 	/**
