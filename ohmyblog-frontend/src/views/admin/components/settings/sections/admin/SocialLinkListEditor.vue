@@ -6,11 +6,16 @@ import SocialLinkRowEditor from "./SocialLinkRowEditor.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useListEditor } from "@/composables/list-editor.hook";
+import type { TPersonalInfoConfigUpsertDTO } from "@server/dtos/config.dto";
 
 const { t } = useLang();
 const systemStore = useSystemStore();
 
 const PAGE_SIZE = 5;
+
+type SocialLink = NonNullable<
+  TPersonalInfoConfigUpsertDTO["configValue"]["socialLinks"]
+>[number];
 
 /**
  * 列表管理逻辑：复用页脚链接相同的 Hook
@@ -23,15 +28,15 @@ const {
   addItem: addLink,
   removeItem: removeRow,
   updateItem,
-} = useListEditor({
-  initialSource: systemStore.personalInfo.socialLinks,
+} = useListEditor<SocialLink, SocialLink>({
+  initialSource: systemStore.personalInfo.socialLinks ?? [],
   pageSize: PAGE_SIZE,
   mapToLocal: (link) => link,
   mapToRemote: (body) => body,
   onSync: (newLinks) => {
     systemStore.personalInfo.socialLinks = newLinks;
   },
-  newItemFactory: () => ({ name: "", url: "", iconLight: "", iconDark: "" }),
+  newItemFactory: () => ({ name: "", url: "" }),
 });
 </script>
 
