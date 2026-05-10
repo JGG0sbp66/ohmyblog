@@ -6,8 +6,11 @@
 import { computed, onMounted, ref } from "vue";
 import { Mail } from "lucide-vue-next";
 import { storeToRefs } from "pinia";
+import { useLang } from "@/composables/lang.hook";
 import DashboardCardLayout from "../DashboardCardLayout.vue";
 import { useEmailStore } from "@/stores/email.store";
+
+const { t } = useLang();
 
 const loading = ref(true);
 
@@ -25,9 +28,9 @@ onMounted(async () => {
 
 <template>
   <DashboardCardLayout
-    label="未读邮件数"
+    :label="t('views.admin.Dashboard.stats.unreadEmails')"
     :value="unreadEmailCount"
-    unit="需阅读"
+    :unit="t('views.admin.Dashboard.stats.unitUnread')"
     :loading="loading"
     icon-bg-class="bg-orange-500/10"
     icon-class="text-orange-600"

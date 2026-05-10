@@ -5,7 +5,10 @@
  */
 import { computed } from "vue";
 import { Pencil } from "lucide-vue-next";
+import { useLang } from "@/composables/lang.hook";
 import DashboardCardLayout from "../DashboardCardLayout.vue";
+
+const { t } = useLang();
 
 interface Props {
   counts?: Record<string, number | undefined>;
@@ -19,9 +22,9 @@ const draftCount = computed(() => props.counts?.draft ?? null);
 
 <template>
   <DashboardCardLayout
-    label="草稿文章数"
+    :label="t('views.admin.Dashboard.stats.draftPosts')"
     :value="draftCount"
-    unit="篇"
+    :unit="t('views.admin.Dashboard.stats.unitPosts')"
     :loading="loading ?? false"
     icon-bg-class="bg-violet-500/10"
     icon-class="text-violet-600"

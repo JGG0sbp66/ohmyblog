@@ -270,6 +270,16 @@
           }
         }
       },
+      "Dashboard": {
+        "stats": {
+          "totalVisits": "总访问量",
+          "publishedPosts": "已发布文章数",
+          "draftPosts": "草稿文章数",
+          "unreadEmails": "未读邮件数",
+          "unitPosts": "篇",
+          "unitUnread": "需阅读"
+        }
+      },
       "PostEditor": {
         "statusBar": {
           "unsaved": "未保存",

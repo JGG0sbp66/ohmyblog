@@ -5,7 +5,10 @@
  */
 import { computed } from "vue";
 import { FileText } from "lucide-vue-next";
+import { useLang } from "@/composables/lang.hook";
 import DashboardCardLayout from "../DashboardCardLayout.vue";
+
+const { t } = useLang();
 
 interface Props {
   counts?: Record<string, number | undefined>;
@@ -19,9 +22,9 @@ const publishedCount = computed(() => props.counts?.published ?? null);
 
 <template>
   <DashboardCardLayout
-    label="已发布文章数"
+    :label="t('views.admin.Dashboard.stats.publishedPosts')"
     :value="publishedCount"
-    unit="篇"
+    :unit="t('views.admin.Dashboard.stats.unitPosts')"
     :loading="loading ?? false"
     icon-bg-class="bg-emerald-500/10"
     icon-class="text-emerald-600"

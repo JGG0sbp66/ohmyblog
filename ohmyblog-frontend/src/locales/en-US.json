@@ -272,6 +272,16 @@
           }
         }
       },
+      "Dashboard": {
+        "stats": {
+          "totalVisits": "Total Visits",
+          "publishedPosts": "Published Posts",
+          "draftPosts": "Draft Posts",
+          "unreadEmails": "Unread Emails",
+          "unitPosts": "posts",
+          "unitUnread": "to read"
+        }
+      },
       "PostEditor": {
         "statusBar": {
           "unsaved": "Unsaved",
