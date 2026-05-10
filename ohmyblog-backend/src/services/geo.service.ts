@@ -118,7 +118,6 @@ class GeoService {
 	 * @param geo 地理位置信息对象
 	 * @returns 格式化后的字符串，解析失败或为空时返回 "未知"
 	 */
-	// TODO: review代码
 	formatLocation(geo: Partial<GeoInfo> | null | undefined): string {
 		if (!geo) return "未知";
 		return [geo.countryName, geo.city].filter(Boolean).join(" / ") || "未知";
