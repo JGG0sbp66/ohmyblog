@@ -278,6 +278,16 @@
           "unreadEmails": "未读邮件数",
           "unitPosts": "篇",
           "unitUnread": "需阅读"
+        },
+        "quickNote": {
+          "title": "灵感速记",
+          "description": "快速记录一闪而过的想法",
+          "titleLabel": "标题",
+          "titleHint": "给这条灵感起个名字",
+          "titlePlaceholder": "比如：一个新的写作点子",
+          "contentLabel": "正文",
+          "contentPlaceholder": "把你的灵感写下来...",
+          "save": "保存草稿"
         }
       },
       "PostEditor": {

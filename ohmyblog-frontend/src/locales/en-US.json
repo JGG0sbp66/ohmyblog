@@ -280,6 +280,16 @@
           "unreadEmails": "Unread Emails",
           "unitPosts": "posts",
           "unitUnread": "to read"
+        },
+        "quickNote": {
+          "title": "Quick Note",
+          "description": "Jot down fleeting ideas",
+          "titleLabel": "Title",
+          "titleHint": "Give this note a short name",
+          "titlePlaceholder": "e.g. A new writing idea",
+          "contentLabel": "Content",
+          "contentPlaceholder": "Write your thoughts here...",
+          "save": "Save Draft"
         }
       },
       "PostEditor": {

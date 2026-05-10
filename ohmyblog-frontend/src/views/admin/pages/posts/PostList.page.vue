@@ -86,6 +86,14 @@ onMounted(() => {
   fetchCounts();
   fetchList();
 });
+
+/** 供父组件触发手动刷新（如新增草稿后） */
+defineExpose({
+  refresh: () => {
+    fetchCounts();
+    fetchList();
+  },
+});
 </script>
 
 <template>
