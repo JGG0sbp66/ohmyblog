@@ -66,7 +66,7 @@ onMounted(fetchList);
       <!-- 卡片列表 -->
       <div
         v-else
-        :class="['flex flex-col gap-4 stagger-container transition-opacity duration-200', loading ? 'opacity-50 pointer-events-none' : '']"
+        :class="['flex flex-col gap-4 stagger-container transition-opacity duration-200 [--content-delay:0ms]', loading ? 'opacity-50 pointer-events-none' : '']"
       >
         <div
           v-for="post in posts"
