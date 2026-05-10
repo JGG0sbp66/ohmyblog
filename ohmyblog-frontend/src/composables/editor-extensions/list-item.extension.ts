@@ -9,6 +9,22 @@ import { Decoration, DecorationSet } from "prosemirror-view";
  * - content 扩展为 "(paragraph | heading) block*"
  * - Enter：若在标题列表项内换行，延续相同标题级别；否则走默认 splitListItem
  * - Tab / Shift-Tab：保留原缩进/取消缩进快捷键
+ *
+ * //TODO(ordered-list-numbering):
+ * - 修复输入 "2." / "3." 时仍被自动归一为 "1." 的问题。
+ *   方向：自定义 OrderedList 的 InputRule（或覆盖 StarterKit 的 orderedList 配置），
+ *   将用户输入的数字写入 orderedList.attrs.start，而不是固定 start=1。
+ *
+ * //TODO(ordered-list-hover-menu):
+ * - 新增“有序列表 hover 高亮 + 点击弹出菜单”的交互：
+ *   - hover 到 orderedList / listItem 区域时，类似 link hover 的背景高亮
+ *   - 点击后弹出 DropButton 菜单（ButtonSecondary 风格 item，icon + text）
+ *   - 菜单项：
+ *     - 继续之前的编号（从上一段 orderedList 的末尾继续）
+ *     - 开始新列表（start=1）
+ *     - 修改编号值（设置 orderedList.attrs.start）
+ *   方向：ProseMirror Plugin + DecorationSet 计算 hover range；点击定位到对应 orderedList；
+ *   或者实现一个 NodeView/Overlay 组件承载交互层。
  */
 export const CustomListItem = ListItem.extend({
   content: "(paragraph | heading) block*",
