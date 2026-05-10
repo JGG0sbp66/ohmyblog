@@ -87,6 +87,14 @@
   },
   "views": {
     "main": {
+      "home": {
+        "PostCard": {
+          "untitled": "新文章",
+          "words": "字",
+          "views": "阅读",
+          "empty": "暂无文章"
+        }
+      },
       "hero": {
         "titleEditor": {
           "triggerText": "编辑首页主副标题",

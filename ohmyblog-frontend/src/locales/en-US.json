@@ -87,6 +87,14 @@
   },
   "views": {
     "main": {
+      "home": {
+        "PostCard": {
+          "untitled": "New Post",
+          "words": "words",
+          "views": "reads",
+          "empty": "No posts yet"
+        }
+      },
       "hero": {
         "titleEditor": {
           "triggerText": "Edit Homepage Headline",
