@@ -3,6 +3,7 @@
 import { computed } from "vue";
 import { Eye, FileText, ChevronRight } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
+import BaseCard from "@/components/base/card/BaseCard.vue";
 import PostMeta from "@/components/base/tag/PostMeta.vue";
 import type { PostListItem } from "@/api/post.api";
 
@@ -31,8 +32,9 @@ const wordCount = computed(() => props.post.contentText?.length ?? 0);
 </script>
 
 <template>
-  <div
-    class="group relative flex items-stretch bg-bg-card rounded-2xl shadow-lg overflow-hidden hover:-translate-y-0.5 transition-transform duration-200 cursor-pointer select-none"
+  <BaseCard
+    padding="none"
+    class="group flex items-stretch overflow-hidden hover:-translate-y-0.5 transition-transform duration-200 cursor-pointer select-none"
   >
     <!-- 左侧：信息区域 -->
     <div class="flex-1 min-w-0 p-5 flex flex-col gap-2.5">
@@ -106,7 +108,7 @@ const wordCount = computed(() => props.post.contentText?.length ?? 0);
         </div>
       </template>
     </div>
-  </div>
+  </BaseCard>
 </template>
 
 <style scoped>
