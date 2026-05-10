@@ -43,43 +43,29 @@ onMounted(fetchList);
 
 <template>
   <div class="flex flex-col gap-4">
-    <!-- 首次加载骨架（列表为空时才显示，避免翻页时高度跳变） -->
-    <template v-if="loading && posts.length === 0">
-      <div class="flex flex-col gap-4">
-        <div
-          v-for="i in PAGE_SIZE"
-          :key="i"
-          class="h-28 rounded-2xl bg-bg-card animate-pulse"
-        />
-      </div>
-    </template>
+    <!-- 空状态 -->
+    <EmptyState
+      v-if="!loading && posts.length === 0"
+      class="mt-32"
+      :text="t('views.main.home.PostCard.empty')"
+    />
 
-    <!-- 列表区域：翻页时保持可见，用透明度表示加载中 -->
-    <template v-else>
-      <!-- 空状态 -->
-      <EmptyState
-        v-if="posts.length === 0"
-        class="mt-32"
-        :text="t('views.main.home.PostCard.empty')"
-      />
-
-      <!-- 卡片列表 -->
+    <!-- 卡片列表 -->
+    <div
+      v-else-if="posts.length > 0"
+      :class="['flex flex-col gap-4 stagger-container transition-opacity duration-200 [--content-delay:0ms]', loading ? 'opacity-50 pointer-events-none' : '']"
+    >
       <div
-        v-else
-        :class="['flex flex-col gap-4 stagger-container transition-opacity duration-200 [--content-delay:0ms]', loading ? 'opacity-50 pointer-events-none' : '']"
+        v-for="post in posts"
+        :key="post.uuid"
+        class="onload-animation"
       >
-        <div
-          v-for="post in posts"
-          :key="post.uuid"
-          class="onload-animation"
-        >
-          <PostCard :post="post" />
-        </div>
+        <PostCard :post="post" />
       </div>
-    </template>
+    </div>
 
     <!-- 翻页（居中） -->
-    <div class="flex justify-center mt-2">
+    <div v-if="totalPages > 1 || posts.length > 0" class="flex justify-center mt-2">
       <BasePagination
         :current-page="page"
         :total-pages="totalPages"
