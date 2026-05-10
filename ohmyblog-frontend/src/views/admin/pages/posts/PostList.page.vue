@@ -17,7 +17,14 @@ const activeFilter = ref<PostStatusFilter>(null);
 const searchQuery = ref("");
 const pageSize = 10;
 
-const counts = ref({ all: 0, draft: 0, published: 0, archived: 0, deleted: 0 });
+const counts = ref<{
+  all?: number;
+  draft?: number;
+  published?: number;
+  archived?: number;
+  deleted?: number;
+  totalViews?: number;
+}>({ all: 0, draft: 0, published: 0, archived: 0, deleted: 0 });
 const posts = ref<PostListItem[]>([]);
 const total = ref(0);
 const page = ref(1);
