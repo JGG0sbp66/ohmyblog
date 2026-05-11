@@ -4,7 +4,7 @@ import { ref, computed, onMounted } from "vue";
 import { useLang } from "@/composables/lang.hook";
 import { getPublicPostList } from "@/api/post.api";
 import type { PostListItem } from "@/api/post.api";
-import PostCard from "@/views/main/components/PostCard.vue";
+import PostCard from "@/views/main/components/post/PostCard.vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
 import BasePagination from "@/components/base/table/BasePagination.vue";
 
