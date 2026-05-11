@@ -29,7 +29,7 @@ import ProfileCard from "@/components/common/item/ProfileCard.vue";
         </aside>
 
         <!-- 主要内容 (router-view) -->
-        <div class="flex-1 w-full overflow-hidden order-2">
+        <div class="flex-1 w-full order-2">
           <div class="onload-animation">
             <router-view />
           </div>
