@@ -157,7 +157,6 @@ export const postRoute = new Elysia({ name: "postRoute" })
 			.get(
 				"/:slug",
 				async ({ params: { slug } }) => {
-					// TODO: 在返回文章前自增 viewCount（postService.incrementViewCount(slug) 或类似实现）
 					const post = await postService.getBySlug(slug);
 					return { message: "获取成功", post };
 				},

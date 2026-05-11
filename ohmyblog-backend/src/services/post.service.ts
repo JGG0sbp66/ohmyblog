@@ -73,7 +73,7 @@ class PostService {
 	 * @returns 文章记录（含 contentMarkdown）
 	 */
 	async getBySlug(slug: string) {
-		const post = await postDao.findBySlug(slug);
+		const post = await postDao.findBySlugAndIncrementView(slug);
 		if (!post) {
 			throw new BusinessError("文章不存在", { status: 404 });
 		}

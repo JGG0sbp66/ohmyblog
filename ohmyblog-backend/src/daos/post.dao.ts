@@ -102,29 +102,30 @@ class PostDao {
 	// ─── 读者 · 单条 ────────────────────────────────────────────────────────────
 
 	/**
-	 * 【读者 · 单条】根据 slug 获取单篇文章，含 contentMarkdown
-	 * 读者打开 /posts/my-slug 时调用，只返回已发布的文章，未发布则视为不存在
-	 * 返回 contentMarkdown 而非 JSON，由前端用 markdown-it 等库渲染
+	 * 【读者 · 单条 + 自增】根据 slug 获取单篇已发布文章，并原子性地自增 viewCount
+	 * 使用 UPDATE ... RETURNING 单次查询完成，避免先 SELECT 再 UPDATE 的竞态
 	 * @param slug URL 中的文章标识
-	 * @returns 文章记录或 null
+	 * @returns 自增后的文章记录或 null
 	 */
-	async findBySlug(slug: string) {
+	async findBySlugAndIncrementView(slug: string) {
 		const result = await db
-			.select({
+			.update(post)
+			.set({ viewCount: sql`${post.viewCount} + 1` })
+			.where(and(eq(post.slug, slug), eq(post.status, "published")))
+			.returning({
 				uuid: post.uuid,
 				title: post.title,
 				contentMarkdown: post.contentMarkdown,
+				contentText: post.contentText,
 				coverImage: post.coverImage,
 				tags: post.tags,
 				slug: post.slug,
 				excerpt: post.excerpt,
+				viewCount: post.viewCount,
 				publishedAt: post.publishedAt,
 				createdAt: post.createdAt,
 				updatedAt: post.updatedAt,
-			})
-			.from(post)
-			.where(and(eq(post.slug, slug), eq(post.status, "published")))
-			.limit(1);
+			});
 		return result[0] || null;
 	}
 
