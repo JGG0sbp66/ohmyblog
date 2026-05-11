@@ -29,6 +29,9 @@ export const friendLink = sqliteTable("friend_link", {
 		.notNull()
 		.default("pending"),
 
+	// 申请人联系邮箱（可选，用于审批结果通知）
+	applicantEmail: text("applicant_email"),
+
 	// 拒绝原因（仅 rejected 时填写）
 	rejectReason: text("reject_reason"),
 
