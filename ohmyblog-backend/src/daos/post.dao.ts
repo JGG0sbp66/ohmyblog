@@ -157,17 +157,17 @@ class PostDao {
 	 * @returns { list, total }
 	 */
 	async findPublished(
-		options: Pick<TPostListQueryDTO, "page" | "pageSize" | "search"> = {},
+		options: { page?: number; pageSize?: number; keyword?: string } = {},
 	) {
-		const { page, pageSize, search } = options as Required<TPostListQueryDTO>;
+		const { page = 1, pageSize = 20, keyword } = options;
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [eq(post.status, "published")];
-		if (search) {
+		if (keyword) {
 			conditions.push(
 				or(
-					like(post.title, `%${search}%`),
-					like(post.contentText, `%${search}%`),
+					like(post.title, `%${keyword}%`),
+					like(post.contentText, `%${keyword}%`),
 				) as ReturnType<typeof eq>,
 			);
 		}

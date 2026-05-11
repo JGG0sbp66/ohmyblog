@@ -1,7 +1,7 @@
 // src/services/post.service.ts
 import type { TPostStatus } from "../../db/constants/post.constants";
 import { postDao } from "../daos/post.dao";
-import type { TPostListQueryDTO, TSavePostDTO } from "../dtos/post.dto";
+import type { TPostListQueryDTO, TPublicPostListQueryDTO, TSavePostDTO } from "../dtos/post.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 
@@ -61,7 +61,7 @@ class PostService {
 	 * @param options 分页参数
 	 * @returns { list, total }
 	 */
-	async getPublishedList(options: TPostListQueryDTO = {}) {
+	async getPublishedList(options: TPublicPostListQueryDTO = {}) {
 		return postDao.findPublished(options);
 	}
 

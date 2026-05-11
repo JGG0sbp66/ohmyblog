@@ -107,7 +107,7 @@ export const PostListQueryDTO = t.Object({
 	),
 });
 
-// 4. 前台文章列表查询参数 DTO（Query String，仅分页，无状态筛选）
+// 4. 前台文章列表查询参数 DTO（Query String，分页 + 关键词搜索）
 export const PublicPostListQueryDTO = t.Object({
 	page: t.Optional(
 		t.Numeric({
@@ -124,6 +124,11 @@ export const PublicPostListQueryDTO = t.Object({
 			default: 20,
 			description: "每页条数，最大 50",
 			error: "post.page_size_invalid",
+		}),
+	),
+	keyword: t.Optional(
+		t.String({
+			description: "关键词，模糊匹配标题和正文",
 		}),
 	),
 });
