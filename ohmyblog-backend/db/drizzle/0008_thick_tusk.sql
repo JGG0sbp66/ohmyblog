@@ -1,0 +1,1 @@
+ALTER TABLE `friend_link` ADD `applicant_email` text;
