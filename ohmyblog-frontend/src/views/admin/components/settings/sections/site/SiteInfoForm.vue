@@ -23,7 +23,6 @@ const handleSave = async () => {
     await upsertConfig({
       configKey: "site_info",
       configValue: systemStore.siteInfo,
-      description: "Basic Site Settings",
     });
     useToast.success(t("api.success.保存成功"));
   } catch (error) {
