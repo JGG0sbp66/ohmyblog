@@ -105,11 +105,15 @@
       },
       "post": {
         "back": "Back",
-        "loading": "Loading...",
         "notFound": "Post not found or has been removed",
         "untitled": "Untitled",
         "words": "words",
         "views": "reads"
+      },
+      "archive": {
+        "empty": "No posts yet",
+        "postsCount": "posts",
+        "untitled": "Untitled"
       },
       "hero": {
         "titleEditor": {

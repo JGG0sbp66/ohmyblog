@@ -7,6 +7,7 @@ import { getPublicPostBySlug } from "@/api/post.api";
 import type { PostDetail } from "@/api/post.api";
 import { useLang } from "@/composables/lang.hook";
 import BaseCard from "@/components/base/card/BaseCard.vue";
+import Loading from "@/components/common/item/Loading.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import PostHeader from "@/views/main/components/post/PostHeader.vue";
 import PostContent from "@/views/main/components/post/PostContent.vue";
@@ -53,7 +54,7 @@ watch(slug, fetchPost, { immediate: true });
 <template>
   <!-- Loading state -->
   <div v-if="loading" class="flex items-center justify-center min-h-[50vh]">
-    <p class="text-fg-muted animate-pulse text-sm">{{ t("views.main.post.loading") }}</p>
+    <Loading size-class="w-6 h-6" color-class="text-fg-subtle" />
   </div>
 
   <!-- Not found state -->
