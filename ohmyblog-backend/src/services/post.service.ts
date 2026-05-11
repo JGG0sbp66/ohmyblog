@@ -65,6 +65,14 @@ class PostService {
 		return postDao.findPublished(options);
 	}
 
+	/**
+	 * 获取所有已发布文章的轻量列表（归档页专用）
+	 * @returns 按发布时间倒序排列的文章数组
+	 */
+	async getArchiveList() {
+		return postDao.findAllPublishedForArchive();
+	}
+
 	// ─── 读者 · 单条 ────────────────────────────────────────────────────────────
 
 	/**

@@ -81,6 +81,14 @@ export const getPublicPostList = (query?: TPublicPostListQueryDTO) => {
 };
 
 /**
+ * GET /api/public/posts/archive
+ * 获取所有已发布文章的轻量列表（归档页时间轴专用）
+ */
+export const getPublicPostArchive = () => {
+  return unwrap(api.api.public.posts.archive.get());
+};
+
+/**
  * GET /api/public/posts/:slug
  * 根据 slug 获取单篇已发布文章（含 contentMarkdown）
  */

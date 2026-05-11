@@ -188,6 +188,24 @@ class PostDao {
 	}
 
 	/**
+	 * 【读者 · 归档页】获取所有已发布文章的轻量列表，不分页
+	 * 仅返回归档页时间轴所需的最小字段集合：title / slug / publishedAt / tags
+	 * @returns 按发布时间倒序排列的文章数组
+	 */
+	async findAllPublishedForArchive() {
+		return db
+			.select({
+				title: post.title,
+				slug: post.slug,
+				publishedAt: post.publishedAt,
+				tags: post.tags,
+			})
+			.from(post)
+			.where(eq(post.status, "published"))
+			.orderBy(desc(post.publishedAt));
+	}
+
+	/**
 	 * 一次查询获取各状态的文章数量与总访问量（用于列表页 filter badge / 仪表盘统计）
 	 * @returns { all, draft, published, archived, deleted, totalViews }
 	 */
