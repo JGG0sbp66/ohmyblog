@@ -27,9 +27,9 @@ const routes = [
         component: () => import("@/views/main/pages/Archive.page.vue"),
       },
       {
-        path: "about",
-        name: "about",
-        component: () => import("@/views/main/pages/About.page.vue"),
+        path: "friends",
+        name: "friends",
+        component: () => import("@/views/main/pages/Friends.page.vue"),
       },
       {
         path: "posts/:slug",
