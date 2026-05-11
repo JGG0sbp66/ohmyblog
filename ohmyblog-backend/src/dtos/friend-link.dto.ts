@@ -24,7 +24,7 @@ export const ApplyFriendLinkDTO = t.Object({
 	url: t.String({ format: "uri", description: "站点 URL" }),
 	avatarUrl: t.Optional(t.String({ format: "uri", description: "站点图标 URL" })),
 	description: t.Optional(t.String({ maxLength: 200, description: "站点简介" })),
-	tags: t.Optional(t.Array(t.String({ maxLength: 20 }), { maxItems: 5, description: "标签" })),
+	tags: t.Optional(t.Array(t.String({ maxLength: 20 }), { maxItems: 3, description: "标签" })),
 	applicantEmail: t.Optional(t.String({ format: "email", description: "联系邮箱（审批结果将发送到此邮箱）" })),
 });
 
@@ -36,7 +36,7 @@ export const UpdateFriendLinkDTO = t.Object({
 	url: t.Optional(t.String({ format: "uri" })),
 	avatarUrl: t.Optional(t.Nullable(t.String({ format: "uri" }))),
 	description: t.Optional(t.Nullable(t.String({ maxLength: 200 }))),
-	tags: t.Optional(t.Nullable(t.Array(t.String({ maxLength: 20 }), { maxItems: 5 }))),
+	tags: t.Optional(t.Nullable(t.Array(t.String({ maxLength: 20 }), { maxItems: 3 }))),
 	joinedAt: t.Optional(t.Nullable(t.Number({ description: "入驻时间戳（秒）" }))),
 });
 
