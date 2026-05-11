@@ -89,3 +89,34 @@ export type TLoginAlertEmailParams = Static<typeof LoginAlertEmailParamsDTO>;
 export type TResetPasswordEmailParams = Static<
 	typeof ResetPasswordEmailParamsDTO
 >;
+
+/** 友链申请通知邮件参数（发送给管理员） */
+export interface TFriendLinkApplyNotifyEmailParams {
+	siteTitle?: string;
+	siteFooter?: string;
+	greeting?: string;
+	hue?: number;
+	siteName: string;
+	siteUrl: string;
+	siteDescription?: string;
+	siteTags?: string[];
+	applicantEmail?: string;
+}
+
+/** 友链申请确认邮件参数（发送给申请人，告知已收到申请） */
+export interface TFriendLinkApplyConfirmedEmailParams {
+	siteTitle?: string;
+	siteFooter?: string;
+	hue?: number;
+	applicantSiteName: string;
+}
+
+/** 友链审批结果邮件参数（发送给申请人） */
+export interface TFriendLinkResultEmailParams {
+	siteTitle?: string;
+	siteFooter?: string;
+	hue?: number;
+	applicantSiteName: string;
+	result: "approved" | "rejected";
+	rejectReason?: string;
+}

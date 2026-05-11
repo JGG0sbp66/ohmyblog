@@ -4,12 +4,18 @@ import { render } from "@react-email/components";
 import { createElement } from "react";
 import { emailLogDao } from "../../daos/email-log.dao";
 import type {
+	TFriendLinkApplyConfirmedEmailParams,
+	TFriendLinkApplyNotifyEmailParams,
+	TFriendLinkResultEmailParams,
 	TLoginAlertEmailParams,
 	TResetPasswordEmailParams,
 	TSMTPTestEmailParams,
 } from "../../dtos/email.dto";
 import { BusinessError } from "../../plugins/errors";
 import { type GeoInfo, geoService } from "../../services/geo.service";
+import { FriendLinkApplyConfirmedEmail } from "../../templates/FriendLinkApplyConfirmedEmail";
+import { FriendLinkApplyNotifyEmail } from "../../templates/FriendLinkApplyNotifyEmail";
+import { FriendLinkResultEmail } from "../../templates/FriendLinkResultEmail";
 import { LoginAlertEmail } from "../../templates/LoginAlertEmail";
 import { ResetPasswordEmail } from "../../templates/ResetPasswordEmail";
 import { SMTPTestEmail } from "../../templates/SMTPTestEmail";
@@ -189,6 +195,126 @@ class EmailSenderService {
 	}
 
 	/**
+	 * 友链申请通知：发送给管理员
+	 */
+	async sendFriendLinkApplyNotify(params: {
+		siteName: string;
+		siteUrl: string;
+		siteDescription?: string;
+		siteTags?: string[];
+		applicantEmail?: string;
+	}) {
+		const smtpConfig = await emailConfigService.getSmtpConfig();
+		const { title: siteTitle, footer: siteFooter } =
+			await emailConfigService.getSiteConfig();
+		const { hue } = await emailConfigService.getAppearanceConfig();
+		const adminName = await emailConfigService.getAdminName();
+		const adminEmail = await emailConfigService.getAdminEmailAddress();
+
+		if (!adminEmail) return;
+
+		const templateProps: TFriendLinkApplyNotifyEmailParams = {
+			siteTitle,
+			siteFooter,
+			greeting: `你好，${adminName}！`,
+			hue,
+			...params,
+		};
+
+		const html = await render(
+			createElement(FriendLinkApplyNotifyEmail, templateProps),
+		);
+
+		return emailDispatchService.dispatch({
+			to: [adminEmail],
+			subject: `[${siteTitle}] 收到一条新的友链申请 — ${params.siteName}`,
+			html,
+			smtpConfig,
+			siteTitle,
+			type: "friend_link_apply",
+			params: templateProps as unknown as Record<string, unknown>,
+		});
+	}
+
+	/**
+	 * 友链申请确认：发送给申请人（告知已收到申请）
+	 */
+	async sendFriendLinkApplyConfirm(params: {
+		to: string;
+		applicantSiteName: string;
+	}) {
+		const smtpConfig = await emailConfigService.getSmtpConfig();
+		const { title: siteTitle, footer: siteFooter } =
+			await emailConfigService.getSiteConfig();
+		const { hue } = await emailConfigService.getAppearanceConfig();
+
+		const templateProps: TFriendLinkApplyConfirmedEmailParams = {
+			siteTitle,
+			siteFooter,
+			hue,
+			applicantSiteName: params.applicantSiteName,
+		};
+
+		const html = await render(
+			createElement(FriendLinkApplyConfirmedEmail, templateProps),
+		);
+
+		return emailDispatchService.dispatch({
+			to: [params.to],
+			subject: `[${siteTitle}] 已收到你的友链申请`,
+			html,
+			smtpConfig,
+			siteTitle,
+			type: "friend_link_apply_confirmed",
+			params: templateProps as unknown as Record<string, unknown>,
+		});
+	}
+
+	/**
+	 * 友链审批结果通知：发送给申请人
+	 */
+	async sendFriendLinkResult(params: {
+		to: string;
+		applicantSiteName: string;
+		result: "approved" | "rejected";
+		rejectReason?: string;
+	}) {
+		const smtpConfig = await emailConfigService.getSmtpConfig();
+		const { title: siteTitle, footer: siteFooter } =
+			await emailConfigService.getSiteConfig();
+		const { hue } = await emailConfigService.getAppearanceConfig();
+
+		const templateProps: TFriendLinkResultEmailParams = {
+			siteTitle,
+			siteFooter,
+			hue,
+			applicantSiteName: params.applicantSiteName,
+			result: params.result,
+			rejectReason: params.rejectReason,
+		};
+
+		const html = await render(
+			createElement(FriendLinkResultEmail, templateProps),
+		);
+
+		const subject =
+			params.result === "approved"
+				? `[${siteTitle}] 你的友链申请已通过 🎉`
+				: `[${siteTitle}] 你的友链申请未通过`;
+
+		return emailDispatchService.dispatch({
+			to: [params.to],
+			subject,
+			html,
+			smtpConfig,
+			siteTitle,
+			type:
+				params.result === "approved" ? "friend_link_approved" : "friend_link_rejected",
+			params: templateProps as unknown as Record<string, unknown>,
+		});
+	}
+
+	/**
 	 * 重新渲染历史邮件的 HTML（管理后台预览用）
 	 * @param uuid 邮件日志记录的 UUID
 	 * @returns 渲染后的 HTML 字符串
@@ -215,6 +341,28 @@ class EmailSenderService {
 					createElement(
 						ResetPasswordEmail,
 						params as TResetPasswordEmailParams,
+					),
+				);
+			case "friend_link_apply":
+				return render(
+					createElement(
+						FriendLinkApplyNotifyEmail,
+						params as unknown as TFriendLinkApplyNotifyEmailParams,
+					),
+				);
+			case "friend_link_apply_confirmed":
+				return render(
+					createElement(
+						FriendLinkApplyConfirmedEmail,
+						params as unknown as TFriendLinkApplyConfirmedEmailParams,
+					),
+				);
+			case "friend_link_approved":
+			case "friend_link_rejected":
+				return render(
+					createElement(
+						FriendLinkResultEmail,
+						params as unknown as TFriendLinkResultEmailParams,
 					),
 				);
 			default:
