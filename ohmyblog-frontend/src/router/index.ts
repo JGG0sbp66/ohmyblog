@@ -31,6 +31,11 @@ const routes = [
         name: "about",
         component: () => import("@/views/main/pages/About.page.vue"),
       },
+      {
+        path: "posts/:slug",
+        name: "post",
+        component: () => import("@/views/main/pages/Post.page.vue"),
+      },
     ],
   },
   // Admin 登录路由
