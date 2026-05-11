@@ -24,7 +24,7 @@ const route = useRoute();
 const navItems = computed(() => [
   { name: "home", label: t("components.common.layout.Header.nav.home") },
   { name: "archive", label: t("components.common.layout.Header.nav.archive") },
-  { name: "about", label: t("components.common.layout.Header.nav.about") },
+  { name: "friends", label: t("components.common.layout.Header.nav.friends") },
 ]);
 
 const handleNavClick = (routeName: string) => {

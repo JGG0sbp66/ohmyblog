@@ -6,7 +6,7 @@
           "nav": {
             "home": "Home",
             "archive": "Archive",
-            "about": "About"
+            "friends": "Friends"
           }
         }
       },
@@ -304,7 +304,7 @@
         "stats": {
           "totalVisits": "Total Visits",
           "publishedPosts": "Published Posts",
-          "draftPosts": "Draft Posts",
+          "pendingFriendLinks": "Pending Links",
           "unreadEmails": "Unread Emails",
           "unitPosts": "posts",
           "unitUnread": "to read"

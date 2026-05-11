@@ -6,7 +6,7 @@
           "nav": {
             "home": "首页",
             "archive": "归档",
-            "about": "关于"
+            "friends": "友链"
           }
         }
       },
@@ -302,7 +302,7 @@
         "stats": {
           "totalVisits": "总访问量",
           "publishedPosts": "已发布文章数",
-          "draftPosts": "草稿文章数",
+          "pendingFriendLinks": "待审友链",
           "unreadEmails": "未读邮件数",
           "unitPosts": "篇",
           "unitUnread": "需阅读"
