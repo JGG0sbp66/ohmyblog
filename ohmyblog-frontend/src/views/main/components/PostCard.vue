@@ -1,6 +1,7 @@
 <!-- src/views/main/components/PostCard.vue -->
 <script setup lang="ts">
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 import { Eye, FileText, ChevronRight } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import BaseCard from "@/components/base/card/BaseCard.vue";
@@ -11,7 +12,13 @@ const props = defineProps<{
   post: PostListItem;
 }>();
 
+const router = useRouter();
 const { t } = useLang();
+
+const navigate = () => {
+  if (!props.post.slug) return;
+  router.push({ name: "post", params: { slug: props.post.slug } });
+};
 
 const formattedDate = computed(() => {
   if (!props.post.publishedAt) return "";
@@ -35,6 +42,7 @@ const wordCount = computed(() => props.post.contentText?.length ?? 0);
   <BaseCard
     padding="none"
     class="group flex items-stretch overflow-hidden hover:-translate-y-0.5 transition-transform duration-200 cursor-pointer select-none"
+    @click="navigate"
   >
     <!-- 左侧：信息区域 -->
     <div class="flex-1 min-w-0 p-5 flex flex-col gap-2.5">
