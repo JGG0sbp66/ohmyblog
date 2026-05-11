@@ -95,6 +95,14 @@
           "empty": "暂无文章"
         }
       },
+      "post": {
+        "back": "返回",
+        "loading": "加载中...",
+        "notFound": "文章不存在或已被删除",
+        "untitled": "无标题",
+        "words": "字",
+        "views": "阅读"
+      },
       "hero": {
         "titleEditor": {
           "triggerText": "编辑首页主副标题",

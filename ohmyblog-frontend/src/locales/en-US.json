@@ -95,6 +95,14 @@
           "empty": "No posts yet"
         }
       },
+      "post": {
+        "back": "Back",
+        "loading": "Loading...",
+        "notFound": "Post not found or has been removed",
+        "untitled": "Untitled",
+        "words": "words",
+        "views": "reads"
+      },
       "hero": {
         "titleEditor": {
           "triggerText": "Edit Homepage Headline",
