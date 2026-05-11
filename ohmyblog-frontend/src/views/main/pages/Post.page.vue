@@ -1,6 +1,6 @@
 <!-- src/views/main/pages/Post.page.vue -->
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ArrowLeft } from "lucide-vue-next";
 import { getPublicPostBySlug } from "@/api/post.api";
@@ -47,7 +47,7 @@ const fetchPost = async () => {
   }
 };
 
-onMounted(fetchPost);
+watch(slug, fetchPost, { immediate: true });
 </script>
 
 <template>
