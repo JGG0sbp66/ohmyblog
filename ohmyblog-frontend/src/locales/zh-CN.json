@@ -72,6 +72,14 @@
         "BaseProgress": {
           "step": "第 {current}/{total} 步"
         }
+      },
+      "search": {
+        "HeaderSearch": {
+          "placeholder": "搜索文章...",
+          "searching": "搜索中...",
+          "noResults": "未找到相关文章",
+          "untitled": "无标题"
+        }
       }
     },
     "theme": {

@@ -72,6 +72,14 @@
         "BaseProgress": {
           "step": "Step {current}/{total}"
         }
+      },
+      "search": {
+        "HeaderSearch": {
+          "placeholder": "Search posts...",
+          "searching": "Searching...",
+          "noResults": "No posts found",
+          "untitled": "Untitled"
+        }
       }
     },
     "theme": {
