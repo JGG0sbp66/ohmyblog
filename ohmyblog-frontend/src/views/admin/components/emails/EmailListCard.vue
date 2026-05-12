@@ -8,6 +8,7 @@
 <script setup lang="ts">
 import type { EmailLogItem } from "./types";
 import { getEmailBodyPreview } from "@/utils/email";
+import { formatShortTime } from "@/utils/date";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -18,19 +19,6 @@ const props = defineProps<{
 
 const { t } = useLang();
 
-/**
- * 格式化发送时间
- * @param raw 原始时间数据
- */
-const formatTime = (raw: string | number | Date) => {
-  const d = new Date(raw);
-  return d.toLocaleString(undefined, {
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
 </script>
 
 <template>
@@ -55,7 +43,7 @@ const formatTime = (raw: string | number | Date) => {
         {{ t(`views.emails.types.${item.type}`) }}
       </span>
       <span class="text-[10px] font-medium text-fg-subtle shrink-0">
-        {{ formatTime(item.createdAt) }}
+        {{ formatShortTime(item.createdAt) }}
       </span>
     </div>
 

@@ -12,6 +12,7 @@ import BaseTag from "@/components/base/tag/BaseTag.vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import { useLang } from "@/composables/lang.hook";
 import { getFriendLinkDomain, getFriendLinkInitial } from "@/utils/friend-link";
+import { formatDate } from "@/utils/date";
 import type { FriendLinkItem } from "@/api/friend-link.api";
 
 const props = defineProps<{
@@ -21,19 +22,7 @@ const props = defineProps<{
 const { locale } = useLang();
 
 const domain = computed(() => getFriendLinkDomain(props.link.url));
-
-/** 入驻日期，跟随当前语言 locale */
-const joinedDate = computed(() => {
-  if (!props.link.joinedAt) return "";
-  return new Intl.DateTimeFormat(locale.value, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  })
-    .format(new Date(props.link.joinedAt))
-    .replace(/\//g, "-");
-});
-
+const joinedDate = computed(() => formatDate(props.link.joinedAt, locale.value));
 const initial = computed(() => getFriendLinkInitial(props.link.name));
 </script>
 
