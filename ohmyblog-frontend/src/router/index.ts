@@ -87,6 +87,11 @@ const routes = [
         component: () => import("@/views/admin/pages/Emails.page.vue"),
       },
       {
+        path: "friend-links",
+        name: "friend-links",
+        component: () => import("@/views/admin/pages/FriendLinks.page.vue"),
+      },
+      {
         path: "settings",
         name: "settings",
         component: () => import("@/views/admin/pages/Settings.page.vue"),

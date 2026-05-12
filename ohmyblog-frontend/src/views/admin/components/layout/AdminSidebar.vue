@@ -3,12 +3,13 @@
 import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useRouter, useRoute } from "vue-router";
-import { LayoutDashboard, Mail, Settings } from "lucide-vue-next";
+import { LayoutDashboard, Mail, Settings, Link2 } from "lucide-vue-next";
 import { RiQuillPenLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import SidebarButton from "@/components/base/button/SidebarButton.vue";
 import AdminUserInfo from "../AdminUserInfo.vue";
 import { useEmailStore } from "@/stores/email.store";
+import { useFriendLinkStore } from "@/stores/friend-link.store";
 
 const isExpanded = ref(false);
 const router = useRouter();
@@ -18,8 +19,12 @@ const { t } = useLang();
 const emailStore = useEmailStore();
 const { unreadCount: emailUnreadCount } = storeToRefs(emailStore);
 
+const friendLinkStore = useFriendLinkStore();
+const { pendingCount: friendLinkPendingCount } = storeToRefs(friendLinkStore);
+
 onMounted(() => {
   emailStore.fetchUnreadCount();
+  friendLinkStore.fetchPendingCount();
 });
 
 // 按功能将菜单拆成三组：仪表盘、内容管理、系统设置。
@@ -42,6 +47,11 @@ const menuGroups = computed(() => [
       name: t("components.common.admin.AdminHeader.pages.emails"),
       icon: Mail,
       path: "/admin/emails",
+    },
+    {
+      name: t("components.common.admin.AdminHeader.pages.friend-links"),
+      icon: Link2,
+      path: "/admin/friend-links",
     },
   ],
   [
@@ -88,7 +98,9 @@ const isItemActive = (item: MenuItem) => {
             :isActive="isItemActive(item)"
             :isExpanded="isExpanded"
             :badge="
-              item.path === '/admin/emails' ? emailUnreadCount : undefined
+              item.path === '/admin/emails' ? emailUnreadCount
+              : item.path === '/admin/friend-links' ? friendLinkPendingCount
+              : undefined
             "
             @click="handleNavClick(item.path)"
           />
