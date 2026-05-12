@@ -30,3 +30,6 @@ export const DB_PATH = join(DATA_DIR, "sqlite.db");
  *  结构：posts/{post-uuid}/cover.webp（封面）、{cuid}.webp（行内图）
  */
 export const POST_UPLOADS_DIR = join(UPLOADS_DIR, "posts");
+
+/** 前端 SPA 构建产物目录，挂载在根路径 / 下（由 Docker build 阶段注入） */
+export const PUBLIC_DIR = join(process.cwd(), "public");

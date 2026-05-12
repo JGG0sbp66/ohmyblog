@@ -95,7 +95,18 @@ async function build(platform: Platform) {
 		);
 	}
 
-	// 5. 创建 README
+	// 5. 复制前端静态资源 (frontend-dist → distDir/public)
+	console.log(`   Copying frontend dist (public/)...`);
+	const frontendDistSrc = "frontend-dist";
+	if (existsSync(frontendDistSrc)) {
+		await cp(frontendDistSrc, join(distDir, "public"), { recursive: true });
+	} else {
+		console.warn(
+			`   ⚠️  frontend-dist not found, skipping public/ copy. Run frontend build first.`,
+		);
+	}
+
+	// 6. 创建 README
 	const readme = `# ohmyblog ${platform.toUpperCase()} Distribution
 
 ## 运行方式
@@ -113,6 +124,7 @@ async function build(platform: Platform) {
 - ${exeName} - 主程序
 - ${config.file} - 图片处理 native 模块 (必须在主程序同级目录)
 - db/drizzle/ - 数据库迁移文件
+- public/ - 前端 SPA 构建产物（可选，挂载在 / 下）
 - data/ - 运行时数据目录（自动创建）
   - .env - 环境变量配置
   - sqlite.db - SQLite 数据库
