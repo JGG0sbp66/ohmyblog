@@ -93,6 +93,7 @@ const handleSubmit = async () => {
           v-model="form.name"
           :label="t('views.main.friends.form.name')"
           :placeholder="t('views.main.friends.form.namePlaceholder')"
+          :schema="ApplyFriendLinkDTO.properties.name"
           required
         />
         <TipInput
@@ -101,6 +102,7 @@ const handleSubmit = async () => {
           :label="t('views.main.friends.form.url')"
           :placeholder="t('views.main.friends.form.urlPlaceholder')"
           type="url"
+          :schema="ApplyFriendLinkDTO.properties.url"
           required
         />
       </div>
@@ -112,11 +114,13 @@ const handleSubmit = async () => {
           :label="t('views.main.friends.form.avatarUrl')"
           :placeholder="t('views.main.friends.form.avatarUrlPlaceholder')"
           type="url"
+          :schema="ApplyFriendLinkDTO.properties.avatarUrl"
         />
         <TipInput
           v-model="form.description"
           :label="t('views.main.friends.form.description')"
           :placeholder="t('views.main.friends.form.descPlaceholder')"
+          :schema="ApplyFriendLinkDTO.properties.description"
         />
       </div>
 
@@ -136,6 +140,7 @@ const handleSubmit = async () => {
         :label="t('views.main.friends.form.email')"
         :placeholder="t('views.main.friends.form.emailPlaceholder')"
         type="email"
+        :schema="ApplyFriendLinkDTO.properties.applicantEmail"
         :hint="t('views.main.friends.form.emailHint')"
       />
     </form>

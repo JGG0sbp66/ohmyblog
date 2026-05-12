@@ -9,15 +9,22 @@ import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useToast } from "@/composables/toast.hook";
 import { upsertConfig } from "@/api/config.api";
+import { SiteInfoConfigUpsertDTO } from "@server/dtos/config.dto";
+import type { Validatable } from "@/composables/setup-step.hook";
 
 const { t } = useLang();
 const systemStore = useSystemStore();
 const isSubmitting = ref(false);
+const titleRef = ref<Validatable | null>(null);
+
+const titleSchema =
+  SiteInfoConfigUpsertDTO.properties.configValue.properties.title;
 
 /**
  * 保存基本设置
  */
 const handleSave = async () => {
+  if (!titleRef.value?.validate()) return;
   isSubmitting.value = true;
   try {
     await upsertConfig({
@@ -42,10 +49,13 @@ const handleSave = async () => {
     <div class="flex flex-col gap-8">
       <!-- 1. 站点标题 -->
       <TipInput
+        ref="titleRef"
         v-model="systemStore.siteInfo.title"
         :label="t('views.setup.steps.step2.siteTitle.label')"
         :placeholder="t('views.setup.steps.step2.siteTitle.placeholder')"
         :hint="t('views.setup.steps.step2.siteTitle.hint')"
+        :schema="titleSchema"
+        required
       />
 
       <!-- 2. 站点图标 -->
