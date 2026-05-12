@@ -115,6 +115,29 @@
         "postsCount": "posts",
         "untitled": "Untitled"
       },
+      "friends": {
+        "listTitle": "Friends",
+        "listEmpty": "No friend links yet. Be the first!",
+        "siteCount": "{count} sites",
+        "applyTitle": "Apply for a Friend Link",
+        "applyDesc": "Submit your site info and wait for review",
+        "form": {
+          "name": "Site Name",
+          "namePlaceholder": "My Blog",
+          "url": "Site URL",
+          "urlPlaceholder": "https://example.com",
+          "avatarUrl": "Site Avatar URL",
+          "avatarUrlPlaceholder": "https://example.com/avatar.png",
+          "description": "Site Description",
+          "descPlaceholder": "A short intro about your blog",
+          "tags": "Tags",
+          "tagsPlaceholder": "tech, life... press Enter or comma to add",
+          "email": "Contact Email (optional)",
+          "emailPlaceholder": "For review result notification",
+          "emailHint": "If provided, you will be notified when your application is reviewed",
+          "submit": "Submit"
+        }
+      },
       "hero": {
         "titleEditor": {
           "triggerText": "Edit Homepage Headline",
@@ -307,7 +330,8 @@
           "pendingFriendLinks": "Pending Links",
           "unreadEmails": "Unread Emails",
           "unitPosts": "posts",
-          "unitUnread": "to read"
+          "unitUnread": "to read",
+          "unitPending": "pending"
         },
         "quickNote": {
           "title": "Quick Note",
@@ -733,7 +757,8 @@
       "图片上传成功": "Image uploaded successfully",
       "邮件发送成功": "Email sent successfully",
       "若邮箱存在，验证码已发送，请注意查收": "If the email exists, a verification code has been sent",
-      "密码重置成功，请使用新密码登录": "Password reset successfully. Please sign in with your new password"
+      "密码重置成功，请使用新密码登录": "Password reset successfully. Please sign in with your new password",
+      "申请已提交，等待审核": "Application submitted, pending review"
     }
   }
 }

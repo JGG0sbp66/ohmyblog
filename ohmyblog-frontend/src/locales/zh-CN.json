@@ -115,6 +115,29 @@
         "postsCount": "篇",
         "untitled": "无标题"
       },
+      "friends": {
+        "listTitle": "友链",
+        "listEmpty": "暂无友链，成为第一个！",
+        "siteCount": "{count} 个站点",
+        "applyTitle": "申请友链",
+        "applyDesc": "填写你的站点信息，等待博主审核",
+        "form": {
+          "name": "站点名称",
+          "namePlaceholder": "My Blog",
+          "url": "站点地址",
+          "urlPlaceholder": "https://example.com",
+          "avatarUrl": "站点图标 URL",
+          "avatarUrlPlaceholder": "https://example.com/avatar.png",
+          "description": "站点简介",
+          "descPlaceholder": "一句话介绍你的博客",
+          "tags": "标签",
+          "tagsPlaceholder": "技术、生活... 按 Enter 或逗号添加",
+          "email": "联系邮箱（可选）",
+          "emailPlaceholder": "用于接收审批结果通知",
+          "emailHint": "填写后，审批通过或拒绝时会发邮件通知你",
+          "submit": "提交申请"
+        }
+      },
       "hero": {
         "titleEditor": {
           "triggerText": "编辑首页主副标题",
@@ -305,7 +328,8 @@
           "pendingFriendLinks": "待审友链",
           "unreadEmails": "未读邮件数",
           "unitPosts": "篇",
-          "unitUnread": "需阅读"
+          "unitUnread": "需阅读",
+          "unitPending": "待审核"
         },
         "quickNote": {
           "title": "灵感速记",
@@ -731,7 +755,8 @@
       "图片上传成功": "图片上传成功",
       "邮件发送成功": "邮件发送成功",
       "若邮箱存在，验证码已发送，请注意查收": "若邮箱存在，验证码已发送，请注意查收",
-      "密码重置成功，请使用新密码登录": "密码重置成功，请使用新密码登录"
+      "密码重置成功，请使用新密码登录": "密码重置成功，请使用新密码登录",
+      "申请已提交，等待审核": "申请已提交，等待审核"
     }
   }
 }
