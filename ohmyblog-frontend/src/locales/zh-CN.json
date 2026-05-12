@@ -133,7 +133,7 @@
           "descPlaceholder": "一句话介绍你的博客",
           "tags": "标签",
           "tagsPlaceholder": "技术、生活... 按 Enter 或逗号添加",
-          "email": "联系邮箱（可选）",
+          "email": "联系邮箱",
           "emailPlaceholder": "用于接收审批结果通知",
           "emailHint": "填写后，审批通过或拒绝时会发邮件通知你",
           "submit": "提交申请"
@@ -498,7 +498,7 @@
       },
       "reject": {
         "title": "拒绝友链申请",
-        "reasonLabel": "拒绝原因（可选）",
+        "reasonLabel": "拒绝原因",
         "reasonPlaceholder": "告知申请人拒绝原因...",
         "confirm": "确认拒绝",
         "cancel": "取消"

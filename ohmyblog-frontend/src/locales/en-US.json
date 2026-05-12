@@ -133,7 +133,7 @@
           "descPlaceholder": "A short intro about your blog",
           "tags": "Tags",
           "tagsPlaceholder": "tech, life... press Enter or comma to add",
-          "email": "Contact Email (optional)",
+          "email": "Contact Email",
           "emailPlaceholder": "For review result notification",
           "emailHint": "If provided, you will be notified when your application is reviewed",
           "submit": "Submit"
@@ -500,7 +500,7 @@
       },
       "reject": {
         "title": "Reject Friend Link",
-        "reasonLabel": "Reason (optional)",
+        "reasonLabel": "Reason",
         "reasonPlaceholder": "Let the applicant know why...",
         "confirm": "Confirm Reject",
         "cancel": "Cancel"
