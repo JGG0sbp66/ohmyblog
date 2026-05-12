@@ -20,6 +20,8 @@ const handleListClick = () => {
   router.push("/admin/posts");
 };
 
+const preloadEditor = () => import("@/views/admin/pages/posts/PostEditor.page.vue");
+
 const handleNewPost = async () => {
   if (creating.value) return;
   creating.value = true;
@@ -45,8 +47,10 @@ const handleNewPost = async () => {
     <ButtonSecondary
       :text="t('components.common.admin.PostsNav.nav.editor')"
       :isActive="activeId === 'editor'"
+      :loading="creating"
       :disabled="creating"
       class="h-11 px-4"
+      @mouseenter="preloadEditor"
       @click="handleNewPost"
     />
   </nav>

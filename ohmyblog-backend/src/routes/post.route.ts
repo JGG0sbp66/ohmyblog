@@ -151,13 +151,30 @@ export const postRoute = new Elysia({ name: "postRoute" })
 				},
 			)
 			/**
+			 * GET /public/posts/archive
+			 * 获取所有已发布文章的轻量列表（归档页时间轴专用）
+			 * 不分页，仅返回 title / slug / publishedAt / tags
+			 */
+			.get(
+				"/archive",
+				async () => {
+					const list = await postService.getArchiveList();
+					return { message: "获取成功", list };
+				},
+				{
+					detail: {
+						summary: "归档页文章列表（前台）(GET)",
+						description: "无需登录，返回所有已发布文章的轻量字段，用于归档页时间轴展示，不分页",
+					},
+				},
+			)
+			/**
 			 * GET /public/posts/:slug
 			 * 按 slug 获取单篇已发布文章（含 contentMarkdown，供前台渲染）
 			 */
 			.get(
 				"/:slug",
 				async ({ params: { slug } }) => {
-					// TODO: 在返回文章前自增 viewCount（postService.incrementViewCount(slug) 或类似实现）
 					const post = await postService.getBySlug(slug);
 					return { message: "获取成功", post };
 				},

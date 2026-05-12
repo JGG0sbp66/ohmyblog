@@ -27,9 +27,14 @@ const routes = [
         component: () => import("@/views/main/pages/Archive.page.vue"),
       },
       {
-        path: "about",
-        name: "about",
-        component: () => import("@/views/main/pages/About.page.vue"),
+        path: "friends",
+        name: "friends",
+        component: () => import("@/views/main/pages/Friends.page.vue"),
+      },
+      {
+        path: "posts/:slug",
+        name: "post",
+        component: () => import("@/views/main/pages/Post.page.vue"),
       },
     ],
   },
@@ -82,6 +87,11 @@ const routes = [
         component: () => import("@/views/admin/pages/Emails.page.vue"),
       },
       {
+        path: "friend-links",
+        name: "friend-links",
+        component: () => import("@/views/admin/pages/FriendLinks.page.vue"),
+      },
+      {
         path: "settings",
         name: "settings",
         component: () => import("@/views/admin/pages/Settings.page.vue"),
@@ -93,6 +103,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+  scrollBehavior: () => ({ top: 0 }),
 });
 
 /**

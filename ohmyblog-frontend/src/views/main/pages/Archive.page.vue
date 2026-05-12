@@ -1,11 +1,82 @@
 <!-- src/views/main/pages/Archive.page.vue -->
-<!-- TODO: 开发正式的归档页面，目前仅为占位符 -->
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { useLang } from "@/composables/lang.hook";
+import { getPublicPostArchive } from "@/api/post.api";
+import BaseCard from "@/components/base/card/BaseCard.vue";
+import EmptyState from "@/components/common/list/EmptyState.vue";
+import Loading from "@/components/common/item/Loading.vue";
+import ArchiveYearGroup from "../components/archive/ArchiveYearGroup.vue";
+
+const { t } = useLang();
+
+interface ArchivePost {
+  title: string;
+  slug: string | null;
+  publishedAt: Date | string | null;
+  tags: string[];
+}
+
+interface YearGroup {
+  year: number;
+  posts: ArchivePost[];
+}
+
+const loading = ref(false);
+const groups = ref<YearGroup[]>([]);
+
+onMounted(async () => {
+  loading.value = true;
+  try {
+    const data = await getPublicPostArchive();
+    if (!data?.list) return;
+
+    const grouped = (data.list as ArchivePost[]).reduce(
+      (acc, post) => {
+        const year = post.publishedAt
+          ? new Date(post.publishedAt).getFullYear()
+          : 0;
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(post);
+        return acc;
+      },
+      {} as Record<number, ArchivePost[]>,
+    );
+
+    groups.value = Object.entries(grouped)
+      .map(([year, posts]) => ({ year: Number(year), posts }))
+      .sort((a, b) => b.year - a.year);
+  } catch {
+  } finally {
+    loading.value = false;
+  }
+});
+</script>
 
 <template>
-  <div class="flex items-center justify-center min-h-[50vh] onload-animation">
-    <h1 class="text-4xl font-bold opacity-20 select-none">
-      这里是archive页面占位符，正在开发中
-    </h1>
+  <div class="onload-animation">
+    <!-- 空状态 -->
+    <EmptyState
+      v-if="!loading && groups.length === 0"
+      class="mt-32"
+      :text="t('views.main.archive.empty')"
+    />
+
+    <!-- 时间轴卡片 -->
+    <BaseCard v-else padding="sm">
+      <!-- 加载中 -->
+      <div v-if="loading" class="flex justify-center py-16">
+        <Loading size-class="w-6 h-6" color-class="text-fg-subtle" />
+      </div>
+
+      <template v-else>
+        <ArchiveYearGroup
+          v-for="group in groups"
+          :key="group.year"
+          :year="group.year"
+          :posts="group.posts"
+        />
+      </template>
+    </BaseCard>
   </div>
 </template>

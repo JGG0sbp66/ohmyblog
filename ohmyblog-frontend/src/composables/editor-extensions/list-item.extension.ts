@@ -1,5 +1,7 @@
 // src/composables/editor-extensions/list-item.extension.ts
 import ListItem from "@tiptap/extension-list-item";
+import { Plugin } from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
 
 /**
  * CustomListItem — 扩展 ListItem，支持列表项内包含标题节点
@@ -7,6 +9,17 @@ import ListItem from "@tiptap/extension-list-item";
  * - content 扩展为 "(paragraph | heading) block*"
  * - Enter：若在标题列表项内换行，延续相同标题级别；否则走默认 splitListItem
  * - Tab / Shift-Tab：保留原缩进/取消缩进快捷键
+ *
+ * //TODO(ordered-list-hover-menu):
+ * - 新增“有序列表 hover 高亮 + 点击弹出菜单”的交互：
+ *   - hover 到 orderedList / listItem 区域时，类似 link hover 的背景高亮
+ *   - 点击后弹出 DropButton 菜单（ButtonSecondary 风格 item，icon + text）
+ *   - 菜单项：
+ *     - 继续之前的编号（从上一段 orderedList 的末尾继续）
+ *     - 开始新列表（start=1）
+ *     - 修改编号值（设置 orderedList.attrs.start）
+ *   方向：ProseMirror Plugin + DecorationSet 计算 hover range；点击定位到对应 orderedList；
+ *   或者实现一个 NodeView/Overlay 组件承载交互层。
  */
 export const CustomListItem = ListItem.extend({
   content: "(paragraph | heading) block*",
@@ -73,5 +86,38 @@ export const CustomListItem = ListItem.extend({
       Tab: () => this.editor.commands.sinkListItem(this.name),
       "Shift-Tab": () => this.editor.commands.liftListItem(this.name),
     };
+  },
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        props: {
+          decorations(state) {
+            const decorations: Decoration[] = [];
+            state.doc.descendants((node, pos) => {
+              if (
+                node.type.name !== "bulletList" &&
+                node.type.name !== "orderedList"
+              ) {
+                return;
+              }
+              const $pos = state.doc.resolve(pos);
+              let depth = 0;
+              for (let d = 0; d <= $pos.depth; d++) {
+                if ($pos.node(d).type.name === node.type.name) depth++;
+              }
+              const attr =
+                node.type.name === "bulletList" ? "data-ul-mod" : "data-ol-mod";
+              decorations.push(
+                Decoration.node(pos, pos + node.nodeSize, {
+                  [attr]: String(depth % 3),
+                }),
+              );
+            });
+            return DecorationSet.create(state.doc, decorations);
+          },
+        },
+      }),
+    ];
   },
 });

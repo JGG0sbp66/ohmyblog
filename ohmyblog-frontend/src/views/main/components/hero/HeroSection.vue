@@ -1,6 +1,7 @@
 <!-- src/views/main/components/HeroSection.vue -->
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import { useSystemStore } from "@/stores/system.store";
 import { useAuthStore } from "@/stores/auth.store";
 import HeroImageEditor from "./editors/HeroImageEditor.vue";
@@ -8,8 +9,11 @@ import HeroTitleEditor from "./editors/HeroTitleEditor.vue";
 import HeroImageTransition from "./display/HeroImageTransition.vue";
 import HeroTitleDisplay from "./display/HeroTitleDisplay.vue";
 
+const route = useRoute();
 const systemStore = useSystemStore();
 const authStore = useAuthStore();
+
+const isHome = computed(() => route.name === "home");
 
 // Banner 动画控制 (声明式)
 const isBannerVisible = ref(false);
@@ -27,7 +31,10 @@ onMounted(() => {
   <section
     v-if="systemStore.personalInfo.hero"
     id="hero"
-    class="relative h-[65vh] w-full overflow-hidden onload-animation"
+    :class="[
+      'relative w-full overflow-hidden onload-animation transition-[height] duration-700 ease-in-out',
+      isHome ? 'h-[65vh]' : 'h-[40vh]',
+    ]"
   >
     <!-- 使用专用的 Hero 过渡组件 -->
     <HeroImageTransition

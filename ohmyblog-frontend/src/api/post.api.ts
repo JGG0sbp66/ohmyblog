@@ -2,7 +2,11 @@
 import { api, unwrap } from "./client";
 import type { TPostStatus } from "@server/db/constants/post.constants";
 import type { TPost } from "@server/db/table/post";
-import type { TSavePostDTO, TPostListQueryDTO } from "@server/dtos/post.dto";
+import type {
+  TSavePostDTO,
+  TPostListQueryDTO,
+  TPublicPostListQueryDTO,
+} from "@server/dtos/post.dto";
 
 /** 文章列表项（用于管理端列表展示） */
 export type PostListItem = Omit<TPost, "content" | "contentMarkdown">;
@@ -64,4 +68,30 @@ export const updatePostStatus = (uuid: string, status: TPostStatus) => {
  */
 export const permanentDeletePost = (uuid: string) => {
   return unwrap(api.api.posts({ uuid }).delete());
+};
+
+// ─── 前台公开接口（无需登录） ────────────────────────────────────────────────
+
+/**
+ * GET /api/public/posts
+ * 获取已发布文章列表（前台首页 / 归档页使用）
+ */
+export const getPublicPostList = (query?: TPublicPostListQueryDTO) => {
+  return unwrap(api.api.public.posts.get({ query }));
+};
+
+/**
+ * GET /api/public/posts/archive
+ * 获取所有已发布文章的轻量列表（归档页时间轴专用）
+ */
+export const getPublicPostArchive = () => {
+  return unwrap(api.api.public.posts.archive.get());
+};
+
+/**
+ * GET /api/public/posts/:slug
+ * 根据 slug 获取单篇已发布文章（含 contentMarkdown）
+ */
+export const getPublicPostBySlug = (slug: string) => {
+  return unwrap(api.api.public.posts({ slug }).get());
 };

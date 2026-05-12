@@ -1,4 +1,4 @@
-<!-- src/views/admin/components/posts/editor/content/menus/bubble/BubbleFormatSection.vue -->
+<!-- src/views/admin/components/posts/editor/content/menus/bubble/sections/BubbleFormatSection.vue -->
 <script setup lang="ts">
 import type { Editor } from "@tiptap/core";
 import { Bold, Italic, Strikethrough, Underline, Code } from "lucide-vue-next";

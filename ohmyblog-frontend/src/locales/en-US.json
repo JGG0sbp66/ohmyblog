@@ -6,7 +6,7 @@
           "nav": {
             "home": "Home",
             "archive": "Archive",
-            "about": "About"
+            "friends": "Friends"
           }
         }
       },
@@ -33,6 +33,7 @@
             "posts": "Posts",
             "post-edit": "Edit Post",
             "emails": "Emails",
+            "friend-links": "Friend Links",
             "settings": "Settings",
             "default": "Admin"
           },
@@ -72,6 +73,14 @@
         "BaseProgress": {
           "step": "Step {current}/{total}"
         }
+      },
+      "search": {
+        "HeaderSearch": {
+          "placeholder": "Search posts...",
+          "searching": "Searching...",
+          "noResults": "No posts found",
+          "untitled": "Untitled"
+        }
       }
     },
     "theme": {
@@ -87,6 +96,49 @@
   },
   "views": {
     "main": {
+      "home": {
+        "PostCard": {
+          "untitled": "New Post",
+          "words": "words",
+          "views": "reads",
+          "empty": "No posts yet"
+        }
+      },
+      "post": {
+        "back": "Back",
+        "notFound": "Post not found or has been removed",
+        "untitled": "Untitled",
+        "words": "words",
+        "views": "reads"
+      },
+      "archive": {
+        "empty": "No posts yet",
+        "postsCount": "posts",
+        "untitled": "Untitled"
+      },
+      "friends": {
+        "listTitle": "Friends",
+        "listEmpty": "No friend links yet. Be the first!",
+        "siteCount": "{count} sites",
+        "applyTitle": "Apply for a Friend Link",
+        "applyDesc": "Submit your site info and wait for review",
+        "form": {
+          "name": "Site Name",
+          "namePlaceholder": "My Blog",
+          "url": "Site URL",
+          "urlPlaceholder": "https://example.com",
+          "avatarUrl": "Site Avatar URL",
+          "avatarUrlPlaceholder": "https://example.com/avatar.png",
+          "description": "Site Description",
+          "descPlaceholder": "A short intro about your blog",
+          "tags": "Tags",
+          "tagsPlaceholder": "tech, life... press Enter or comma to add",
+          "email": "Contact Email",
+          "emailPlaceholder": "For review result notification",
+          "emailHint": "If provided, you will be notified when your application is reviewed",
+          "submit": "Submit"
+        }
+      },
       "hero": {
         "titleEditor": {
           "triggerText": "Edit Homepage Headline",
@@ -260,7 +312,7 @@
             "recipient": {
               "label": "Recipients",
               "hint": "Enter multiple addresses separated by commas (,), semicolons (;), or spaces. The list will sync automatically.",
-              "placeholder": "user1@example.com, user2@example.com"
+              "placeholder": "user1{'@'}example.com, user2{'@'}example.com"
             },
             "list": {
               "title": "Recipient List",
@@ -270,6 +322,27 @@
             "button": "Send Email",
             "noRecipient": "Please add at least one recipient"
           }
+        }
+      },
+      "Dashboard": {
+        "stats": {
+          "totalVisits": "Total Visits",
+          "publishedPosts": "Published Posts",
+          "pendingFriendLinks": "Pending Links",
+          "unreadEmails": "Unread Emails",
+          "unitPosts": "posts",
+          "unitUnread": "to read",
+          "unitPending": "pending"
+        },
+        "quickNote": {
+          "title": "Quick Note",
+          "description": "Jot down fleeting ideas",
+          "titleLabel": "Title",
+          "titleHint": "Give this note a short name",
+          "titlePlaceholder": "e.g. A new writing idea",
+          "contentLabel": "Content",
+          "contentPlaceholder": "Write your thoughts here...",
+          "save": "Save Draft"
         }
       },
       "PostEditor": {
@@ -295,6 +368,11 @@
             "label": "Status",
             "tooltip": "Control the visibility of your post. Drafts are only visible to you"
           },
+          "excerpt": {
+            "label": "Excerpt",
+            "tooltip": "Manually write a summary; if left empty, the system will auto-generate one from the post content",
+            "placeholder": "A brief description of this post…"
+          },
           "coverImage": {
             "label": "Cover Image",
             "tooltip": "Set the post cover image, displayed on listing and detail pages",
@@ -315,10 +393,13 @@
             "underline": "Underline (Ctrl/⌘+U)\nmarkdown:~text~ Space",
             "code": "Inline code (Ctrl/⌘+E)\nmarkdown:`code` Space",
             "paragraph": "Paragraph",
-            "orderedList": "Ordered list",
-            "bulletList": "Bullet list",
-            "codeBlock": "Code block",
-            "quote": "Blockquote",
+            "heading1": "Heading 1\nmarkdown:# Space",
+            "heading2": "Heading 2\nmarkdown:## Space",
+            "heading3": "Heading 3\nmarkdown:### Space",
+            "bulletList": "Bullet list\nmarkdown:- Space",
+            "orderedList": "Ordered list\nmarkdown:1. Space",
+            "codeBlock": "Code block\nmarkdown:``` Enter",
+            "quote": "Blockquote\nmarkdown:> Space",
             "alignLeft": "Align left",
             "alignCenter": "Align center",
             "alignRight": "Align right",
@@ -389,6 +470,42 @@
         "resend": "Didn't receive? Resend"
       }
     },
+    "friendLinks": {
+      "filters": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "detail": {
+        "emptyTitle": "No Link Selected",
+        "emptyDesc": "Select a friend link from the list to view details",
+        "description": "Description",
+        "tags": "Tags",
+        "applicantEmail": "Contact Email",
+        "rejectReason": "Reject Reason",
+        "appliedAt": "Applied At",
+        "joinedAt": "Joined At",
+        "preview": "Card Preview"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "delete": "Delete"
+      },
+      "reject": {
+        "title": "Reject Friend Link",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Let the applicant know why...",
+        "confirm": "Confirm Reject",
+        "cancel": "Cancel"
+      }
+    },
     "emails": {
       "title": "Email Management",
       "filters": {
@@ -399,7 +516,11 @@
       "types": {
         "smtp_test": "SMTP Test",
         "login_alert": "Login Alert",
-        "reset_password": "Password Reset"
+        "reset_password": "Password Reset",
+        "friend_link_apply": "Friend Link Application",
+        "friend_link_apply_confirmed": "Application Received",
+        "friend_link_approved": "Friend Link Approved",
+        "friend_link_rejected": "Friend Link Rejected"
       },
       "statuses": {
         "failed": "Failed"
@@ -410,7 +531,11 @@
       "body_preview": {
         "smtp_test": "SMTP connection test, sender: {senderEmail}",
         "login_alert": "Login detected from {location} (IP: {ip})",
-        "reset_password": "Password reset request from {location}, IP: {ip}, expires in {minutes} min"
+        "reset_password": "Password reset request from {location}, IP: {ip}, expires in {minutes} min",
+        "friend_link_apply": "New application: {name} ({url})",
+        "friend_link_apply_confirmed": "Application from {name} received, pending review",
+        "friend_link_approved": "Friend link approved: {name}",
+        "friend_link_rejected": "Friend link rejected: {name}"
       },
       "empty_selection_title": "No Message Selected",
       "empty_selection_desc": "Select a message from the list to view its details and content."
@@ -608,7 +733,8 @@
         "description_range": "Description must be under 255 characters"
       },
       "post": {
-        "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post"
+        "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post",
+        "excerpt_range": "Excerpt cannot exceed 500 characters"
       }
     },
     "next": "Next Step",
@@ -646,6 +772,9 @@
       "请上传 1MB 以内的有效图片": "Please upload a valid image under 1MB.",
       "请上传 5MB 以内的有效图片": "Please upload a valid image under 5MB.",
       "请上传 2MB 以内的有效图片": "Please upload a valid image under 2MB.",
+      "请上传 100MB 以内的有效图片": "Please upload a valid image under 100MB.",
+      "\"body.image\" has invalid file type": "Invalid file type. Please upload an image file.",
+      "文章行内图处理失败，请重试": "Failed to process the image. Please try again.",
       "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP connection failed: Invalid username",
       "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP connection failed: Authentication credentials (password or auth code) invalid",
       "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP connection failed: Hostname not found (DNS error)",
@@ -673,7 +802,12 @@
       "图片上传成功": "Image uploaded successfully",
       "邮件发送成功": "Email sent successfully",
       "若邮箱存在，验证码已发送，请注意查收": "If the email exists, a verification code has been sent",
-      "密码重置成功，请使用新密码登录": "Password reset successfully. Please sign in with your new password"
+      "密码重置成功，请使用新密码登录": "Password reset successfully. Please sign in with your new password",
+      "申请已提交，等待审核": "Application submitted, pending review",
+      "已通过": "Approved",
+      "已拒绝": "Rejected",
+      "删除成功": "Deleted successfully",
+      "更新成功": "Updated successfully"
     }
   }
 }

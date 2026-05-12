@@ -1,4 +1,4 @@
-<!-- src/views/admin/components/posts/editor/content/menus/bubble/BubbleBlockSection.vue -->
+<!-- src/views/admin/components/posts/editor/content/menus/bubble/sections/BubbleBlockSection.vue -->
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Editor } from "@tiptap/core";

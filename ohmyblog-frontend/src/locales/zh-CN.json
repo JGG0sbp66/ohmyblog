@@ -6,7 +6,7 @@
           "nav": {
             "home": "首页",
             "archive": "归档",
-            "about": "关于"
+            "friends": "友链"
           }
         }
       },
@@ -33,6 +33,7 @@
             "posts": "文章管理",
             "post-edit": "文章编辑",
             "emails": "邮件管理",
+            "friend-links": "友链审批",
             "settings": "系统设置",
             "default": "管理后台"
           },
@@ -72,6 +73,14 @@
         "BaseProgress": {
           "step": "第 {current}/{total} 步"
         }
+      },
+      "search": {
+        "HeaderSearch": {
+          "placeholder": "搜索文章...",
+          "searching": "搜索中...",
+          "noResults": "未找到相关文章",
+          "untitled": "无标题"
+        }
       }
     },
     "theme": {
@@ -87,6 +96,49 @@
   },
   "views": {
     "main": {
+      "home": {
+        "PostCard": {
+          "untitled": "新文章",
+          "words": "字",
+          "views": "阅读",
+          "empty": "暂无文章"
+        }
+      },
+      "post": {
+        "back": "返回",
+        "notFound": "文章不存在或已被删除",
+        "untitled": "无标题",
+        "words": "字",
+        "views": "阅读"
+      },
+      "archive": {
+        "empty": "暂无文章",
+        "postsCount": "篇",
+        "untitled": "无标题"
+      },
+      "friends": {
+        "listTitle": "友链",
+        "listEmpty": "暂无友链，成为第一个！",
+        "siteCount": "{count} 个站点",
+        "applyTitle": "申请友链",
+        "applyDesc": "填写你的站点信息，等待博主审核",
+        "form": {
+          "name": "站点名称",
+          "namePlaceholder": "My Blog",
+          "url": "站点地址",
+          "urlPlaceholder": "https://example.com",
+          "avatarUrl": "站点图标 URL",
+          "avatarUrlPlaceholder": "https://example.com/avatar.png",
+          "description": "站点简介",
+          "descPlaceholder": "一句话介绍你的博客",
+          "tags": "标签",
+          "tagsPlaceholder": "技术、生活... 按 Enter 或逗号添加",
+          "email": "联系邮箱",
+          "emailPlaceholder": "用于接收审批结果通知",
+          "emailHint": "填写后，审批通过或拒绝时会发邮件通知你",
+          "submit": "提交申请"
+        }
+      },
       "hero": {
         "titleEditor": {
           "triggerText": "编辑首页主副标题",
@@ -258,7 +310,7 @@
             "recipient": {
               "label": "收件人",
               "hint": "支持同时输入多个邮箱地址，使用英文逗号（,）、分号（;）或空格分隔，列表将自动同步",
-              "placeholder": "user1@example.com, user2@example.com"
+              "placeholder": "user1{'@'}example.com, user2{'@'}example.com"
             },
             "list": {
               "title": "收件人列表",
@@ -268,6 +320,27 @@
             "button": "发送邮件",
             "noRecipient": "请添加至少一位收件人"
           }
+        }
+      },
+      "Dashboard": {
+        "stats": {
+          "totalVisits": "总访问量",
+          "publishedPosts": "已发布文章数",
+          "pendingFriendLinks": "待审友链",
+          "unreadEmails": "未读邮件数",
+          "unitPosts": "篇",
+          "unitUnread": "需阅读",
+          "unitPending": "待审核"
+        },
+        "quickNote": {
+          "title": "灵感速记",
+          "description": "快速记录一闪而过的想法",
+          "titleLabel": "标题",
+          "titleHint": "给这条灵感起个名字",
+          "titlePlaceholder": "比如：一个新的写作点子",
+          "contentLabel": "正文",
+          "contentPlaceholder": "把你的灵感写下来...",
+          "save": "保存草稿"
         }
       },
       "PostEditor": {
@@ -293,6 +366,11 @@
             "label": "文章状态",
             "tooltip": "控制文章的可见性，草稿仅自己可见"
           },
+          "excerpt": {
+            "label": "文章摘要",
+            "tooltip": "手动填写摘要，未填则由系统自动截取正文前段",
+            "placeholder": "简短介绍这篇文章的内容…"
+          },
           "coverImage": {
             "label": "封面图",
             "tooltip": "设置文章封面图，将在列表与详情页展示",
@@ -313,10 +391,13 @@
             "underline": "下划线 (Ctrl/⌘+U)\nmarkdown:~文本~ 空格",
             "code": "行内代码 (Ctrl/⌘+E)\nmarkdown:`文本` 空格",
             "paragraph": "正文",
-            "orderedList": "有序列表",
-            "bulletList": "无序列表",
-            "codeBlock": "代码块",
-            "quote": "引用",
+            "heading1": "一级标题\nmarkdown:# 空格",
+            "heading2": "二级标题\nmarkdown:## 空格",
+            "heading3": "三级标题\nmarkdown:### 空格",
+            "bulletList": "无序列表\nmarkdown:- 空格",
+            "orderedList": "有序列表\nmarkdown:1. 空格",
+            "codeBlock": "代码块\nmarkdown:``` 换行",
+            "quote": "引用\nmarkdown:> 空格",
             "alignLeft": "左对齐",
             "alignCenter": "居中对齐",
             "alignRight": "右对齐",
@@ -387,6 +468,42 @@
         "resend": "没收到？重新发送"
       }
     },
+    "friendLinks": {
+      "filters": {
+        "all": "全部",
+        "pending": "待审批",
+        "approved": "已通过",
+        "rejected": "已拒绝"
+      },
+      "status": {
+        "pending": "待审批",
+        "approved": "已通过",
+        "rejected": "已拒绝"
+      },
+      "detail": {
+        "emptyTitle": "未选中友链",
+        "emptyDesc": "请从左侧列表中选择一条友链查看详情",
+        "description": "站点简介",
+        "tags": "标签",
+        "applicantEmail": "联系邮箱",
+        "rejectReason": "拒绝原因",
+        "appliedAt": "申请时间",
+        "joinedAt": "入驻时间",
+        "preview": "前台预览"
+      },
+      "actions": {
+        "approve": "通过",
+        "reject": "拒绝",
+        "delete": "删除"
+      },
+      "reject": {
+        "title": "拒绝友链申请",
+        "reasonLabel": "拒绝原因",
+        "reasonPlaceholder": "告知申请人拒绝原因...",
+        "confirm": "确认拒绝",
+        "cancel": "取消"
+      }
+    },
     "emails": {
       "title": "邮件管理",
       "filters": {
@@ -397,7 +514,11 @@
       "types": {
         "smtp_test": "SMTP 测试",
         "login_alert": "异地登录提醒",
-        "reset_password": "密码重置"
+        "reset_password": "密码重置",
+        "friend_link_apply": "友链申请通知",
+        "friend_link_apply_confirmed": "申请接收确认",
+        "friend_link_approved": "友链审批通过",
+        "friend_link_rejected": "友链审批拒绝"
       },
       "statuses": {
         "failed": "失败"
@@ -408,7 +529,11 @@
       "body_preview": {
         "smtp_test": "SMTP 连接测试，发件人: {senderEmail}",
         "login_alert": "检测到来自 {location} 的登录 (IP: {ip})",
-        "reset_password": "密码重置请求，来自 {location}，IP: {ip}，有效期 {minutes} 分钟"
+        "reset_password": "密码重置请求，来自 {location}，IP: {ip}，有效期 {minutes} 分钟",
+        "friend_link_apply": "新友链申请：{name}（{url}）",
+        "friend_link_apply_confirmed": "已收到 {name} 的友链申请，等待审核",
+        "friend_link_approved": "友链审批通过：{name}",
+        "friend_link_rejected": "友链审批拒绝：{name}"
       },
       "empty_selection_title": "未选中邮件",
       "empty_selection_desc": "请从左侧列表中选择一封邮件来查看其详细内容。"
@@ -606,7 +731,8 @@
         "description_range": "配置描述长度不能超过255个字符"
       },
       "post": {
-        "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post"
+        "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post",
+        "excerpt_range": "摘要不能超过 500 字"
       }
     },
     "next": "下一步",
@@ -644,6 +770,9 @@
       "请上传 1MB 以内的有效图片": "请上传 1MB 以内的有效图片",
       "请上传 5MB 以内的有效图片": "请上传 5MB 以内的有效图片",
       "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片",
+      "请上传 100MB 以内的有效图片": "请上传 100MB 以内的有效图片",
+      "\"body.image\" has invalid file type": "文章图片格式不支持，请上传图片文件",
+      "文章行内图处理失败，请重试": "图片处理失败，请重试",
       "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP 连接失败：用户名无效",
       "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP 连接失败：认证凭据（密码或授权码）无效",
       "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP 连接失败：无法解析服务器地址 (DNS 错误)",
@@ -671,7 +800,12 @@
       "图片上传成功": "图片上传成功",
       "邮件发送成功": "邮件发送成功",
       "若邮箱存在，验证码已发送，请注意查收": "若邮箱存在，验证码已发送，请注意查收",
-      "密码重置成功，请使用新密码登录": "密码重置成功，请使用新密码登录"
+      "密码重置成功，请使用新密码登录": "密码重置成功，请使用新密码登录",
+      "申请已提交，等待审核": "申请已提交，等待审核",
+      "已通过": "已通过",
+      "已拒绝": "已拒绝",
+      "删除成功": "删除成功",
+      "更新成功": "更新成功"
     }
   }
 }

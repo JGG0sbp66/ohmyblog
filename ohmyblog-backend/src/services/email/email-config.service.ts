@@ -70,6 +70,15 @@ class EmailConfigService {
 	}
 
 	/**
+	 * 获取管理员邮箱（用于系统通知）
+	 * @returns 管理员邮箱，若未找到返回 null
+	 */
+	async getAdminEmailAddress(): Promise<string | null> {
+		const admin = await userDao.findAdmin();
+		return admin?.email ?? null;
+	}
+
+	/**
 	 * 获取指定用户的最后登录 IP
 	 * @param uuid 用户唯一标识
 	 * @returns 最后登录 IP，若不存在则返回 null

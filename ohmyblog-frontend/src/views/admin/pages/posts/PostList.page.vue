@@ -17,7 +17,14 @@ const activeFilter = ref<PostStatusFilter>(null);
 const searchQuery = ref("");
 const pageSize = 10;
 
-const counts = ref({ all: 0, draft: 0, published: 0, archived: 0, deleted: 0 });
+const counts = ref<{
+  all?: number;
+  draft?: number;
+  published?: number;
+  archived?: number;
+  deleted?: number;
+  totalViews?: number;
+}>({ all: 0, draft: 0, published: 0, archived: 0, deleted: 0 });
 const posts = ref<PostListItem[]>([]);
 const total = ref(0);
 const page = ref(1);
@@ -79,12 +86,20 @@ onMounted(() => {
   fetchCounts();
   fetchList();
 });
+
+/** 供父组件触发手动刷新（如新增草稿后） */
+defineExpose({
+  refresh: () => {
+    fetchCounts();
+    fetchList();
+  },
+});
 </script>
 
 <template>
-  <BaseCard padding="none" class="flex-1 flex flex-col overflow-hidden">
+  <BaseCard padding="none" class="flex-1 flex flex-col overflow-hidden onload-animation">
     <!-- 操作区域 -->
-    <PageToolbar>
+    <PageToolbar class="onload-animation anim-delay-100">
       <template #left>
         <!-- 分类过滤 -->
         <PostListFilter v-model="activeFilter" :counts="counts" />
@@ -120,6 +135,7 @@ onMounted(() => {
     </PageToolbar>
 
     <PostListTable
+      class="onload-animation anim-delay-150"
       :posts="posts"
       :loading="loading"
       :total="total"

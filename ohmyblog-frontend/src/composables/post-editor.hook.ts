@@ -1,10 +1,12 @@
 // src/composables/post-editor.hook.ts
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import { watchDebounced } from "@vueuse/core";
 import limax from "limax";
 import type { TPostStatus } from "@server/db/constants/post.constants";
 import { getPostById, savePost, updatePostStatus } from "@/api/post.api";
 import { useToast } from "@/composables/toast.hook";
+import { useLang } from "@/composables/lang.hook";
 
 /**
  * usePostEditor — 文章编辑器状态 & 保存逻辑
@@ -19,6 +21,7 @@ import { useToast } from "@/composables/toast.hook";
 export const usePostEditor = () => {
   const route = useRoute();
   const uuid = route.params.uuid as string;
+  const { t } = useLang();
 
   // --- 表单状态 ---
   const slug = ref("");
@@ -29,8 +32,7 @@ export const usePostEditor = () => {
   const contentMarkdown = ref("");
   const contentText = ref("");
   const coverImage = ref<string | null>(null);
-  // TODO: 以下字段待对应设置项开发完成后接入
-  // const excerpt = ref("");
+  const excerpt = ref("");
 
   // --- UI 状态 ---
   const isSaving = ref(false);
@@ -51,13 +53,14 @@ export const usePostEditor = () => {
       title.value = post.title ?? "";
       content.value = (post.content as object) ?? undefined;
       coverImage.value = post.coverImage ?? null;
+      excerpt.value = post.excerpt ?? "";
     } catch {
       useToast.error("加载文章失败");
     } finally {
       isLoading.value = false;
       // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
       // deep: true — 捕获 tags 数组的 push/splice 就地变更（浅监听感知不到引用未变的数组修改）
-      watch([slug, tags, status, title, content], () => {
+      watch([slug, tags, status, title, content, excerpt], () => {
         isDirty.value = true;
       }, { deep: true });
       // 标题变化时自动同步 slug：
@@ -70,9 +73,39 @@ export const usePostEditor = () => {
           slug.value = lastAutoSlug;
         }
       });
-      // TODO: 接入 Markdown 编辑器后，对 title/content 加防抖自动保存：
-      // watchDebounced([title, content], save, { debounce: 2000 })
-      // 参考：@vueuse/core watchDebounced
+      // title/content 防抖自动保存
+      watchDebounced(
+        [title, content, contentMarkdown, contentText, coverImage, excerpt, tags, slug],
+        () => {
+          if (!isDirty.value) return;
+          autoSave();
+        },
+        { debounce: 2000, maxWait: 8000, deep: true },
+      );
+    }
+  };
+
+  const buildSavePayload = () => ({
+    slug: slug.value || undefined,
+    tags: tags.value,
+    title: title.value || undefined,
+    content: content.value,
+    contentMarkdown: contentMarkdown.value || undefined,
+    contentText: contentText.value || undefined,
+    coverImage: coverImage.value ?? undefined,
+    excerpt: excerpt.value || undefined,
+  });
+
+  const autoSave = async () => {
+    if (isSaving.value) return;
+    isSaving.value = true;
+    try {
+      await savePost(uuid, buildSavePayload());
+      isDirty.value = false;
+    } catch (error: any) {
+      useToast.error(t(`common.validation.${error}`));
+    } finally {
+      isSaving.value = false;
     }
   };
 
@@ -88,22 +121,13 @@ export const usePostEditor = () => {
     isSaving.value = true;
     try {
       await Promise.all([
-        savePost(uuid, {
-          slug: slug.value || undefined,
-          tags: tags.value,
-          title: title.value || undefined,
-          content: content.value,
-          contentMarkdown: contentMarkdown.value || undefined,
-          contentText: contentText.value || undefined,
-          coverImage: coverImage.value ?? undefined,
-          // TODO: excerpt: excerpt.value || undefined,
-        }),
+        savePost(uuid, buildSavePayload()),
         updatePostStatus(uuid, status.value),
       ]);
       isDirty.value = false;
-      useToast.success("保存成功");
-    } catch (e) {
-      useToast.error(typeof e === "string" ? e : "保存失败，请重试");
+      useToast.success(t("api.success.保存成功"));
+    } catch (error: any) {
+      useToast.error(t(`common.validation.${error}`));
     } finally {
       isSaving.value = false;
     }
@@ -121,6 +145,7 @@ export const usePostEditor = () => {
     contentMarkdown,
     contentText,
     coverImage,
+    excerpt,
     isSaving,
     isLoading,
     isDirty,

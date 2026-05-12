@@ -1,5 +1,5 @@
 // src/daos/post.dao.ts
-import { and, count, desc, eq, like, ne, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, like, ne, or, sql, sum } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { post } from "../../db/schema";
 import type { TPostListQueryDTO } from "../dtos/post.dto";
@@ -102,29 +102,30 @@ class PostDao {
 	// ─── 读者 · 单条 ────────────────────────────────────────────────────────────
 
 	/**
-	 * 【读者 · 单条】根据 slug 获取单篇文章，含 contentMarkdown
-	 * 读者打开 /posts/my-slug 时调用，只返回已发布的文章，未发布则视为不存在
-	 * 返回 contentMarkdown 而非 JSON，由前端用 markdown-it 等库渲染
+	 * 【读者 · 单条 + 自增】根据 slug 获取单篇已发布文章，并原子性地自增 viewCount
+	 * 使用 UPDATE ... RETURNING 单次查询完成，避免先 SELECT 再 UPDATE 的竞态
 	 * @param slug URL 中的文章标识
-	 * @returns 文章记录或 null
+	 * @returns 自增后的文章记录或 null
 	 */
-	async findBySlug(slug: string) {
+	async findBySlugAndIncrementView(slug: string) {
 		const result = await db
-			.select({
+			.update(post)
+			.set({ viewCount: sql`${post.viewCount} + 1` })
+			.where(and(eq(post.slug, slug), eq(post.status, "published")))
+			.returning({
 				uuid: post.uuid,
 				title: post.title,
 				contentMarkdown: post.contentMarkdown,
+				contentText: post.contentText,
 				coverImage: post.coverImage,
 				tags: post.tags,
 				slug: post.slug,
 				excerpt: post.excerpt,
+				viewCount: post.viewCount,
 				publishedAt: post.publishedAt,
 				createdAt: post.createdAt,
 				updatedAt: post.updatedAt,
-			})
-			.from(post)
-			.where(and(eq(post.slug, slug), eq(post.status, "published")))
-			.limit(1);
+			});
 		return result[0] || null;
 	}
 
@@ -156,17 +157,17 @@ class PostDao {
 	 * @returns { list, total }
 	 */
 	async findPublished(
-		options: Pick<TPostListQueryDTO, "page" | "pageSize" | "search"> = {},
+		options: { page?: number; pageSize?: number; keyword?: string } = {},
 	) {
-		const { page, pageSize, search } = options as Required<TPostListQueryDTO>;
+		const { page = 1, pageSize = 20, keyword } = options;
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [eq(post.status, "published")];
-		if (search) {
+		if (keyword) {
 			conditions.push(
 				or(
-					like(post.title, `%${search}%`),
-					like(post.contentText, `%${search}%`),
+					like(post.title, `%${keyword}%`),
+					like(post.contentText, `%${keyword}%`),
 				) as ReturnType<typeof eq>,
 			);
 		}
@@ -187,8 +188,26 @@ class PostDao {
 	}
 
 	/**
-	 * 一次查询获取各状态的文章数量（用于列表页 filter badge）
-	 * @returns { all, draft, published, archived, deleted }
+	 * 【读者 · 归档页】获取所有已发布文章的轻量列表，不分页
+	 * 仅返回归档页时间轴所需的最小字段集合：title / slug / publishedAt / tags
+	 * @returns 按发布时间倒序排列的文章数组
+	 */
+	async findAllPublishedForArchive() {
+		return db
+			.select({
+				title: post.title,
+				slug: post.slug,
+				publishedAt: post.publishedAt,
+				tags: post.tags,
+			})
+			.from(post)
+			.where(eq(post.status, "published"))
+			.orderBy(desc(post.publishedAt));
+	}
+
+	/**
+	 * 一次查询获取各状态的文章数量与总访问量（用于列表页 filter badge / 仪表盘统计）
+	 * @returns { all, draft, published, archived, deleted, totalViews }
 	 */
 	async countByStatus() {
 		const result = await db
@@ -200,9 +219,13 @@ class PostDao {
 				),
 				archived: count(sql`CASE WHEN ${post.status} = 'archived' THEN 1 END`),
 				deleted: count(sql`CASE WHEN ${post.status} = 'deleted' THEN 1 END`),
+				totalViews: sum(post.viewCount),
 			})
 			.from(post);
-		return result[0];
+		return {
+			...result[0],
+			totalViews: Number(result[0].totalViews ?? 0),
+		};
 	}
 
 	/**

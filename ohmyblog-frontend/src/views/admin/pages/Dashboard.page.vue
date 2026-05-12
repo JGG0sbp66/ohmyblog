@@ -1,29 +1,22 @@
 <!-- src/views/admin/pages/Dashboard.page.vue -->
 <script setup lang="ts">
-/**
- * // TODO: 后台管理仪表盘（开发中）
- * 目前仅作为占位页面，提供返回首页的简单跳转
- */
-import { useRouter } from "vue-router";
+import { ref } from "vue";
+import DashboardStatsRow from "@/views/admin/components/dashboard/stats/DashboardStatsRow.vue";
+import RecentPostsCard from "@/views/admin/components/dashboard/cards/RecentPostsCard.vue";
+import QuickNoteCard from "@/views/admin/components/dashboard/cards/QuickNoteCard.vue";
 
-const router = useRouter();
-
-// 返回前台首页
-const goHome = () => router.push("/");
+const recentPostsRef = ref<InstanceType<typeof RecentPostsCard> | null>(null);
 </script>
 
 <template>
-  <div
-    class="flex flex-col items-center justify-center min-h-[50vh] gap-4 onload-animation"
-  >
-    <h1 class="text-2xl font-bold">这里是后台管理页面</h1>
-    <p class="text-gray-500 italic">功能正在开发中...</p>
+  <div class="flex-1 flex flex-col gap-6 onload-animation min-h-0">
+    <!-- 上半区域：统计卡片 -->
+    <DashboardStatsRow />
 
-    <button
-      @click="goHome"
-      class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm"
-    >
-      返回首页
-    </button>
+    <!-- 下半区域：文章(宽) + 灵感速记(窄，固定高度) -->
+    <div class="flex-1 flex flex-col md:flex-row gap-6 items-start onload-animation anim-delay-200 min-h-0">
+      <RecentPostsCard ref="recentPostsRef" class="md:flex-2 self-stretch min-h-0" />
+      <QuickNoteCard class="md:flex-1" @saved="recentPostsRef?.refresh()" />
+    </div>
   </div>
 </template>

@@ -12,11 +12,11 @@ import {
 export type PostStatusFilter = TPostStatus | null;
 
 interface CountMap {
-  all: number;
-  draft: number;
-  published: number;
-  archived: number;
-  deleted: number;
+  all?: number;
+  draft?: number;
+  published?: number;
+  archived?: number;
+  deleted?: number;
 }
 
 const props = defineProps<{
@@ -34,27 +34,27 @@ const items = computed(() => [
   {
     key: null as PostStatusFilter,
     label: t("views.admin.Posts.filter.all"),
-    count: props.counts.all,
+    count: props.counts.all ?? 0,
   },
   {
     key: "published" as PostStatusFilter,
     label: t(POST_STATUS_LABEL_KEYS.published),
-    count: props.counts.published,
+    count: props.counts.published ?? 0,
   },
   {
     key: "draft" as PostStatusFilter,
     label: t(POST_STATUS_LABEL_KEYS.draft),
-    count: props.counts.draft,
+    count: props.counts.draft ?? 0,
   },
   {
     key: "archived" as PostStatusFilter,
     label: t(POST_STATUS_LABEL_KEYS.archived),
-    count: props.counts.archived,
+    count: props.counts.archived ?? 0,
   },
   {
     key: "deleted" as PostStatusFilter,
     label: t(POST_STATUS_LABEL_KEYS.deleted),
-    count: props.counts.deleted,
+    count: props.counts.deleted ?? 0,
   },
 ]);
 

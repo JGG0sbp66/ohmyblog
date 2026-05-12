@@ -59,6 +59,19 @@ class UserDao {
 	}
 
 	/**
+	 * 查找第一个管理员用户（用于系统通知邮件等场景）
+	 * @returns 管理员用户记录或 null
+	 */
+	async findAdmin() {
+		const result = await db
+			.select()
+			.from(user)
+			.where(eq(user.role, "admin"))
+			.limit(1);
+		return result[0] || null;
+	}
+
+	/**
 	 * 检查是否存在管理员用户
 	 * @returns 是否已存在至少一个管理员
 	 */

@@ -1,7 +1,7 @@
 // src/services/post.service.ts
 import type { TPostStatus } from "../../db/constants/post.constants";
 import { postDao } from "../daos/post.dao";
-import type { TPostListQueryDTO, TSavePostDTO } from "../dtos/post.dto";
+import type { TPostListQueryDTO, TPublicPostListQueryDTO, TSavePostDTO } from "../dtos/post.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 
@@ -32,8 +32,8 @@ class PostService {
 	}
 
 	/**
-	 * 获取各状态文章数量（用于列表页 filter badge 显示）
-	 * @returns { all, draft, published, archived, deleted }
+	 * 获取各状态文章数量与总访问量（用于列表页 filter badge / 仪表盘统计）
+	 * @returns { all, draft, published, archived, deleted, totalViews }
 	 */
 	async getCounts() {
 		return postDao.countByStatus();
@@ -61,8 +61,16 @@ class PostService {
 	 * @param options 分页参数
 	 * @returns { list, total }
 	 */
-	async getPublishedList(options: TPostListQueryDTO = {}) {
+	async getPublishedList(options: TPublicPostListQueryDTO = {}) {
 		return postDao.findPublished(options);
+	}
+
+	/**
+	 * 获取所有已发布文章的轻量列表（归档页专用）
+	 * @returns 按发布时间倒序排列的文章数组
+	 */
+	async getArchiveList() {
+		return postDao.findAllPublishedForArchive();
 	}
 
 	// ─── 读者 · 单条 ────────────────────────────────────────────────────────────
@@ -73,7 +81,7 @@ class PostService {
 	 * @returns 文章记录（含 contentMarkdown）
 	 */
 	async getBySlug(slug: string) {
-		const post = await postDao.findBySlug(slug);
+		const post = await postDao.findBySlugAndIncrementView(slug);
 		if (!post) {
 			throw new BusinessError("文章不存在", { status: 404 });
 		}
