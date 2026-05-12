@@ -33,6 +33,7 @@
             "posts": "文章管理",
             "post-edit": "文章编辑",
             "emails": "邮件管理",
+            "friend-links": "友链审批",
             "settings": "系统设置",
             "default": "管理后台"
           },
@@ -467,6 +468,42 @@
         "resend": "没收到？重新发送"
       }
     },
+    "friendLinks": {
+      "filters": {
+        "all": "全部",
+        "pending": "待审批",
+        "approved": "已通过",
+        "rejected": "已拒绝"
+      },
+      "status": {
+        "pending": "待审批",
+        "approved": "已通过",
+        "rejected": "已拒绝"
+      },
+      "detail": {
+        "emptyTitle": "未选中友链",
+        "emptyDesc": "请从左侧列表中选择一条友链查看详情",
+        "description": "站点简介",
+        "tags": "标签",
+        "applicantEmail": "联系邮箱",
+        "rejectReason": "拒绝原因",
+        "appliedAt": "申请时间",
+        "joinedAt": "入驻时间",
+        "preview": "前台预览"
+      },
+      "actions": {
+        "approve": "通过",
+        "reject": "拒绝",
+        "delete": "删除"
+      },
+      "reject": {
+        "title": "拒绝友链申请",
+        "reasonLabel": "拒绝原因（可选）",
+        "reasonPlaceholder": "告知申请人拒绝原因...",
+        "confirm": "确认拒绝",
+        "cancel": "取消"
+      }
+    },
     "emails": {
       "title": "邮件管理",
       "filters": {
@@ -477,7 +514,11 @@
       "types": {
         "smtp_test": "SMTP 测试",
         "login_alert": "异地登录提醒",
-        "reset_password": "密码重置"
+        "reset_password": "密码重置",
+        "friend_link_apply": "友链申请通知",
+        "friend_link_apply_confirmed": "申请接收确认",
+        "friend_link_approved": "友链审批通过",
+        "friend_link_rejected": "友链审批拒绝"
       },
       "statuses": {
         "failed": "失败"
@@ -488,7 +529,11 @@
       "body_preview": {
         "smtp_test": "SMTP 连接测试，发件人: {senderEmail}",
         "login_alert": "检测到来自 {location} 的登录 (IP: {ip})",
-        "reset_password": "密码重置请求，来自 {location}，IP: {ip}，有效期 {minutes} 分钟"
+        "reset_password": "密码重置请求，来自 {location}，IP: {ip}，有效期 {minutes} 分钟",
+        "friend_link_apply": "新友链申请：{name}（{url}）",
+        "friend_link_apply_confirmed": "已收到 {name} 的友链申请，等待审核",
+        "friend_link_approved": "友链审批通过：{name}",
+        "friend_link_rejected": "友链审批拒绝：{name}"
       },
       "empty_selection_title": "未选中邮件",
       "empty_selection_desc": "请从左侧列表中选择一封邮件来查看其详细内容。"
@@ -756,7 +801,11 @@
       "邮件发送成功": "邮件发送成功",
       "若邮箱存在，验证码已发送，请注意查收": "若邮箱存在，验证码已发送，请注意查收",
       "密码重置成功，请使用新密码登录": "密码重置成功，请使用新密码登录",
-      "申请已提交，等待审核": "申请已提交，等待审核"
+      "申请已提交，等待审核": "申请已提交，等待审核",
+      "已通过": "已通过",
+      "已拒绝": "已拒绝",
+      "删除成功": "删除成功",
+      "更新成功": "更新成功"
     }
   }
 }

@@ -33,6 +33,7 @@
             "posts": "Posts",
             "post-edit": "Edit Post",
             "emails": "Emails",
+            "friend-links": "Friend Links",
             "settings": "Settings",
             "default": "Admin"
           },
@@ -469,6 +470,42 @@
         "resend": "Didn't receive? Resend"
       }
     },
+    "friendLinks": {
+      "filters": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "detail": {
+        "emptyTitle": "No Link Selected",
+        "emptyDesc": "Select a friend link from the list to view details",
+        "description": "Description",
+        "tags": "Tags",
+        "applicantEmail": "Contact Email",
+        "rejectReason": "Reject Reason",
+        "appliedAt": "Applied At",
+        "joinedAt": "Joined At",
+        "preview": "Card Preview"
+      },
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject",
+        "delete": "Delete"
+      },
+      "reject": {
+        "title": "Reject Friend Link",
+        "reasonLabel": "Reason (optional)",
+        "reasonPlaceholder": "Let the applicant know why...",
+        "confirm": "Confirm Reject",
+        "cancel": "Cancel"
+      }
+    },
     "emails": {
       "title": "Email Management",
       "filters": {
@@ -479,7 +516,11 @@
       "types": {
         "smtp_test": "SMTP Test",
         "login_alert": "Login Alert",
-        "reset_password": "Password Reset"
+        "reset_password": "Password Reset",
+        "friend_link_apply": "Friend Link Application",
+        "friend_link_apply_confirmed": "Application Received",
+        "friend_link_approved": "Friend Link Approved",
+        "friend_link_rejected": "Friend Link Rejected"
       },
       "statuses": {
         "failed": "Failed"
@@ -490,7 +531,11 @@
       "body_preview": {
         "smtp_test": "SMTP connection test, sender: {senderEmail}",
         "login_alert": "Login detected from {location} (IP: {ip})",
-        "reset_password": "Password reset request from {location}, IP: {ip}, expires in {minutes} min"
+        "reset_password": "Password reset request from {location}, IP: {ip}, expires in {minutes} min",
+        "friend_link_apply": "New application: {name} ({url})",
+        "friend_link_apply_confirmed": "Application from {name} received, pending review",
+        "friend_link_approved": "Friend link approved: {name}",
+        "friend_link_rejected": "Friend link rejected: {name}"
       },
       "empty_selection_title": "No Message Selected",
       "empty_selection_desc": "Select a message from the list to view its details and content."
@@ -758,7 +803,11 @@
       "邮件发送成功": "Email sent successfully",
       "若邮箱存在，验证码已发送，请注意查收": "If the email exists, a verification code has been sent",
       "密码重置成功，请使用新密码登录": "Password reset successfully. Please sign in with your new password",
-      "申请已提交，等待审核": "Application submitted, pending review"
+      "申请已提交，等待审核": "Application submitted, pending review",
+      "已通过": "Approved",
+      "已拒绝": "Rejected",
+      "删除成功": "Deleted successfully",
+      "更新成功": "Updated successfully"
     }
   }
 }
