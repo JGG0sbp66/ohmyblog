@@ -6,7 +6,7 @@
 import { onMounted, ref } from "vue";
 import TotalVisitsCard from "./cards/TotalVisitsCard.vue";
 import PublishedPostsCard from "./cards/PublishedPostsCard.vue";
-import DraftPostsCard from "./cards/DraftPostsCard.vue";
+import PendingFriendLinksCard from "./cards/PendingFriendLinksCard.vue";
 import UnreadEmailsCard from "./cards/UnreadEmailsCard.vue";
 import { getPostCounts } from "@/api/post.api";
 
@@ -42,7 +42,7 @@ onMounted(async () => {
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <TotalVisitsCard :counts="counts" :loading="loading" />
     <PublishedPostsCard :counts="counts" :loading="loading" />
-    <DraftPostsCard :counts="counts" :loading="loading" />
     <UnreadEmailsCard />
+    <PendingFriendLinksCard />
   </div>
 </template>
