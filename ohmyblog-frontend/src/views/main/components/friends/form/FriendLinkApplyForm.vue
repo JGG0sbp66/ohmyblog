@@ -1,7 +1,7 @@
 <!-- src/views/main/components/friends/form/FriendLinkApplyForm.vue -->
 <!--
   友链申请表单组件。
-  包含站点名称、URL、简介、标签、联系邮箱字段，提交成功后通过 toast 提示并重置表单。
+  包含站点名称、URL、图标 URL、简介、标签、联系邮箱字段，提交成功后通过 toast 提示并重置表单。
   标签约束（最大数量/字符数）直接从后端 DTO schema 读取，保持前后端一致。
 -->
 <script setup lang="ts">
@@ -33,6 +33,7 @@ const emailRef = ref<InstanceType<typeof TipInput> | null>(null);
 const emptyForm = () => ({
   name: "",
   url: "",
+  avatarUrl: "",
   description: "",
   tags: [] as string[],
   applicantEmail: "",
@@ -60,6 +61,7 @@ const handleSubmit = async () => {
     const result = await applyFriendLink({
       name: form.value.name.trim(),
       url: form.value.url.trim(),
+      avatarUrl: form.value.avatarUrl.trim() || undefined,
       description: form.value.description.trim() || undefined,
       tags: form.value.tags.length > 0 ? form.value.tags : undefined,
       applicantEmail: form.value.applicantEmail.trim() || undefined,
@@ -103,12 +105,20 @@ const handleSubmit = async () => {
         />
       </div>
 
-      <!-- 站点简介 -->
-      <TipInput
-        v-model="form.description"
-        :label="t('views.main.friends.form.description')"
-        :placeholder="t('views.main.friends.form.descPlaceholder')"
-      />
+      <!-- 站点图标 URL + 站点简介 并排（桌面端） -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <TipInput
+          v-model="form.avatarUrl"
+          :label="t('views.main.friends.form.avatarUrl')"
+          :placeholder="t('views.main.friends.form.avatarUrlPlaceholder')"
+          type="url"
+        />
+        <TipInput
+          v-model="form.description"
+          :label="t('views.main.friends.form.description')"
+          :placeholder="t('views.main.friends.form.descPlaceholder')"
+        />
+      </div>
 
       <!-- 标签 -->
       <TagsInput
