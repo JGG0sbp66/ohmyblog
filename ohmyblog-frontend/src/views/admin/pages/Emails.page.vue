@@ -6,7 +6,7 @@
 -->
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
-import BaseCard from "@/components/base/card/BaseCard.vue";
+import AdminSplitLayout from "@/views/admin/components/layout/AdminSplitLayout.vue";
 import { useEmailStore } from "@/stores/email.store";
 import EmailList from "@/views/admin/components/emails/EmailList.vue";
 import EmailDetailView from "@/views/admin/components/emails/EmailDetailView.vue";
@@ -42,25 +42,19 @@ watch(() => emailStore.pendingOpenItem, consumePending);
 </script>
 
 <template>
-  <!-- 主容器 -->
-  <BaseCard padding="none" class="flex-1 overflow-hidden flex onload-animation">
-    <!-- 左侧列表 -->
-    <div
-      class="w-100 border-r border-border/40 flex flex-col bg-bg-muted/10 onload-animation anim-delay-100 z-10"
-    >
+  <AdminSplitLayout>
+    <template #left>
       <!-- 操作区域 -->
       <EmailListActions
         v-model:isRead="filters.isRead"
         v-model:type="filters.type"
       />
-
-      <!-- 消息列表组件 -->
+      <!-- 消息列表 -->
       <EmailList v-model="selectedItem" :filters="filters" />
-    </div>
+    </template>
 
-    <!-- 右侧展示区域 -->
-    <div class="flex-1 overflow-hidden onload-animation anim-delay-150">
+    <template #right>
       <EmailDetailView :item="selectedItem" />
-    </div>
-  </BaseCard>
+    </template>
+  </AdminSplitLayout>
 </template>
