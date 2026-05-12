@@ -11,6 +11,7 @@ import { ExternalLink } from "lucide-vue-next";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import { useLang } from "@/composables/lang.hook";
+import { getFriendLinkDomain, getFriendLinkInitial } from "@/utils/friend-link";
 import type { FriendLinkItem } from "@/api/friend-link.api";
 
 const props = defineProps<{
@@ -19,14 +20,7 @@ const props = defineProps<{
 
 const { locale } = useLang();
 
-/** 从 URL 提取展示用域名，去掉 www. 前缀 */
-const domain = computed(() => {
-  try {
-    return new URL(props.link.url).hostname.replace(/^www\./, "");
-  } catch {
-    return props.link.url;
-  }
-});
+const domain = computed(() => getFriendLinkDomain(props.link.url));
 
 /** 入驻日期，跟随当前语言 locale */
 const joinedDate = computed(() => {
@@ -40,8 +34,7 @@ const joinedDate = computed(() => {
     .replace(/\//g, "-");
 });
 
-/** 无头像时取首字大写作为占位符 */
-const initial = computed(() => props.link.name.charAt(0).toUpperCase());
+const initial = computed(() => getFriendLinkInitial(props.link.name));
 </script>
 
 <template>
