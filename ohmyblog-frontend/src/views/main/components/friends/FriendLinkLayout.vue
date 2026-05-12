@@ -52,7 +52,7 @@ const pagedLinks = computed(() => {
         </div>
       </div>
 
-      <div v-if="totalPages > 1" class="flex justify-center">
+      <div class="flex justify-center">
         <BasePagination
           :current-page="page"
           :total-pages="totalPages"
