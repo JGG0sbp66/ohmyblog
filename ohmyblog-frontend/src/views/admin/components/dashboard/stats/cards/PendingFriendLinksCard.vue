@@ -1,36 +1,33 @@
 <script setup lang="ts">
 /**
  * 待审批友链数卡片
- * 独立拉取待审批数量，在仪表盘统计行中展示
+ * 通过 useFriendLinkStore 读取共享 pendingCount，与侧边栏 badge 保持同步
  */
 import { onMounted, ref } from "vue";
 import { Link } from "lucide-vue-next";
+import { storeToRefs } from "pinia";
 import { useLang } from "@/composables/lang.hook";
 import DashboardCardLayout from "../DashboardCardLayout.vue";
-import { getFriendLinkPendingCount } from "@/api/friend-link.api";
+import { useFriendLinkStore } from "@/stores/friend-link.store";
 
 const { t } = useLang();
 
 const loading = ref(true);
-const count = ref<number | null>(null);
+
+const friendLinkStore = useFriendLinkStore();
+const { pendingCount } = storeToRefs(friendLinkStore);
 
 onMounted(async () => {
   loading.value = true;
-  try {
-    const data = await getFriendLinkPendingCount();
-    count.value = (data as any)?.count ?? 0;
-  } catch {
-    count.value = null;
-  } finally {
-    loading.value = false;
-  }
+  await friendLinkStore.fetchPendingCount();
+  loading.value = false;
 });
 </script>
 
 <template>
   <DashboardCardLayout
     :label="t('views.admin.Dashboard.stats.pendingFriendLinks')"
-    :value="count"
+    :value="pendingCount"
     :unit="t('views.admin.Dashboard.stats.unitPending')"
     :loading="loading"
     icon-bg-class="bg-teal-500/10"
