@@ -32,7 +32,7 @@ onMounted(() => {
     v-if="systemStore.personalInfo.hero"
     id="hero"
     :class="[
-      'relative w-full overflow-hidden onload-animation transition-[height] duration-700 ease-in-out',
+      'relative w-full overflow-hidden onload-animation transition-[height] duration-700 ease-in-out -mb-28',
       isHome ? 'h-[65vh]' : 'h-[40vh]',
     ]"
   >
