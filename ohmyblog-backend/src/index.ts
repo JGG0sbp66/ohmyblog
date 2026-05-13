@@ -1,7 +1,9 @@
 import { openapi } from "@elysiajs/openapi";
 import { staticPlugin } from "@elysiajs/static";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { Elysia } from "elysia";
-import { UPLOADS_DIR } from "./constants";
+import { PUBLIC_DIR, UPLOADS_DIR } from "./constants";
 import { config } from "./env";
 import { logPlugin } from "./plugins/logger.plugin.js";
 import { responsePlugin } from "./plugins/response.plugin.js";
@@ -14,6 +16,18 @@ import { postRoute } from "./routes/post.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 
 const app = new Elysia()
+	// SPA fallback：注册在 responsePlugin 之前，优先处理前端路由的 NOT_FOUND
+	// 非 /api 路径找不到路由时返回 index.html，让 Vue Router 接管
+	// /api 路径仍走 formatError 返回 JSON 错误
+	.onError({ as: "global" }, ({ code, request }) => {
+		if (
+			code === "NOT_FOUND" &&
+			existsSync(PUBLIC_DIR) &&
+			!new URL(request.url).pathname.startsWith("/api")
+		) {
+			return Bun.file(join(PUBLIC_DIR, "index.html"));
+		}
+	})
 	// OpenAPI 插件（生产环境禁用）
 	.use(
 		openapi({
@@ -46,9 +60,19 @@ const app = new Elysia()
 			.use(friendLinkRoute)
 			.use(postRoute)
 			.use(uploadRoute),
-	)
-	// 启动服务
-	.listen(config.PORT);
+	);
+
+// 挂载前端静态资源（public/ 目录由 Docker build 阶段注入）
+// GET / 显式处理，SPA 其余路由由上方 onError 兜底
+if (existsSync(PUBLIC_DIR)) {
+	const serveIndex = () => Bun.file(join(PUBLIC_DIR, "index.html"));
+	app
+		.get("/", serveIndex)
+		.use(staticPlugin({ assets: PUBLIC_DIR, prefix: "/" }));
+}
+
+// 启动服务
+app.listen(config.PORT);
 
 export type App = typeof app;
 

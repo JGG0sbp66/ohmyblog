@@ -56,11 +56,9 @@ onMounted(async () => {
 <template>
   <div class="onload-animation">
     <!-- 空状态 -->
-    <EmptyState
-      v-if="!loading && groups.length === 0"
-      class="mt-32"
-      :text="t('views.main.archive.empty')"
-    />
+    <BaseCard v-if="!loading && groups.length === 0" padding="default">
+      <EmptyState :text="t('views.main.archive.empty')" />
+    </BaseCard>
 
     <!-- 时间轴卡片 -->
     <BaseCard v-else padding="sm">

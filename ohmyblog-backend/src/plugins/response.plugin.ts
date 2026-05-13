@@ -62,8 +62,8 @@ const formatResponse = ({ response, set }: any) => {
 		return response;
 	}
 
-	// 特殊类型直接放行（文件流、Blob 等）
-	if (response instanceof Response) return response;
+	// 特殊类型直接放行（文件流、BunFile/Blob 等）
+	if (response instanceof Response || response instanceof Blob) return response;
 
 	// 防止二次包装 (比如 onError 返回的已经是格式化好的对象)
 	if (response && typeof response === "object" && "success" in response) {

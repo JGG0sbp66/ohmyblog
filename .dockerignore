@@ -1,0 +1,32 @@
+# Backend
+ohmyblog-backend/node_modules
+ohmyblog-backend/scripts/dist
+ohmyblog-backend/data
+ohmyblog-backend/.kiro
+ohmyblog-backend/.vscode
+ohmyblog-backend/README.md
+
+# Frontend
+ohmyblog-frontend/node_modules
+ohmyblog-frontend/dist
+ohmyblog-frontend/.vscode
+
+# Common - editor & system
+.git
+.vscode
+**/.kiro
+*.code-workspace
+
+# Common - sensitive / runtime
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+**/*.db
+**/*.db-journal
+**/*.db-shm
+**/*.db-wal
+
+# Common - unnecessary
+README.md
+LICENSE

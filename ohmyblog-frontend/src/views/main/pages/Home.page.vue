@@ -5,6 +5,7 @@ import { useLang } from "@/composables/lang.hook";
 import { getPublicPostList } from "@/api/post.api";
 import type { PostListItem } from "@/api/post.api";
 import PostCard from "@/views/main/components/post/PostCard.vue";
+import BaseCard from "@/components/base/card/BaseCard.vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
 import BasePagination from "@/components/base/table/BasePagination.vue";
 
@@ -44,11 +45,9 @@ onMounted(fetchList);
 <template>
   <div class="flex flex-col gap-4">
     <!-- 空状态 -->
-    <EmptyState
-      v-if="!loading && posts.length === 0"
-      class="mt-32"
-      :text="t('views.main.home.PostCard.empty')"
-    />
+    <BaseCard class="onload-animation" v-if="!loading && posts.length === 0" padding="default">
+      <EmptyState :text="t('views.main.home.PostCard.empty')" />
+    </BaseCard>
 
     <!-- 卡片列表 -->
     <div

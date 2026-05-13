@@ -1,8 +1,0 @@
-node_modules
-scripts/dist
-data
-.git
-.vscode
-.kiro
-*.db
-*.log

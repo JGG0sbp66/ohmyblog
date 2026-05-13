@@ -3,56 +3,29 @@
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useImageUpload } from "@/composables/upload.hook";
-import { uploadAvatar, uploadHero } from "@/api/upload.api";
+import { uploadAvatar } from "@/api/upload.api";
 
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
-import { RiGalleryFill, RiIdCardLine } from "@remixicon/vue";
+import HeroUploadSetting from "./HeroUploadSetting.vue";
+import { RiIdCardLine } from "@remixicon/vue";
 
 const { t } = useLang();
 const systemStore = useSystemStore();
 
-/**
- * 上传配置映射
- */
-const UPLOAD_CONFIGS = {
-  avatar: {
-    api: uploadAvatar,
-    storeKey: "avatar",
-    fileName: "avatar",
-  },
-  hero: {
-    api: uploadHero,
-    storeKey: "hero",
-    fileName: "hero",
-  },
-} as const;
-
-// 1. 实例化上传管理的 Hook
+// 1. 实例化头像上传管理的 Hook
 const avatar = useImageUpload();
-const hero = useImageUpload();
-
-// 2. 提取变量供模板直接使用
-const avatarLoading = avatar.loading;
-const heroLoading = hero.loading;
-const avatarUploadRef = avatar.uploadRef;
-const heroUploadRef = hero.uploadRef;
 
 /**
- * 统一处理图片上传逻辑
+ * 处理头像上传逻辑
  */
-const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
-  const config = UPLOAD_CONFIGS[type];
-  const hook = type === "avatar" ? avatar : hero;
-
-  hook.handleUpload(
+const onAvatarChange = (file: File) => {
+  avatar.handleUpload(
     file,
-    (f) => config.api({ [config.fileName]: f } as any),
+    (f) => uploadAvatar({ avatar: f }),
     (url) => {
-      // handleUpload 已自动添加时间戳，直接赋值即可
-      const info = systemStore.personalInfo as any;
-      info[config.storeKey] = url;
+      systemStore.personalInfo.avatar = url;
     },
   );
 };
@@ -69,11 +42,11 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         <ImageUpload
           ref="avatarUploadRef"
           v-model="systemStore.personalInfo.avatar"
-          :loading="avatarLoading"
+          :loading="avatar.loading.value"
           width="w-32"
           height="h-32"
           rounded-class="rounded-2xl"
-          @change="(file) => onFileChange('avatar', file)"
+          @change="onAvatarChange"
         >
           <template #icon>
             <RiIdCardLine class="w-12 h-12 text-fg-subtle/30" />
@@ -96,7 +69,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
         <!-- 2. 按钮与状态 -->
         <div class="flex flex-col md:flex-row items-center gap-4">
           <ButtonPrimary
-            :loading="avatarLoading"
+            :loading="avatar.loading.value"
             class="text-sm"
             :text="
               avatar.getButtonText(
@@ -108,7 +81,7 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
           />
 
           <BaseTag
-            v-if="systemStore.personalInfo.avatar && !avatarLoading"
+            v-if="systemStore.personalInfo.avatar && !avatar.loading.value"
             type="success"
           >
             {{ t("views.setup.steps.step4.avatar.uploaded") }}
@@ -123,65 +96,10 @@ const onFileChange = (type: keyof typeof UPLOAD_CONFIGS, file: File) => {
     </div>
 
     <!-- 2. 横幅上传部分 -->
-    <div class="flex flex-col gap-8 px-4 md:px-0">
-      <!-- 第一行：标题和按钮 -->
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div class="flex flex-col gap-1 text-center md:text-left">
-          <h3 class="text-lg font-bold text-fg">
-            {{ t("views.setup.steps.step4.hero.label") }}
-          </h3>
-          <p class="text-xs text-fg-muted">
-            {{ t("views.setup.steps.step4.hero.description") }}
-          </p>
-        </div>
-        <ButtonPrimary
-          :loading="heroLoading"
-          class="text-sm"
-          :text="
-            hero.getButtonText(
-              'views.setup.steps.step4.hero',
-              systemStore.personalInfo.hero,
-            )
-          "
-          @click="hero.trigger"
-        />
-      </div>
-
-      <!-- 第二行：预览框 -->
-      <div class="relative group">
-        <ImageUpload
-          ref="heroUploadRef"
-          v-model="systemStore.personalInfo.hero"
-          :loading="heroLoading"
-          width="w-full"
-          height="h-48 md:h-56"
-          rounded-class="rounded-2xl"
-          @change="(file) => onFileChange('hero', file)"
-        >
-          <template #icon>
-            <div class="flex flex-col items-center gap-3">
-              <RiGalleryFill class="w-10 h-10 text-fg-subtle/30" />
-              <p class="text-xs text-fg-subtle/60">
-                {{ t("views.setup.steps.step4.hero.recommend") }}
-              </p>
-            </div>
-          </template>
-        </ImageUpload>
-      </div>
-
-      <!-- 第三行：格式说明与状态 -->
-      <div class="flex items-center justify-between min-h-6">
-        <p class="text-[11px] text-fg-subtle/80 font-medium text-left">
-          {{ t("views.setup.steps.step4.hero.format") }}
-        </p>
-
-        <BaseTag
-          v-if="systemStore.personalInfo.hero && !heroLoading"
-          type="success"
-        >
-          {{ t("views.setup.steps.step4.hero.uploaded") }}
-        </BaseTag>
-      </div>
-    </div>
+    <HeroUploadSetting
+      v-model="systemStore.personalInfo.hero"
+      show-success-tag
+      class="px-4 md:px-0"
+    />
   </div>
 </template>

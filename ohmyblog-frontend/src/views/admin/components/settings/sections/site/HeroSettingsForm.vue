@@ -6,6 +6,7 @@ import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useToast } from "@/composables/toast.hook";
 import { upsertConfig } from "@/api/config.api";
+import HeroUploadSetting from "@/views/setup/components/HeroUploadSetting.vue";
 import { ref } from "vue";
 
 // 引入现有的编辑器组件以保持功能和视觉高度统一
@@ -38,6 +39,8 @@ const handleSave = async () => {
     :description="t('views.admin.Settings.site.hero.description')"
   >
     <div class="flex flex-col gap-8">
+      <HeroUploadSetting v-model="systemStore.personalInfo.hero" />
+
       <!-- 直接复用成熟的编辑器组件 -->
       <HeroMainTitleEditor />
       <HeroSubtitleEditor :page-size="5" />
