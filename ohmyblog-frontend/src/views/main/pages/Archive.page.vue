@@ -58,7 +58,7 @@ onMounted(async () => {
     <!-- 空状态 -->
     <EmptyState
       v-if="!loading && groups.length === 0"
-      class="mt-32"
+      is-page-placeholder
       :text="t('views.main.archive.empty')"
     />
 

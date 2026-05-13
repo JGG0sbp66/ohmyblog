@@ -46,7 +46,7 @@ onMounted(fetchList);
     <!-- 空状态 -->
     <EmptyState
       v-if="!loading && posts.length === 0"
-      class="mt-32"
+      is-page-placeholder
       :text="t('views.main.home.PostCard.empty')"
     />
 
