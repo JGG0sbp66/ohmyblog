@@ -45,6 +45,7 @@ onMounted(fetchList);
   <div class="flex flex-col gap-4">
     <!-- 空状态 -->
     <EmptyState
+      class="onload-animation"
       v-if="!loading && posts.length === 0"
       is-page-placeholder
       :text="t('views.main.home.PostCard.empty')"
