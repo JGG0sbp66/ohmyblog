@@ -18,8 +18,8 @@ export function useHeaderSearch() {
   const router = useRouter();
 
   // ── DOM 模板引用 ──────────────────────────────────────────
-  const containerRef = ref<HTMLElement | null>(null);      // 整个搜索组件的根容器
-  const inputRef = ref<HTMLInputElement | null>(null);     // 文本输入框
+  const containerRef = ref<HTMLElement | null>(null); // 整个搜索组件的根容器
+  const inputRef = ref<HTMLInputElement | null>(null); // 文本输入框
   const scrollContainerRef = ref<HTMLElement | null>(null); // 结果列表滚动容器（用于无限滚动）
 
   // ── 展开 / 收起状态 ────────────────────────────────────────
@@ -42,7 +42,9 @@ export function useHeaderSearch() {
   watchEffect(() => {
     isDropdownOpen.value =
       focused.value &&
-      (loading.value || results.value.length > 0 || query.value.trim().length > 0);
+      (loading.value ||
+        results.value.length > 0 ||
+        query.value.trim().length > 0);
   });
 
   // ── 搜索请求 ───────────────────────────────────────────────
@@ -65,7 +67,11 @@ export function useHeaderSearch() {
       isFinished.value = false;
     }
     try {
-      const data = await getPublicPostList({ page: page.value, pageSize: PAGE_SIZE, keyword: query.value });
+      const data = await getPublicPostList({
+        page: page.value,
+        pageSize: PAGE_SIZE,
+        keyword: query.value,
+      });
       if (thisId !== requestId) return; // 旧请求，丢弃
       const newItems: PostListItem[] = (data as any)?.list ?? [];
       const total: number = (data as any)?.total ?? 0;
@@ -90,7 +96,9 @@ export function useHeaderSearch() {
   // 滚动到距底部 50px 时自动加载下一页
   useInfiniteScroll(
     scrollContainerRef,
-    () => { if (!isFinished.value && !loading.value) fetchMore(); },
+    () => {
+      if (!isFinished.value && !loading.value) fetchMore();
+    },
     { distance: 50 },
   );
 

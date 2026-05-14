@@ -14,7 +14,11 @@ import { useFriendLinkStore } from "@/stores/friend-link.store";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import FriendLinkRejectModal from "./FriendLinkRejectModal.vue";
-import { approveFriendLink, rejectFriendLink, deleteFriendLink } from "@/api/friend-link.api";
+import {
+  approveFriendLink,
+  rejectFriendLink,
+  deleteFriendLink,
+} from "@/api/friend-link.api";
 import type { FriendLinkItem } from "../types";
 
 const props = defineProps<{
@@ -56,7 +60,9 @@ const handleApprove = async () => {
 const handleRejectConfirm = async (reason: string | undefined) => {
   rejectLoading.value = true;
   try {
-    const res = await rejectFriendLink(props.item.uuid, { rejectReason: reason });
+    const res = await rejectFriendLink(props.item.uuid, {
+      rejectReason: reason,
+    });
     useToast.success(t(`api.success.${(res as any)?.message ?? "已拒绝"}`));
     rejectModalOpen.value = false;
     friendLinkStore.fetchPendingCount();

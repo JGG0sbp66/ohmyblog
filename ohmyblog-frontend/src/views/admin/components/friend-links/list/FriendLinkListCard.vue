@@ -43,10 +43,7 @@ const statusTagType = computed(() => {
     ]"
   >
     <!-- 激活态左侧标识条 -->
-    <div
-      v-if="active"
-      class="absolute left-0 top-0 bottom-0 w-1 bg-accent"
-    />
+    <div v-if="active" class="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
 
     <!-- 头部：头像 + 名称 + 时间 -->
     <div class="flex items-center gap-3">
@@ -80,7 +77,11 @@ const statusTagType = computed(() => {
           <p class="text-[11px] font-mono text-fg-subtle truncate">
             {{ domain }}
           </p>
-          <BaseTag :type="statusTagType" :show-icon="false" class="uppercase tracking-wide shrink-0">
+          <BaseTag
+            :type="statusTagType"
+            :show-icon="false"
+            class="uppercase tracking-wide shrink-0"
+          >
             {{ t(`views.friendLinks.status.${item.status}`) }}
           </BaseTag>
         </div>

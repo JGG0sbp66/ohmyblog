@@ -15,27 +15,30 @@ const uuidParam = t.Object({ uuid: t.String() });
 export const friendLinkRoute = new Elysia({ name: "friendLinkRoute" })
 	.use(authPlugin)
 	// ── 公开路由 ──────────────────────────────────────────────────────────
-	.group("/public/friends", { detail: { tags: ["Friends (友链 - 公开)"] } }, (app) =>
-		app
-			.get(
-				"/",
-				async () => {
-					const list = await friendLinkService.getApprovedList();
-					return { message: "获取成功", list };
-				},
-				{ detail: { summary: "获取已通过的友链列表（前台）(GET)" } },
-			)
-			.post(
-				"/apply",
-				async ({ body }) => {
-					const item = await friendLinkService.apply(body);
-					return { message: "申请已提交，等待审核", item };
-				},
-				{
-					body: ApplyFriendLinkDTO,
-					detail: { summary: "提交友链申请（前台）(POST)" },
-				},
-			),
+	.group(
+		"/public/friends",
+		{ detail: { tags: ["Friends (友链 - 公开)"] } },
+		(app) =>
+			app
+				.get(
+					"/",
+					async () => {
+						const list = await friendLinkService.getApprovedList();
+						return { message: "获取成功", list };
+					},
+					{ detail: { summary: "获取已通过的友链列表（前台）(GET)" } },
+				)
+				.post(
+					"/apply",
+					async ({ body }) => {
+						const item = await friendLinkService.apply(body);
+						return { message: "申请已提交，等待审核", item };
+					},
+					{
+						body: ApplyFriendLinkDTO,
+						detail: { summary: "提交友链申请（前台）(POST)" },
+					},
+				),
 	)
 	// ── 管理员路由 ────────────────────────────────────────────────────────
 	.group("/friends", { detail: { tags: ["Friends (友链 - 管理)"] } }, (app) =>

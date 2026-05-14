@@ -5,7 +5,9 @@ import { friendLink } from "../../db/schema";
 import type { TFriendLinkQueryDTO } from "../dtos/friend-link.dto";
 
 export type NewFriendLink = typeof friendLink.$inferInsert;
-export type UpdateFriendLink = Partial<Omit<NewFriendLink, "uuid" | "createdAt">>;
+export type UpdateFriendLink = Partial<
+	Omit<NewFriendLink, "uuid" | "createdAt">
+>;
 
 class FriendLinkDao {
 	/**
@@ -20,8 +22,11 @@ class FriendLinkDao {
 	 * 分页查询友链列表（管理员），支持按状态筛选
 	 */
 	async findAll(options: TFriendLinkQueryDTO = {}) {
-		const { page = 1, pageSize = 20, status } =
-			options as Required<TFriendLinkQueryDTO>;
+		const {
+			page = 1,
+			pageSize = 20,
+			status,
+		} = options as Required<TFriendLinkQueryDTO>;
 		const offset = (page - 1) * pageSize;
 
 		const conditions = [];

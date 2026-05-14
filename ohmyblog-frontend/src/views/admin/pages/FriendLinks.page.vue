@@ -10,7 +10,10 @@ import AdminSplitLayout from "@/views/admin/components/layout/AdminSplitLayout.v
 import FriendLinkListActions from "@/views/admin/components/friend-links/list/FriendLinkListActions.vue";
 import FriendLinkList from "@/views/admin/components/friend-links/list/FriendLinkList.vue";
 import FriendLinkDetailPanel from "@/views/admin/components/friend-links/detail/FriendLinkDetailPanel.vue";
-import type { FriendLinkItem, FriendLinkFilters } from "@/views/admin/components/friend-links/types";
+import type {
+  FriendLinkItem,
+  FriendLinkFilters,
+} from "@/views/admin/components/friend-links/types";
 
 /** 当前筛选条件 */
 const filters = ref<FriendLinkFilters>({ status: undefined });
@@ -34,18 +37,11 @@ const handleUpdated = () => {
       <!-- 筛选操作区 -->
       <FriendLinkListActions v-model:status="filters.status" />
       <!-- 列表 -->
-      <FriendLinkList
-        ref="listRef"
-        v-model="selectedItem"
-        :filters="filters"
-      />
+      <FriendLinkList ref="listRef" v-model="selectedItem" :filters="filters" />
     </template>
 
     <template #right>
-      <FriendLinkDetailPanel
-        :item="selectedItem"
-        @updated="handleUpdated"
-      />
+      <FriendLinkDetailPanel :item="selectedItem" @updated="handleUpdated" />
     </template>
   </AdminSplitLayout>
 </template>

@@ -41,19 +41,17 @@ const formattedTags = computed(() =>
       </div>
 
       <!-- 竖线 + 圆点 -->
-      <div class="dash-line w-[15%] md:w-[10%] relative h-full flex items-center">
+      <div
+        class="dash-line w-[15%] md:w-[10%] relative h-full flex items-center"
+      >
         <div
-          class="timeline-dot mx-auto w-1 h-1 rounded z-10
-                 bg-fg-muted
-                 group-hover:h-5 group-hover:bg-accent"
+          class="timeline-dot mx-auto w-1 h-1 rounded z-10 bg-fg-muted group-hover:h-5 group-hover:bg-accent"
         />
       </div>
 
       <!-- 文章标题 -->
       <div
-        class="w-[70%] md:max-w-[65%] md:w-[65%] text-left font-bold text-fg/75
-               group-hover:translate-x-1 transition-all group-hover:text-accent
-               pr-8 whitespace-nowrap overflow-hidden text-ellipsis"
+        class="w-[70%] md:max-w-[65%] md:w-[65%] text-left font-bold text-fg/75 group-hover:translate-x-1 transition-all group-hover:text-accent pr-8 whitespace-nowrap overflow-hidden text-ellipsis"
       >
         {{ title || t("views.main.archive.untitled") }}
       </div>
@@ -61,8 +59,7 @@ const formattedTags = computed(() =>
       <!-- 标签列表（仅桌面端） -->
       <div
         v-if="tags?.length"
-        class="hidden md:block md:w-[15%] text-left text-sm
-               whitespace-nowrap overflow-hidden text-ellipsis text-fg-muted/60"
+        class="hidden md:block md:w-[15%] text-left text-sm whitespace-nowrap overflow-hidden text-ellipsis text-fg-muted/60"
       >
         {{ formattedTags }}
       </div>

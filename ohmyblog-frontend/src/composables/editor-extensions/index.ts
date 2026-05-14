@@ -8,7 +8,13 @@ import { useLang } from "@/composables/lang.hook";
 import { Indent } from "./indent.extension";
 import { CustomListItem } from "./list-item.extension";
 import { CustomOrderedList } from "./ordered-list.extension";
-import { CustomBold, CustomItalic, CustomStrike, CustomUnderline, CustomCode } from "./marks.extension";
+import {
+  CustomBold,
+  CustomItalic,
+  CustomStrike,
+  CustomUnderline,
+  CustomCode,
+} from "./marks.extension";
 import { CustomCodeBlock } from "./code-block.extension";
 import { TextStyle, Color, CustomHighlight } from "./color.extension";
 import { ResizableImage } from "./image.extension";
@@ -23,15 +29,15 @@ export function useEditorExtensions() {
 
   return [
     StarterKit.configure({
-      listItem: false,      // 由 CustomListItem 替代，支持列表项内含标题节点
-      orderedList: false,   // 由 CustomOrderedList 替代，修复 InputRule start 归一问题
-      bold: false,       // 由 CustomBold 替代，支持飞书风格空格触发 InputRule
-      italic: false,     // 由 CustomItalic 替代，同上
-      strike: false,     // 由 CustomStrike 替代，同上
-      code: false,       // 由 CustomCode 替代，允许行内代码与其他 Mark 共存
-      codeBlock: false,  // 由 CustomCodeBlock 替代，挂载 Vue NodeView + lowlight 语法高亮
-      link: false,       // 由下方 Link.configure 替代（v3 StarterKit 已内置，需显式禁用）
-      underline: false,  // 由 CustomUnderline 替代（v3 StarterKit 已内置，需显式禁用）
+      listItem: false, // 由 CustomListItem 替代，支持列表项内含标题节点
+      orderedList: false, // 由 CustomOrderedList 替代，修复 InputRule start 归一问题
+      bold: false, // 由 CustomBold 替代，支持飞书风格空格触发 InputRule
+      italic: false, // 由 CustomItalic 替代，同上
+      strike: false, // 由 CustomStrike 替代，同上
+      code: false, // 由 CustomCode 替代，允许行内代码与其他 Mark 共存
+      codeBlock: false, // 由 CustomCodeBlock 替代，挂载 Vue NodeView + lowlight 语法高亮
+      link: false, // 由下方 Link.configure 替代（v3 StarterKit 已内置，需显式禁用）
+      underline: false, // 由 CustomUnderline 替代（v3 StarterKit 已内置，需显式禁用）
     }),
     CustomListItem,
     CustomOrderedList,
@@ -41,8 +47,8 @@ export function useEditorExtensions() {
     CustomUnderline,
     CustomCode,
     CustomCodeBlock,
-    TextStyle,      // Color 的依赖 mark，必须在 Color 之前注册
-    Color,          // 文字颜色，依赖 TextStyle mark
+    TextStyle, // Color 的依赖 mark，必须在 Color 之前注册
+    Color, // 文字颜色，依赖 TextStyle mark
     CustomHighlight, // 背景高亮（多色）
     ResizableImage,
     Indent,

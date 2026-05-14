@@ -51,7 +51,8 @@ const editor = useEditor({
             editor.value?.chain().focus().setImage({ src: result.url }).run();
           })
           .catch((e: unknown) => {
-            const msg = typeof e === "string" ? e : (e as any)?.message || "Error";
+            const msg =
+              typeof e === "string" ? e : (e as any)?.message || "Error";
             useToast.error(t(`api.errors.${msg}`));
           });
       }

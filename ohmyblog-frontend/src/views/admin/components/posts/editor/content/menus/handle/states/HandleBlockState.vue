@@ -21,7 +21,12 @@ defineEmits<{ gripDragStart: [event: DragEvent]; gripDragEnd: [] }>();
 <template>
   <div class="flex items-center">
     <!-- 块类型图标：hover 展开类型菜单（远离内容侧） -->
-    <DropButton trigger-class="" pop-offset="mt-2" bridge-height="h-2" placement="left-0">
+    <DropButton
+      trigger-class=""
+      pop-offset="mt-2"
+      bridge-height="h-2"
+      placement="left-0"
+    >
       <template #trigger="{ active }">
         <ButtonSecondary :isActive="active" class="w-7 h-7 p-0 shrink-0">
           <component :is="icon" class="w-3.5 h-3.5" />

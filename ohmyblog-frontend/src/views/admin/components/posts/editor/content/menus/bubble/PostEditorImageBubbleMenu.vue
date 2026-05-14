@@ -36,7 +36,9 @@ const updateMenu = () => {
   }
 
   // 取选中图片节点对应的 DOM 元素定位
-  const domNode = props.editor.view.nodeDOM(selection.from) as HTMLElement | null;
+  const domNode = props.editor.view.nodeDOM(
+    selection.from,
+  ) as HTMLElement | null;
   if (!domNode) {
     isVisible.value = false;
     return;

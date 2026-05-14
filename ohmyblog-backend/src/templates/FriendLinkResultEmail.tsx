@@ -70,12 +70,12 @@ export const FriendLinkResultEmail = ({
 						{/* 拒绝原因（仅 rejected 时显示） */}
 						{!isApproved && rejectReason && (
 							<Section className="bg-bg-muted-soft rounded-xl border border-border-soft p-6 mb-8">
-								<Text
-									className="text-[10px] font-bold uppercase text-fg-subtle m-0 mb-2 tracking-tight"
-								>
+								<Text className="text-[10px] font-bold uppercase text-fg-subtle m-0 mb-2 tracking-tight">
 									未通过原因
 								</Text>
-								<Text className="text-sm text-fg-muted m-0">{rejectReason}</Text>
+								<Text className="text-sm text-fg-muted m-0">
+									{rejectReason}
+								</Text>
 							</Section>
 						)}
 

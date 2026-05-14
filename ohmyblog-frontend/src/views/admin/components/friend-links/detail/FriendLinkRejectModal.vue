@@ -32,9 +32,12 @@ const { t } = useLang();
 const reason = ref("");
 
 /** 弹窗关闭时重置输入 */
-watch(() => props.modelValue, (val) => {
-  if (!val) reason.value = "";
-});
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (!val) reason.value = "";
+  },
+);
 
 const handleConfirm = () => {
   emit("confirm", reason.value.trim() || undefined);

@@ -59,13 +59,12 @@ export const FriendLinkApplyConfirmedEmail = ({
 							<span style={{ color: colors.accent, fontWeight: 600 }}>
 								{siteTitle}
 							</span>{" "}
-							的友链！我们已收到「{applicantSiteName}」的申请，博主将会尽快进行审核。
+							的友链！我们已收到「{applicantSiteName}
+							」的申请，博主将会尽快进行审核。
 						</Text>
 
 						<Section className="bg-bg-muted-soft rounded-xl border border-border-soft p-6 mb-8">
-							<Text
-								className="text-[10px] font-bold uppercase text-fg-subtle m-0 mb-3 tracking-tight"
-							>
+							<Text className="text-[10px] font-bold uppercase text-fg-subtle m-0 mb-3 tracking-tight">
 								接下来会发生什么？
 							</Text>
 							<Text className="text-sm text-fg-muted m-0 leading-relaxed">

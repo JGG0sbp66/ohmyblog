@@ -22,23 +22,27 @@
 
 /* 模拟 Fuwari/MacOS 的三个小圆点 */
 .tiptap .code-block-header::before {
-  content: '';
+  content: "";
   display: flex;
   width: 40px;
   height: 10px;
-  background: radial-gradient(circle, #ff5f56 4px, transparent 5px),
-              radial-gradient(circle, #ffbd2e 4px, transparent 5px),
-              radial-gradient(circle, #27c93f 4px, transparent 5px);
+  background:
+    radial-gradient(circle, #ff5f56 4px, transparent 5px),
+    radial-gradient(circle, #ffbd2e 4px, transparent 5px),
+    radial-gradient(circle, #27c93f 4px, transparent 5px);
   background-size: 14px 10px;
   background-repeat: no-repeat;
-  background-position: 0 center, 14px center, 28px center;
+  background-position:
+    0 center,
+    14px center,
+    28px center;
   opacity: 0.8;
 }
 
 /* 悬浮复制按钮：默认隐藏，容器 hover 时淡入到右上角 */
 .tiptap .code-block-copy-btn {
   position: absolute;
-  top: 2.1rem;   /* header 底部（padding 0.5rem + 内容 ~1rem + padding 0.5rem ≈ 2rem） */
+  top: 2.1rem; /* header 底部（padding 0.5rem + 内容 ~1rem + padding 0.5rem ≈ 2rem） */
   right: 0.75rem;
   z-index: 10;
   background: oklch(0.24 0.015 var(--app-hue));
@@ -50,7 +54,10 @@
   display: flex;
   align-items: center;
   opacity: 0;
-  transition: opacity 0.15s, color 0.15s, background 0.15s;
+  transition:
+    opacity 0.15s,
+    color 0.15s,
+    background 0.15s;
 }
 .tiptap .code-block-container:hover .code-block-copy-btn {
   opacity: 1;
@@ -60,8 +67,8 @@
   background: oklch(0.28 0.015 var(--app-hue));
 }
 .tiptap .code-block-copy-btn.copied {
-  opacity: 1;        /* 复制成功期间保持可见 */
-  color: #4ade80;    /* 绿色反馈 */
+  opacity: 1; /* 复制成功期间保持可见 */
+  color: #4ade80; /* 绿色反馈 */
 }
 
 .tiptap .code-block-lang-input {
@@ -90,7 +97,9 @@
   background: oklch(0.17 0.015 var(--app-hue));
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   color: oklch(0.45 0.01 var(--app-hue));
-  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family:
+    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular,
+    Menlo, Monaco, Consolas, "Courier New", monospace;
   font-size: 0.875rem;
   user-select: none;
   flex-shrink: 0;
@@ -118,7 +127,9 @@
 }
 
 .tiptap code {
-  font-family: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-family:
+    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular,
+    Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 .tiptap pre code {

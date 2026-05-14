@@ -24,7 +24,9 @@ const emit = defineEmits<{
 
 const inputVal = ref("");
 
-const charRemaining = computed(() => props.maxTagLength - inputVal.value.length);
+const charRemaining = computed(
+  () => props.maxTagLength - inputVal.value.length,
+);
 const isOverLimit = computed(() => charRemaining.value < 0);
 
 const addTag = () => {

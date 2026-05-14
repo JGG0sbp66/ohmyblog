@@ -20,7 +20,8 @@ const handleListClick = () => {
   router.push("/admin/posts");
 };
 
-const preloadEditor = () => import("@/views/admin/pages/posts/PostEditor.page.vue");
+const preloadEditor = () =>
+  import("@/views/admin/pages/posts/PostEditor.page.vue");
 
 const handleNewPost = async () => {
   if (creating.value) return;

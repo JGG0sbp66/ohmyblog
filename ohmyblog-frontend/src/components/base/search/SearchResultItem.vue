@@ -27,11 +27,13 @@ const highlightParts = (text: string, keyword: string) => {
   let lastIndex = 0;
   let m: RegExpExecArray | null;
   while ((m = regex.exec(text)) !== null) {
-    if (m.index > lastIndex) parts.push({ text: text.slice(lastIndex, m.index), match: false });
+    if (m.index > lastIndex)
+      parts.push({ text: text.slice(lastIndex, m.index), match: false });
     parts.push({ text: m[0], match: true });
     lastIndex = regex.lastIndex;
   }
-  if (lastIndex < text.length) parts.push({ text: text.slice(lastIndex), match: false });
+  if (lastIndex < text.length)
+    parts.push({ text: text.slice(lastIndex), match: false });
   return parts;
 };
 </script>
@@ -47,7 +49,10 @@ const highlightParts = (text: string, keyword: string) => {
       <!-- 标题：高亮匹配关键词 -->
       <p class="text-sm font-semibold text-fg line-clamp-1 leading-snug">
         <template
-          v-for="(part, i) in highlightParts(post.title || t('components.base.search.HeaderSearch.untitled'), query)"
+          v-for="(part, i) in highlightParts(
+            post.title || t('components.base.search.HeaderSearch.untitled'),
+            query,
+          )"
           :key="i"
         >
           <span v-if="part.match" class="text-accent">{{ part.text }}</span>
@@ -60,10 +65,15 @@ const highlightParts = (text: string, keyword: string) => {
         class="text-xs text-fg-muted mt-1 line-clamp-2 leading-relaxed"
       >
         <template
-          v-for="(part, i) in highlightParts((post.excerpt || post.contentText?.slice(0, 120)) ?? '', query)"
+          v-for="(part, i) in highlightParts(
+            (post.excerpt || post.contentText?.slice(0, 120)) ?? '',
+            query,
+          )"
           :key="i"
         >
-          <span v-if="part.match" class="text-accent font-medium">{{ part.text }}</span>
+          <span v-if="part.match" class="text-accent font-medium">{{
+            part.text
+          }}</span>
           <span v-else>{{ part.text }}</span>
         </template>
       </p>

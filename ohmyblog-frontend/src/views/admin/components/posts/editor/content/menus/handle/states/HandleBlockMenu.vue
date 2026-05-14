@@ -46,7 +46,8 @@ const doSwitchListType = (targetType: "bulletList" | "orderedList") => {
     else chain.toggleOrderedList().run();
     return;
   }
-  if (targetType === "bulletList") props.editor.chain().focus().toggleBulletList().run();
+  if (targetType === "bulletList")
+    props.editor.chain().focus().toggleBulletList().run();
   else props.editor.chain().focus().toggleOrderedList().run();
 };
 
@@ -61,19 +62,22 @@ const items = [
     label: t("views.admin.PostEditor.content.bubbleMenu.heading1"),
     icon: Heading1,
     isActive: () => props.editor.isActive("heading", { level: 1 }),
-    action: () => props.editor.chain().focus().toggleHeading({ level: 1 }).run(),
+    action: () =>
+      props.editor.chain().focus().toggleHeading({ level: 1 }).run(),
   },
   {
     label: t("views.admin.PostEditor.content.bubbleMenu.heading2"),
     icon: Heading2,
     isActive: () => props.editor.isActive("heading", { level: 2 }),
-    action: () => props.editor.chain().focus().toggleHeading({ level: 2 }).run(),
+    action: () =>
+      props.editor.chain().focus().toggleHeading({ level: 2 }).run(),
   },
   {
     label: t("views.admin.PostEditor.content.bubbleMenu.heading3"),
     icon: Heading3,
     isActive: () => props.editor.isActive("heading", { level: 3 }),
-    action: () => props.editor.chain().focus().toggleHeading({ level: 3 }).run(),
+    action: () =>
+      props.editor.chain().focus().toggleHeading({ level: 3 }).run(),
   },
   {
     label: t("views.admin.PostEditor.content.bubbleMenu.bulletList"),

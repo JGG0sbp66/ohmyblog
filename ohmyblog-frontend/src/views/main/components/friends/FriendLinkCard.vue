@@ -22,7 +22,9 @@ const props = defineProps<{
 const { locale } = useLang();
 
 const domain = computed(() => getFriendLinkDomain(props.link.url));
-const joinedDate = computed(() => formatDate(props.link.joinedAt, locale.value));
+const joinedDate = computed(() =>
+  formatDate(props.link.joinedAt, locale.value),
+);
 const initial = computed(() => getFriendLinkInitial(props.link.name));
 </script>
 
@@ -35,17 +37,13 @@ const initial = computed(() => getFriendLinkInitial(props.link.name));
   >
     <BaseCard
       padding="none"
-      class="flex flex-col gap-3 p-4 border border-border shadow-none
-             cursor-pointer
-             hover:border-accent/40 hover:-translate-y-1
-             transition-all duration-200"
+      class="flex flex-col gap-3 p-4 border border-border shadow-none cursor-pointer hover:border-accent/40 hover:-translate-y-1 transition-all duration-200"
     >
       <!-- 头部：头像 + 站点名 + 域名 -->
       <div class="flex items-center gap-3">
         <!-- 圆形头像 -->
         <div
-          class="shrink-0 w-16 h-16 rounded-full overflow-hidden
-                 bg-accent/10 flex items-center justify-center"
+          class="shrink-0 w-16 h-16 rounded-full overflow-hidden bg-accent/10 flex items-center justify-center"
         >
           <img
             v-if="link.avatarUrl"
@@ -53,13 +51,17 @@ const initial = computed(() => getFriendLinkInitial(props.link.name));
             :alt="link.name"
             class="w-full h-full object-cover"
           />
-          <span v-else class="text-base font-bold text-accent">{{ initial }}</span>
+          <span v-else class="text-base font-bold text-accent">{{
+            initial
+          }}</span>
         </div>
 
         <!-- 名称 + 域名 -->
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1 min-w-0">
-            <span class="font-semibold text-sm text-fg truncate">{{ link.name }}</span>
+            <span class="font-semibold text-sm text-fg truncate">{{
+              link.name
+            }}</span>
             <ExternalLink
               class="w-3 h-3 shrink-0 text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-150"
             />

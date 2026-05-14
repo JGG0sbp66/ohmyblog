@@ -60,7 +60,11 @@ const statusTagType = computed(() => {
           {{ domain }}
         </a>
       </div>
-      <BaseTag :type="statusTagType" :show-icon="false" class="uppercase tracking-wide shrink-0 mt-0.5">
+      <BaseTag
+        :type="statusTagType"
+        :show-icon="false"
+        class="uppercase tracking-wide shrink-0 mt-0.5"
+      >
         {{ t(`views.friendLinks.status.${item.status}`) }}
       </BaseTag>
     </div>

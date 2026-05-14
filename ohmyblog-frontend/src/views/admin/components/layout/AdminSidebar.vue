@@ -98,9 +98,11 @@ const isItemActive = (item: MenuItem) => {
             :isActive="isItemActive(item)"
             :isExpanded="isExpanded"
             :badge="
-              item.path === '/admin/emails' ? emailUnreadCount
-              : item.path === '/admin/friend-links' ? friendLinkPendingCount
-              : undefined
+              item.path === '/admin/emails'
+                ? emailUnreadCount
+                : item.path === '/admin/friend-links'
+                  ? friendLinkPendingCount
+                  : undefined
             "
             @click="handleNavClick(item.path)"
           />

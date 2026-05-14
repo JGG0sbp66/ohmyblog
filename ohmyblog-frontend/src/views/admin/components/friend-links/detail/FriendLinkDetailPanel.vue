@@ -29,7 +29,6 @@ const { t } = useLang();
 
 <template>
   <div class="h-full flex flex-col bg-bg-card">
-
     <!-- ── 有选中项 ────────────────────────────────────────────────────────── -->
     <template v-if="item">
       <FriendLinkHeaderInfo :item="item" />
@@ -54,6 +53,5 @@ const { t } = useLang();
         {{ t("views.friendLinks.detail.emptyDesc") }}
       </p>
     </div>
-
   </div>
 </template>

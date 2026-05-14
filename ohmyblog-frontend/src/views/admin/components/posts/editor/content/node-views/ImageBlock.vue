@@ -25,7 +25,8 @@ const onResizeStart = (e: MouseEvent) => {
   startX = e.clientX;
   startWidth =
     containerRef.value?.getBoundingClientRect().width ??
-    (props.node.attrs.width ?? 500);
+    props.node.attrs.width ??
+    500;
 };
 
 useEventListener(document, "mousemove", (e: MouseEvent) => {

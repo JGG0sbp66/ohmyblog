@@ -14,8 +14,13 @@ const recentPostsRef = ref<InstanceType<typeof RecentPostsCard> | null>(null);
     <DashboardStatsRow />
 
     <!-- 下半区域：文章(宽) + 灵感速记(窄，固定高度) -->
-    <div class="flex-1 flex flex-col md:flex-row gap-6 items-start onload-animation anim-delay-200 min-h-0">
-      <RecentPostsCard ref="recentPostsRef" class="md:flex-2 self-stretch min-h-0" />
+    <div
+      class="flex-1 flex flex-col md:flex-row gap-6 items-start onload-animation anim-delay-200 min-h-0"
+    >
+      <RecentPostsCard
+        ref="recentPostsRef"
+        class="md:flex-2 self-stretch min-h-0"
+      />
       <QuickNoteCard class="md:flex-1" @saved="recentPostsRef?.refresh()" />
     </div>
   </div>

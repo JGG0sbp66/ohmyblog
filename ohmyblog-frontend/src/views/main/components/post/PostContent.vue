@@ -6,9 +6,19 @@ import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import { Markdown } from "tiptap-markdown";
-import { TextStyle, Color, CustomHighlight } from "@/composables/editor-extensions/color.extension";
+import {
+  TextStyle,
+  Color,
+  CustomHighlight,
+} from "@/composables/editor-extensions/color.extension";
 import { CustomListItem } from "@/composables/editor-extensions/list-item.extension";
-import { CustomBold, CustomItalic, CustomStrike, CustomUnderline, CustomCode } from "@/composables/editor-extensions/marks.extension";
+import {
+  CustomBold,
+  CustomItalic,
+  CustomStrike,
+  CustomUnderline,
+  CustomCode,
+} from "@/composables/editor-extensions/marks.extension";
 import { CustomCodeBlock } from "@/composables/editor-extensions/code-block.extension";
 import { Indent } from "@/composables/editor-extensions/indent.extension";
 import Image from "@tiptap/extension-image";

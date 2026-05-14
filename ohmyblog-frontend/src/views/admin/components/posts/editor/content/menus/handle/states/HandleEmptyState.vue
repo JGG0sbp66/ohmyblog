@@ -13,7 +13,12 @@ defineProps<{ editor: Editor }>();
 </script>
 
 <template>
-  <DropButton trigger-class="" pop-offset="mt-2" bridge-height="h-2" placement="left-0">
+  <DropButton
+    trigger-class=""
+    pop-offset="mt-2"
+    bridge-height="h-2"
+    placement="left-0"
+  >
     <template #trigger="{ active }">
       <ButtonSecondary :isActive="active" class="w-7 h-7 p-0 shrink-0">
         <Plus class="w-3.5 h-3.5" />

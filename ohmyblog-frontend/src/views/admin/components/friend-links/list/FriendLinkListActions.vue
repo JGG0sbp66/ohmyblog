@@ -18,18 +18,21 @@ const emit = defineEmits<{
 
 const { t } = useLang();
 
-const statusOptions: { key: FriendLinkFilters["status"]; labelKey: string }[] = [
-  { key: undefined,   labelKey: "views.friendLinks.filters.all" },
-  { key: "pending",   labelKey: "views.friendLinks.filters.pending" },
-  { key: "approved",  labelKey: "views.friendLinks.filters.approved" },
-  { key: "rejected",  labelKey: "views.friendLinks.filters.rejected" },
-];
+const statusOptions: { key: FriendLinkFilters["status"]; labelKey: string }[] =
+  [
+    { key: undefined, labelKey: "views.friendLinks.filters.all" },
+    { key: "pending", labelKey: "views.friendLinks.filters.pending" },
+    { key: "approved", labelKey: "views.friendLinks.filters.approved" },
+    { key: "rejected", labelKey: "views.friendLinks.filters.rejected" },
+  ];
 </script>
 
 <template>
   <div class="p-4 border-b border-border/40 flex items-center gap-2">
     <!-- 状态筛选 pill 组 -->
-    <div class="flex items-center gap-1 p-1 bg-bg-muted-soft rounded-2xl w-full">
+    <div
+      class="flex items-center gap-1 p-1 bg-bg-muted-soft rounded-2xl w-full"
+    >
       <ButtonSecondary
         v-for="opt in statusOptions"
         :key="String(opt.key)"

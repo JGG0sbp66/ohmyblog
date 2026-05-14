@@ -97,7 +97,10 @@ defineExpose({
 </script>
 
 <template>
-  <BaseCard padding="none" class="flex-1 flex flex-col overflow-hidden onload-animation">
+  <BaseCard
+    padding="none"
+    class="flex-1 flex flex-col overflow-hidden onload-animation"
+  >
     <!-- 操作区域 -->
     <PageToolbar class="onload-animation anim-delay-100">
       <template #left>
