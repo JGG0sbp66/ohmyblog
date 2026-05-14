@@ -112,6 +112,25 @@ bun run dev
 - 前台：<http://localhost:5173>
 - OpenAPI：<http://localhost:3000/openapi>（仅开发环境）
 
+### 🐳 Docker 部署
+
+> 镜像会同时打包前后端，后端通过 Elysia 挂载前端静态文件。
+
+```bash
+# 进入后端目录
+cd ohmyblog-backend
+
+# 构建镜像（使用 scripts/Dockerfile）
+bun run docker
+```
+
+```bash
+# 运行镜像（端口映射决定访问端口）
+docker run --rm -p 3000:3000 ohmyblog
+```
+
+访问 <http://localhost:3000> 即可打开前台页面。
+
 ## 🧱 项目结构
 
 ```text
