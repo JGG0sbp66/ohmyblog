@@ -71,7 +71,8 @@ const handleSubmit = async () => {
     }
     form.value = emptyForm();
   } catch (error: any) {
-    const errorMsg = typeof error === "string" ? error : error?.message || "Error";
+    const errorMsg =
+      typeof error === "string" ? error : error?.message || "Error";
     useToast.error(t(`api.errors.${errorMsg}`));
   } finally {
     submitting.value = false;
@@ -85,7 +86,11 @@ const handleSubmit = async () => {
     :description="t('views.main.friends.applyDesc')"
   >
     <!-- 表单字段 -->
-    <form id="friend-link-form" class="flex flex-col gap-4" @submit.prevent="handleSubmit">
+    <form
+      id="friend-link-form"
+      class="flex flex-col gap-4"
+      @submit.prevent="handleSubmit"
+    >
       <!-- 站点名 + URL 并排（桌面端） -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <TipInput

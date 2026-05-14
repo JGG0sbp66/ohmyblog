@@ -37,7 +37,9 @@ const excerpt = defineModel<string>({ default: "" });
 
     <TipTextarea
       v-model="excerpt"
-      :placeholder="t('views.admin.PostEditor.settingsPanel.excerpt.placeholder')"
+      :placeholder="
+        t('views.admin.PostEditor.settingsPanel.excerpt.placeholder')
+      "
       :schema="excerptSchema"
     />
   </PostEditorSettingItem>

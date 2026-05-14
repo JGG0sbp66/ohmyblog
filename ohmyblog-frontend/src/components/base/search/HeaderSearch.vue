@@ -39,7 +39,9 @@ const {
     <!-- 搜索栏 -->
     <div
       class="flex items-center h-11 overflow-hidden rounded-xl transition-[width] duration-300 ease-in-out"
-      :class="isExpanded ? 'w-56 ring-1 ring-fg-subtle/20 bg-bg-muted/50' : 'w-11'"
+      :class="
+        isExpanded ? 'w-56 ring-1 ring-fg-subtle/20 bg-bg-muted/50' : 'w-11'
+      "
     >
       <input
         ref="inputRef"
@@ -47,11 +49,16 @@ const {
         type="text"
         :placeholder="t('components.base.search.HeaderSearch.placeholder')"
         class="flex-1 min-w-0 bg-transparent text-sm text-fg outline-none placeholder:text-fg-subtle/50 transition-[opacity,padding] duration-200"
-        :class="isExpanded ? 'opacity-100 pl-3' : 'opacity-0 pl-0 pointer-events-none'"
+        :class="
+          isExpanded ? 'opacity-100 pl-3' : 'opacity-0 pl-0 pointer-events-none'
+        "
         @keydown="onKeydown"
       />
       <!-- 点击图标聚焦输入框 -->
-      <ButtonSecondary class="shrink-0 w-11! min-h-11!" @click="inputRef?.focus()">
+      <ButtonSecondary
+        class="shrink-0 w-11! min-h-11!"
+        @click="inputRef?.focus()"
+      >
         <RiSearchLine class="w-4 h-4" />
       </ButtonSecondary>
     </div>
@@ -63,12 +70,19 @@ const {
       class="top-full mt-6 -right-14 w-72 overflow-hidden ring-1 ring-fg-subtle/10"
     >
       <!-- 初始加载中（还没有结果） -->
-      <div v-if="loading && results.length === 0" class="flex items-center justify-center py-5">
+      <div
+        v-if="loading && results.length === 0"
+        class="flex items-center justify-center py-5"
+      >
         <Loading size-class="w-4 h-4" color-class="text-fg-subtle" />
       </div>
 
       <!-- 结果列表（含底部加载更多） -->
-      <div v-else-if="results.length > 0" ref="scrollContainerRef" class="search-results max-h-72 overflow-y-auto">
+      <div
+        v-else-if="results.length > 0"
+        ref="scrollContainerRef"
+        class="search-results max-h-72 overflow-y-auto"
+      >
         <SearchResultItem
           v-for="post in results"
           :key="post.uuid"
@@ -84,7 +98,9 @@ const {
 
       <!-- 无结果 -->
       <div v-else class="flex items-center justify-center py-5">
-        <span class="text-xs text-fg-muted">{{ t('components.base.search.HeaderSearch.noResults') }}</span>
+        <span class="text-xs text-fg-muted">{{
+          t("components.base.search.HeaderSearch.noResults")
+        }}</span>
       </div>
     </BasePop>
   </div>

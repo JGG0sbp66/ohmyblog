@@ -309,7 +309,9 @@ class EmailSenderService {
 			smtpConfig,
 			siteTitle,
 			type:
-				params.result === "approved" ? "friend_link_approved" : "friend_link_rejected",
+				params.result === "approved"
+					? "friend_link_approved"
+					: "friend_link_rejected",
 			params: templateProps as unknown as Record<string, unknown>,
 		});
 	}

@@ -1,7 +1,7 @@
-import { openapi } from "@elysiajs/openapi";
-import { staticPlugin } from "@elysiajs/static";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { openapi } from "@elysiajs/openapi";
+import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
 import { PUBLIC_DIR, UPLOADS_DIR } from "./constants";
 import { config } from "./env";
@@ -10,8 +10,8 @@ import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
 import { configRoute } from "./routes/config.route.js";
 import { emailRoute } from "./routes/email.route.js";
-import { healthRoute } from "./routes/health.route.js";
 import { friendLinkRoute } from "./routes/friend-link.route.js";
+import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 

@@ -91,7 +91,9 @@ defineExpose({ refresh });
 
     <!-- 加载完毕提示 -->
     <div v-if="isFinished && list.length > 0" class="py-4 text-center">
-      <span class="text-[10px] font-bold uppercase tracking-widest text-fg-subtle/30">
+      <span
+        class="text-[10px] font-bold uppercase tracking-widest text-fg-subtle/30"
+      >
         {{ t("common.no_more_data") }}
       </span>
     </div>

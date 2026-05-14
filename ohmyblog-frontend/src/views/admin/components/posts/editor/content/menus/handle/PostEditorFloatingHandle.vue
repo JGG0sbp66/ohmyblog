@@ -141,7 +141,9 @@ const onMouseMove = (event: MouseEvent) => {
         lineTop = coords.top;
         lineHeight = coords.bottom - coords.top;
       }
-    } catch { /* fallback to rect */ }
+    } catch {
+      /* fallback to rect */
+    }
 
     // 段落位于列表项内时，图标应显示列表类型而非 Type
     let icon = getNodeIcon(blockNode);
@@ -150,8 +152,14 @@ const onMouseMove = (event: MouseEvent) => {
         const ancestor = $pos.node(d);
         if (ancestor.type.name === "listItem") {
           const parent = $pos.node(d - 1);
-          if (parent.type.name === "bulletList") { icon = List; break; }
-          if (parent.type.name === "orderedList") { icon = ListOrdered; break; }
+          if (parent.type.name === "bulletList") {
+            icon = List;
+            break;
+          }
+          if (parent.type.name === "orderedList") {
+            icon = ListOrdered;
+            break;
+          }
         }
       }
     }
@@ -177,7 +185,9 @@ const onMouseMove = (event: MouseEvent) => {
 
     // 首次出现时不做 top 过渡（避免从初始位置滑入），出现后再启用
     if (!wasVisible) {
-      nextTick(() => { transitionTop.value = true; });
+      nextTick(() => {
+        transitionTop.value = true;
+      });
     }
   } catch {
     scheduleHide();
@@ -213,7 +223,9 @@ const onGripDragStart = (event: DragEvent) => {
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("text/html", "");
     }
-  } catch { /* ignore invalid positions */ }
+  } catch {
+    /* ignore invalid positions */
+  }
 };
 
 /** 拖拽结束：若未落入编辑器则清理 dragging 状态，防止残留 */
@@ -243,8 +255,7 @@ onBeforeUnmount(() => {
   <Teleport to="body">
     <div
       ref="handleRef"
-      class="fixed z-40 select-none flex items-center
-             bg-bg-card border border-border/30 rounded-lg shadow-sm px-1 py-0.5"
+      class="fixed z-40 select-none flex items-center bg-bg-card border border-border/30 rounded-lg shadow-sm px-1 py-0.5"
       :class="isVisible ? 'pointer-events-auto' : 'pointer-events-none'"
       :style="{
         top: `${fixedTop}px`,

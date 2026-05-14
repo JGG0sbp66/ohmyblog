@@ -9,7 +9,10 @@ import BaseCard from "@/components/base/card/BaseCard.vue";
 import Loading from "@/components/common/item/Loading.vue";
 import FriendLinkLayout from "@/views/main/components/friends/FriendLinkLayout.vue";
 import FriendLinkApplyForm from "@/views/main/components/friends/form/FriendLinkApplyForm.vue";
-import { getApprovedFriendLinks, type FriendLinkItem } from "@/api/friend-link.api";
+import {
+  getApprovedFriendLinks,
+  type FriendLinkItem,
+} from "@/api/friend-link.api";
 import { useLang } from "@/composables/lang.hook";
 
 const { t } = useLang();
@@ -34,9 +37,11 @@ onMounted(async () => {
     <BaseCard padding="default" class="onload-animation">
       <!-- 标题行 -->
       <div class="flex items-center gap-2 mb-6">
-        <h2 class="text-xl font-bold text-fg">{{ t('views.main.friends.listTitle') }}</h2>
+        <h2 class="text-xl font-bold text-fg">
+          {{ t("views.main.friends.listTitle") }}
+        </h2>
         <span class="text-xs text-fg-subtle/60 ml-auto">
-          {{ t('views.main.friends.siteCount', { count: links.length }) }}
+          {{ t("views.main.friends.siteCount", { count: links.length }) }}
         </span>
       </div>
 

@@ -18,7 +18,6 @@ const props = defineProps<{
 }>();
 
 const { t } = useLang();
-
 </script>
 
 <template>

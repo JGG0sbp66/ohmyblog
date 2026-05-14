@@ -22,7 +22,9 @@ const { t } = useLang();
   <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
     <!-- 简介 -->
     <div v-if="item.description">
-      <div class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1">
+      <div
+        class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1"
+      >
         {{ t("views.friendLinks.detail.description") }}
       </div>
       <p class="text-sm text-fg leading-relaxed">{{ item.description }}</p>
@@ -30,7 +32,9 @@ const { t } = useLang();
 
     <!-- 标签 -->
     <div v-if="item.tags && item.tags.length > 0">
-      <div class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1">
+      <div
+        class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1"
+      >
         {{ t("views.friendLinks.detail.tags") }}
       </div>
       <div class="flex flex-wrap gap-1.5">
@@ -47,7 +51,9 @@ const { t } = useLang();
 
     <!-- 联系邮箱 -->
     <div v-if="item.applicantEmail">
-      <div class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1">
+      <div
+        class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1"
+      >
         {{ t("views.friendLinks.detail.applicantEmail") }}
       </div>
       <p class="text-sm text-fg font-mono">{{ item.applicantEmail }}</p>
@@ -55,7 +61,9 @@ const { t } = useLang();
 
     <!-- 拒绝原因（仅 rejected 时显示） -->
     <div v-if="item.status === 'rejected' && item.rejectReason">
-      <div class="text-[10px] font-bold uppercase tracking-wider text-red-500 mb-1">
+      <div
+        class="text-[10px] font-bold uppercase tracking-wider text-red-500 mb-1"
+      >
         {{ t("views.friendLinks.detail.rejectReason") }}
       </div>
       <p class="text-sm text-fg-muted">{{ item.rejectReason }}</p>
@@ -64,13 +72,17 @@ const { t } = useLang();
     <!-- 时间信息 -->
     <div class="grid grid-cols-2 gap-3 pt-2 border-t border-border/30">
       <div>
-        <div class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1">
+        <div
+          class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1"
+        >
           {{ t("views.friendLinks.detail.appliedAt") }}
         </div>
         <p class="text-xs text-fg">{{ formatDateTime(item.createdAt) }}</p>
       </div>
       <div v-if="item.joinedAt">
-        <div class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1">
+        <div
+          class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-1"
+        >
           {{ t("views.friendLinks.detail.joinedAt") }}
         </div>
         <p class="text-xs text-fg">{{ formatDateTime(item.joinedAt) }}</p>
@@ -79,7 +91,9 @@ const { t } = useLang();
 
     <!-- 前台预览 -->
     <div class="pt-2 border-t border-border/30">
-      <div class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-2">
+      <div
+        class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle mb-2"
+      >
         {{ t("views.friendLinks.detail.preview") }}
       </div>
       <div class="max-w-xs mx-auto">

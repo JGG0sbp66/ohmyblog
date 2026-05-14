@@ -39,16 +39,16 @@ const textColors = [
  * 透明度 0.12 ~ 0.14（600 级饱和度高，浓度低也足够辨识）
  */
 const bgColors = [
-  { label: "无",   value: null },
+  { label: "无", value: null },
   { label: "灰色", value: "rgba(107,114,128,0.14)" },
-  { label: "棕色", value: "rgba(146,64,14,0.12)"   },
-  { label: "橙色", value: "rgba(234,88,12,0.12)"   },
-  { label: "黄色", value: "rgba(217,119,6,0.14)"   },
-  { label: "绿色", value: "rgba(22,163,74,0.12)"   },
-  { label: "蓝色", value: "rgba(37,99,235,0.12)"   },
-  { label: "紫色", value: "rgba(124,58,237,0.12)"  },
-  { label: "粉色", value: "rgba(219,39,119,0.12)"  },
-  { label: "红色", value: "rgba(220,38,38,0.12)"   },
+  { label: "棕色", value: "rgba(146,64,14,0.12)" },
+  { label: "橙色", value: "rgba(234,88,12,0.12)" },
+  { label: "黄色", value: "rgba(217,119,6,0.14)" },
+  { label: "绿色", value: "rgba(22,163,74,0.12)" },
+  { label: "蓝色", value: "rgba(37,99,235,0.12)" },
+  { label: "紫色", value: "rgba(124,58,237,0.12)" },
+  { label: "粉色", value: "rgba(219,39,119,0.12)" },
+  { label: "红色", value: "rgba(220,38,38,0.12)" },
 ];
 
 const currentTextColor = computed(
@@ -62,9 +62,7 @@ const hasAnyColor = computed(
 );
 
 /** 按钮底部小色条：显示当前字体颜色（无则用 currentColor） */
-const indicatorColor = computed(
-  () => currentTextColor.value ?? "currentColor",
-);
+const indicatorColor = computed(() => currentTextColor.value ?? "currentColor");
 
 const setTextColor = (color: string | null) => {
   if (color === null) {
@@ -122,7 +120,10 @@ const setBgColor = (color: string | null) => {
             }"
             :style="
               c.value
-                ? { background: c.value, border: '1px solid rgba(255,255,255,0.12)' }
+                ? {
+                    background: c.value,
+                    border: '1px solid rgba(255,255,255,0.12)',
+                  }
                 : { background: 'transparent', border: '1.5px dashed #9ca3af' }
             "
             @mousedown.prevent="setTextColor(c.value)"
@@ -147,7 +148,10 @@ const setBgColor = (color: string | null) => {
             }"
             :style="
               c.value
-                ? { background: c.value, border: '1px solid rgba(255,255,255,0.12)' }
+                ? {
+                    background: c.value,
+                    border: '1px solid rgba(255,255,255,0.12)',
+                  }
                 : { background: 'transparent', border: '1.5px dashed #9ca3af' }
             "
             @mousedown.prevent="setBgColor(c.value)"

@@ -6,35 +6,37 @@
   - 内容区：NodeViewContent 渲染 ProseMirror 可编辑代码区
 -->
 <script setup lang="ts">
-import { nodeViewProps, NodeViewWrapper, NodeViewContent } from '@tiptap/vue-3'
-import { computed, ref } from 'vue'
-import { Copy, Check } from 'lucide-vue-next'
+import { nodeViewProps, NodeViewWrapper, NodeViewContent } from "@tiptap/vue-3";
+import { computed, ref } from "vue";
+import { Copy, Check } from "lucide-vue-next";
 
-const props = defineProps(nodeViewProps)
+const props = defineProps(nodeViewProps);
 
 const updateLanguage = (event: Event) => {
-  const target = event.target as HTMLInputElement
+  const target = event.target as HTMLInputElement;
   props.updateAttributes({
     language: target.value,
-  })
-}
+  });
+};
 
 // 复制按钮：点击后复制代码内容，1.5s 后恢复图标
-const copied = ref(false)
+const copied = ref(false);
 const copyCode = async () => {
-  await navigator.clipboard.writeText(props.node.textContent)
-  copied.value = true
-  setTimeout(() => { copied.value = false }, 1500)
-}
+  await navigator.clipboard.writeText(props.node.textContent);
+  copied.value = true;
+  setTimeout(() => {
+    copied.value = false;
+  }, 1500);
+};
 
 // 计算行数
 // ProseMirror 的 CodeBlock 内容末尾始终带有一个隐式 \n，
 // 不去除会导致行号比实际多一行，且在某些编辑操作后出现忽多忽少的 bug
 const lineCount = computed(() => {
-  const text = props.node.textContent
-  const normalized = text.endsWith('\n') ? text.slice(0, -1) : text
-  return normalized.split('\n').length
-})
+  const text = props.node.textContent;
+  const normalized = text.endsWith("\n") ? text.slice(0, -1) : text;
+  return normalized.split("\n").length;
+});
 </script>
 
 <template>

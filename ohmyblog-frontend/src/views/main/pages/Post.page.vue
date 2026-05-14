@@ -58,15 +58,25 @@ watch(slug, fetchPost, { immediate: true });
   </div>
 
   <!-- Not found state -->
-  <div v-else-if="notFound" class="flex flex-col items-center justify-center min-h-[50vh] gap-4">
+  <div
+    v-else-if="notFound"
+    class="flex flex-col items-center justify-center min-h-[50vh] gap-4"
+  >
     <p class="text-fg-muted">{{ t("views.main.post.notFound") }}</p>
-    <ButtonSecondary :text="t('views.main.post.back')" @click="router.push({ name: 'home' })">
+    <ButtonSecondary
+      :text="t('views.main.post.back')"
+      @click="router.push({ name: 'home' })"
+    >
       <ArrowLeft class="w-4 h-4" />
     </ButtonSecondary>
   </div>
 
   <!-- Post content -->
-  <BaseCard v-else-if="post" padding="none" class="flex flex-col overflow-hidden onload-animation">
+  <BaseCard
+    v-else-if="post"
+    padding="none"
+    class="flex flex-col overflow-hidden onload-animation"
+  >
     <div class="flex flex-col gap-5 p-6 md:p-8">
       <!-- Back button -->
       <ButtonSecondary :text="t('views.main.post.back')" @click="router.back()">

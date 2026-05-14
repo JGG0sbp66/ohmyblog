@@ -22,7 +22,9 @@ const props = defineProps<{
 
 const page = ref(1);
 
-const totalPages = computed(() => Math.max(1, Math.ceil(props.links.length / PAGE_SIZE)));
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(props.links.length / PAGE_SIZE)),
+);
 
 const pagedLinks = computed(() => {
   const start = (page.value - 1) * PAGE_SIZE;

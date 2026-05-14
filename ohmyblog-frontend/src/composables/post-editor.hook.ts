@@ -60,9 +60,13 @@ export const usePostEditor = () => {
       isLoading.value = false;
       // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
       // deep: true — 捕获 tags 数组的 push/splice 就地变更（浅监听感知不到引用未变的数组修改）
-      watch([slug, tags, status, title, content, excerpt], () => {
-        isDirty.value = true;
-      }, { deep: true });
+      watch(
+        [slug, tags, status, title, content, excerpt],
+        () => {
+          isDirty.value = true;
+        },
+        { deep: true },
+      );
       // 标题变化时自动同步 slug：
       // - slug 为空，或 slug 仍等于上次自动生成的值 → 继续同步（用户一直在打标题）
       // - slug 与上次生成值不同 → 说明用户手动修改过，停止同步
@@ -75,7 +79,16 @@ export const usePostEditor = () => {
       });
       // title/content 防抖自动保存
       watchDebounced(
-        [title, content, contentMarkdown, contentText, coverImage, excerpt, tags, slug],
+        [
+          title,
+          content,
+          contentMarkdown,
+          contentText,
+          coverImage,
+          excerpt,
+          tags,
+          slug,
+        ],
         () => {
           if (!isDirty.value) return;
           autoSave();

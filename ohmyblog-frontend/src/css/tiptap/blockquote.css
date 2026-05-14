@@ -10,7 +10,7 @@
   position: relative;
 }
 .tiptap blockquote::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;

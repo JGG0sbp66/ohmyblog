@@ -164,7 +164,8 @@ export const postRoute = new Elysia({ name: "postRoute" })
 				{
 					detail: {
 						summary: "归档页文章列表（前台）(GET)",
-						description: "无需登录，返回所有已发布文章的轻量字段，用于归档页时间轴展示，不分页",
+						description:
+							"无需登录，返回所有已发布文章的轻量字段，用于归档页时间轴展示，不分页",
 					},
 				},
 			)

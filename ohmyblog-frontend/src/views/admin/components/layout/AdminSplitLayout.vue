@@ -14,12 +14,15 @@
 <script setup lang="ts">
 import BaseCard from "@/components/base/card/BaseCard.vue";
 
-withDefaults(defineProps<{
-  /** 左侧栏宽度 Tailwind class，默认 w-100 */
-  leftWidth?: string;
-}>(), {
-  leftWidth: "w-100",
-});
+withDefaults(
+  defineProps<{
+    /** 左侧栏宽度 Tailwind class，默认 w-100 */
+    leftWidth?: string;
+  }>(),
+  {
+    leftWidth: "w-100",
+  },
+);
 </script>
 
 <template>

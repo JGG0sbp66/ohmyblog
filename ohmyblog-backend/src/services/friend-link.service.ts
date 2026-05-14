@@ -1,12 +1,12 @@
 // src/services/friend-link.service.ts
 import { friendLinkDao } from "../daos/friend-link.dao";
-import { emailSenderService } from "./email/email-sender.service";
 import type {
 	TApplyFriendLinkDTO,
 	TFriendLinkQueryDTO,
 	TRejectFriendLinkDTO,
 	TUpdateFriendLinkDTO,
 } from "../dtos/friend-link.dto";
+import { emailSenderService } from "./email/email-sender.service";
 
 class FriendLinkService {
 	/**
@@ -122,7 +122,8 @@ class FriendLinkService {
 	async update(uuid: string, data: TUpdateFriendLinkDTO) {
 		return friendLinkDao.update(uuid, {
 			...data,
-			joinedAt: data.joinedAt != null ? new Date(data.joinedAt * 1000) : data.joinedAt,
+			joinedAt:
+				data.joinedAt != null ? new Date(data.joinedAt * 1000) : data.joinedAt,
 		});
 	}
 
