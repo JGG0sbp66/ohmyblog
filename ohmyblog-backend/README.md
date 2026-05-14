@@ -87,6 +87,25 @@ bun run dev
 bun run start
 ```
 
+### 🐳 Docker 构建与运行
+
+> 镜像会同时打包前后端，后端通过 Elysia 挂载前端静态文件。
+
+```bash
+# 从仓库根目录进入后端
+cd ohmyblog-backend
+
+# 构建镜像（使用 scripts/Dockerfile）
+bun run docker
+```
+
+```bash
+# 运行镜像（端口映射决定访问端口）
+docker run --rm -p 3000:3000 ohmyblog
+```
+
+访问 <http://localhost:3000> 即可打开前台页面。
+
 ## ⚡ 可用命令
 
 | 命令 | 说明 |
