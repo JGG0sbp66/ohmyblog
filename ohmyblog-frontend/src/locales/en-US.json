@@ -393,13 +393,13 @@
             "underline": "Underline (Ctrl/⌘+U)\nmarkdown:~text~ Space",
             "code": "Inline code (Ctrl/⌘+E)\nmarkdown:`code` Space",
             "paragraph": "Paragraph",
-            "heading1": "Heading 1\nmarkdown:# Space",
-            "heading2": "Heading 2\nmarkdown:## Space",
-            "heading3": "Heading 3\nmarkdown:### Space",
-            "bulletList": "Bullet list\nmarkdown:- Space",
-            "orderedList": "Ordered list\nmarkdown:1. Space",
-            "codeBlock": "Code block\nmarkdown:``` Enter",
-            "quote": "Blockquote\nmarkdown:> Space",
+            "heading1": "Heading 1",
+            "heading2": "Heading 2",
+            "heading3": "Heading 3",
+            "bulletList": "Bullet list",
+            "orderedList": "Ordered list",
+            "codeBlock": "Code block",
+            "quote": "Blockquote",
             "alignLeft": "Align left",
             "alignCenter": "Align center",
             "alignRight": "Align right",
@@ -410,6 +410,16 @@
             "linkRemove": "Remove link",
             "linkUrlPlaceholder": "https://...",
             "linkConfirm": "Insert"
+          },
+          "handleMenu": {
+            "paragraph": "Paragraph",
+            "heading1": "Heading 1\nmarkdown:# Space",
+            "heading2": "Heading 2\nmarkdown:## Space",
+            "heading3": "Heading 3\nmarkdown:### Space",
+            "bulletList": "Bullet list\nmarkdown:- Space",
+            "orderedList": "Ordered list\nmarkdown:1. Space",
+            "codeBlock": "Code block\nmarkdown:``` Enter",
+            "quote": "Blockquote\nmarkdown:> Space"
           }
         }
       }
@@ -504,6 +514,11 @@
         "reasonPlaceholder": "Let the applicant know why...",
         "confirm": "Confirm Reject",
         "cancel": "Cancel"
+      },
+      "delete": {
+        "title": "Delete Friend Link",
+        "message": "Are you sure you want to delete this friend link?",
+        "warning": "This action cannot be undone!"
       }
     },
     "emails": {

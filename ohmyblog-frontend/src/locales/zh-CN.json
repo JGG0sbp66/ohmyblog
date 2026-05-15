@@ -391,13 +391,13 @@
             "underline": "下划线 (Ctrl/⌘+U)\nmarkdown:~文本~ 空格",
             "code": "行内代码 (Ctrl/⌘+E)\nmarkdown:`文本` 空格",
             "paragraph": "正文",
-            "heading1": "一级标题\nmarkdown:# 空格",
-            "heading2": "二级标题\nmarkdown:## 空格",
-            "heading3": "三级标题\nmarkdown:### 空格",
-            "bulletList": "无序列表\nmarkdown:- 空格",
-            "orderedList": "有序列表\nmarkdown:1. 空格",
-            "codeBlock": "代码块\nmarkdown:``` 换行",
-            "quote": "引用\nmarkdown:> 空格",
+            "heading1": "一级标题",
+            "heading2": "二级标题",
+            "heading3": "三级标题",
+            "bulletList": "无序列表",
+            "orderedList": "有序列表",
+            "codeBlock": "代码块",
+            "quote": "引用",
             "alignLeft": "左对齐",
             "alignCenter": "居中对齐",
             "alignRight": "右对齐",
@@ -408,6 +408,16 @@
             "linkRemove": "移除链接",
             "linkUrlPlaceholder": "https://...",
             "linkConfirm": "插入"
+          },
+          "handleMenu": {
+            "paragraph": "正文",
+            "heading1": "一级标题\nmarkdown:# 空格",
+            "heading2": "二级标题\nmarkdown:## 空格",
+            "heading3": "三级标题\nmarkdown:### 空格",
+            "bulletList": "无序列表\nmarkdown:- 空格",
+            "orderedList": "有序列表\nmarkdown:1. 空格",
+            "codeBlock": "代码块\nmarkdown:``` 换行",
+            "quote": "引用\nmarkdown:> 空格"
           }
         }
       }
@@ -502,6 +512,11 @@
         "reasonPlaceholder": "告知申请人拒绝原因...",
         "confirm": "确认拒绝",
         "cancel": "取消"
+      },
+      "delete": {
+        "title": "删除友链",
+        "message": "确定要删除这个友链吗？",
+        "warning": "此操作不可撤销！"
       }
     },
     "emails": {

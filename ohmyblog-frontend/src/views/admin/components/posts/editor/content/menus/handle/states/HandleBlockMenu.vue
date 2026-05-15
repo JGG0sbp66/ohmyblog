@@ -53,52 +53,52 @@ const doSwitchListType = (targetType: "bulletList" | "orderedList") => {
 
 const items = [
   {
-    label: t("views.admin.PostEditor.content.bubbleMenu.paragraph"),
+    label: t("views.admin.PostEditor.content.handleMenu.paragraph"),
     icon: Type,
     isActive: () => props.editor.isActive("paragraph"),
     action: () => props.editor.chain().focus().setParagraph().run(),
   },
   {
-    label: t("views.admin.PostEditor.content.bubbleMenu.heading1"),
+    label: t("views.admin.PostEditor.content.handleMenu.heading1"),
     icon: Heading1,
     isActive: () => props.editor.isActive("heading", { level: 1 }),
     action: () =>
       props.editor.chain().focus().toggleHeading({ level: 1 }).run(),
   },
   {
-    label: t("views.admin.PostEditor.content.bubbleMenu.heading2"),
+    label: t("views.admin.PostEditor.content.handleMenu.heading2"),
     icon: Heading2,
     isActive: () => props.editor.isActive("heading", { level: 2 }),
     action: () =>
       props.editor.chain().focus().toggleHeading({ level: 2 }).run(),
   },
   {
-    label: t("views.admin.PostEditor.content.bubbleMenu.heading3"),
+    label: t("views.admin.PostEditor.content.handleMenu.heading3"),
     icon: Heading3,
     isActive: () => props.editor.isActive("heading", { level: 3 }),
     action: () =>
       props.editor.chain().focus().toggleHeading({ level: 3 }).run(),
   },
   {
-    label: t("views.admin.PostEditor.content.bubbleMenu.bulletList"),
+    label: t("views.admin.PostEditor.content.handleMenu.bulletList"),
     icon: List,
     isActive: () => props.editor.isActive("bulletList"),
     action: () => doSwitchListType("bulletList"),
   },
   {
-    label: t("views.admin.PostEditor.content.bubbleMenu.orderedList"),
+    label: t("views.admin.PostEditor.content.handleMenu.orderedList"),
     icon: ListOrdered,
     isActive: () => props.editor.isActive("orderedList"),
     action: () => doSwitchListType("orderedList"),
   },
   {
-    label: t("views.admin.PostEditor.content.bubbleMenu.codeBlock"),
+    label: t("views.admin.PostEditor.content.handleMenu.codeBlock"),
     icon: Code2,
     isActive: () => props.editor.isActive("codeBlock"),
     action: () => props.editor.chain().focus().toggleCodeBlock().run(),
   },
   {
-    label: t("views.admin.PostEditor.content.bubbleMenu.quote"),
+    label: t("views.admin.PostEditor.content.handleMenu.quote"),
     icon: Quote,
     isActive: () => props.editor.isActive("blockquote"),
     action: () => props.editor.chain().focus().toggleBlockquote().run(),

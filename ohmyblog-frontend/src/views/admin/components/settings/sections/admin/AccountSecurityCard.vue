@@ -5,6 +5,7 @@ import SettingCard from "@/components/base/card/SettingCard.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import { useAuthStore } from "@/stores/auth.store";
+import { useSystemStore } from "@/stores/system.store";
 import { useLang } from "@/composables/lang.hook";
 import { updateAccount } from "@/api/auth.api";
 import { useToast } from "@/composables/toast.hook";
@@ -12,12 +13,12 @@ import { UpdateAccountDTO } from "@server/dtos/auth.dto";
 
 const { t } = useLang();
 const authStore = useAuthStore();
+const systemStore = useSystemStore();
 const isSubmitting = ref(false);
 const formRefs = ref<any[]>([]);
 
-// 账号表单数据
+// 账号表单数据（只保留邮箱和密码）
 const form = reactive({
-  username: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -26,10 +27,9 @@ const form = reactive({
 // 获取校验 Schema
 const schema = UpdateAccountDTO.properties;
 
-// 初始化数据回显
+// 初始化邮箱数据回显
 onMounted(() => {
   if (authStore.user) {
-    form.username = authStore.user.username;
     form.email = authStore.user.email || "";
   }
 });
@@ -66,7 +66,7 @@ const handleSave = async () => {
   try {
     isSubmitting.value = true;
     await updateAccount({
-      username: form.username,
+      username: systemStore.personalInfo.username,
       email: form.email,
       password: form.password || undefined,
     });
@@ -97,7 +97,7 @@ const handleSave = async () => {
       <!-- 用户名 -->
       <TipInput
         :ref="setFormRef"
-        v-model="form.username"
+        v-model="systemStore.personalInfo.username"
         :label="t('views.setup.steps.step3.username.label')"
         :placeholder="t('views.setup.steps.step3.username.placeholder')"
         :schema="schema.username"
