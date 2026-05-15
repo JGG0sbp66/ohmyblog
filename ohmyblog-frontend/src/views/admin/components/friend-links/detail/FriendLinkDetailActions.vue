@@ -3,7 +3,7 @@
   友链详情底部操作区
   - 审批通过（仅 pending）
   - 拒绝（仅 pending，打开 FriendLinkRejectModal）
-  - 删除（任意状态）
+  - 删除（任意状态，打开 FriendLinkDeleteModal）
   - 操作成功后 emit('updated') 通知父组件刷新列表
 -->
 <script setup lang="ts">
@@ -14,6 +14,7 @@ import { useFriendLinkStore } from "@/stores/friend-link.store";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import FriendLinkRejectModal from "./FriendLinkRejectModal.vue";
+import FriendLinkDeleteModal from "./FriendLinkDeleteModal.vue";
 import {
   approveFriendLink,
   rejectFriendLink,
@@ -37,9 +38,12 @@ const friendLinkStore = useFriendLinkStore();
 const rejectModalOpen = ref(false);
 const rejectLoading = ref(false);
 
+// ── 删除确认弹窗状态 ──────────────────────────────────────────────────────────
+const deleteModalOpen = ref(false);
+const deleteLoading = ref(false);
+
 // ── 操作 loading 状态 ────────────────────────────────────────────────────────
 const approveLoading = ref(false);
-const deleteLoading = ref(false);
 
 /** 审批通过 */
 const handleApprove = async () => {
@@ -74,12 +78,13 @@ const handleRejectConfirm = async (reason: string | undefined) => {
   }
 };
 
-/** 删除 */
-const handleDelete = async () => {
+/** 删除确认 */
+const handleDeleteConfirm = async () => {
   deleteLoading.value = true;
   try {
     const res = await deleteFriendLink(props.item.uuid);
     useToast.success(t(`api.success.${(res as any)?.message ?? "删除成功"}`));
+    deleteModalOpen.value = false;
     friendLinkStore.fetchPendingCount();
     emit("updated");
   } catch (e: any) {
@@ -114,15 +119,23 @@ const handleDelete = async () => {
       :text="t('views.friendLinks.actions.delete')"
       :disabled="approveLoading || deleteLoading"
       class="px-4 py-2 text-sm text-red-500 hover:text-red-500 ml-auto"
-      @click="handleDelete"
+      @click="deleteModalOpen = true"
     />
   </div>
 
-  <!-- 拒绝弹窗（Teleport 到 body） -->
+  <!-- 拒绝弹窗 -->
   <FriendLinkRejectModal
     v-model="rejectModalOpen"
     :item="item"
     :loading="rejectLoading"
     @confirm="handleRejectConfirm"
+  />
+
+  <!-- 删除确认弹窗 -->
+  <FriendLinkDeleteModal
+    v-model="deleteModalOpen"
+    :item="item"
+    :loading="deleteLoading"
+    @confirm="handleDeleteConfirm"
   />
 </template>

@@ -512,6 +512,11 @@
         "reasonPlaceholder": "告知申请人拒绝原因...",
         "confirm": "确认拒绝",
         "cancel": "取消"
+      },
+      "delete": {
+        "title": "删除友链",
+        "message": "确定要删除这个友链吗？",
+        "warning": "此操作不可撤销！"
       }
     },
     "emails": {
