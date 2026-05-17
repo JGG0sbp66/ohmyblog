@@ -6,11 +6,11 @@ import {
 	ResetPasswordDTO,
 	UpdateAccountDTO,
 } from "../dtos/auth.dto";
-import { config } from "../env";
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
 import { authService } from "../services/auth.service";
 import { getClientIp } from "../utils/getClientIp";
+import { isProduction } from "../utils/runtime";
 
 export const authRoute = new Elysia({ name: "authRoute" }).group(
 	"/auth",
@@ -62,10 +62,10 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 					cookie.auth_token.set({
 						value: token,
 						httpOnly: true,
-						secure: config.NODE_ENV === "production",
+						secure: isProduction(),
 						maxAge: 7 * 86400,
 						path: "/",
-						sameSite: config.NODE_ENV === "production" ? "strict" : "lax",
+						sameSite: isProduction() ? "strict" : "lax",
 					});
 
 					return {
