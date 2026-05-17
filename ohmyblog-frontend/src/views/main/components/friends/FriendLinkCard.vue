@@ -66,7 +66,7 @@ const initial = computed(() => getFriendLinkInitial(props.link.name));
               class="w-3 h-3 shrink-0 text-accent opacity-0 group-hover:opacity-100 transition-opacity duration-150"
             />
           </div>
-          <p class="text-[11px] font-mono text-fg-subtle truncate mt-0.5">
+          <p class="text-xs font-mono text-fg-subtle truncate mt-0.5">
             {{ domain }}
           </p>
         </div>
@@ -94,7 +94,7 @@ const initial = computed(() => getFriendLinkInitial(props.link.name));
         </div>
         <span
           v-if="joinedDate"
-          class="text-[10px] text-fg-subtle/60 shrink-0 whitespace-nowrap"
+          class="text-xs text-fg-subtle/60 shrink-0 whitespace-nowrap"
         >
           {{ joinedDate }}
         </span>

@@ -14,6 +14,8 @@ import { friendLinkRoute } from "./routes/friend-link.route.js";
 import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
+import { viewCounterService } from "./services/view-counter.service.js";
+import { isProduction } from "./utils/runtime";
 
 const app = new Elysia()
 	// SPA fallback：注册在 responsePlugin 之前，优先处理前端路由的 NOT_FOUND
@@ -31,7 +33,7 @@ const app = new Elysia()
 	// OpenAPI 插件（生产环境禁用）
 	.use(
 		openapi({
-			enabled: config.NODE_ENV !== "production",
+			enabled: !isProduction(),
 			documentation: {
 				info: {
 					title: "ohmyblog API",
@@ -74,6 +76,22 @@ if (existsSync(PUBLIC_DIR)) {
 // 启动服务
 app.listen(config.PORT);
 
+// 启动后台 viewCount 累积器（每 5s 把内存累积的访问量批量写回数据库）
+viewCounterService.start();
+
+// 容器停止 / 本地 Ctrl+C 时，把剩余的 viewCount 落盘后再退出
+const shutdown = async (signal: string) => {
+	console.log(`\n收到 ${signal}，正在退出...`);
+	try {
+		await viewCounterService.stop();
+	} catch (err) {
+		console.error("viewCounterService.stop 失败：", err);
+	}
+	process.exit(0);
+};
+process.on("SIGTERM", () => void shutdown("SIGTERM"));
+process.on("SIGINT", () => void shutdown("SIGINT"));
+
 export type App = typeof app;
 
 if (!app.server) {
@@ -86,7 +104,7 @@ const baseUrl = `${protocol}://localhost:${port}`;
 
 console.log(`\n🚀 Server started in \x1b[33m${config.NODE_ENV}\x1b[0m mode`);
 console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`);
-if (config.NODE_ENV !== "production") {
+if (!isProduction()) {
 	console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`);
 }
 console.log(`\nReady to accept requests...\n`);

@@ -11,8 +11,21 @@ import type {
 /** 文章列表项（用于管理端列表展示） */
 export type PostListItem = Omit<TPost, "content" | "contentMarkdown">;
 
-/** 文章详情（用于编辑器加载） */
+/** 文章详情（用于编辑器加载，含完整 ProseMirror JSON） */
 export type PostDetail = TPost;
+
+/**
+ * 公开文章详情（前台 GET /api/public/posts/:slug 的返回）
+ *
+ * 性能优化：后端不返回 content / contentText（前者编辑器才用，后者只用于
+ * 取长度），改成 SQL 直接算 wordCount，响应体积大幅减小。
+ */
+export type PublicPostDetail = Omit<
+  TPost,
+  "content" | "contentText" | "status" | "deletedAt"
+> & {
+  wordCount: number;
+};
 
 /**
  * POST /api/posts

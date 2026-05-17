@@ -88,14 +88,14 @@ bun run preview
 
 ## ⚡ 可用命令
 
-| 命令 | 说明 |
-| --- | --- |
-| `bun run dev` | 开发模式（热重载） |
-| `bun run build` | 构建生产版本 |
+| 命令                 | 说明                   |
+| -------------------- | ---------------------- |
+| `bun run dev`        | 开发模式（热重载）     |
+| `bun run build`      | 构建生产版本           |
 | `bun run build-only` | 仅构建（不做类型检查） |
-| `bun run type-check` | 类型检查 |
-| `bun run preview` | 预览生产构建 |
-| `bun run format` | 代码格式化 |
+| `bun run type-check` | 类型检查               |
+| `bun run preview`    | 预览生产构建           |
+| `bun run format`     | 代码格式化             |
 
 ## 🧩 开发说明
 

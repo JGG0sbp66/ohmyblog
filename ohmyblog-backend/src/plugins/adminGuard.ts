@@ -2,32 +2,15 @@
 import { userDao } from "../daos/user.dao";
 import { createRoleGuard } from "./auth.plugin";
 
-let hasAdminCache: boolean | null = null;
-
-/**
- * 标记系统已有管理员，后续不再查库
- */
-export const markHasAdmin = () => {
-	hasAdminCache = true;
-};
-
-/**
- * 缓存模式获取是否存在管理员
- * @returns 是否已存在管理员用户
- */
-const hasAdmin = async () => {
-	if (hasAdminCache === null) {
-		hasAdminCache = await userDao.hasAnyAdmin();
-	}
-	return hasAdminCache;
-};
-
 /**
  * 若系统已有管理员，则强制需要 admin；否则放行（用于初始化阶段）
+ *
+ * hasAdmin 状态由 userDao.hasAnyAdmin 内部缓存维护：
+ * 第一个 admin 创建时 createUser 自动把缓存置 true，之后不再查库
  */
 // biome-ignore lint/suspicious/noExplicitAny: Elysia context is dynamically extended by plugins
 export const ensureAdminIfExists = async (ctx: any) => {
-	const exists = await hasAdmin();
+	const exists = await userDao.hasAnyAdmin();
 	if (!exists) return;
 
 	// 复用 auth 插件的角色校验逻辑，保持一致

@@ -4,6 +4,11 @@ import { user } from "../../db/schema";
 
 export type NewUser = typeof user.$inferInsert;
 
+// hasAnyAdmin 是高频调用（healthRoute 每次请求都会查），但变化只有一次：
+// 系统初始化时第一个 admin 用户创建。之后永远是 true。
+// 所以用一个本地 boolean 缓存，true 时不再触达数据库。
+let hasAdminCache: boolean | null = null;
+
 class UserDao {
 	/**
 	 * 创建用户
@@ -12,6 +17,10 @@ class UserDao {
 	 */
 	async createUser(userData: NewUser) {
 		const result = await db.insert(user).values(userData).returning();
+		// 第一个 admin 注册成功后立即把缓存置 true，避免下一次查库
+		if (userData.role === "admin") {
+			hasAdminCache = true;
+		}
 		return result[0];
 	}
 
@@ -73,15 +82,20 @@ class UserDao {
 
 	/**
 	 * 检查是否存在管理员用户
+	 * 命中本地 boolean 缓存（true 永不失效，false 每次回源），
+	 * 用于 healthRoute 等高频调用场景
 	 * @returns 是否已存在至少一个管理员
 	 */
 	async hasAnyAdmin() {
+		if (hasAdminCache === true) return true;
 		const result = await db
 			.select({ uuid: user.uuid })
 			.from(user)
 			.where(eq(user.role, "admin"))
 			.limit(1);
-		return result.length > 0;
+		const exists = result.length > 0;
+		if (exists) hasAdminCache = true;
+		return exists;
 	}
 
 	/**

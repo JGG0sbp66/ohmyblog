@@ -4,12 +4,20 @@ import { useTheme } from "@/composables/theme.hook";
 import ButtonSecondary from "../base/button/ButtonSecondary.vue";
 import { RiContrastLine, RiSunLine, RiMoonLine } from "@remixicon/vue";
 import { computed } from "vue";
+import { useMediaQuery } from "@vueuse/core";
 import { useLang } from "@/composables/lang.hook";
 import DropButton from "../common/button/DropButton.vue";
 import { type TThemeMode, THEME_MODES } from "@/api/shared";
 
 const { t } = useLang();
 const { colorMode, cycleTheme, setTheme } = useTheme();
+
+// 桌面端（支持 hover 的精细指针）保留"点击循环切换"快捷操作；
+// 触屏设备改用 DropButton 的 click 打开下拉，避免双重触发。
+const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
+const onTriggerClick = () => {
+  if (canHover.value) cycleTheme();
+};
 
 const themeOptions = computed(() => {
   return THEME_MODES.map((mode: TThemeMode) => ({
@@ -30,7 +38,7 @@ const isActive = (value: TThemeMode) => {
       <!-- 点击触发循环切换 -->
       <ButtonSecondary
         :isActive="active"
-        @click="cycleTheme()"
+        @click="onTriggerClick"
         class="w-full h-full"
       >
         <RiContrastLine v-if="colorMode === 'auto'" class="w-5 h-5" />

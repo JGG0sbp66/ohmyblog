@@ -2,6 +2,7 @@
 <script lang="ts" setup>
 import BasePop from "@/components/base/pop/BasePop.vue";
 import { ref } from "vue";
+import { useMediaQuery } from "@vueuse/core";
 
 interface Props {
   triggerClass?: string;
@@ -24,30 +25,33 @@ const {
 const isShow = ref(false);
 const btnRef = ref(null);
 
-const showPop = () => {
-  isShow.value = true;
-};
-const hidePop = () => {
-  isShow.value = false;
-};
+/**
+ * 设备是否支持精细悬停（鼠标）。
+ * - true（桌面）→ 仅响应 mouseenter / mouseleave
+ * - false（触屏）→ 仅响应 click 切换；外部点击关闭由 BasePop 内的
+ *   onClickOutside 兜底
+ */
+const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
 
-defineExpose({ close: hidePop });
+const close = () => (isShow.value = false);
+defineExpose({ close });
 </script>
 
 <template>
   <div
-    class="relative"
     ref="btnRef"
-    @mouseenter="showPop"
-    @mouseleave="hidePop"
+    class="relative"
+    @mouseenter="canHover && (isShow = true)"
+    @mouseleave="canHover && (isShow = false)"
+    @click="!canHover && (isShow = !isShow)"
   >
     <div :class="triggerClass">
       <slot name="trigger" :active="isShow"></slot>
     </div>
 
-    <!-- 桥接层：填充按钮和浮窗之间的间隙，防止鼠标移动时浮窗消失 -->
+    <!-- 桥接层：仅 hover 模式下需要，触屏设备无需防"鼠标移出消失"  -->
     <div
-      v-if="isShow"
+      v-if="isShow && canHover"
       :class="['absolute w-[500%] top-full left-[-200%] z-50', bridgeHeight]"
     ></div>
 

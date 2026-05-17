@@ -36,18 +36,14 @@ class AuthService {
 		const hashedPassword = await Bun.password.hash(body.password);
 
 		// 3. 落库
+		// userDao.createUser 在 role === "admin" 时会自动把 hasAnyAdmin 缓存置 true，
+		// 后续 healthRoute / ensureAdminIfExists 不会再触达数据库
 		const newUser = await userDao.createUser({
 			username: body.username,
 			email: body.email,
 			passwordHash: hashedPassword,
 			role: role,
 		});
-
-		// 一旦创建管理员，更新缓存，避免后续再查库
-		if (role === "admin") {
-			const { markHasAdmin } = await import("../plugins/adminGuard");
-			markHasAdmin();
-		}
 
 		this.logger.info(
 			{ userId: newUser.uuid, role },

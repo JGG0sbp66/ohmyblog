@@ -100,8 +100,16 @@
 /* 全局过渡效果 */
 @layer base {
   html {
+    font-size: 14px;
+
     /* 预留滚动条空间，防止路由切换时页面宽度抖动 */
     scrollbar-gutter: stable;
+  }
+
+  @media (min-width: 48rem) {
+    html {
+      font-size: 16px;
+    }
   }
 
   /* 文字选中高亮 — 使用主题主色调替换浏览器默认蓝色 */
@@ -129,6 +137,10 @@
 body {
   background-color: var(--theme-bg);
   color: var(--theme-fg);
+
+  /* 数字使用等宽字形，避免日期、ID、统计等数字列对不齐
+     （Inter 等比例字体下 1 比 0/6 窄，会出现"05-10 比 05-06 窄"的问题） */
+  font-variant-numeric: tabular-nums;
 }
 
 @layer utilities {

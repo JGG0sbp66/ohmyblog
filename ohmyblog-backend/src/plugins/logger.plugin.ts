@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { consola } from "consola";
 import Elysia from "elysia";
 import { LOGS_DIR } from "../constants";
+import { isProduction } from "../utils/runtime";
 
 /**
  * 全局日志实例，使用 consola 默认配置
@@ -44,13 +45,13 @@ consola.addReporter({
 
 			// 5. 异步追加到文件末尾（不覆盖历史日志，不阻塞主线程）
 			appendFile(logFile, content, (err) => {
-				if (err && process.env.NODE_ENV === "development") {
+				if (err && !isProduction()) {
 					console.warn("Failed to write error log:", err);
 				}
 			});
 		} catch (err) {
 			// 只有同步代码（如 JSON.stringify 或 join）抛出的错误会在这里捕获
-			if (process.env.NODE_ENV === "development") {
+			if (!isProduction()) {
 				console.warn("Log formatting error:", err);
 			}
 		}

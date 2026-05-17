@@ -3,6 +3,11 @@ import { and, count, desc, eq } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { friendLink } from "../../db/schema";
 import type { TFriendLinkQueryDTO } from "../dtos/friend-link.dto";
+import {
+	APPROVED_FRIEND_LINK_KEY,
+	friendLinkCache,
+	invalidateFriendLinks,
+} from "./caches/friend-link.cache";
 
 export type NewFriendLink = typeof friendLink.$inferInsert;
 export type UpdateFriendLink = Partial<
@@ -15,6 +20,7 @@ class FriendLinkDao {
 	 */
 	async create(data: NewFriendLink) {
 		const result = await db.insert(friendLink).values(data).returning();
+		invalidateFriendLinks();
 		return result[0];
 	}
 
@@ -48,14 +54,16 @@ class FriendLinkDao {
 	}
 
 	/**
-	 * 获取所有已审批通过的友链（前台展示用）
+	 * 获取所有已审批通过的友链（前台展示用，带 60s 缓存）
 	 */
 	async findApproved() {
-		return db
-			.select()
-			.from(friendLink)
-			.where(eq(friendLink.status, "approved"))
-			.orderBy(desc(friendLink.joinedAt));
+		return friendLinkCache.fetch(APPROVED_FRIEND_LINK_KEY, () =>
+			db
+				.select()
+				.from(friendLink)
+				.where(eq(friendLink.status, "approved"))
+				.orderBy(desc(friendLink.joinedAt)),
+		);
 	}
 
 	/**
@@ -79,6 +87,7 @@ class FriendLinkDao {
 			.set(data)
 			.where(eq(friendLink.uuid, uuid))
 			.returning();
+		invalidateFriendLinks();
 		return result[0] || null;
 	}
 
@@ -87,6 +96,7 @@ class FriendLinkDao {
 	 */
 	async delete(uuid: string) {
 		await db.delete(friendLink).where(eq(friendLink.uuid, uuid));
+		invalidateFriendLinks();
 	}
 
 	/**

@@ -7,6 +7,11 @@
             "home": "首页",
             "archive": "归档",
             "friends": "友链"
+          },
+          "menu": {
+            "title": "导航菜单",
+            "open": "打开菜单",
+            "close": "关闭菜单"
           }
         }
       },

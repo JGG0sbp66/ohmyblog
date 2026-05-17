@@ -7,6 +7,11 @@
             "home": "Home",
             "archive": "Archive",
             "friends": "Friends"
+          },
+          "menu": {
+            "title": "Navigation",
+            "open": "Open menu",
+            "close": "Close menu"
           }
         }
       },

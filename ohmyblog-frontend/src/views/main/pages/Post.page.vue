@@ -4,7 +4,7 @@ import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ArrowLeft } from "lucide-vue-next";
 import { getPublicPostBySlug } from "@/api/post.api";
-import type { PostDetail } from "@/api/post.api";
+import type { PublicPostDetail } from "@/api/post.api";
 import { useLang } from "@/composables/lang.hook";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import Loading from "@/components/common/item/Loading.vue";
@@ -17,7 +17,7 @@ const router = useRouter();
 const { t } = useLang();
 
 const slug = computed(() => route.params.slug as string);
-const post = ref<PostDetail | null>(null);
+const post = ref<PublicPostDetail | null>(null);
 const loading = ref(false);
 const notFound = ref(false);
 
@@ -32,7 +32,7 @@ const formattedDate = computed(() => {
     .replace(/\//g, "-");
 });
 
-const wordCount = computed(() => post.value?.contentText?.length ?? 0);
+const wordCount = computed(() => post.value?.wordCount ?? 0);
 
 const fetchPost = async () => {
   loading.value = true;

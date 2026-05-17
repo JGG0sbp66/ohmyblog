@@ -64,10 +64,10 @@ const handleFileChange = (file: File) => {
         </div>
 
         <div class="mt-3 flex flex-col gap-1">
-          <p class="text-[11px] text-fg-muted leading-relaxed">
+          <p class="text-xs text-fg-muted leading-relaxed">
             {{ t("views.setup.steps.step2.siteIcon.help1") }}
           </p>
-          <p class="text-[11px] text-fg-muted leading-relaxed">
+          <p class="text-xs text-fg-muted leading-relaxed">
             {{ t("views.setup.steps.step2.siteIcon.help2") }}
           </p>
         </div>

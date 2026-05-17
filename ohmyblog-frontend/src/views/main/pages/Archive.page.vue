@@ -61,20 +61,22 @@ onMounted(async () => {
     </BaseCard>
 
     <!-- 时间轴卡片 -->
-    <BaseCard v-else padding="sm">
-      <!-- 加载中 -->
-      <div v-if="loading" class="flex justify-center py-16">
-        <Loading size-class="w-6 h-6" color-class="text-fg-subtle" />
-      </div>
+    <div v-else class="-mx-4 md:mx-0">
+      <BaseCard padding="none" class="px-8 py-6 rounded-2xl! md:rounded-3xl!">
+        <!-- 加载中 -->
+        <div v-if="loading" class="flex justify-center py-16">
+          <Loading size-class="w-6 h-6" color-class="text-fg-subtle" />
+        </div>
 
-      <template v-else>
-        <ArchiveYearGroup
-          v-for="group in groups"
-          :key="group.year"
-          :year="group.year"
-          :posts="group.posts"
-        />
-      </template>
-    </BaseCard>
+        <template v-else>
+          <ArchiveYearGroup
+            v-for="group in groups"
+            :key="group.year"
+            :year="group.year"
+            :posts="group.posts"
+          />
+        </template>
+      </BaseCard>
+    </div>
   </div>
 </template>

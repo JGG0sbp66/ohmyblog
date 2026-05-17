@@ -33,6 +33,7 @@ coverage/
 /cypress/videos/
 /cypress/screenshots/
 __screenshots__/
+perf/
 
 # --- 环境与秘钥 ---
 .env

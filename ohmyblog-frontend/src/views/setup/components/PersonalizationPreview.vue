@@ -89,7 +89,7 @@ const onAvatarChange = (file: File) => {
         </div>
 
         <!-- 3. 辅助说明 -->
-        <p class="text-[11px] text-fg-subtle/80 font-medium">
+        <p class="text-xs text-fg-subtle/80 font-medium">
           {{ t("views.setup.steps.step4.avatar.help") }}
         </p>
       </div>
