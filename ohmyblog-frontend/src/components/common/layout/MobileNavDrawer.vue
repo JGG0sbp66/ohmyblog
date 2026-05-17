@@ -69,7 +69,10 @@ const handleNavClick = (name: string) => {
         aria-modal="true"
         :aria-label="t('components.common.layout.Header.menu.title')"
         class="fixed top-0 left-0 bottom-0 z-61 w-72 max-w-[85vw] bg-bg-card shadow-xl flex flex-col md:hidden"
-        style="padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom)"
+        style="
+          padding-top: env(safe-area-inset-top);
+          padding-bottom: env(safe-area-inset-bottom);
+        "
       >
         <!-- 顶部：标题 + 关闭按钮 -->
         <div

@@ -70,7 +70,9 @@ watch(
       </nav>
 
       <!-- 右侧按钮区域（桌面 / 移动端共用，仅移动端额外多一个汉堡按钮） -->
-      <div class="flex items-center mr-3 md:mr-4 gap-1 md:gap-2 stagger-container">
+      <div
+        class="flex items-center mr-3 md:mr-4 gap-1 md:gap-2 stagger-container"
+      >
         <ToggleColor class="onload-animation" />
         <ToggleTheme class="onload-animation" />
         <ToggleLanguage class="onload-animation" />

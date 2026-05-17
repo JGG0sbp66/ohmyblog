@@ -46,10 +46,7 @@ const initial = computed(() =>
     @confirm="emit('confirm')"
   >
     <!-- 显示要删除的友链信息（带头像） -->
-    <div
-      v-if="item"
-      class="p-3 bg-bg-muted rounded-lg border border-border/30"
-    >
+    <div v-if="item" class="p-3 bg-bg-muted rounded-lg border border-border/30">
       <div class="flex items-center gap-3">
         <!-- 圆形头像或首字占位 -->
         <div

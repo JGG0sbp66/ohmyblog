@@ -20,7 +20,10 @@ export type PostDetail = TPost;
  * 性能优化：后端不返回 content / contentText（前者编辑器才用，后者只用于
  * 取长度），改成 SQL 直接算 wordCount，响应体积大幅减小。
  */
-export type PublicPostDetail = Omit<TPost, "content" | "contentText" | "status" | "deletedAt"> & {
+export type PublicPostDetail = Omit<
+  TPost,
+  "content" | "contentText" | "status" | "deletedAt"
+> & {
   wordCount: number;
 };
 
