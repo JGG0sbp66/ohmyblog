@@ -102,17 +102,14 @@ class PostDao {
 	// ─── 读者 · 单条 ────────────────────────────────────────────────────────────
 
 	/**
-	 * 【读者 · 单条 + 自增】根据 slug 获取单篇已发布文章，并原子性地自增 viewCount
-	 * 使用 UPDATE ... RETURNING 单次查询完成，避免先 SELECT 再 UPDATE 的竞态
+	 * 【读者 · 单条】根据 slug 获取单篇已发布文章
+	 * 纯读路径，不触发 viewCount 自增。viewCount 累积由 viewCounterService 异步批量 flush
 	 * @param slug URL 中的文章标识
-	 * @returns 自增后的文章记录或 null
+	 * @returns 文章记录或 null
 	 */
-	async findBySlugAndIncrementView(slug: string) {
+	async findPublishedBySlug(slug: string) {
 		const result = await db
-			.update(post)
-			.set({ viewCount: sql`${post.viewCount} + 1` })
-			.where(and(eq(post.slug, slug), eq(post.status, "published")))
-			.returning({
+			.select({
 				uuid: post.uuid,
 				title: post.title,
 				contentMarkdown: post.contentMarkdown,
@@ -125,8 +122,25 @@ class PostDao {
 				publishedAt: post.publishedAt,
 				createdAt: post.createdAt,
 				updatedAt: post.updatedAt,
-			});
+			})
+			.from(post)
+			.where(and(eq(post.slug, slug), eq(post.status, "published")))
+			.limit(1);
 		return result[0] || null;
+	}
+
+	/**
+	 * 【内部专用】按 slug 批量增加 viewCount
+	 * 由 viewCounterService 周期性调用，把内存累积的 delta 落盘
+	 * @param slug 文章标识
+	 * @param delta 累积的访问次数（>0）
+	 */
+	async addViewCount(slug: string, delta: number) {
+		if (delta <= 0) return;
+		await db
+			.update(post)
+			.set({ viewCount: sql`${post.viewCount} + ${delta}` })
+			.where(eq(post.slug, slug));
 	}
 
 	/**

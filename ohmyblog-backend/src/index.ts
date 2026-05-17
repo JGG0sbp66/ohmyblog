@@ -14,6 +14,7 @@ import { friendLinkRoute } from "./routes/friend-link.route.js";
 import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
+import { viewCounterService } from "./services/view-counter.service.js";
 import { isProduction } from "./utils/runtime";
 
 const app = new Elysia()
@@ -74,6 +75,22 @@ if (existsSync(PUBLIC_DIR)) {
 
 // 启动服务
 app.listen(config.PORT);
+
+// 启动后台 viewCount 累积器（每 5s 把内存累积的访问量批量写回数据库）
+viewCounterService.start();
+
+// 优雅关闭：在容器停止 / 本地 Ctrl+C 时把剩余的 viewCount 落盘
+const shutdown = async (signal: string) => {
+	console.log(`\n收到 ${signal}，正在优雅关闭...`);
+	try {
+		await viewCounterService.stop();
+	} catch (err) {
+		console.error("viewCounterService.stop 失败：", err);
+	}
+	process.exit(0);
+};
+process.on("SIGTERM", () => void shutdown("SIGTERM"));
+process.on("SIGINT", () => void shutdown("SIGINT"));
 
 export type App = typeof app;
 

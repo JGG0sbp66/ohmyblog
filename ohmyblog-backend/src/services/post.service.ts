@@ -9,6 +9,8 @@ import type {
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 
+import { viewCounterService } from "./view-counter.service";
+
 class PostService {
 	private logger = logger.withTag("PostService");
 
@@ -81,14 +83,17 @@ class PostService {
 
 	/**
 	 * 根据 slug 获取已发布文章（前台文章详情页）
+	 * 读路径不再写库，viewCount 由 viewCounterService 异步批量累加
 	 * @param slug URL 中的文章标识
 	 * @returns 文章记录（含 contentMarkdown）
 	 */
 	async getBySlug(slug: string) {
-		const post = await postDao.findBySlugAndIncrementView(slug);
+		const post = await postDao.findPublishedBySlug(slug);
 		if (!post) {
 			throw new BusinessError("文章不存在", { status: 404 });
 		}
+		// 异步累计访问量，不阻塞响应
+		viewCounterService.hit(slug);
 		return post;
 	}
 
