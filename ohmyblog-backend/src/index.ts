@@ -79,9 +79,9 @@ app.listen(config.PORT);
 // 启动后台 viewCount 累积器（每 5s 把内存累积的访问量批量写回数据库）
 viewCounterService.start();
 
-// 优雅关闭：在容器停止 / 本地 Ctrl+C 时把剩余的 viewCount 落盘
+// 容器停止 / 本地 Ctrl+C 时，把剩余的 viewCount 落盘后再退出
 const shutdown = async (signal: string) => {
-	console.log(`\n收到 ${signal}，正在优雅关闭...`);
+	console.log(`\n收到 ${signal}，正在退出...`);
 	try {
 		await viewCounterService.stop();
 	} catch (err) {
