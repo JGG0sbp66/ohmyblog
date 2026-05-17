@@ -88,7 +88,7 @@ defineExpose({
 
     <!-- 第三行：格式说明与状态 -->
     <div class="flex items-center justify-between min-h-6">
-      <p class="text-[11px] text-fg-subtle/80 font-medium text-left">
+      <p class="text-xs text-fg-subtle/80 font-medium text-left">
         {{ t("views.setup.steps.step4.hero.format") }}
       </p>
 
