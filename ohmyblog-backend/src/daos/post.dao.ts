@@ -107,6 +107,9 @@ class PostDao {
 	/**
 	 * 【读者 · 单条】根据 slug 获取已发布文章。带 60s TTL 缓存
 	 * 纯读路径；viewCount 累积由 viewCounterService 异步批量 flush
+	 *
+	 * 性能优化：不返回完整的 contentText（巨大且前台仅用于取长度），
+	 * 直接在 SQL 中用 LENGTH() 算出 wordCount，响应体积从 ~50KB 降到 ~25KB
 	 */
 	async findPublishedBySlug(slug: string) {
 		return postCaches.slug.fetch(slug, async () => {
@@ -115,7 +118,7 @@ class PostDao {
 					uuid: post.uuid,
 					title: post.title,
 					contentMarkdown: post.contentMarkdown,
-					contentText: post.contentText,
+					wordCount: sql<number>`LENGTH(${post.contentText})`,
 					coverImage: post.coverImage,
 					tags: post.tags,
 					slug: post.slug,

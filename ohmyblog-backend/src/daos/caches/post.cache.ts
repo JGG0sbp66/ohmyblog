@@ -17,7 +17,7 @@ export type PublishedPostRow = {
 	uuid: string;
 	title: string;
 	contentMarkdown: string | null;
-	contentText: string | null;
+	wordCount: number;
 	coverImage: string | null;
 	tags: unknown;
 	slug: string | null;
