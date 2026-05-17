@@ -22,11 +22,11 @@ const systemStore = useSystemStore();
         systemStore.personalInfo.hero ? 'mt-4' : 'mt-28',
       ]"
     >
-      <!-- 两栏布局：左侧侧边栏 + 右侧内容区 -->
+      <!-- 两栏布局：左侧侧边栏 + 右侧内容区（侧边栏仅桌面端显示） -->
       <div class="flex flex-col md:flex-row gap-7 items-start">
-        <!-- 侧边栏 (Widgets) -->
+        <!-- 侧边栏 (Widgets) - 移动端隐藏 -->
         <aside
-          class="w-full md:w-70 flex flex-col gap-7 sticky top-24 order-1 sidebar"
+          class="hidden md:flex md:w-70 flex-col gap-7 sticky top-24 order-1 sidebar"
         >
           <div class="onload-animation">
             <ProfileCard />
