@@ -3,11 +3,54 @@ import { and, count, desc, eq, like, ne, or, sql, sum } from "drizzle-orm";
 import { db } from "../../db/connection";
 import { post } from "../../db/schema";
 import type { TPostListQueryDTO } from "../dtos/post.dto";
+import { TTLCache } from "../utils/cache";
 
 export type NewPost = typeof post.$inferInsert;
 export type PostUpdate = Partial<
 	Omit<NewPost, "uuid" | "createdAt" | "updatedAt">
 >;
+
+// ───── 缓存 ─────────────────────────────────────────────────────────────────
+// 文章详情按 slug 缓存（前台 GET /public/posts/:slug 是热路径）。
+// archive 列表按单 key 缓存（仅返回标题/slug/日期/标签，体积小变化稀疏）。
+//
+// 失效策略：所有 mutation（update / permanentDelete）后调用 invalidatePostCaches。
+// 注意：addViewCount 不需要失效——viewCount 在缓存里反正不准（异步累加），
+// 等 TTL 过期或下一次 mutation 顺带刷新即可，避免互相抵消缓存收益。
+type PublishedPostRow = {
+	uuid: string;
+	title: string;
+	contentMarkdown: string | null;
+	contentText: string | null;
+	coverImage: string | null;
+	tags: unknown;
+	slug: string | null;
+	excerpt: string | null;
+	viewCount: number;
+	publishedAt: Date | null;
+	createdAt: Date;
+	updatedAt: Date;
+};
+type ArchiveRow = {
+	title: string;
+	slug: string | null;
+	publishedAt: Date | null;
+	tags: unknown;
+};
+const slugCache = new TTLCache<string, PublishedPostRow | null>({
+	ttlMs: 60_000,
+	maxSize: 512,
+});
+const archiveCache = new TTLCache<string, ArchiveRow[]>({
+	ttlMs: 60_000,
+	maxSize: 4,
+});
+const ARCHIVE_KEY = "all";
+
+function invalidatePostCaches() {
+	slugCache.clear();
+	archiveCache.clear();
+}
 
 // 列表场景下选取的字段：刻意排除 content (ProseMirror JSON) 和 contentMarkdown
 // 因为这两个字段存储整篇文章数据，在列表接口中传输会造成不必要的性能损耗
@@ -35,6 +78,7 @@ class PostDao {
 	 */
 	async create(data: NewPost) {
 		const result = await db.insert(post).values(data).returning();
+		invalidatePostCaches();
 		return result[0];
 	}
 
@@ -104,10 +148,13 @@ class PostDao {
 	/**
 	 * 【读者 · 单条】根据 slug 获取单篇已发布文章
 	 * 纯读路径，不触发 viewCount 自增。viewCount 累积由 viewCounterService 异步批量 flush
+	 * 带 60s TTL 缓存：mutation 时统一清空
 	 * @param slug URL 中的文章标识
 	 * @returns 文章记录或 null
 	 */
 	async findPublishedBySlug(slug: string) {
+		const cached = slugCache.get(slug);
+		if (cached !== undefined) return cached;
 		const result = await db
 			.select({
 				uuid: post.uuid,
@@ -126,7 +173,9 @@ class PostDao {
 			.from(post)
 			.where(and(eq(post.slug, slug), eq(post.status, "published")))
 			.limit(1);
-		return result[0] || null;
+		const row = (result[0] as PublishedPostRow | undefined) ?? null;
+		slugCache.set(slug, row);
+		return row;
 	}
 
 	/**
@@ -204,10 +253,13 @@ class PostDao {
 	/**
 	 * 【读者 · 归档页】获取所有已发布文章的轻量列表，不分页
 	 * 仅返回归档页时间轴所需的最小字段集合：title / slug / publishedAt / tags
+	 * 带 60s TTL 缓存：mutation 时统一清空
 	 * @returns 按发布时间倒序排列的文章数组
 	 */
 	async findAllPublishedForArchive() {
-		return db
+		const cached = archiveCache.get(ARCHIVE_KEY);
+		if (cached !== undefined) return cached;
+		const list = await db
 			.select({
 				title: post.title,
 				slug: post.slug,
@@ -217,6 +269,8 @@ class PostDao {
 			.from(post)
 			.where(eq(post.status, "published"))
 			.orderBy(desc(post.publishedAt));
+		archiveCache.set(ARCHIVE_KEY, list);
+		return list;
 	}
 
 	/**
@@ -260,6 +314,7 @@ class PostDao {
 			.set(updateData)
 			.where(eq(post.uuid, uuid))
 			.returning();
+		invalidatePostCaches();
 		return result[0] || null;
 	}
 
@@ -271,6 +326,7 @@ class PostDao {
 	 */
 	async permanentDelete(uuid: string) {
 		const result = await db.delete(post).where(eq(post.uuid, uuid)).returning();
+		invalidatePostCaches();
 		return result[0] || null;
 	}
 }
