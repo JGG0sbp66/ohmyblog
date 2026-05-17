@@ -32,9 +32,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <!--
+    根容器 -mx-4 md:mx-0：移动端整体破出 main 的 px-4 让卡片贴边；
+    每个卡片在移动端 rounded-2xl，桌面端恢复 BaseCard 默认 rounded-3xl。
+  -->
+  <div class="flex flex-col gap-6 -mx-4 md:mx-0">
     <!-- 友链列表 -->
-    <BaseCard padding="default" class="onload-animation">
+    <BaseCard
+      padding="default"
+      class="onload-animation rounded-2xl! md:rounded-3xl!"
+    >
       <!-- 标题行 -->
       <div class="flex items-center gap-2 mb-6">
         <h2 class="text-xl font-bold text-fg">
@@ -52,6 +59,8 @@ onMounted(async () => {
     </BaseCard>
 
     <!-- 申请友链卡片（SettingCard 在组件内部管理） -->
-    <FriendLinkApplyForm class="onload-animation anim-delay-200" />
+    <FriendLinkApplyForm
+      class="onload-animation anim-delay-200 rounded-2xl! md:rounded-3xl!"
+    />
   </div>
 </template>

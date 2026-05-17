@@ -62,7 +62,7 @@ onMounted(async () => {
 
     <!-- 时间轴卡片 -->
     <div v-else class="-mx-4 md:mx-0">
-      <BaseCard padding="none" class="px-8 py-6 rounded-2xl md:rounded-3xl">
+      <BaseCard padding="none" class="px-8 py-6 rounded-2xl! md:rounded-3xl!">
         <!-- 加载中 -->
         <div v-if="loading" class="flex justify-center py-16">
           <Loading size-class="w-6 h-6" color-class="text-fg-subtle" />
