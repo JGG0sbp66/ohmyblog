@@ -11,6 +11,7 @@
 // 等 TTL 过期或下一次 mutation 顺带刷新即可，避免高频访问让缓存命中率归零。
 
 import { TTLCache } from "../../utils/cache";
+import type { TPostStatus } from "../../../db/constants/post.constants";
 
 // 单文档：findPublishedBySlug 的返回结构
 export type PublishedPostRow = {
@@ -42,8 +43,8 @@ export type PublishedListRow = {
 	title: string;
 	contentText: string | null;
 	coverImage: string | null;
-	status: string;
-	tags: unknown;
+	status: TPostStatus;
+	tags: string[];
 	slug: string | null;
 	excerpt: string | null;
 	viewCount: number;

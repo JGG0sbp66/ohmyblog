@@ -41,14 +41,14 @@ const wordCount = computed(() => props.post.contentText?.length ?? 0);
 <template>
   <BaseCard
     padding="none"
-    class="group flex items-stretch overflow-hidden hover:-translate-y-0.5 transition-transform duration-200 cursor-pointer select-none"
+    class="group flex flex-col-reverse md:flex-row md:items-stretch overflow-hidden md:hover:-translate-y-0.5 transition-transform duration-200 cursor-pointer select-none rounded-none! shadow-none! md:rounded-3xl! md:shadow-lg!"
     @click="navigate"
   >
-    <!-- 左侧：信息区域 -->
-    <div class="flex-1 min-w-0 p-5 flex flex-col gap-2.5">
+    <!-- 信息区域（桌面：左；移动：下） -->
+    <div class="flex-1 min-w-0 p-4 md:p-5 flex flex-col gap-2.5">
       <!-- 标题 -->
       <h2
-        class="text-[26px] font-bold leading-snug text-fg line-clamp-2 border-l-4 border-accent pl-3 -ml-0.5"
+        class="text-xl md:text-[26px] font-bold leading-snug text-fg line-clamp-2 border-l-4 border-accent pl-3 -ml-0.5"
       >
         {{ post.title || t("views.main.home.PostCard.untitled") }}
       </h2>
@@ -79,42 +79,45 @@ const wordCount = computed(() => props.post.contentText?.length ?? 0);
       </div>
     </div>
 
-    <!-- 右侧：封面图区域（有无封面宽度不同） -->
+    <!--
+      封面区域（桌面：右；移动：上）
+      - 有封面：移动端 m-3 + 2:1 比例 + rounded-xl；桌面端固定宽度 + m-3 + rounded-xl
+      - 无封面：移动端完全不渲染；桌面端保留右侧主题色细条 + 箭头
+    -->
+    <!-- 有封面图 -->
     <div
-      :class="[
-        'shrink-0 m-3 rounded-xl overflow-hidden relative transition-[width] duration-200',
-        post.coverImage ? 'w-40 md:w-56' : 'w-13',
-      ]"
+      v-if="post.coverImage"
+      class="shrink-0 relative overflow-hidden m-3 rounded-xl aspect-2/1 md:w-56 md:aspect-auto"
     >
-      <!-- 有封面图 -->
-      <template v-if="post.coverImage">
-        <img
-          :src="post.coverImage"
-          :alt="post.title"
-          class="w-full h-full object-cover"
-        />
-        <!-- 悬浮遮罩 + 右箭头（仿 ProfileCard 效果） -->
+      <img
+        :src="post.coverImage"
+        :alt="post.title"
+        class="w-full h-full object-cover"
+      />
+      <!-- 悬浮遮罩 + 右箭头（仅 hover 设备生效） -->
+      <div
+        class="absolute inset-0 bg-black/25 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      >
         <div
-          class="absolute inset-0 bg-black/25 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          class="transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 ease-spring"
         >
-          <div
-            class="transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 ease-spring"
-          >
-            <ChevronRight class="w-8 h-8 text-white" />
-          </div>
+          <ChevronRight class="w-8 h-8 text-white" />
         </div>
-      </template>
+      </div>
+    </div>
 
-      <!-- 无封面图：主题色细长条 + 常驻右箭头 -->
-      <template v-else>
-        <div
-          class="w-full h-full bg-accent/15 flex items-center justify-center group-hover:bg-accent/25 transition-colors duration-200"
-        >
-          <ChevronRight
-            class="w-5 h-5 text-accent transition-transform duration-300 group-hover:translate-x-0.5"
-          />
-        </div>
-      </template>
+    <!-- 无封面图：仅桌面端渲染右侧主题色细条 + 常驻右箭头 -->
+    <div
+      v-else
+      class="hidden md:block shrink-0 m-3 w-13 rounded-xl overflow-hidden"
+    >
+      <div
+        class="w-full h-full bg-accent/15 flex items-center justify-center group-hover:bg-accent/25 transition-colors duration-200"
+      >
+        <ChevronRight
+          class="w-5 h-5 text-accent transition-transform duration-300 group-hover:translate-x-0.5"
+        />
+      </div>
     </div>
   </BaseCard>
 </template>

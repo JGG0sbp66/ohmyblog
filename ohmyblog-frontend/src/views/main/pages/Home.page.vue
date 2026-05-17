@@ -58,15 +58,26 @@ onMounted(fetchList);
       <EmptyState :text="t('views.main.home.PostCard.empty')" />
     </BaseCard>
 
-    <!-- 卡片列表 -->
+    <!--
+      卡片列表
+      - 移动端：破出 main 的 px-4 让卡片贴边；用点状分割线在卡间做轻量分隔；
+        整体 overflow-hidden + rounded-2xl 让首尾卡片四角圆角，与 Header 底部圆角呼应。
+      - 桌面端：恢复 gap-4，去除分隔线和裁剪。
+    -->
     <div
       v-else-if="posts.length > 0"
       :class="[
-        'flex flex-col gap-4 stagger-container transition-opacity duration-200 [--content-delay:0ms]',
+        'flex flex-col stagger-container transition-opacity duration-200 [--content-delay:0ms]',
+        '-mx-4 md:mx-0 md:gap-4',
+        'overflow-hidden rounded-2xl md:overflow-visible md:rounded-none',
         loading ? 'opacity-50 pointer-events-none' : '',
       ]"
     >
-      <div v-for="post in posts" :key="post.uuid" class="onload-animation">
+      <div
+        v-for="post in posts"
+        :key="post.uuid"
+        class="post-card-item onload-animation"
+      >
         <PostCard :post="post" />
       </div>
     </div>
@@ -84,3 +95,28 @@ onMounted(fetchList);
     </div>
   </div>
 </template>
+
+<style scoped>
+@media (width < 48rem) {
+  .post-card-item + .post-card-item {
+    position: relative;
+  }
+
+  .post-card-item + .post-card-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    right: 1rem;
+    z-index: 1;
+    height: 1px;
+    background-image: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--color-fg-muted) 10%, transparent) 1px,
+      transparent 1px
+    );
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+  }
+}
+</style>
