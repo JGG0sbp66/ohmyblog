@@ -86,7 +86,13 @@ const editor = useEditor({
     ReadonlyImage,
     Indent,
     TextAlign.configure({ types: ["heading", "paragraph"] }),
-    Link.configure({ openOnClick: true }),
+    Link.configure({
+      openOnClick: true,
+      HTMLAttributes: {
+        rel: "noopener noreferrer",
+        target: "_blank",
+      },
+    }),
   ],
   content: null,
   editable: false,

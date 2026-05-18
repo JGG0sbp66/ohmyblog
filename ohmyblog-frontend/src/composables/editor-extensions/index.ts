@@ -93,7 +93,20 @@ export function useEditorExtensions() {
     ResizableImage,
     Indent,
     TextAlign.configure({ types: ["heading", "paragraph"] }),
-    Link.configure({ openOnClick: true }),
+    Link.configure({
+      // 编辑模式下点击链接只定位光标，不跳转（否则用户改链接文字时会被带走）
+      openOnClick: false,
+      // autolink 会边打边扫描，URL 一成形就立即变链接，且空格后继续输入会被
+      // mark 边界吸入。Notion/飞书都不做这种"边打边链"，只在粘贴时识别 URL。
+      // 想手动给文字加链接，使用 BubbleMenu 的链接按钮即可。
+      autolink: false,
+      // 选中文字后粘贴 URL，自动给选区套上链接而非替换；纯粘贴 URL 也自动转链接
+      linkOnPaste: true,
+      HTMLAttributes: {
+        rel: "noopener noreferrer",
+        target: "_blank",
+      },
+    }),
     Placeholder.configure({
       placeholder: t("views.admin.PostEditor.content.body.placeholder"),
     }),
