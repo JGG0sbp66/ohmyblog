@@ -81,7 +81,7 @@ export function useEditorExtensions() {
       // 拖拽 drop 时的指示器：默认 1px 浅色几乎看不见，加粗 + 主题色让落点清晰
       dropcursor: {
         color: "var(--theme-accent)",
-        width: 1,
+        width: 2,
       },
     }),
     CustomListItem,
