@@ -78,6 +78,11 @@ export function useEditorExtensions() {
       codeBlock: false, // 由 CustomCodeBlock 替代，挂载 Vue NodeView + lowlight 语法高亮
       link: false, // 由下方 Link.configure 替代（v3 StarterKit 已内置，需显式禁用）
       underline: false, // 由 CustomUnderline 替代（v3 StarterKit 已内置，需显式禁用）
+      // 拖拽 drop 时的指示器：默认 1px 浅色几乎看不见，加粗 + 主题色让落点清晰
+      dropcursor: {
+        color: "var(--theme-accent)",
+        width: 1,
+      },
     }),
     CustomListItem,
     CustomOrderedList,

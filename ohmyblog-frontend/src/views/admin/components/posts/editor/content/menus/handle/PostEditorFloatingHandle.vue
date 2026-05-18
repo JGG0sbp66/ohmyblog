@@ -148,6 +148,13 @@ const onMouseMove = (event: MouseEvent) => {
     // 段落位于列表项内时，图标应显示列表类型而非 Type
     let icon = getNodeIcon(blockNode);
     if (blockNode.type.name === "paragraph") {
+      // 段落内含图片时图标切到 Image
+      blockNode.descendants((n) => {
+        if (n.type.name === "image" || n.type.name === "resizableImage") {
+          icon = Image;
+          return false;
+        }
+      });
       for (let d = blockDepth - 1; d >= 1; d--) {
         const ancestor = $pos.node(d);
         if (ancestor.type.name === "listItem") {
@@ -179,7 +186,9 @@ const onMouseMove = (event: MouseEvent) => {
 
     fixedTop.value = newTop;
     fixedLeft.value = rect.left - HANDLE_OFFSET;
-    isEmpty.value = blockNode.textContent === "";
+    // 空行判定：考虑 leaf inline node（image / hardBreak 等），
+    // 不仅仅是文字。一个段落只含图片时不应被当作空行
+    isEmpty.value = blockNode.content.size === 0;
     blockIcon.value = icon;
     isVisible.value = true;
 

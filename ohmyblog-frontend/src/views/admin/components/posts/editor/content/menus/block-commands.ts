@@ -1,0 +1,183 @@
+// src/views/admin/components/posts/editor/content/menus/block-commands.ts
+import type { Editor } from "@tiptap/core";
+import type { Component } from "vue";
+import {
+  Type,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
+  List,
+  ListOrdered,
+  Code2,
+  Quote,
+} from "lucide-vue-next";
+import { useLang } from "@/composables/lang.hook";
+
+/**
+ * 编辑器块命令注册表（菜单单一真源）
+ *
+ * 服务对象：BubbleBlockSection / HandleBlockMenu / 未来 SlashMenu。
+ * 不放在全局 composables/，是因为它**只服务于本目录下的菜单组件**，
+ * 不属于跨模块复用的能力，与消费方共住更便于维护。
+ *
+ * 文案策略：
+ * - label   : 短文本（"H1"/"正文"），用于横排按钮（不能含 \n，否则撑开高度）
+ * - tooltip : 长文本（"一级标题\nmarkdown:# 空格"），用于悬浮提示（多行 OK）
+ * 两者不能合并：见 i18n blockCommands.* 的 { label, tooltip } 结构。
+ */
+
+export type BlockCommandGroup = "text" | "list" | "embed";
+
+export interface BlockCommand {
+  /** 唯一标识，菜单按 id 挑选子集 */
+  id: BlockCommandId;
+  /** i18n 文案 key，相对 views.admin.PostEditor.content.blockCommands */
+  labelKey: string;
+  icon: Component;
+  group: BlockCommandGroup;
+  /** 当前光标是否处于该块内 */
+  isActive: (e: Editor) => boolean;
+  /** 执行命令 */
+  run: (e: Editor) => void;
+}
+
+export type BlockCommandId =
+  | "paragraph"
+  | "heading1"
+  | "heading2"
+  | "heading3"
+  | "heading4"
+  | "heading5"
+  | "heading6"
+  | "bulletList"
+  | "orderedList"
+  | "codeBlock"
+  | "quote";
+
+/**
+ * 切换光标所在列表项的列表类型。
+ * 原理：把当前 listItem lift 出列表 → toggle 包回新类型。
+ * 已是目标类型则不操作；不在列表中则直接 toggle。
+ */
+const switchListType = (e: Editor, target: "bulletList" | "orderedList") => {
+  const { $from } = e.state.selection;
+  let currentListType: string | null = null;
+  let inListItem = false;
+  for (let d = $from.depth; d > 0; d--) {
+    const node = $from.node(d);
+    if (node.type.name === "listItem") inListItem = true;
+    if (node.type.name === "bulletList" || node.type.name === "orderedList") {
+      currentListType = node.type.name;
+      break;
+    }
+  }
+  if (currentListType === target) return;
+  if (inListItem && currentListType !== null) {
+    const chain = e.chain().focus().liftListItem("listItem");
+    if (target === "bulletList") chain.toggleBulletList().run();
+    else chain.toggleOrderedList().run();
+    return;
+  }
+  if (target === "bulletList") e.chain().focus().toggleBulletList().run();
+  else e.chain().focus().toggleOrderedList().run();
+};
+
+/** 标题命令工厂：减少重复 */
+const headingCommand = (
+  level: 1 | 2 | 3 | 4 | 5 | 6,
+  icon: Component,
+): BlockCommand => ({
+  id: `heading${level}` as BlockCommandId,
+  labelKey: `heading${level}`,
+  icon,
+  group: "text",
+  isActive: (e) => e.isActive("heading", { level }),
+  run: (e) => e.chain().focus().toggleHeading({ level }).run(),
+});
+
+/** 全部块命令（声明式，单一真源） */
+const BLOCK_COMMANDS: readonly BlockCommand[] = [
+  {
+    id: "paragraph",
+    labelKey: "paragraph",
+    icon: Type,
+    group: "text",
+    isActive: (e) => e.isActive("paragraph"),
+    run: (e) => e.chain().focus().setParagraph().run(),
+  },
+  headingCommand(1, Heading1),
+  headingCommand(2, Heading2),
+  headingCommand(3, Heading3),
+  headingCommand(4, Heading4),
+  headingCommand(5, Heading5),
+  headingCommand(6, Heading6),
+  {
+    id: "bulletList",
+    labelKey: "bulletList",
+    icon: List,
+    group: "list",
+    isActive: (e) => e.isActive("bulletList"),
+    run: (e) => switchListType(e, "bulletList"),
+  },
+  {
+    id: "orderedList",
+    labelKey: "orderedList",
+    icon: ListOrdered,
+    group: "list",
+    isActive: (e) => e.isActive("orderedList"),
+    run: (e) => switchListType(e, "orderedList"),
+  },
+  {
+    id: "codeBlock",
+    labelKey: "codeBlock",
+    icon: Code2,
+    group: "embed",
+    isActive: (e) => e.isActive("codeBlock"),
+    run: (e) => e.chain().focus().toggleCodeBlock().run(),
+  },
+  {
+    id: "quote",
+    labelKey: "quote",
+    icon: Quote,
+    group: "embed",
+    isActive: (e) => e.isActive("blockquote"),
+    run: (e) => e.chain().focus().toggleBlockquote().run(),
+  },
+];
+
+const COMMAND_BY_ID = new Map(BLOCK_COMMANDS.map((c) => [c.id, c]));
+
+/**
+ * useBlockCommands — 在组件中消费块命令注册表
+ *
+ * @param ids 可选；指定则只返回这些 id 的命令（按指定顺序），不传返回全部
+ *
+ * 返回：
+ * - commands  : 命令数组
+ * - labelOf   : 短文本（行按钮用，单行）
+ * - tooltipOf : 长文本（悬浮提示用，可含换行 / 快捷键说明）
+ * - findActive: 当前编辑器中处于激活态的第一个命令（用于显示当前块类型 icon）
+ */
+export const useBlockCommands = (ids?: readonly BlockCommandId[]) => {
+  const { t } = useLang();
+
+  const commands: BlockCommand[] = ids
+    ? ids
+        .map((id) => COMMAND_BY_ID.get(id))
+        .filter((c): c is BlockCommand => Boolean(c))
+    : [...BLOCK_COMMANDS];
+
+  const labelOf = (cmd: BlockCommand) =>
+    t(`views.admin.PostEditor.content.blockCommands.${cmd.labelKey}.label`);
+
+  const tooltipOf = (cmd: BlockCommand) =>
+    t(`views.admin.PostEditor.content.blockCommands.${cmd.labelKey}.tooltip`);
+
+  const findActive = (e: Editor): BlockCommand | undefined =>
+    commands.find((c) => c.isActive(e));
+
+  return { commands, labelOf, tooltipOf, findActive };
+};
