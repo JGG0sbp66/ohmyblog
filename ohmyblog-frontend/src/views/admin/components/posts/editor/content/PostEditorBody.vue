@@ -14,14 +14,11 @@ import { useLang } from "@/composables/lang.hook";
 /**
  * PostEditorBody — Tiptap 富文本编辑区
  *
- * v-model:json         → ProseMirror JSON（存入 content 字段）
- * v-model:markdown     → 纯 Markdown（存入 contentMarkdown 字段）
+ * v-model:json         → ProseMirror JSON（存入 content 字段，唯一真源）
  * v-model:text         → 纯文本（存入 contentText 字段，用于搜索/预览）
- *
  * TODO: 后续在此组件内挂载 FloatingMenu（块操作手柄）/ SlashMenu（/ 命令）
  */
 const json = defineModel<object | undefined>("json");
-const markdown = defineModel<string>("markdown", { default: "" });
 const text = defineModel<string>("text", { default: "" });
 const containerRef = ref<HTMLElement | null>(null);
 
@@ -61,7 +58,6 @@ const editor = useEditor({
   },
   onUpdate({ editor }) {
     json.value = editor.getJSON();
-    markdown.value = (editor.storage as any).markdown.getMarkdown();
     text.value = editor.getText();
   },
 });

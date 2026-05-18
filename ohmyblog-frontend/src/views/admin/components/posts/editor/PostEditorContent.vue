@@ -9,12 +9,10 @@ import PostEditorBody from "./content/PostEditorBody.vue";
  * 组合 Title 和 Body 两个子组件。
  * v-model:title           → 文章标题
  * v-model:content         → ProseMirror JSON
- * v-model:contentMarkdown → 纯 Markdown
  * v-model:contentText     → 纯文本（搜索/预览）
  */
 const title = defineModel<string>("title", { default: "" });
 const content = defineModel<object | undefined>("content");
-const contentMarkdown = defineModel<string>("contentMarkdown", { default: "" });
 const contentText = defineModel<string>("contentText", { default: "" });
 </script>
 
@@ -29,11 +27,7 @@ const contentText = defineModel<string>("contentText", { default: "" });
       <div class="border-b border-border/30" />
 
       <!-- 正文 -->
-      <PostEditorBody
-        v-model:json="content"
-        v-model:markdown="contentMarkdown"
-        v-model:text="contentText"
-      />
+      <PostEditorBody v-model:json="content" v-model:text="contentText" />
     </div>
   </div>
 </template>

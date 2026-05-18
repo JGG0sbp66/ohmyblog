@@ -13,15 +13,12 @@ export const post = sqliteTable("post", {
 	title: text("title").notNull().default(""),
 
 	// 【管理端专用】编辑器源数据：ProseMirror JSON 格式
-	// 保存了所有富文本细节（如图片宽高、块级自定义属性），是后台编辑器的唯一数据来源
+	// 保存了所有富文本细节（如图片宽高、块级自定义属性），是后台编辑器的唯一数据来源，
+	// 也是前台文章渲染的输入（只读 Tiptap 实例直接 setContent(json)）
 	content: text("content", { mode: "json" }),
 
-	// 【展示端专用】纯 Markdown 文本
-	// 由后端根据 content 自动派生。用于前台页面高性能渲染、RSS 订阅、以及文章导出
-	contentMarkdown: text("content_markdown"),
-
 	// 【搜索/预览专用】纯文本摘要
-	// 由后端从 content 中剥离所有标签后的纯文本。用于数据库全文搜索 (FTS) 和文章列表的预览文字
+	// 由前端 editor.getText() 导出。用于数据库全文搜索 (FTS) 和文章列表的预览文字
 	contentText: text("content_text"),
 
 	// 封面图 URL

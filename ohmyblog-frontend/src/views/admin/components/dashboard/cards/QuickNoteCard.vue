@@ -44,7 +44,6 @@ const handleSave = async () => {
     await savePost(uuid, {
       title: title.value.trim() || undefined,
       content: buildProseMirrorDoc(plainText),
-      contentMarkdown: plainText || undefined,
       contentText: plainText || undefined,
     });
 

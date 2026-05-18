@@ -15,7 +15,6 @@ const {
   status,
   title,
   content,
-  contentMarkdown,
   contentText,
   coverImage,
   excerpt,
@@ -41,7 +40,6 @@ const {
         class="onload-animation anim-delay-150"
         v-model:title="title"
         v-model:content="content"
-        v-model:contentMarkdown="contentMarkdown"
         v-model:contentText="contentText"
       />
     </div>

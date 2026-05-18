@@ -5,13 +5,13 @@ import { useEditor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
-import { Markdown } from "tiptap-markdown";
 import {
   TextStyle,
   Color,
   CustomHighlight,
 } from "@/composables/editor-extensions/color.extension";
 import { CustomListItem } from "@/composables/editor-extensions/list-item.extension";
+import { CustomOrderedList } from "@/composables/editor-extensions/ordered-list.extension";
 import {
   CustomBold,
   CustomItalic,
@@ -22,6 +22,15 @@ import {
 import { CustomCodeBlock } from "@/composables/editor-extensions/code-block.extension";
 import { Indent } from "@/composables/editor-extensions/indent.extension";
 import Image from "@tiptap/extension-image";
+
+/**
+ * PostContent — 前台文章渲染组件（只读 Tiptap 实例）
+ *
+ * 渲染源：ProseMirror JSON
+ *
+ * 扩展集合需与 PostEditorBody 严格保持一致（除了交互类的 NodeView resize），
+ * 否则 JSON 中的节点/标记会被 Tiptap 视为未知而丢弃。
+ */
 
 // 纯展示版图片扩展：保留 width 属性渲染，移除 NodeView 与 resize handle
 const ReadonlyImage = Image.extend({
@@ -47,13 +56,14 @@ const ReadonlyImage = Image.extend({
 });
 
 const props = defineProps<{
-  contentMarkdown: string;
+  contentJson?: object | null;
 }>();
 
 const editor = useEditor({
   extensions: [
     StarterKit.configure({
       listItem: false,
+      orderedList: false,
       bold: false,
       italic: false,
       strike: false,
@@ -63,6 +73,7 @@ const editor = useEditor({
       underline: false,
     }),
     CustomListItem,
+    CustomOrderedList,
     CustomBold,
     CustomItalic,
     CustomStrike,
@@ -76,17 +87,19 @@ const editor = useEditor({
     Indent,
     TextAlign.configure({ types: ["heading", "paragraph"] }),
     Link.configure({ openOnClick: true }),
-    Markdown.configure({ html: false }),
   ],
   content: null,
   editable: false,
 });
 
 watch(
-  [() => props.contentMarkdown, editor],
-  ([markdown, ed]) => {
-    if (markdown && ed) {
-      ed.commands.setContent(markdown as string);
+  [() => props.contentJson, editor],
+  ([json, ed]) => {
+    if (!ed) return;
+    if (json && Object.keys(json).length > 0) {
+      ed.commands.setContent(json as object);
+    } else {
+      ed.commands.clearContent();
     }
   },
   { immediate: true },

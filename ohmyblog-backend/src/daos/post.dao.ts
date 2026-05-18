@@ -17,8 +17,8 @@ export type PostUpdate = Partial<
 	Omit<NewPost, "uuid" | "createdAt" | "updatedAt">
 >;
 
-// 列表场景下选取的字段：刻意排除 content (ProseMirror JSON) 和 contentMarkdown
-// 因为这两个字段存储整篇文章数据，在列表接口中传输会造成不必要的性能损耗
+// 列表场景下选取的字段：刻意排除 content (ProseMirror JSON)
+// 因为这个字段存储整篇文章数据，在列表接口中传输会造成不必要的性能损耗
 const listColumns = {
 	uuid: post.uuid,
 	title: post.title,
@@ -50,7 +50,7 @@ class PostDao {
 	/**
 	 * 【管理员 · 列表】分页查询所有文章
 	 * 支持按 status 过滤（草稿/已发布/归档/回收站）和关键词搜索
-	 * 不返回 content / contentMarkdown，避免把整篇文章数据传给列表页
+	 * 不返回 content，避免把整篇文章数据传给列表页
 	 */
 	async findAll(options: TPostListQueryDTO = {}) {
 		const { page, pageSize, status, search } =
@@ -117,7 +117,7 @@ class PostDao {
 				.select({
 					uuid: post.uuid,
 					title: post.title,
-					contentMarkdown: post.contentMarkdown,
+					content: post.content,
 					wordCount: sql<number>`LENGTH(${post.contentText})`,
 					coverImage: post.coverImage,
 					tags: post.tags,

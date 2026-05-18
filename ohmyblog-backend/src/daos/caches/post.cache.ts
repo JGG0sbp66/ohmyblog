@@ -17,7 +17,7 @@ import { TTLCache } from "../../utils/cache";
 export type PublishedPostRow = {
 	uuid: string;
 	title: string;
-	contentMarkdown: string | null;
+	content: unknown;
 	wordCount: number;
 	coverImage: string | null;
 	tags: unknown;
