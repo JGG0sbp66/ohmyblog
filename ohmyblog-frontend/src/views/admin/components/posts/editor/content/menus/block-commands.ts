@@ -99,7 +99,7 @@ const headingCommand = (
 });
 
 /** 全部块命令（声明式，单一真源） */
-const BLOCK_COMMANDS: readonly BlockCommand[] = [
+export const BLOCK_COMMANDS: readonly BlockCommand[] = [
   {
     id: "paragraph",
     labelKey: "paragraph",

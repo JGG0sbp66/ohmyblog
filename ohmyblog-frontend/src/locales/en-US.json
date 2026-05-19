@@ -420,6 +420,13 @@
             "orderedList": { "label": "Ordered list", "tooltip": "Ordered list\nmarkdown:1. Space" },
             "codeBlock": { "label": "Code block", "tooltip": "Code block\nmarkdown:``` Enter" },
             "quote": { "label": "Blockquote", "tooltip": "Blockquote\nmarkdown:> Space" }
+          },
+          "slashMenu": {
+            "empty": "No matching commands"
+          },
+          "slashCommands": {
+            "horizontalRule": { "label": "Divider" },
+            "clearFormatting": { "label": "Clear formatting" }
           }
         }
       }

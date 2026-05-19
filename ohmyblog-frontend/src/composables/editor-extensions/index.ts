@@ -58,6 +58,7 @@ import {
 import { CustomCodeBlock } from "./code-block.extension";
 import { TextStyle, Color, CustomHighlight } from "./color.extension";
 import { ResizableImage } from "./image.extension";
+import { SlashExtension } from "@/views/admin/components/posts/editor/content/menus/slash/slash.extension";
 
 /**
  * useEditorExtensions — 返回 Tiptap 编辑器扩展数组
@@ -119,5 +120,6 @@ export function useEditorExtensions() {
       html: false,
       transformPastedText: true,
     }),
+    SlashExtension,
   ];
 }

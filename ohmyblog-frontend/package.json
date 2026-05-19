@@ -32,6 +32,7 @@
     "@tiptap/extension-text-style": "^3.22.5",
     "@tiptap/extension-underline": "^3.22.5",
     "@tiptap/starter-kit": "^3.22.5",
+    "@tiptap/suggestion": "^3.22.5",
     "@tiptap/vue-3": "^3.22.5",
     "@vueuse/core": "^14.3.0",
     "limax": "^4.2.3",

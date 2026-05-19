@@ -418,6 +418,13 @@
             "orderedList": { "label": "有序列表", "tooltip": "有序列表\nmarkdown:1. 空格" },
             "codeBlock": { "label": "代码块", "tooltip": "代码块\nmarkdown:``` 换行" },
             "quote": { "label": "引用", "tooltip": "引用\nmarkdown:> 空格" }
+          },
+          "slashMenu": {
+            "empty": "没有匹配的命令"
+          },
+          "slashCommands": {
+            "horizontalRule": { "label": "分割线" },
+            "clearFormatting": { "label": "清除格式" }
           }
         }
       }
