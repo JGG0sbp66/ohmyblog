@@ -1,16 +1,18 @@
 <!-- src/views/admin/components/posts/editor/content/menus/bubble/PostEditorImageBubbleMenu.vue -->
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { toRef } from "vue";
 import type { Editor } from "@tiptap/core";
 import { NodeSelection } from "@tiptap/pm/state";
 import { AlignLeft, AlignCenter, AlignRight } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
+import { useBubbleAnchor } from "./composables/use-bubble-anchor";
 
 /**
  * PostEditorImageBubbleMenu — 图片节点专属气泡菜单
  *
- * 仅在 NodeSelection 选中 image 节点时显示。
+ * 触发条件：NodeSelection 选中 image 节点。
+ * 锚点：图片 NodeView 的 DOM 矩形。
  * 提供左 / 居中 / 右对齐，通过 setTextAlign 控制父段落对齐。
  */
 const props = defineProps<{
@@ -20,75 +22,19 @@ const props = defineProps<{
 
 const { t } = useLang();
 
-const isVisible = ref(false);
-const menuStyle = ref<Record<string, string>>({});
-const menuRef = ref<HTMLElement | null>(null);
-
-const updateMenu = () => {
-  const { selection } = props.editor.state;
-
-  if (
-    !(selection instanceof NodeSelection) ||
-    selection.node.type.name !== "image"
-  ) {
-    isVisible.value = false;
-    return;
-  }
-
-  // 取选中图片节点对应的 DOM 元素定位
-  const domNode = props.editor.view.nodeDOM(
-    selection.from,
-  ) as HTMLElement | null;
-  if (!domNode) {
-    isVisible.value = false;
-    return;
-  }
-
-  const rect = domNode.getBoundingClientRect();
-  let top = rect.top;
-  let left = rect.left + rect.width / 2;
-
-  if (props.containerRef) {
-    const containerRect = props.containerRef.getBoundingClientRect();
-    top = top - containerRect.top;
-    left = left - containerRect.left;
-  }
-
-  menuStyle.value = {
-    top: `${top - 10}px`,
-    left: `${left}px`,
-    transform: "translate(-50%, -100%)",
-  };
-  isVisible.value = true;
-};
-
-const hideMenu = ({ event }: { editor: Editor; event: FocusEvent }) => {
-  if (
-    menuRef.value &&
-    event.relatedTarget instanceof Node &&
-    menuRef.value.contains(event.relatedTarget)
-  ) {
-    return;
-  }
-  isVisible.value = false;
-};
-
-const onScrollOrResize = () => {
-  if (isVisible.value) updateMenu();
-};
-
-onMounted(() => {
-  props.editor.on("selectionUpdate", updateMenu);
-  props.editor.on("blur", hideMenu);
-  window.addEventListener("scroll", onScrollOrResize, true);
-  window.addEventListener("resize", onScrollOrResize);
-});
-
-onBeforeUnmount(() => {
-  props.editor.off("selectionUpdate", updateMenu);
-  props.editor.off("blur", hideMenu);
-  window.removeEventListener("scroll", onScrollOrResize, true);
-  window.removeEventListener("resize", onScrollOrResize);
+const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
+  containerRef: toRef(props, "containerRef"),
+  computeAnchorRect: (editor) => {
+    const { selection } = editor.state;
+    if (
+      !(selection instanceof NodeSelection) ||
+      selection.node.type.name !== "image"
+    ) {
+      return null;
+    }
+    const domNode = editor.view.nodeDOM(selection.from) as HTMLElement | null;
+    return domNode?.getBoundingClientRect() ?? null;
+  },
 });
 </script>
 
