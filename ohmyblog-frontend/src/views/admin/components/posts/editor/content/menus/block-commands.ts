@@ -6,20 +6,18 @@ import {
   Heading1,
   Heading2,
   Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
   List,
   ListOrdered,
   Code2,
   Quote,
+  Minus,
 } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 
 /**
  * 编辑器块命令注册表（菜单单一真源）
  *
- * 服务对象：BubbleBlockSection / HandleBlockMenu / 未来 SlashMenu。
+ * 服务对象：BubbleBlockSection / HandleBlockMenu / SlashMenu。
  * 不放在全局 composables/，是因为它**只服务于本目录下的菜单组件**，
  * 不属于跨模块复用的能力，与消费方共住更便于维护。
  *
@@ -27,6 +25,10 @@ import { useLang } from "@/composables/lang.hook";
  * - label   : 短文本（"H1"/"正文"），用于横排按钮（不能含 \n，否则撑开高度）
  * - tooltip : 长文本（"一级标题\nmarkdown:# 空格"），用于悬浮提示（多行 OK）
  * 两者不能合并：见 i18n blockCommands.* 的 { label, tooltip } 结构。
+ *
+ * 标题级别决策：仅暴露 H1-H3。博客场景三层结构足以表达大多数文章；
+ * H4-H6 在 Tiptap 内核仍然支持（粘贴 markdown / Ctrl+Alt+4-6 仍生效），
+ * 只是不在菜单露出，避免选项过多。
  */
 
 export type BlockCommandGroup = "text" | "list" | "embed";
@@ -49,13 +51,11 @@ export type BlockCommandId =
   | "heading1"
   | "heading2"
   | "heading3"
-  | "heading4"
-  | "heading5"
-  | "heading6"
   | "bulletList"
   | "orderedList"
   | "codeBlock"
-  | "quote";
+  | "quote"
+  | "horizontalRule";
 
 /**
  * 切换光标所在列表项的列表类型。
@@ -87,7 +87,7 @@ const switchListType = (e: Editor, target: "bulletList" | "orderedList") => {
 
 /** 标题命令工厂：减少重复 */
 const headingCommand = (
-  level: 1 | 2 | 3 | 4 | 5 | 6,
+  level: 1 | 2 | 3,
   icon: Component,
 ): BlockCommand => ({
   id: `heading${level}` as BlockCommandId,
@@ -111,9 +111,6 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
   headingCommand(1, Heading1),
   headingCommand(2, Heading2),
   headingCommand(3, Heading3),
-  headingCommand(4, Heading4),
-  headingCommand(5, Heading5),
-  headingCommand(6, Heading6),
   {
     id: "bulletList",
     labelKey: "bulletList",
@@ -145,6 +142,15 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     group: "embed",
     isActive: (e) => e.isActive("blockquote"),
     run: (e) => e.chain().focus().toggleBlockquote().run(),
+  },
+  {
+    // 分割线没有"激活态"概念（不是包裹光标的容器节点），isActive 永远 false
+    id: "horizontalRule",
+    labelKey: "horizontalRule",
+    icon: Minus,
+    group: "embed",
+    isActive: () => false,
+    run: (e) => e.chain().focus().setHorizontalRule().run(),
   },
 ];
 

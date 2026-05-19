@@ -413,19 +413,16 @@
             "heading1": { "label": "H1", "tooltip": "Heading 1\nmarkdown:# Space" },
             "heading2": { "label": "H2", "tooltip": "Heading 2\nmarkdown:## Space" },
             "heading3": { "label": "H3", "tooltip": "Heading 3\nmarkdown:### Space" },
-            "heading4": { "label": "H4", "tooltip": "Heading 4" },
-            "heading5": { "label": "H5", "tooltip": "Heading 5" },
-            "heading6": { "label": "H6", "tooltip": "Heading 6" },
             "bulletList": { "label": "Bullet list", "tooltip": "Bullet list\nmarkdown:- Space" },
             "orderedList": { "label": "Ordered list", "tooltip": "Ordered list\nmarkdown:1. Space" },
             "codeBlock": { "label": "Code block", "tooltip": "Code block\nmarkdown:``` Enter" },
-            "quote": { "label": "Blockquote", "tooltip": "Blockquote\nmarkdown:> Space" }
+            "quote": { "label": "Blockquote", "tooltip": "Blockquote\nmarkdown:> Space" },
+            "horizontalRule": { "label": "Divider", "tooltip": "Divider\nmarkdown:--- Enter" }
           },
           "slashMenu": {
             "empty": "No matching commands"
           },
           "slashCommands": {
-            "horizontalRule": { "label": "Divider" },
             "clearFormatting": { "label": "Clear formatting" }
           }
         }

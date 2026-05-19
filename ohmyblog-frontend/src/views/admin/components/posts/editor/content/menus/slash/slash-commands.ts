@@ -1,7 +1,7 @@
 // src/views/admin/components/posts/editor/content/menus/slash/slash-commands.ts
 import type { Editor, Range } from "@tiptap/core";
 import type { Component } from "vue";
-import { Minus, Eraser } from "lucide-vue-next";
+import { Eraser } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import {
   BLOCK_COMMANDS,
@@ -20,7 +20,7 @@ export interface SlashCommand {
   id: string;
   /** i18n key fragment（块命令复用 blockCommands；slash 专属用 slashCommands） */
   labelKey: string;
-  /** 标记是否走 slashCommands.{labelKey}.label，否则走 blockCommands.{labelKey}.tooltip 第一行 */
+  /** true 表示走 slashCommands.{labelKey}.label，false 走 blockCommands.{labelKey}.tooltip 第一行 */
   isSlashOnly: boolean;
   icon: Component;
   searchTerms: string[];
@@ -53,8 +53,9 @@ const blockById = (id: BlockCommandId): BlockCommand => {
  * SlashMenu 命令列表（顺序即菜单显示顺序）
  *
  * 来源：
- * - 复用 BLOCK_COMMANDS 的常用项（paragraph / h1-3 / lists / codeBlock / quote）
- * - 加 slash 专属：horizontalRule / clearFormatting
+ * - 全部块命令（paragraph / h1-3 / lists / codeBlock / quote / hr）
+ *   → 直接从 BLOCK_COMMANDS 复用，统一文案与图标
+ * - slash 专属：clearFormatting（"清除格式"在块命令注册表里没意义，仅 slash 用）
  */
 export const SLASH_COMMANDS: readonly SlashCommand[] = [
   fromBlockCommand(blockById("paragraph"), ["paragraph", "正文", "p"]),
@@ -75,16 +76,12 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
   ]),
   fromBlockCommand(blockById("codeBlock"), ["codeBlock", "code", "代码块"]),
   fromBlockCommand(blockById("quote"), ["quote", "blockquote", "引用"]),
-  {
-    id: "horizontalRule",
-    labelKey: "horizontalRule",
-    isSlashOnly: true,
-    icon: Minus,
-    searchTerms: ["horizontalRule", "hr", "divider", "分割线"],
-    run: (editor, range) => {
-      editor.chain().focus().deleteRange(range).setHorizontalRule().run();
-    },
-  },
+  fromBlockCommand(blockById("horizontalRule"), [
+    "horizontalRule",
+    "hr",
+    "divider",
+    "分割线",
+  ]),
   {
     id: "clearFormatting",
     labelKey: "clearFormatting",
@@ -125,9 +122,9 @@ export const filterSlashCommands = (
  * useSlashI18n — 取 SlashMenu 文案
  *
  * 文案策略（不引入新 i18n key）：
- * - 块命令（h1 / list / codeBlock 等）：复用 blockCommands.{labelKey}.tooltip
+ * - 块命令（h1 / list / codeBlock / hr 等）：复用 blockCommands.{labelKey}.tooltip
  *   并取换行前的第一行（"一级标题\nmarkdown:# 空格" → "一级标题"）
- * - slash 专属（hr / clear）：走 slashCommands.{labelKey}.label
+ * - slash 专属（clearFormatting）：走 slashCommands.{labelKey}.label
  */
 export const useSlashI18n = () => {
   const { t } = useLang();
@@ -140,7 +137,6 @@ export const useSlashI18n = () => {
     const tooltip = t(
       `views.admin.PostEditor.content.blockCommands.${cmd.labelKey}.tooltip`,
     );
-    // tooltip 含 "\n markdown:..." 时只取第一行作为 slash 菜单的描述文案
     return tooltip.split("\n")[0] ?? tooltip;
   };
   return { labelOf };

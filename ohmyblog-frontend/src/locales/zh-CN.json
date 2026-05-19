@@ -411,19 +411,16 @@
             "heading1": { "label": "H1", "tooltip": "一级标题\nmarkdown:# 空格" },
             "heading2": { "label": "H2", "tooltip": "二级标题\nmarkdown:## 空格" },
             "heading3": { "label": "H3", "tooltip": "三级标题\nmarkdown:### 空格" },
-            "heading4": { "label": "H4", "tooltip": "四级标题" },
-            "heading5": { "label": "H5", "tooltip": "五级标题" },
-            "heading6": { "label": "H6", "tooltip": "六级标题" },
             "bulletList": { "label": "无序列表", "tooltip": "无序列表\nmarkdown:- 空格" },
             "orderedList": { "label": "有序列表", "tooltip": "有序列表\nmarkdown:1. 空格" },
             "codeBlock": { "label": "代码块", "tooltip": "代码块\nmarkdown:``` 换行" },
-            "quote": { "label": "引用", "tooltip": "引用\nmarkdown:> 空格" }
+            "quote": { "label": "引用", "tooltip": "引用\nmarkdown:> 空格" },
+            "horizontalRule": { "label": "分割线", "tooltip": "分割线\nmarkdown:--- 换行" }
           },
           "slashMenu": {
             "empty": "没有匹配的命令"
           },
           "slashCommands": {
-            "horizontalRule": { "label": "分割线" },
             "clearFormatting": { "label": "清除格式" }
           }
         }

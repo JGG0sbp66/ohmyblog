@@ -24,6 +24,7 @@ const { commands, tooltipOf } = useBlockCommands([
   "orderedList",
   "codeBlock",
   "quote",
+  "horizontalRule",
 ]);
 </script>
 
