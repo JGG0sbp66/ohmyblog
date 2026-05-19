@@ -22,6 +22,7 @@ const { commands, tooltipOf } = useBlockCommands([
   "heading3",
   "bulletList",
   "orderedList",
+  "taskList",
   "codeBlock",
   "quote",
   "horizontalRule",

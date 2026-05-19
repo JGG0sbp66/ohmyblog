@@ -8,6 +8,7 @@ import {
   Heading3,
   List,
   ListOrdered,
+  ListChecks,
   Code2,
   Quote,
   Minus,
@@ -53,6 +54,7 @@ export type BlockCommandId =
   | "heading3"
   | "bulletList"
   | "orderedList"
+  | "taskList"
   | "codeBlock"
   | "quote"
   | "horizontalRule";
@@ -126,6 +128,15 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     group: "list",
     isActive: (e) => e.isActive("orderedList"),
     run: (e) => switchListType(e, "orderedList"),
+  },
+  {
+    // 任务列表：和 bullet/ordered 是平级 toggle，命令底层会自动处理 lift 嵌套
+    id: "taskList",
+    labelKey: "taskList",
+    icon: ListChecks,
+    group: "list",
+    isActive: (e) => e.isActive("taskList"),
+    run: (e) => e.chain().focus().toggleTaskList().run(),
   },
   {
     id: "codeBlock",

@@ -40,10 +40,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Placeholder from "@tiptap/extension-placeholder";
+import CharacterCount from "@tiptap/extension-character-count";
 import { Markdown } from "tiptap-markdown";
 import { useLang } from "@/composables/lang.hook";
 import { getContentExtensions } from "./content-extensions";
 import { SmartSelectAll } from "./select-all.extension";
+import { TrailingNode } from "./trailing-node.extension";
 import { SlashExtension } from "@/views/admin/components/posts/editor/content/menus/slash/slash.extension";
 
 /**
@@ -64,6 +66,8 @@ export function useEditorExtensions() {
   return [
     ...getContentExtensions({ readonly: false }),
     SmartSelectAll,
+    TrailingNode,
+    CharacterCount,
     Placeholder.configure({
       placeholder: t("views.admin.PostEditor.content.body.placeholder"),
     }),

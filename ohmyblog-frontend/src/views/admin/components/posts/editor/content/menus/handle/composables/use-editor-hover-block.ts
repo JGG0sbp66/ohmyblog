@@ -132,11 +132,20 @@ export const useEditorHoverBlock = (
         /* fallback to rect */
       }
 
-      // 列表项内取 listItem 作为拖拽锚点，其他取顶层块
+      // 列表项内取 listItem / taskItem 作为拖拽锚点，其他取顶层块
+      // 同时记录最近的 list-item DOM rect，用作 handle 的 left 锚点
+      // —— taskItem 内段落的 rect.left 在 checkbox 右侧，handle 直接放在
+      // 段落左外侧会盖住 checkbox；改用 listItem 整体 rect 对齐到列表项左边
       let resolvedDragPos = $pos.before(1);
+      let listItemLeft: number | null = null;
       for (let d = $pos.depth; d >= 1; d--) {
-        if ($pos.node(d).type.name === "listItem") {
+        const name = $pos.node(d).type.name;
+        if (name === "listItem" || name === "taskItem") {
           resolvedDragPos = $pos.before(d);
+          const itemDom = view.nodeDOM($pos.before(d));
+          if (itemDom instanceof HTMLElement) {
+            listItemLeft = itemDom.getBoundingClientRect().left;
+          }
           break;
         }
       }
@@ -144,7 +153,7 @@ export const useEditorHoverBlock = (
       const wasVisible = visible.value;
 
       top.value = lineTop + (lineHeight - HANDLE_HEIGHT) / 2;
-      left.value = rect.left - HANDLE_OFFSET;
+      left.value = (listItemLeft ?? rect.left) - HANDLE_OFFSET;
       // 空行判定：考虑 leaf inline node（image / hardBreak 等），
       // 一个段落只含图片时不应被当作空行
       isEmpty.value = blockNode.content.size === 0;

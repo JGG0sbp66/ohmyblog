@@ -24,6 +24,7 @@ import { CustomCodeBlock } from "./code-block.extension";
 import { TextStyle, Color, CustomHighlight } from "./color.extension";
 import { ResizableImage } from "./image.extension";
 import { Indent } from "./indent.extension";
+import { TaskList, CustomTaskItem } from "./task-list.extension";
 
 /**
  * 只读图片扩展：保留 width 属性渲染，不挂 NodeView / resize handle。
@@ -88,6 +89,8 @@ export function getContentExtensions(opts: ContentExtensionsOptions = {}) {
     }),
     CustomListItem,
     CustomOrderedList,
+    TaskList,
+    CustomTaskItem,
     CustomBold,
     CustomItalic,
     CustomStrike,

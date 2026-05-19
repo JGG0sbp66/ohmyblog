@@ -12,6 +12,7 @@ import {
   Heading6,
   List,
   ListOrdered,
+  ListChecks,
   Code2,
   Quote,
 } from "lucide-vue-next";
@@ -33,6 +34,7 @@ const baseIconOf = (node: Node): Component => {
   }
   if (name === "bulletList") return List;
   if (name === "orderedList") return ListOrdered;
+  if (name === "taskList") return ListChecks;
   if (name === "codeBlock") return Code2;
   if (name === "blockquote") return Quote;
   if (name === "image") return Image;
@@ -56,13 +58,18 @@ const paragraphContainsImage = (paragraph: Node): boolean => {
 const enclosingListType = (
   $pos: ResolvedPos,
   paragraphDepth: number,
-): "bulletList" | "orderedList" | null => {
+): "bulletList" | "orderedList" | "taskList" | null => {
   for (let d = paragraphDepth - 1; d >= 1; d--) {
     const ancestor = $pos.node(d);
+    // listItem -> 父级 bulletList / orderedList
     if (ancestor.type.name === "listItem") {
       const parent = $pos.node(d - 1);
       if (parent.type.name === "bulletList") return "bulletList";
       if (parent.type.name === "orderedList") return "orderedList";
+    }
+    // taskItem -> 父级 taskList
+    if (ancestor.type.name === "taskItem") {
+      return "taskList";
     }
   }
   return null;
@@ -86,6 +93,7 @@ export const decideBlockIcon = (
   const listType = enclosingListType($pos, blockDepth);
   if (listType === "bulletList") return List;
   if (listType === "orderedList") return ListOrdered;
+  if (listType === "taskList") return ListChecks;
 
   if (paragraphContainsImage(blockNode)) return Image;
 

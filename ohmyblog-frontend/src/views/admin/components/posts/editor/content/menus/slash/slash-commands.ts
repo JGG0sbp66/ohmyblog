@@ -74,6 +74,15 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     "有序列表",
     "1.",
   ]),
+  fromBlockCommand(blockById("taskList"), [
+    "taskList",
+    "todo",
+    "task",
+    "待办",
+    "任务",
+    "checklist",
+    "[]",
+  ]),
   fromBlockCommand(blockById("codeBlock"), ["codeBlock", "code", "代码块"]),
   fromBlockCommand(blockById("quote"), ["quote", "blockquote", "引用"]),
   fromBlockCommand(blockById("horizontalRule"), [

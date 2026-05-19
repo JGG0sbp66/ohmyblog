@@ -28,7 +28,10 @@ export const useBlockDrag = (editor: Editor, getDragPos: () => number) => {
       view.dispatch(state.tr.setSelection(sel));
 
       let slice: Slice;
-      if (node.type.name === "listItem") {
+      // listItem / taskItem 拖拽：用父列表类型包装并设置 openStart/openEnd=1
+      // - 落入同类型列表内：作为条目合并
+      // - 落入列表外：独立成新列表
+      if (node.type.name === "listItem" || node.type.name === "taskItem") {
         const $nodePos = state.doc.resolve(dragPos);
         const parentListType = $nodePos.parent.type;
         const wrappedList = parentListType.create(null, node);

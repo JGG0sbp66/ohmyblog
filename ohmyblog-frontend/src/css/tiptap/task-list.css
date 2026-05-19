@@ -1,0 +1,106 @@
+/* src/css/tiptap/task-list.css */
+/*
+ * 任务列表（- [ ] / - [x]）
+ * 视觉与 components/base/table/BaseCheckbox 对齐：
+ * - 圆形（rounded-full）
+ * - 默认：bg-bg-muted + 内阴影
+ * - 选中：bg-accent + 外阴影 + 白色对勾
+ * - hover：bg-bg-muted/80
+ * - active：缩放 0.9
+ *
+ * 对勾用 CSS border 绘制（input 是自闭合元素，不能放 SVG 子节点）；
+ * 尺寸 / 描边参照 Lucide Check stroke-width=4 视觉。
+ */
+
+.tiptap ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.5rem 0;
+}
+
+.tiptap ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.125rem 0;
+}
+
+/* tiptap 渲染结构：<li><label><input type="checkbox" /></label><div>正文</div></li> */
+.tiptap ul[data-type="taskList"] li > label {
+  flex-shrink: 0;
+  margin-top: 0.35rem; /* 视觉上让复选框与首行文字基线对齐 */
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 复选框：圆形 + 立体感（对齐 BaseCheckbox 的 shadow / scale 行为） */
+.tiptap ul[data-type="taskList"] li > label > input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem; /* 与 BaseCheckbox 的 w-5 一致 */
+  height: 1.25rem;
+  border: none;
+  border-radius: 9999px;
+  background: var(--theme-bg-muted);
+  box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  cursor: pointer;
+  position: relative;
+  transition:
+    background-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tiptap ul[data-type="taskList"] li > label > input[type="checkbox"]:hover {
+  background: color-mix(in oklch, var(--theme-bg-muted) 80%, transparent);
+}
+
+.tiptap ul[data-type="taskList"] li > label > input[type="checkbox"]:active {
+  transform: scale(0.9);
+}
+
+.tiptap ul[data-type="taskList"] li > label > input[type="checkbox"]:checked {
+  background: var(--theme-accent);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* 选中态对勾：复用 lucide-vue-next Check 的 SVG path（stroke-width=4 与 BaseCheckbox 一致），
+ * 内联成 data URI 作为 background-image。
+ * input 是自闭合元素不能放 SVG 子节点，但可以走 background-image 路径 —— 形状仍是 Lucide。
+ *
+ * Lucide Check 源码: <path d="M20 6 9 17l-5-5"/> on viewBox 24×24
+ */
+.tiptap ul[data-type="taskList"] li > label > input[type="checkbox"]:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 65% 65%;
+}
+
+/* 已完成项：文本变弱 + 删除线，与 GitHub / Notion 行为一致 */
+.tiptap ul[data-type="taskList"] li[data-checked="true"] > div {
+  color: var(--theme-fg-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+/* 任务列表正文容器：让段落 margin 归零，跟其他列表项观感一致 */
+.tiptap ul[data-type="taskList"] li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.tiptap ul[data-type="taskList"] li > div > p {
+  margin: 0;
+}
+
+/* 嵌套任务列表 */
+.tiptap ul[data-type="taskList"] ul[data-type="taskList"] {
+  padding-left: 1.5em;
+  margin: 0.125rem 0;
+}
