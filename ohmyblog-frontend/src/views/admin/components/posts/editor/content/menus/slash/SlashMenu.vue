@@ -1,6 +1,6 @@
 <!-- src/views/admin/components/posts/editor/content/menus/slash/SlashMenu.vue -->
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from "vue";
+import { ref, computed, watch, nextTick, onMounted } from "vue";
 import type { Editor, Range } from "@tiptap/core";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import {
@@ -15,6 +15,9 @@ import {
  * 由 slash.extension 在用户输入 "/" 时挂载到 body 并定位。
  * 菜单项复用 ButtonSecondary，与 GroupedDropButton / BubbleBlockSection
  * 视觉保持一致（icon + 单行文字，激活态自动响应）。
+ *
+ * 视窗边界处理：菜单优先贴 "/" 下方；下方空间不足则翻到上方。
+ * 水平方向左对齐 "/" 起点；超出右边界则向左 clamp 进视窗。
  *
  * 所有交互通过 expose 给 extension 调用：
  * - update(query)  : 用户键入字符，刷新过滤
@@ -33,14 +36,57 @@ const { labelOf } = useSlashI18n();
 const query = ref("");
 const selectedIndex = ref(0);
 const listRef = ref<HTMLElement | null>(null);
+const panelRef = ref<HTMLElement | null>(null);
 
 const items = computed(() => filterSlashCommands(query.value, labelOf));
 
-/** 弹层位置：贴在 "/" 字符的 bottom 下方 8px */
-const position = computed(() => {
+/** 弹层位置（绝对 viewport 坐标，按需翻转） */
+const position = ref({ top: 0, left: 0 });
+
+const VIEWPORT_PADDING = 8; // 距离视窗边缘的最小留白
+const ANCHOR_GAP = 8; // 菜单与 "/" 的间距
+
+/**
+ * 算菜单位置：
+ * 1. 默认贴 "/" 下方
+ * 2. 下方剩余空间装不下完整菜单 → 翻到上方
+ * 3. left 超出右边界 → 向左 clamp
+ */
+const updatePosition = () => {
   const rect = props.clientRect();
-  if (!rect) return { top: 0, left: 0 };
-  return { top: rect.bottom + 8, left: rect.left };
+  const panel = panelRef.value;
+  if (!rect || !panel) return;
+
+  const panelRect = panel.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // 垂直：默认下方，空间不足则翻上
+  const spaceBelow = vh - rect.bottom - VIEWPORT_PADDING;
+  const spaceAbove = rect.top - VIEWPORT_PADDING;
+  const placeBelow =
+    spaceBelow >= panelRect.height + ANCHOR_GAP ||
+    spaceBelow >= spaceAbove; // 都装不下时选空间多的一侧
+  const top = placeBelow
+    ? rect.bottom + ANCHOR_GAP
+    : rect.top - panelRect.height - ANCHOR_GAP;
+
+  // 水平：左对齐 "/"，超出右边界则向左收
+  const maxLeft = vw - panelRect.width - VIEWPORT_PADDING;
+  const left = Math.max(VIEWPORT_PADDING, Math.min(rect.left, maxLeft));
+
+  position.value = { top, left };
+};
+
+/** items 变化菜单高度变 → 下一帧重新定位 */
+watch(items, () => {
+  selectedIndex.value = 0;
+  nextTick(updatePosition);
+});
+
+onMounted(() => {
+  // 首次挂载需要 DOM 渲染完成才能测高度
+  nextTick(updatePosition);
 });
 
 const select = (index: number) => {
@@ -69,11 +115,6 @@ const scrollSelectedIntoView = () => {
   });
 };
 
-/** query 改变重置选中（避免选中超出过滤后的范围） */
-watch(items, () => {
-  selectedIndex.value = 0;
-});
-
 defineExpose({
   /** suggestion 通知 query 变化 */
   updateQuery(next: string) {
@@ -101,6 +142,7 @@ defineExpose({
 <template>
   <Teleport to="body">
     <div
+      ref="panelRef"
       class="fixed z-50 bg-bg-card border border-border/40 rounded-xl shadow-xl py-1.5 min-w-56 max-h-80 overflow-hidden flex flex-col"
       :style="{ top: `${position.top}px`, left: `${position.left}px` }"
     >
