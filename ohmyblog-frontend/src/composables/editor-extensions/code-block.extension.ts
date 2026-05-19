@@ -19,4 +19,4 @@ export const CustomCodeBlock = CodeBlockLowlight.extend({
   addNodeView() {
     return VueNodeViewRenderer(CodeBlock);
   },
-}).configure({ lowlight });
+}).configure({ lowlight, enableTabIndentation: true, tabSize: 2 });
