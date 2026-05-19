@@ -15,11 +15,17 @@ import { useLang } from "@/composables/lang.hook";
 /**
  * PostEditorBody — Tiptap 富文本编辑区
  *
- * v-model:json         → ProseMirror JSON（存入 content 字段，唯一真源）
- * v-model:text         → 纯文本（存入 contentText 字段，用于搜索/预览）
+ * v-model:json              → ProseMirror JSON（存入 content 字段，唯一真源）
+ * v-model:text              → 纯文本（存入 contentText 字段，用于搜索/预览）
+ * v-model:totalCharCount    → 全文字符数
+ * v-model:selectedCharCount → 当前选区字符数（无选区时为 0）
  */
 const json = defineModel<object | undefined>("json");
 const text = defineModel<string>("text", { default: "" });
+const totalCharCount = defineModel<number>("totalCharCount", { default: 0 });
+const selectedCharCount = defineModel<number>("selectedCharCount", {
+  default: 0,
+});
 const containerRef = ref<HTMLElement | null>(null);
 
 const { t } = useLang();
@@ -48,6 +54,22 @@ const uploadAndInsertImage = (editor: Editor, file: File) => {
       const msg = typeof e === "string" ? e : (e as any)?.message || "Error";
       useToast.error(t(`api.errors.${msg}`));
     });
+};
+
+/**
+ * 同步字数：总数 + 当前选区。
+ * - 总字符数：CharacterCount.characters()
+ * - 选区字符数：CharacterCount 不直接提供，用 ProseMirror 的 textBetween 算。
+ *   多块选区用 \n 拼接，跟编辑器 getText() 的行为一致。
+ */
+const syncCharCount = (ed: Editor) => {
+  const storage = ed.storage.characterCount;
+  totalCharCount.value = storage ? storage.characters() : 0;
+
+  const { from, to, empty } = ed.state.selection;
+  selectedCharCount.value = empty
+    ? 0
+    : ed.state.doc.textBetween(from, to, "\n", "\n").length;
 };
 
 const editor = useEditor({
@@ -92,6 +114,10 @@ const editor = useEditor({
     internalUpdate = true;
     json.value = editor.getJSON();
     text.value = editor.getText();
+    syncCharCount(editor);
+  },
+  onSelectionUpdate({ editor }) {
+    syncCharCount(editor);
   },
 });
 
@@ -110,6 +136,8 @@ watch(
     const ed = editor.value;
     if (!ed || !newVal) return;
     ed.commands.setContent(newVal, { emitUpdate: false });
+    // 外部 setContent 不会触发 onUpdate，需要主动同步一次字数统计
+    syncCharCount(ed);
   },
 );
 

@@ -355,7 +355,8 @@
           "unsaved": "Unsaved",
           "saved": "Saved",
           "saving": "Saving",
-          "save": "Save"
+          "save": "Save",
+          "stats": "Selected {selected} / Total {total}"
         },
         "settingsPanel": {
           "title": "Post Settings",
@@ -415,6 +416,7 @@
             "heading3": { "label": "H3", "tooltip": "Heading 3\nmarkdown:### Space" },
             "bulletList": { "label": "Bullet list", "tooltip": "Bullet list\nmarkdown:- Space" },
             "orderedList": { "label": "Ordered list", "tooltip": "Ordered list\nmarkdown:1. Space" },
+            "taskList": { "label": "Task list", "tooltip": "Task list\nmarkdown:- [ ] Space" },
             "codeBlock": { "label": "Code block", "tooltip": "Code block\nmarkdown:``` Enter" },
             "quote": { "label": "Blockquote", "tooltip": "Blockquote\nmarkdown:> Space" },
             "horizontalRule": { "label": "Divider", "tooltip": "Divider\nmarkdown:--- Enter" }

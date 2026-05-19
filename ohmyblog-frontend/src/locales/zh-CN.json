@@ -353,7 +353,8 @@
           "unsaved": "未保存",
           "saved": "已保存",
           "saving": "保存中",
-          "save": "保存"
+          "save": "保存",
+          "stats": "选中 {selected} / 全文 {total} 字"
         },
         "settingsPanel": {
           "title": "文章设置",
@@ -413,6 +414,7 @@
             "heading3": { "label": "H3", "tooltip": "三级标题\nmarkdown:### 空格" },
             "bulletList": { "label": "无序列表", "tooltip": "无序列表\nmarkdown:- 空格" },
             "orderedList": { "label": "有序列表", "tooltip": "有序列表\nmarkdown:1. 空格" },
+            "taskList": { "label": "待办列表", "tooltip": "待办列表\nmarkdown:[ ] 空格" },
             "codeBlock": { "label": "代码块", "tooltip": "代码块\nmarkdown:``` 换行" },
             "quote": { "label": "引用", "tooltip": "引用\nmarkdown:> 空格" },
             "horizontalRule": { "label": "分割线", "tooltip": "分割线\nmarkdown:--- 换行" }
