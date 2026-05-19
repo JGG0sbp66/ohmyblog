@@ -417,6 +417,9 @@
             "quote": { "label": "引用", "tooltip": "引用\nmarkdown:> 空格" },
             "horizontalRule": { "label": "分割线", "tooltip": "分割线\nmarkdown:--- 换行" }
           },
+          "codeBlock": {
+            "languageEmpty": "未匹配语言"
+          },
           "slashMenu": {
             "empty": "没有匹配的命令"
           },

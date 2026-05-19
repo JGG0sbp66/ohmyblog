@@ -419,6 +419,9 @@
             "quote": { "label": "Blockquote", "tooltip": "Blockquote\nmarkdown:> Space" },
             "horizontalRule": { "label": "Divider", "tooltip": "Divider\nmarkdown:--- Enter" }
           },
+          "codeBlock": {
+            "languageEmpty": "No matching language"
+          },
           "slashMenu": {
             "empty": "No matching commands"
           },
