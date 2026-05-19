@@ -35,7 +35,7 @@ const baseIconOf = (node: Node): Component => {
   if (name === "orderedList") return ListOrdered;
   if (name === "codeBlock") return Code2;
   if (name === "blockquote") return Quote;
-  if (name === "image" || name === "resizableImage") return Image;
+  if (name === "image") return Image;
   return Type;
 };
 
@@ -43,7 +43,7 @@ const baseIconOf = (node: Node): Component => {
 const paragraphContainsImage = (paragraph: Node): boolean => {
   let found = false;
   paragraph.descendants((n) => {
-    if (n.type.name === "image" || n.type.name === "resizableImage") {
+    if (n.type.name === "image") {
       found = true;
       return false;
     }

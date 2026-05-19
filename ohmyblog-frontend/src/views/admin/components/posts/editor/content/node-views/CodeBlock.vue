@@ -124,8 +124,14 @@ onClickOutside(
 // 滚动 / resize 时直接关闭 popup —— 跟 FloatingHandle 同策略
 // 不跟随的原因：popup 是 fixed 定位 + Teleport 到 body，没有父容器可裁切，
 // 跟随会让它飞出编辑器区域，比如挡住 header / sidebar
-const onScrollOrResize = () => {
-  if (langPickerOpen.value) langPickerOpen.value = false;
+//
+// 但是在 popup 内部滚动选项时（capture 阶段 scroll 事件源在 popup 内）不应关闭，
+// 否则用户翻不到下面的语言项
+const onScrollOrResize = (event?: Event) => {
+  if (!langPickerOpen.value) return;
+  const target = event?.target as Node | null;
+  if (target && langPopupRef.value?.contains(target)) return;
+  langPickerOpen.value = false;
 };
 
 onMounted(() => {
