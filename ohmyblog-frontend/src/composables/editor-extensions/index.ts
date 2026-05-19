@@ -46,6 +46,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import { useLang } from "@/composables/lang.hook";
 import { Indent } from "./indent.extension";
+import { SmartSelectAll } from "./select-all.extension";
 import { CustomListItem } from "./list-item.extension";
 import { CustomOrderedList } from "./ordered-list.extension";
 import {
@@ -98,6 +99,7 @@ export function useEditorExtensions() {
     CustomHighlight, // 背景高亮（多色）
     ResizableImage,
     Indent,
+    SmartSelectAll,
     TextAlign.configure({ types: ["heading", "paragraph"] }),
     Link.configure({
       // 编辑模式下点击链接只定位光标，不跳转（否则用户改链接文字时会被带走）
