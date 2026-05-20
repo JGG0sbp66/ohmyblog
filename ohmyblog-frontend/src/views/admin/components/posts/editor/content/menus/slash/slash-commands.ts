@@ -120,9 +120,7 @@ export const filterSlashCommands = (
   if (!q) return [...SLASH_COMMANDS];
 
   return SLASH_COMMANDS.filter((cmd) => {
-    const haystack = [labelOf(cmd), ...cmd.searchTerms]
-      .join(" ")
-      .toLowerCase();
+    const haystack = [labelOf(cmd), ...cmd.searchTerms].join(" ").toLowerCase();
     return haystack.includes(q);
   });
 };

@@ -5,10 +5,7 @@ import type { Editor } from "@tiptap/core";
 import { Type } from "lucide-vue-next";
 import GroupedDropButton from "@/components/common/button/GroupedDropButton.vue";
 import type { DropdownItem } from "@/components/common/button/GroupedDropButton.vue";
-import {
-  useBlockCommands,
-  type BlockCommand,
-} from "../../block-commands";
+import { useBlockCommands, type BlockCommand } from "../../block-commands";
 
 /**
  * BubbleBlockSection — 气泡菜单区域一：文本块类型切换

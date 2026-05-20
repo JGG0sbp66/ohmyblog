@@ -88,10 +88,7 @@ const switchListType = (e: Editor, target: "bulletList" | "orderedList") => {
 };
 
 /** 标题命令工厂：减少重复 */
-const headingCommand = (
-  level: 1 | 2 | 3,
-  icon: Component,
-): BlockCommand => ({
+const headingCommand = (level: 1 | 2 | 3, icon: Component): BlockCommand => ({
   id: `heading${level}` as BlockCommandId,
   labelKey: `heading${level}`,
   icon,

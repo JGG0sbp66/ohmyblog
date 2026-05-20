@@ -5,7 +5,13 @@ import Suggestion, {
   type SuggestionProps,
 } from "@tiptap/suggestion";
 import { PluginKey, type EditorState } from "@tiptap/pm/state";
-import { type App, type ComponentPublicInstance, createApp, h, nextTick } from "vue";
+import {
+  type App,
+  type ComponentPublicInstance,
+  createApp,
+  h,
+  nextTick,
+} from "vue";
 import SlashMenu from "./SlashMenu.vue";
 
 /**

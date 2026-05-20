@@ -145,10 +145,7 @@ export const Indent = Extension.create({
         if (!empty) return false;
         if ($from.parentOffset !== 0) return false;
         const node = $from.parent;
-        if (
-          node.type.name !== "paragraph" &&
-          node.type.name !== "heading"
-        ) {
+        if (node.type.name !== "paragraph" && node.type.name !== "heading") {
           return false;
         }
         if (!node.attrs.indent) return false;
@@ -161,10 +158,7 @@ export const Indent = Extension.create({
         const { $from, empty } = this.editor.state.selection;
         if (!empty) return false;
         const node = $from.parent;
-        if (
-          node.type.name !== "paragraph" &&
-          node.type.name !== "heading"
-        ) {
+        if (node.type.name !== "paragraph" && node.type.name !== "heading") {
           return false;
         }
         if (!node.attrs.indent) return false; // 没缩进让默认 Enter 行为继续

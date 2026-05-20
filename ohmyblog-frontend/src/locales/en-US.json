@@ -411,15 +411,42 @@
           },
           "blockCommands": {
             "paragraph": { "label": "Paragraph", "tooltip": "Paragraph" },
-            "heading1": { "label": "H1", "tooltip": "Heading 1\nmarkdown:# Space" },
-            "heading2": { "label": "H2", "tooltip": "Heading 2\nmarkdown:## Space" },
-            "heading3": { "label": "H3", "tooltip": "Heading 3\nmarkdown:### Space" },
-            "bulletList": { "label": "Bullet list", "tooltip": "Bullet list\nmarkdown:- Space" },
-            "orderedList": { "label": "Ordered list", "tooltip": "Ordered list\nmarkdown:1. Space" },
-            "taskList": { "label": "Task list", "tooltip": "Task list\nmarkdown:- [ ] Space" },
-            "codeBlock": { "label": "Code block", "tooltip": "Code block\nmarkdown:``` Enter" },
-            "quote": { "label": "Blockquote", "tooltip": "Blockquote\nmarkdown:> Space" },
-            "horizontalRule": { "label": "Divider", "tooltip": "Divider\nmarkdown:--- Enter" }
+            "heading1": {
+              "label": "H1",
+              "tooltip": "Heading 1\nmarkdown:# Space"
+            },
+            "heading2": {
+              "label": "H2",
+              "tooltip": "Heading 2\nmarkdown:## Space"
+            },
+            "heading3": {
+              "label": "H3",
+              "tooltip": "Heading 3\nmarkdown:### Space"
+            },
+            "bulletList": {
+              "label": "Bullet list",
+              "tooltip": "Bullet list\nmarkdown:- Space"
+            },
+            "orderedList": {
+              "label": "Ordered list",
+              "tooltip": "Ordered list\nmarkdown:1. Space"
+            },
+            "taskList": {
+              "label": "Task list",
+              "tooltip": "Task list\nmarkdown:- [ ] Space"
+            },
+            "codeBlock": {
+              "label": "Code block",
+              "tooltip": "Code block\nmarkdown:``` Enter"
+            },
+            "quote": {
+              "label": "Blockquote",
+              "tooltip": "Blockquote\nmarkdown:> Space"
+            },
+            "horizontalRule": {
+              "label": "Divider",
+              "tooltip": "Divider\nmarkdown:--- Enter"
+            }
           },
           "codeBlock": {
             "languageEmpty": "No matching language"

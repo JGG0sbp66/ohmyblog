@@ -35,7 +35,9 @@ const drag = useBlockDrag(props.editor, () => hover.dragPos.value);
     <div
       ref="handleRef"
       class="fixed z-40 select-none flex items-center bg-bg-card border border-border/30 rounded-lg shadow-sm px-1 py-0.5"
-      :class="hover.visible.value ? 'pointer-events-auto' : 'pointer-events-none'"
+      :class="
+        hover.visible.value ? 'pointer-events-auto' : 'pointer-events-none'
+      "
       :style="{
         top: `${hover.top.value}px`,
         left: `${hover.left.value}px`,

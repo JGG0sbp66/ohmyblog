@@ -409,15 +409,39 @@
           },
           "blockCommands": {
             "paragraph": { "label": "正文", "tooltip": "正文" },
-            "heading1": { "label": "H1", "tooltip": "一级标题\nmarkdown:# 空格" },
-            "heading2": { "label": "H2", "tooltip": "二级标题\nmarkdown:## 空格" },
-            "heading3": { "label": "H3", "tooltip": "三级标题\nmarkdown:### 空格" },
-            "bulletList": { "label": "无序列表", "tooltip": "无序列表\nmarkdown:- 空格" },
-            "orderedList": { "label": "有序列表", "tooltip": "有序列表\nmarkdown:1. 空格" },
-            "taskList": { "label": "待办列表", "tooltip": "待办列表\nmarkdown:[ ] 空格" },
-            "codeBlock": { "label": "代码块", "tooltip": "代码块\nmarkdown:``` 换行" },
+            "heading1": {
+              "label": "H1",
+              "tooltip": "一级标题\nmarkdown:# 空格"
+            },
+            "heading2": {
+              "label": "H2",
+              "tooltip": "二级标题\nmarkdown:## 空格"
+            },
+            "heading3": {
+              "label": "H3",
+              "tooltip": "三级标题\nmarkdown:### 空格"
+            },
+            "bulletList": {
+              "label": "无序列表",
+              "tooltip": "无序列表\nmarkdown:- 空格"
+            },
+            "orderedList": {
+              "label": "有序列表",
+              "tooltip": "有序列表\nmarkdown:1. 空格"
+            },
+            "taskList": {
+              "label": "待办列表",
+              "tooltip": "待办列表\nmarkdown:[ ] 空格"
+            },
+            "codeBlock": {
+              "label": "代码块",
+              "tooltip": "代码块\nmarkdown:``` 换行"
+            },
             "quote": { "label": "引用", "tooltip": "引用\nmarkdown:> 空格" },
-            "horizontalRule": { "label": "分割线", "tooltip": "分割线\nmarkdown:--- 换行" }
+            "horizontalRule": {
+              "label": "分割线",
+              "tooltip": "分割线\nmarkdown:--- 换行"
+            }
           },
           "codeBlock": {
             "languageEmpty": "未匹配语言"

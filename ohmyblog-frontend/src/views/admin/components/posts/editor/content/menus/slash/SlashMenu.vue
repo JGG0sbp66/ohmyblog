@@ -65,8 +65,7 @@ const updatePosition = () => {
   const spaceBelow = vh - rect.bottom - VIEWPORT_PADDING;
   const spaceAbove = rect.top - VIEWPORT_PADDING;
   const placeBelow =
-    spaceBelow >= panelRect.height + ANCHOR_GAP ||
-    spaceBelow >= spaceAbove; // 都装不下时选空间多的一侧
+    spaceBelow >= panelRect.height + ANCHOR_GAP || spaceBelow >= spaceAbove; // 都装不下时选空间多的一侧
   const top = placeBelow
     ? rect.bottom + ANCHOR_GAP
     : rect.top - panelRect.height - ANCHOR_GAP;
