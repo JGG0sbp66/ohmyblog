@@ -1,6 +1,5 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { openapi } from "@elysiajs/openapi";
 import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
 import { PUBLIC_DIR, UPLOADS_DIR } from "./constants";
@@ -30,18 +29,6 @@ const app = new Elysia()
 			return Bun.file(join(PUBLIC_DIR, "index.html"));
 		}
 	})
-	// OpenAPI 插件（生产环境禁用）
-	.use(
-		openapi({
-			enabled: !isProduction(),
-			documentation: {
-				info: {
-					title: "ohmyblog API",
-					version: "1.0.0",
-				},
-			},
-		}),
-	)
 	// 挂载插件
 	.use(logPlugin)
 	.use(responsePlugin)
@@ -71,6 +58,23 @@ if (existsSync(PUBLIC_DIR)) {
 	app
 		.get("/", serveIndex)
 		.use(staticPlugin({ assets: PUBLIC_DIR, prefix: "/" }));
+}
+
+// OpenAPI 文档：仅开发环境启用
+// 生产用 lazy import 避免把 @elysiajs/openapi 整个模块 evaluate 进常驻 JS 堆
+if (!isProduction()) {
+	const { openapi } = await import("@elysiajs/openapi");
+	app.use(
+		openapi({
+			enabled: true,
+			documentation: {
+				info: {
+					title: "ohmyblog API",
+					version: "1.0.0",
+				},
+			},
+		}),
+	);
 }
 
 // 启动服务
