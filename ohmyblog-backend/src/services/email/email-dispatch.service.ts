@@ -1,5 +1,4 @@
 // src/services/email/email-dispatch.service.ts
-import nodemailer from "nodemailer";
 import type {
 	TEmailLogStatus,
 	TEmailLogType,
@@ -15,10 +14,15 @@ class EmailDispatchService {
 
 	/**
 	 * 根据 SMTP 配置创建 nodemailer 传输器
-	 * @param smtpConfig SMTP 配置记录
-	 * @returns nodemailer 传输器实例
+	 *
+	 * nodemailer 是个包含完整 SMTP 协议实现的较重模块，但博客绝大多数
+	 * 时间不会发邮件。采用 lazy import 避免服务启动时把它 evaluate 进常驻
+	 * JS 堆，仅在首次发邮件 / 测试 SMTP 连接时加载。
 	 */
-	private createTransporter(smtpConfig: TSMTPConfigUpsertDTO["configValue"]) {
+	private async createTransporter(
+		smtpConfig: TSMTPConfigUpsertDTO["configValue"],
+	) {
+		const { default: nodemailer } = await import("nodemailer");
 		return nodemailer.createTransport({
 			host: smtpConfig.host,
 			port: smtpConfig.port,
@@ -44,7 +48,7 @@ class EmailDispatchService {
 		type,
 		params,
 	}: DispatchOptions): Promise<{ message: string; count?: number }> {
-		const transporter = this.createTransporter(smtpConfig);
+		const transporter = await this.createTransporter(smtpConfig);
 		const fromAddress = smtpConfig.senderEmail || smtpConfig.username;
 		const fromName = smtpConfig.senderName || siteTitle;
 		try {
@@ -121,7 +125,7 @@ class EmailDispatchService {
 	 */
 	async testSMTPConnection(smtpConfig: TSMTPConfigUpsertDTO["configValue"]) {
 		try {
-			const transporter = this.createTransporter(smtpConfig);
+			const transporter = await this.createTransporter(smtpConfig);
 			await transporter.verify();
 			this.logger.info({ host: smtpConfig.host }, "SMTP 连接测试成功");
 			return { message: "SMTP 服务器连接成功" };

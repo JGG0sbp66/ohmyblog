@@ -214,12 +214,15 @@ export const SMTPConfigUpsertDTO = t.Object({
 			error: "smtp.password_range",
 		}),
 		senderEmail: t.Optional(
-			t.String({
-				format: "email",
-				maxLength: 255,
-				description: "发件人邮箱",
-				error: "smtp.sender_email_invalid",
-			}),
+			t.Union([
+				t.Literal(""),
+				t.String({
+					format: "email",
+					maxLength: 255,
+					description: "发件人邮箱",
+					error: "smtp.sender_email_invalid",
+				}),
+			]),
 		),
 		senderName: t.Optional(
 			t.String({

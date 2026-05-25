@@ -1,7 +1,6 @@
 // src/services/email/email-sender.service.ts
 import { randomInt } from "node:crypto";
-import { render } from "@react-email/components";
-import { createElement } from "react";
+import type { ComponentType } from "react";
 import { emailLogDao } from "../../daos/email-log.dao";
 import type {
 	TFriendLinkApplyConfirmedEmailParams,
@@ -13,17 +12,37 @@ import type {
 } from "../../dtos/email.dto";
 import { BusinessError } from "../../plugins/errors";
 import { type GeoInfo, geoService } from "../../services/geo.service";
-import { FriendLinkApplyConfirmedEmail } from "../../templates/FriendLinkApplyConfirmedEmail";
-import { FriendLinkApplyNotifyEmail } from "../../templates/FriendLinkApplyNotifyEmail";
-import { FriendLinkResultEmail } from "../../templates/FriendLinkResultEmail";
-import { LoginAlertEmail } from "../../templates/LoginAlertEmail";
-import { ResetPasswordEmail } from "../../templates/ResetPasswordEmail";
-import { SMTPTestEmail } from "../../templates/SMTPTestEmail";
 import { emailConfigService } from "./email-config.service";
 import { emailDispatchService } from "./email-dispatch.service";
 import type { SendLoginAlertParams, SendResetPasswordParams } from "./types";
 
 class EmailSenderService {
+	/**
+	 * 内部辅助：按需加载 React + @react-email/components 并渲染指定模板
+	 *
+	 * 设计动机：邮件相关的 react / react-dom / @react-email 体量较大，
+	 * 但博客绝大多数时间都不会触发邮件发送。把这些模块从顶层 import 改成
+	 * 按需 import，可以避免服务启动时把它们 evaluate 进常驻 JS 堆，
+	 * 显著降低空载内存（实测 RssAnon 中很大一块就来自这些模块）。
+	 *
+	 * 代价：首次发送任意邮件会多 50~200ms 用于求值这几个模块；
+	 * 之后 import 命中模块缓存，开销可忽略。
+	 */
+	private async renderEmail<P>(
+		Component: ComponentType<P>,
+		props: P,
+	): Promise<string> {
+		const [{ render }, { createElement }] = await Promise.all([
+			import("@react-email/components"),
+			import("react"),
+		]);
+		// React.createElement 的泛型签名带 `P extends {}` 约束，从泛型辅助函数里
+		// 调用时 TS 无法把外层 P 和 createElement 内部 P 对齐，这里用 any 绕过类型
+		// 检查。调用方传入 Component/props 时仍受 ComponentType<P>/P 约束。
+		// biome-ignore lint/suspicious/noExplicitAny: see comment above
+		return render(createElement(Component as any, props as any));
+	}
+
 	/**
 	 * 发送 SMTP 测试通知邮件
 	 * @param to 收件人邮箱列表
@@ -55,7 +74,10 @@ class EmailSenderService {
 			hue,
 		};
 
-		const html = await render(createElement(SMTPTestEmail, templateProps));
+		const { SMTPTestEmail } = await import(
+			"../../templates/SMTPTestEmail"
+		);
+		const html = await this.renderEmail(SMTPTestEmail, templateProps);
 
 		return emailDispatchService.dispatch({
 			to,
@@ -133,7 +155,10 @@ class EmailSenderService {
 			hue,
 		};
 
-		const html = await render(createElement(LoginAlertEmail, templateProps));
+		const { LoginAlertEmail } = await import(
+			"../../templates/LoginAlertEmail"
+		);
+		const html = await this.renderEmail(LoginAlertEmail, templateProps);
 
 		return emailDispatchService.dispatch({
 			to: [params.to],
@@ -179,7 +204,10 @@ class EmailSenderService {
 			location,
 		};
 
-		const html = await render(createElement(ResetPasswordEmail, templateProps));
+		const { ResetPasswordEmail } = await import(
+			"../../templates/ResetPasswordEmail"
+		);
+		const html = await this.renderEmail(ResetPasswordEmail, templateProps);
 
 		const result = await emailDispatchService.dispatch({
 			to: [params.to],
@@ -221,8 +249,12 @@ class EmailSenderService {
 			...params,
 		};
 
-		const html = await render(
-			createElement(FriendLinkApplyNotifyEmail, templateProps),
+		const { FriendLinkApplyNotifyEmail } = await import(
+			"../../templates/FriendLinkApplyNotifyEmail"
+		);
+		const html = await this.renderEmail(
+			FriendLinkApplyNotifyEmail,
+			templateProps,
 		);
 
 		return emailDispatchService.dispatch({
@@ -255,8 +287,12 @@ class EmailSenderService {
 			applicantSiteName: params.applicantSiteName,
 		};
 
-		const html = await render(
-			createElement(FriendLinkApplyConfirmedEmail, templateProps),
+		const { FriendLinkApplyConfirmedEmail } = await import(
+			"../../templates/FriendLinkApplyConfirmedEmail"
+		);
+		const html = await this.renderEmail(
+			FriendLinkApplyConfirmedEmail,
+			templateProps,
 		);
 
 		return emailDispatchService.dispatch({
@@ -293,9 +329,10 @@ class EmailSenderService {
 			rejectReason: params.rejectReason,
 		};
 
-		const html = await render(
-			createElement(FriendLinkResultEmail, templateProps),
+		const { FriendLinkResultEmail } = await import(
+			"../../templates/FriendLinkResultEmail"
 		);
+		const html = await this.renderEmail(FriendLinkResultEmail, templateProps);
 
 		const subject =
 			params.result === "approved"
@@ -328,45 +365,63 @@ class EmailSenderService {
 		}
 		const params = (log.params ?? {}) as Record<string, unknown>;
 
-		// 根据日志类型渲染对应模板
+		// 根据日志类型按需加载并渲染对应模板（lazy import 避免空载吃内存）
 		switch (log.type) {
-			case "smtp_test":
-				return render(
-					createElement(SMTPTestEmail, params as TSMTPTestEmailParams),
+			case "smtp_test": {
+				const { SMTPTestEmail } = await import(
+					"../../templates/SMTPTestEmail"
 				);
-			case "login_alert":
-				return render(
-					createElement(LoginAlertEmail, params as TLoginAlertEmailParams),
+				return this.renderEmail(
+					SMTPTestEmail,
+					params as TSMTPTestEmailParams,
 				);
-			case "reset_password":
-				return render(
-					createElement(
-						ResetPasswordEmail,
-						params as TResetPasswordEmailParams,
-					),
+			}
+			case "login_alert": {
+				const { LoginAlertEmail } = await import(
+					"../../templates/LoginAlertEmail"
 				);
-			case "friend_link_apply":
-				return render(
-					createElement(
-						FriendLinkApplyNotifyEmail,
-						params as unknown as TFriendLinkApplyNotifyEmailParams,
-					),
+				return this.renderEmail(
+					LoginAlertEmail,
+					params as TLoginAlertEmailParams,
 				);
-			case "friend_link_apply_confirmed":
-				return render(
-					createElement(
-						FriendLinkApplyConfirmedEmail,
-						params as unknown as TFriendLinkApplyConfirmedEmailParams,
-					),
+			}
+			case "reset_password": {
+				const { ResetPasswordEmail } = await import(
+					"../../templates/ResetPasswordEmail"
 				);
+				return this.renderEmail(
+					ResetPasswordEmail,
+					params as TResetPasswordEmailParams,
+				);
+			}
+			case "friend_link_apply": {
+				const { FriendLinkApplyNotifyEmail } = await import(
+					"../../templates/FriendLinkApplyNotifyEmail"
+				);
+				return this.renderEmail(
+					FriendLinkApplyNotifyEmail,
+					params as unknown as TFriendLinkApplyNotifyEmailParams,
+				);
+			}
+			case "friend_link_apply_confirmed": {
+				const { FriendLinkApplyConfirmedEmail } = await import(
+					"../../templates/FriendLinkApplyConfirmedEmail"
+				);
+				return this.renderEmail(
+					FriendLinkApplyConfirmedEmail,
+					params as unknown as TFriendLinkApplyConfirmedEmailParams,
+				);
+			}
 			case "friend_link_approved":
-			case "friend_link_rejected":
-				return render(
-					createElement(
-						FriendLinkResultEmail,
-						params as unknown as TFriendLinkResultEmailParams,
-					),
+			case "friend_link_rejected": {
+				const { FriendLinkResultEmail } = await import(
+					"../../templates/FriendLinkResultEmail"
 				);
+				return this.renderEmail(
+					FriendLinkResultEmail,
+					params as unknown as TFriendLinkResultEmailParams,
+				);
+			}
 			default:
 				throw new BusinessError(`未知的邮件类型: ${log.type}`, { status: 400 });
 		}
