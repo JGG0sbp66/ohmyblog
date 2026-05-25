@@ -1,6 +1,7 @@
 # --- 阶段 1: 构建前端 ---
 # Build context 为 monorepo 根目录（即 ohmyblog-refactor/）
-FROM oven/bun:latest AS frontend-builder
+# 钉死 Bun 版本以保证 Bun.Image (1.3.14+) 等内置 API 行为稳定
+FROM oven/bun:1.3.14 AS frontend-builder
 
 WORKDIR /monorepo
 
@@ -21,7 +22,7 @@ WORKDIR /monorepo/ohmyblog-frontend
 RUN bun run build-only
 
 # --- 阶段 2: 构建后端 ---
-FROM oven/bun:latest AS builder
+FROM oven/bun:1.3.14 AS builder
 
 ARG GIT_COMMIT=unknown
 LABEL git-commit=$GIT_COMMIT
@@ -32,13 +33,6 @@ WORKDIR /app
 COPY ohmyblog-backend/package.json ohmyblog-backend/bun.lock ./
 RUN bun install --frozen-lockfile
 
-# 强制安装 musl 版本的 @napi-rs/image 模块，以便在 builder (glibc) 中编译出 alpine 兼容包
-RUN bun add @napi-rs/image-linux-x64-musl
-
-# 删除 builder 默认随 optionalDependencies 安装的 glibc 版 native 模块，
-# 否则 bun build 静态分析会同时把两份 .node 都嵌入二进制，多出约 12MB 死重
-RUN rm -rf node_modules/@napi-rs/image-linux-x64-gnu
-
 # 复制后端源代码及构建脚本
 COPY ohmyblog-backend/ .
 
@@ -46,6 +40,7 @@ COPY ohmyblog-backend/ .
 COPY --from=frontend-builder /monorepo/ohmyblog-frontend/dist ./frontend-dist
 
 # 执行针对 musl 的编译 (用于 Alpine)
+# 图像处理由 Bun 运行时内置 Bun.Image 提供，无 native 模块依赖
 RUN bun run scripts/build.ts linux-musl
 
 # --- 阶段 3: 运行阶段 ---
@@ -71,9 +66,6 @@ RUN apk add --no-cache \
 
 # 从构建阶段复制编译好的资源
 # 仅复制必要的二进制文件、迁移文件和前端产物
-# 注意：image.linux-x64-musl.node 已被 bun build 静态嵌入 standalone 二进制内
-# （位于 /$bunfs/root/），运行时由 @napi-rs/image 自动 fallback 加载，
-# 无需在 /app/ 下额外拷贝一份磁盘版（避免约 13.4MB 重复）。
 COPY --from=builder --chmod=755 /app/scripts/dist/linux-musl/ohmyblog /app/
 COPY --from=builder /app/scripts/dist/linux-musl/db/ /app/db/
 COPY --from=builder /app/scripts/dist/linux-musl/public/ /app/public/
