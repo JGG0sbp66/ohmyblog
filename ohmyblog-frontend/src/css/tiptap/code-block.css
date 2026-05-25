@@ -84,6 +84,52 @@
   letter-spacing: 0.05em;
 }
 
+/* 语言候选下拉
+   注意：Teleport 到 body 后该元素不在 .tiptap 范围内，选择器不能加 .tiptap 前缀 */
+.code-block-lang-popup {
+  position: fixed;
+  z-index: 50;
+  max-height: 16rem;
+  overflow-y: auto;
+  background: oklch(0.22 0.015 var(--app-hue));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.code-block-lang-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.3rem 0.625rem;
+  font-size: 0.75rem;
+  font-family:
+    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+  color: oklch(0.75 0.04 var(--app-hue));
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.code-block-lang-item.is-selected,
+.code-block-lang-item:hover {
+  background: oklch(0.3 0.02 var(--app-hue));
+  color: oklch(0.92 0.04 var(--app-hue));
+}
+
+.code-block-lang-empty {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  color: oklch(0.5 0.02 var(--app-hue));
+  text-align: center;
+}
+
 .tiptap .code-block-content {
   display: flex;
   line-height: 1.5rem; /* 行高单一来源，两侧共同继承 */

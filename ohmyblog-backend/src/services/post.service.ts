@@ -85,7 +85,7 @@ class PostService {
 	 * 根据 slug 获取已发布文章（前台文章详情页）
 	 * 读路径不再写库，viewCount 由 viewCounterService 异步批量累加
 	 * @param slug URL 中的文章标识
-	 * @returns 文章记录（含 contentMarkdown）
+	 * @returns 文章记录（含 ProseMirror JSON）
 	 */
 	async getBySlug(slug: string) {
 		const post = await postDao.findPublishedBySlug(slug);
@@ -101,7 +101,7 @@ class PostService {
 
 	/**
 	 * 保存文章内容（自动保存 / 手动保存）
-	 * content / contentMarkdown / contentText 由前端 Tiptap 导出后随请求传入
+	 * content / contentText 由前端 Tiptap 导出后随请求传入
 	 * @param uuid 文章唯一标识
 	 * @param data 待保存的字段（全部可选，支持增量更新）
 	 * @returns 更新后的文章记录

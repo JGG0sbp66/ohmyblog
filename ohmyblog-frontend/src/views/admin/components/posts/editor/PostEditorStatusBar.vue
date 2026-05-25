@@ -27,6 +27,10 @@ const props = defineProps<{
   isDirty?: boolean;
   /** 保存中状态，用于禁用按鈕并显示加载态 */
   loading?: boolean;
+  /** 全文字符数 */
+  totalCharCount?: number;
+  /** 当前选区字符数（无选区为 0） */
+  selectedCharCount?: number;
 }>();
 
 /** 保存状态：saving > unsaved > saved */
@@ -68,6 +72,16 @@ const emit = defineEmits<{
           </template>
           {{ t(`views.admin.PostEditor.statusBar.${saveStatus}`) }}
         </BaseTag>
+
+        <!-- 字数统计：选中字数 / 总字数 -->
+        <span class="text-xs text-fg-subtle tabular-nums select-none">
+          {{
+            t("views.admin.PostEditor.statusBar.stats", {
+              selected: props.selectedCharCount ?? 0,
+              total: props.totalCharCount ?? 0,
+            })
+          }}
+        </span>
       </div>
     </template>
     <template #right>

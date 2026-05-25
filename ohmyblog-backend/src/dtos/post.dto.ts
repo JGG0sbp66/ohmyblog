@@ -18,12 +18,6 @@ export const SavePostDTO = t.Object({
 			description: "ProseMirror JSON，编辑器源数据",
 		}),
 	),
-	// 由前端 Tiptap 导出的纯 Markdown，随 content 一并传入
-	contentMarkdown: t.Optional(
-		t.String({
-			description: "纯 Markdown 文本，由前端从编辑器导出",
-		}),
-	),
 	// 由前端 editor.getText() 导出的纯文本，用于搜索和列表预览
 	contentText: t.Optional(
 		t.String({

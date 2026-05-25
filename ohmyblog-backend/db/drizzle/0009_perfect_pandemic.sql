@@ -1,0 +1,1 @@
+ALTER TABLE `post` DROP COLUMN `content_markdown`;

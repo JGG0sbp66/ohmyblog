@@ -39,61 +39,35 @@
 // 验收：粘贴 GFM 表格能直接编辑、工具栏插表、拖列宽、保存还原、移动端横滚
 // ─────────────────────────────────────────────────────────────────────────────
 
-import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
+import CharacterCount from "@tiptap/extension-character-count";
 import { Markdown } from "tiptap-markdown";
-import TextAlign from "@tiptap/extension-text-align";
-import Link from "@tiptap/extension-link";
 import { useLang } from "@/composables/lang.hook";
-import { Indent } from "./indent.extension";
-import { CustomListItem } from "./list-item.extension";
-import { CustomOrderedList } from "./ordered-list.extension";
-import {
-  CustomBold,
-  CustomItalic,
-  CustomStrike,
-  CustomUnderline,
-  CustomCode,
-} from "./marks.extension";
-import { CustomCodeBlock } from "./code-block.extension";
-import { TextStyle, Color, CustomHighlight } from "./color.extension";
-import { ResizableImage } from "./image.extension";
+import { getContentExtensions } from "./content-extensions";
+import { SmartSelectAll } from "./select-all.extension";
+import { TrailingNode } from "./trailing-node.extension";
+import { SlashExtension } from "@/views/admin/components/posts/editor/content/menus/slash/slash.extension";
 
 /**
- * useEditorExtensions — 返回 Tiptap 编辑器扩展数组
+ * useEditorExtensions — 后台编辑器扩展数组
  *
- * 集中管理所有扩展配置，PostEditorBody 直接调用即可。
+ * 在 getContentExtensions（共享 schema）之上叠加编辑专属能力：
+ * - Placeholder         空文档占位提示
+ * - Markdown            粘贴 markdown 文本即时转富文本
+ * - SmartSelectAll      Ctrl+A 渐进式选择
+ * - SlashExtension      "/" 命令面板
+ *
+ * 前台只读渲染（PostContent）使用 getContentExtensions({ readonly: true }），
+ * 不需要这些交互扩展，避免引入 placeholder / slash menu 等无意义副作用。
  */
 export function useEditorExtensions() {
   const { t } = useLang();
 
   return [
-    StarterKit.configure({
-      listItem: false, // 由 CustomListItem 替代，支持列表项内含标题节点
-      orderedList: false, // 由 CustomOrderedList 替代，修复 InputRule start 归一问题
-      bold: false, // 由 CustomBold 替代，支持飞书风格空格触发 InputRule
-      italic: false, // 由 CustomItalic 替代，同上
-      strike: false, // 由 CustomStrike 替代，同上
-      code: false, // 由 CustomCode 替代，允许行内代码与其他 Mark 共存
-      codeBlock: false, // 由 CustomCodeBlock 替代，挂载 Vue NodeView + lowlight 语法高亮
-      link: false, // 由下方 Link.configure 替代（v3 StarterKit 已内置，需显式禁用）
-      underline: false, // 由 CustomUnderline 替代（v3 StarterKit 已内置，需显式禁用）
-    }),
-    CustomListItem,
-    CustomOrderedList,
-    CustomBold,
-    CustomItalic,
-    CustomStrike,
-    CustomUnderline,
-    CustomCode,
-    CustomCodeBlock,
-    TextStyle, // Color 的依赖 mark，必须在 Color 之前注册
-    Color, // 文字颜色，依赖 TextStyle mark
-    CustomHighlight, // 背景高亮（多色）
-    ResizableImage,
-    Indent,
-    TextAlign.configure({ types: ["heading", "paragraph"] }),
-    Link.configure({ openOnClick: true }),
+    ...getContentExtensions({ readonly: false }),
+    SmartSelectAll,
+    TrailingNode,
+    CharacterCount,
     Placeholder.configure({
       placeholder: t("views.admin.PostEditor.content.body.placeholder"),
     }),
@@ -101,5 +75,6 @@ export function useEditorExtensions() {
       html: false,
       transformPastedText: true,
     }),
+    SlashExtension,
   ];
 }

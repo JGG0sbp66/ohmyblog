@@ -44,6 +44,7 @@ async function build(platform: Platform) {
 	await mkdir(distDir, { recursive: true });
 
 	// 2. 编译可执行文件
+	// 图像处理由 Bun.Image (Bun 1.3.14+ 内置) 提供，无需额外的 native 模块拷贝
 	console.log(`   Compiling executable...`);
 	await Bun.build({
 		entrypoints: ["./src/index.ts"],
@@ -62,40 +63,7 @@ async function build(platform: Platform) {
 	await mkdir(join(distDir, "db"), { recursive: true });
 	await cp(drizzleSource, drizzleDest, { recursive: true });
 
-	// 4. 复制 @napi-rs/image 的 native 二进制文件
-	console.log(`   Copying native modules for @napi-rs/image...`);
-	const nativeConfigs = {
-		win: {
-			pkg: "@napi-rs/image-win32-x64-msvc",
-			file: "image.win32-x64-msvc.node",
-		},
-		linux: {
-			pkg: "@napi-rs/image-linux-x64-gnu",
-			file: "image.linux-x64-gnu.node",
-		},
-		"linux-musl": {
-			pkg: "@napi-rs/image-linux-x64-musl",
-			file: "image.linux-x64-musl.node",
-		},
-		mac: {
-			pkg: "@napi-rs/image-darwin-arm64",
-			file: "image.darwin-arm64.node",
-		},
-	};
-
-	const config = nativeConfigs[platform];
-	const nativeSource = join("node_modules", config.pkg, config.file);
-
-	if (existsSync(nativeSource)) {
-		console.log(`     Bundling native module ${config.file}...`);
-		await cp(nativeSource, join(distDir, config.file));
-	} else {
-		console.warn(
-			`   ⚠️  Native module for ${platform} not found at ${nativeSource}. Binary may not run correctly.`,
-		);
-	}
-
-	// 5. 复制前端静态资源 (frontend-dist → distDir/public)
+	// 4. 复制前端静态资源 (frontend-dist → distDir/public)
 	console.log(`   Copying frontend dist (public/)...`);
 	const frontendDistSrc = "frontend-dist";
 	if (existsSync(frontendDistSrc)) {
@@ -106,7 +74,7 @@ async function build(platform: Platform) {
 		);
 	}
 
-	// 6. 创建 README
+	// 5. 创建 README
 	const readme = `# ohmyblog ${platform.toUpperCase()} Distribution
 
 ## 运行方式
@@ -121,8 +89,7 @@ async function build(platform: Platform) {
 
 ## 目录结构
 
-- ${exeName} - 主程序
-- ${config.file} - 图片处理 native 模块 (必须在主程序同级目录)
+- ${exeName} - 主程序（图像处理由 Bun 运行时内置 Bun.Image 提供，无外部依赖）
 - db/drizzle/ - 数据库迁移文件
 - public/ - 前端 SPA 构建产物（可选，挂载在 / 下）
 - data/ - 运行时数据目录（自动创建）
@@ -134,9 +101,8 @@ async function build(platform: Platform) {
 ## 注意事项
 
 1. 不要删除 db/drizzle 目录，它包含数据库结构定义
-2. 不要删除 ${config.file} 文件，它是图片处理必需的 native 模块
-3. data 目录会在首次运行时自动创建
-4. 此发行版仅适用于 ${platform} 平台，不可跨平台使用
+2. data 目录会在首次运行时自动创建
+3. 此发行版仅适用于 ${platform} 平台，不可跨平台使用
 `;
 
 	await Bun.write(join(distDir, "README.md"), readme);

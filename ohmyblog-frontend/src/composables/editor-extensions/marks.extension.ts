@@ -26,8 +26,9 @@ export const CustomItalic = Italic.extend({
   addInputRules() {
     return [
       // 匹配 *文本* 或 _文本_ 后跟一个空格，且前面不是 * 或 _
+      // 用 lookbehind 不消费前置字符，否则前一个中文 / 英文字符会被卷进 mark 区间
       markInputRule({
-        find: /(?:^|[^*_])(?:\*|_)([^*_]+)(?:\*|_)\s$/,
+        find: /(?<=^|[^*_])(?:\*|_)([^*_]+)(?:\*|_)\s$/,
         type: this.type,
       }),
     ];
@@ -64,9 +65,10 @@ export const CustomCode = Code.extend({
 
   addInputRules() {
     return [
-      // 匹配 `文本` 后跟一个空格
+      // 匹配 `文本` 后跟一个空格，前面不是反引号
+      // 用 lookbehind 不消费前置字符，避免吞掉前一个普通字符
       markInputRule({
-        find: /(?:^|[^`])(?:`)([^`]+)(?:`)\s$/,
+        find: /(?<=^|[^`])(?:`)([^`]+)(?:`)\s$/,
         type: this.type,
       }),
     ];

@@ -171,7 +171,7 @@ export const postRoute = new Elysia({ name: "postRoute" })
 			)
 			/**
 			 * GET /public/posts/:slug
-			 * 按 slug 获取单篇已发布文章（含 contentMarkdown，供前台渲染）
+			 * 按 slug 获取单篇已发布文章（含 ProseMirror JSON，供前台渲染）
 			 */
 			.get(
 				"/:slug",

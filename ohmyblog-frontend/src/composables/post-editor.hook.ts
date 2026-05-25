@@ -29,7 +29,6 @@ export const usePostEditor = () => {
   const status = ref<TPostStatus>("draft");
   const title = ref("");
   const content = ref<object | undefined>(undefined);
-  const contentMarkdown = ref("");
   const contentText = ref("");
   const coverImage = ref<string | null>(null);
   const excerpt = ref("");
@@ -79,16 +78,7 @@ export const usePostEditor = () => {
       });
       // title/content 防抖自动保存
       watchDebounced(
-        [
-          title,
-          content,
-          contentMarkdown,
-          contentText,
-          coverImage,
-          excerpt,
-          tags,
-          slug,
-        ],
+        [title, content, contentText, coverImage, excerpt, tags, slug],
         () => {
           if (!isDirty.value) return;
           autoSave();
@@ -103,7 +93,6 @@ export const usePostEditor = () => {
     tags: tags.value,
     title: title.value || undefined,
     content: content.value,
-    contentMarkdown: contentMarkdown.value || undefined,
     contentText: contentText.value || undefined,
     coverImage: coverImage.value ?? undefined,
     excerpt: excerpt.value || undefined,
@@ -155,7 +144,6 @@ export const usePostEditor = () => {
     status,
     title,
     content,
-    contentMarkdown,
     contentText,
     coverImage,
     excerpt,

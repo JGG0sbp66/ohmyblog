@@ -8,6 +8,8 @@ import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostE
 import { usePostEditor } from "@/composables/post-editor.hook";
 
 const showSettings = ref(true);
+const totalCharCount = ref(0);
+const selectedCharCount = ref(0);
 const {
   uuid,
   slug,
@@ -15,7 +17,6 @@ const {
   status,
   title,
   content,
-  contentMarkdown,
   contentText,
   coverImage,
   excerpt,
@@ -34,6 +35,8 @@ const {
         :settingsOpen="showSettings"
         :loading="isSaving"
         :isDirty="isDirty"
+        :totalCharCount="totalCharCount"
+        :selectedCharCount="selectedCharCount"
         @toggle-settings="showSettings = !showSettings"
         @save="save"
       />
@@ -41,8 +44,9 @@ const {
         class="onload-animation anim-delay-150"
         v-model:title="title"
         v-model:content="content"
-        v-model:contentMarkdown="contentMarkdown"
         v-model:contentText="contentText"
+        v-model:total-char-count="totalCharCount"
+        v-model:selected-char-count="selectedCharCount"
       />
     </div>
 

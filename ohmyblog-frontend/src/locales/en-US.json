@@ -355,7 +355,8 @@
           "unsaved": "Unsaved",
           "saved": "Saved",
           "saving": "Saving",
-          "save": "Save"
+          "save": "Save",
+          "stats": "Selected {selected} / Total {total}"
         },
         "settingsPanel": {
           "title": "Post Settings",
@@ -397,14 +398,6 @@
             "strike": "Strikethrough (Ctrl/⌘+Shift+S)\nmarkdown:~~text~~ Space",
             "underline": "Underline (Ctrl/⌘+U)\nmarkdown:~text~ Space",
             "code": "Inline code (Ctrl/⌘+E)\nmarkdown:`code` Space",
-            "paragraph": "Paragraph",
-            "heading1": "Heading 1",
-            "heading2": "Heading 2",
-            "heading3": "Heading 3",
-            "bulletList": "Bullet list",
-            "orderedList": "Ordered list",
-            "codeBlock": "Code block",
-            "quote": "Blockquote",
             "alignLeft": "Align left",
             "alignCenter": "Align center",
             "alignRight": "Align right",
@@ -416,15 +409,53 @@
             "linkUrlPlaceholder": "https://...",
             "linkConfirm": "Insert"
           },
-          "handleMenu": {
-            "paragraph": "Paragraph",
-            "heading1": "Heading 1\nmarkdown:# Space",
-            "heading2": "Heading 2\nmarkdown:## Space",
-            "heading3": "Heading 3\nmarkdown:### Space",
-            "bulletList": "Bullet list\nmarkdown:- Space",
-            "orderedList": "Ordered list\nmarkdown:1. Space",
-            "codeBlock": "Code block\nmarkdown:``` Enter",
-            "quote": "Blockquote\nmarkdown:> Space"
+          "blockCommands": {
+            "paragraph": { "label": "Paragraph", "tooltip": "Paragraph" },
+            "heading1": {
+              "label": "H1",
+              "tooltip": "Heading 1\nmarkdown:# Space"
+            },
+            "heading2": {
+              "label": "H2",
+              "tooltip": "Heading 2\nmarkdown:## Space"
+            },
+            "heading3": {
+              "label": "H3",
+              "tooltip": "Heading 3\nmarkdown:### Space"
+            },
+            "bulletList": {
+              "label": "Bullet list",
+              "tooltip": "Bullet list\nmarkdown:- Space"
+            },
+            "orderedList": {
+              "label": "Ordered list",
+              "tooltip": "Ordered list\nmarkdown:1. Space"
+            },
+            "taskList": {
+              "label": "Task list",
+              "tooltip": "Task list\nmarkdown:- [ ] Space"
+            },
+            "codeBlock": {
+              "label": "Code block",
+              "tooltip": "Code block\nmarkdown:``` Enter"
+            },
+            "quote": {
+              "label": "Blockquote",
+              "tooltip": "Blockquote\nmarkdown:> Space"
+            },
+            "horizontalRule": {
+              "label": "Divider",
+              "tooltip": "Divider\nmarkdown:--- Enter"
+            }
+          },
+          "codeBlock": {
+            "languageEmpty": "No matching language"
+          },
+          "slashMenu": {
+            "empty": "No matching commands"
+          },
+          "slashCommands": {
+            "clearFormatting": { "label": "Clear formatting" }
           }
         }
       }

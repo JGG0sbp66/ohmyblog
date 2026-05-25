@@ -9,6 +9,14 @@ import CodeBlock from "@/views/admin/components/posts/editor/content/node-views/
 const lowlight = createLowlight(common);
 
 /**
+ * 暴露给 NodeView：供语言下拉框枚举所有可用语言名
+ * 顺便加上 "text" 作为"无高亮"的占位项（lowlight 不识别 text 但 placeholder 习惯用）
+ */
+export const listAvailableLanguages = (): string[] => {
+  return ["text", ...lowlight.listLanguages()].sort();
+};
+
+/**
  * CustomCodeBlock — 代码块 NodeView 扩展（含 lowlight 语法高亮）
  *
  * - lowlight(common)：highlight.js 语法解析，生成 hljs-* token spans
@@ -19,4 +27,4 @@ export const CustomCodeBlock = CodeBlockLowlight.extend({
   addNodeView() {
     return VueNodeViewRenderer(CodeBlock);
   },
-}).configure({ lowlight });
+}).configure({ lowlight, enableTabIndentation: true, tabSize: 2 });
