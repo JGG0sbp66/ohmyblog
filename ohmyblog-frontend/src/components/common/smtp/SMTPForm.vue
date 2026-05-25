@@ -160,7 +160,8 @@ const updateField = (key: string, value: any) => {
             "
             :hint="t('views.setup.steps.step5.form.senderEmail.hint')"
             :schema="
-              SMTPConfigUpsertDTO.properties.configValue.properties.senderEmail
+              SMTPConfigUpsertDTO.properties.configValue.properties
+                .senderEmail.anyOf[1]
             "
             @update:model-value="updateField('senderEmail', $event)"
           />
