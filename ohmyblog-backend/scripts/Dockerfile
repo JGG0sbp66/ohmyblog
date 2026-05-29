@@ -24,9 +24,6 @@ RUN bun run build-only
 # --- 阶段 2: 构建后端 ---
 FROM oven/bun:1.3.14 AS builder
 
-ARG GIT_COMMIT=unknown
-LABEL git-commit=$GIT_COMMIT
-
 WORKDIR /app
 
 # 复制依赖定义并安装
@@ -44,13 +41,16 @@ COPY --from=frontend-builder /monorepo/ohmyblog-frontend/dist ./frontend-dist
 RUN bun run scripts/build.ts linux-musl
 
 # --- 阶段 3: 提供运行库（用于 scratch） ---
-FROM alpine:latest AS runtime
+FROM alpine:3.23 AS runtime
 
-# 只安装运行时必需的库和证书
+# 只安装运行时必需的库和证书，并创建非 root 用户
 RUN apk add --no-cache \
     ca-certificates \
     libstdc++ \
-    && rm -rf /var/cache/apk/*
+    && addgroup -S app \
+    && adduser -S -G app -u 10001 app \
+    && mkdir -p /app/data \
+    && chown -R app:app /app
 
 # --- 阶段 4: 运行阶段（scratch） ---
 FROM scratch
@@ -63,25 +63,31 @@ LABEL git-commit=$GIT_COMMIT
 # 设置运行时环境变量，确保应用以生产模式运行
 ENV NODE_ENV=production
 
-WORKDIR /app
-
-# 必需的运行库与证书
+# 必需的运行库、证书与用户信息
 COPY --from=runtime /lib/ld-musl-x86_64.so.1 /lib/
 COPY --from=runtime /usr/lib/libstdc++.so.6* /usr/lib/
 COPY --from=runtime /usr/lib/libgcc_s.so.1 /usr/lib/
 COPY --from=runtime /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=runtime /etc/passwd /etc/passwd
+COPY --from=runtime /etc/group /etc/group
+COPY --from=runtime /app /app
+
+WORKDIR /app
 
 # 从构建阶段复制编译好的资源
 # 仅复制必要的二进制文件、迁移文件和前端产物
-COPY --from=builder --chmod=755 /app/scripts/dist/linux-musl/ohmyblog /app/ohmyblog
-COPY --from=builder /app/scripts/dist/linux-musl/db/ /app/db/
-COPY --from=builder /app/scripts/dist/linux-musl/public/ /app/public/
+COPY --from=builder --chmod=755 --chown=10001:10001 /app/scripts/dist/linux-musl/ohmyblog /app/ohmyblog
+COPY --from=builder --chown=10001:10001 /app/scripts/dist/linux-musl/db/ /app/db/
+COPY --from=builder --chown=10001:10001 /app/scripts/dist/linux-musl/public/ /app/public/
 
 # 定义数据挂载点
 VOLUME ["/app/data"]
 
 # 声明服务端口
 EXPOSE 3000
+
+# 非 root 运行
+USER 10001:10001
 
 # 运行程序
 CMD ["/app/ohmyblog"]
