@@ -43,8 +43,17 @@ COPY --from=frontend-builder /monorepo/ohmyblog-frontend/dist ./frontend-dist
 # 图像处理由 Bun 运行时内置 Bun.Image 提供，无 native 模块依赖
 RUN bun run scripts/build.ts linux-musl
 
-# --- 阶段 3: 运行阶段 ---
-FROM alpine:latest
+# --- 阶段 3: 提供运行库（用于 scratch） ---
+FROM alpine:latest AS runtime
+
+# 只安装运行时必需的库和证书
+RUN apk add --no-cache \
+    ca-certificates \
+    libstdc++ \
+    && rm -rf /var/cache/apk/*
+
+# --- 阶段 4: 运行阶段（scratch） ---
+FROM scratch
 
 # 从构建阶段继承 GIT_COMMIT
 ARG GIT_COMMIT=unknown
@@ -56,17 +65,15 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-# 安装必要的运行库
-# - ca-certificates: 用于 HTTPS 请求
-# - libstdc++: Bun 运行时依赖
-RUN apk add --no-cache \
-    ca-certificates \
-    libstdc++ \
-    && rm -rf /var/cache/apk/*
+# 必需的运行库与证书
+COPY --from=runtime /lib/ld-musl-x86_64.so.1 /lib/
+COPY --from=runtime /usr/lib/libstdc++.so.6* /usr/lib/
+COPY --from=runtime /usr/lib/libgcc_s.so.1 /usr/lib/
+COPY --from=runtime /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # 从构建阶段复制编译好的资源
 # 仅复制必要的二进制文件、迁移文件和前端产物
-COPY --from=builder --chmod=755 /app/scripts/dist/linux-musl/ohmyblog /app/
+COPY --from=builder --chmod=755 /app/scripts/dist/linux-musl/ohmyblog /app/ohmyblog
 COPY --from=builder /app/scripts/dist/linux-musl/db/ /app/db/
 COPY --from=builder /app/scripts/dist/linux-musl/public/ /app/public/
 
@@ -77,4 +84,4 @@ VOLUME ["/app/data"]
 EXPOSE 3000
 
 # 运行程序
-CMD ["./ohmyblog"]
+CMD ["/app/ohmyblog"]
