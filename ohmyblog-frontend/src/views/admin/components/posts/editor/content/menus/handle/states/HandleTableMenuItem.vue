@@ -1,7 +1,7 @@
 <!-- src/views/admin/components/posts/editor/content/menus/handle/states/HandleTableMenuItem.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
-import { Table } from "lucide-vue-next";
+import { RiTableView } from "@remixicon/vue";
 import type { Editor } from "@tiptap/core";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
 import DropButton from "@/components/common/button/DropButton.vue";
@@ -46,7 +46,7 @@ const onSelect = ({ rows, cols }: { rows: number; cols: number }) => {
         :isActive="active"
         size="w-8 h-8"
       >
-        <Table class="w-5 h-5" />
+        <RiTableView class="w-5 h-5" />
       </IconTipButton>
     </template>
     <template #content>
