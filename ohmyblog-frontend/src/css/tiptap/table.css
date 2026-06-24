@@ -1,0 +1,77 @@
+/* src/css/tiptap/table.css */
+/*
+ * 表格（Tiptap TableKit / prosemirror-tables）
+ * - 结构类名沿用 prosemirror-tables：.tableWrapper / .selectedCell / .column-resize-handle
+ * - 配色统一走 --theme-* 变量，暗色模式自动适配
+ * - 表头底色用 bg-muted，正文斑马纹用 bg-muted 的低透明度混色
+ */
+
+/* resizable 模式下，表格外层会包一层 .tableWrapper，用于横向滚动 */
+.tiptap .tableWrapper {
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.tiptap table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.tiptap table td,
+.tiptap table th {
+  position: relative;
+  min-width: 1em;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--theme-border);
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+.tiptap table td > *,
+.tiptap table th > * {
+  margin: 0;
+}
+
+/* 表头：底色 + 加粗 + 左对齐 */
+.tiptap table th {
+  background: var(--theme-bg-muted);
+  font-weight: 600;
+  text-align: left;
+  color: var(--theme-fg);
+}
+
+/* 正文斑马纹：偶数行轻微底色，提升可读性 */
+.tiptap table tbody tr:nth-child(even) td {
+  background: color-mix(in oklch, var(--theme-bg-muted) 35%, transparent);
+}
+
+/* 选中单元格：半透明强调色蒙层（prosemirror-tables 通过 .selectedCell::after 实现） */
+.tiptap table .selectedCell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklch, var(--theme-accent) 18%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 列宽拖拽手柄：悬停/拖拽时在列右边界显示一条强调色竖线 */
+.tiptap table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background: var(--theme-accent);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* 拖拽列宽时，整个编辑区域光标切换为列调整样式 */
+.tiptap.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}

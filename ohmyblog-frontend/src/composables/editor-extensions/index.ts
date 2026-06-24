@@ -10,7 +10,7 @@
 //   [x] P1.1 安装扩展：@tiptap/extension-table（Tiptap v3 已把 Table/TableRow/
 //            TableHeader/TableCell 打包进 TableKit，单包即可，无需装 4 个）
 //   [x] P1.2 在本文件 useEditorExtensions 数组里注册 TableKit，开启 resizable: true
-//   [ ] P1.3 编辑器内表格 CSS：
+//   [x] P1.3 编辑器内表格 CSS（见 src/css/tiptap/table.css）：
 //            - 边框 / 斑马纹 / 表头底色
 //            - 选中态 .selectedCell
 //            - 列宽拖拽手柄 .column-resize-handle

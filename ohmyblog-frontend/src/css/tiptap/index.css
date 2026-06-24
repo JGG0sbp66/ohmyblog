@@ -5,6 +5,7 @@
 @import "./paragraph.css";
 @import "./lists.css";
 @import "./task-list.css";
+@import "./table.css";
 @import "./blockquote.css";
 @import "./code-block.css";
 @import "./inline.css";
