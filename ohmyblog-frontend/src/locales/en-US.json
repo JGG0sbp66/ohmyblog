@@ -455,6 +455,7 @@
             "empty": "No matching commands"
           },
           "slashCommands": {
+            "table": { "label": "Table" },
             "clearFormatting": { "label": "Clear formatting" }
           }
         }

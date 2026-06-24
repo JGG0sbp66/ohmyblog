@@ -1,7 +1,7 @@
 // src/views/admin/components/posts/editor/content/menus/slash/slash-commands.ts
 import type { Editor, Range } from "@tiptap/core";
 import type { Component } from "vue";
-import { Eraser } from "lucide-vue-next";
+import { Eraser, Table } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import {
   BLOCK_COMMANDS,
@@ -91,6 +91,21 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     "divider",
     "分割线",
   ]),
+  {
+    id: "table",
+    labelKey: "table",
+    isSlashOnly: true,
+    icon: Table,
+    searchTerms: ["table", "表格", "biaoge", "grid"],
+    run: (editor, range) => {
+      editor
+        .chain()
+        .focus()
+        .deleteRange(range)
+        .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+        .run();
+    },
+  },
   {
     id: "clearFormatting",
     labelKey: "clearFormatting",

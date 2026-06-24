@@ -450,6 +450,7 @@
             "empty": "没有匹配的命令"
           },
           "slashCommands": {
+            "table": { "label": "表格" },
             "clearFormatting": { "label": "清除格式" }
           }
         }
