@@ -46,7 +46,7 @@ const onSelect = ({ rows, cols }: { rows: number; cols: number }) => {
         :isActive="active"
         size="w-8 h-8"
       >
-        <Table class="w-4 h-4" />
+        <Table class="w-5 h-5" />
       </IconTipButton>
     </template>
     <template #content>

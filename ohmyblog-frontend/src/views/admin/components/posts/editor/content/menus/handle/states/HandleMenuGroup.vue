@@ -57,7 +57,7 @@ const resolved = computed<Resolved[]>(() =>
           size="w-8 h-8"
           @click="entry.cmd.run(editor)"
         >
-          <component :is="entry.cmd.icon" class="w-4 h-4" />
+          <component :is="entry.cmd.icon" class="w-5 h-5" />
         </IconTipButton>
       </template>
     </div>
