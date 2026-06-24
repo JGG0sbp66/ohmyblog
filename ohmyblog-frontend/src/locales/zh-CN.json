@@ -457,6 +457,9 @@
             "label": "表格",
             "hint": "选择表格尺寸",
             "dimensions": "{rows} × {cols}"
+          },
+          "handleMenu": {
+            "groups": { "basic": "基础", "common": "常用", "list": "列表" }
           }
         }
       }

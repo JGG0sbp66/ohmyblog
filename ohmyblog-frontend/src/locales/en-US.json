@@ -462,6 +462,9 @@
             "label": "Table",
             "hint": "Select table size",
             "dimensions": "{rows} × {cols}"
+          },
+          "handleMenu": {
+            "groups": { "basic": "Basic", "common": "Common", "list": "List" }
           }
         }
       }
