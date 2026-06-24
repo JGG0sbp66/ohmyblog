@@ -7,12 +7,9 @@
 // 粘贴 markdown 表格会 fallback 成纯文本。
 //
 // Phase 1：基础可用（约 30 分钟，先验证可行性）
-//   [ ] P1.1 安装 4 个扩展：
-//            @tiptap/extension-table
-//            @tiptap/extension-table-row
-//            @tiptap/extension-table-header
-//            @tiptap/extension-table-cell
-//   [ ] P1.2 在本文件 useEditorExtensions 数组里注册，开启 resizable: true
+//   [x] P1.1 安装扩展：@tiptap/extension-table（Tiptap v3 已把 Table/TableRow/
+//            TableHeader/TableCell 打包进 TableKit，单包即可，无需装 4 个）
+//   [x] P1.2 在本文件 useEditorExtensions 数组里注册 TableKit，开启 resizable: true
 //   [ ] P1.3 编辑器内表格 CSS：
 //            - 边框 / 斑马纹 / 表头底色
 //            - 选中态 .selectedCell
@@ -41,6 +38,7 @@
 
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
+import { TableKit } from "@tiptap/extension-table";
 import { Markdown } from "tiptap-markdown";
 import { useLang } from "@/composables/lang.hook";
 import { getContentExtensions } from "./content-extensions";
@@ -68,6 +66,9 @@ export function useEditorExtensions() {
     SmartSelectAll,
     TrailingNode,
     CharacterCount,
+    TableKit.configure({
+      table: { resizable: true },
+    }),
     Placeholder.configure({
       placeholder: t("views.admin.PostEditor.content.body.placeholder"),
     }),
