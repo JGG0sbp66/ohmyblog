@@ -3,11 +3,8 @@
 import { ref, computed, watch, nextTick, onMounted } from "vue";
 import type { Editor, Range } from "@tiptap/core";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import {
-  filterSlashCommands,
-  useSlashI18n,
-  type SlashCommand,
-} from "./slash-commands";
+import { useLang } from "@/composables/lang.hook";
+import { filterSlashCommands, useSlashI18n } from "./slash-commands";
 
 /**
  * SlashMenu — Notion 风格 / 命令面板
@@ -32,6 +29,7 @@ const props = defineProps<{
 }>();
 
 const { labelOf } = useSlashI18n();
+const { t } = useLang();
 
 const query = ref("");
 const selectedIndex = ref(0);
@@ -149,7 +147,7 @@ defineExpose({
         v-if="items.length === 0"
         class="px-3 py-3 text-sm text-fg-soft text-center"
       >
-        {{ $t("views.admin.PostEditor.content.slashMenu.empty") }}
+        {{ t("views.admin.PostEditor.content.slashMenu.empty") }}
       </div>
       <div
         v-else

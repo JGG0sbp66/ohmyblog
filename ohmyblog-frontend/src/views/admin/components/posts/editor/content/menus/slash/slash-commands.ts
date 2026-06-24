@@ -98,11 +98,13 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     icon: Table,
     searchTerms: ["table", "表格", "biaoge", "grid"],
     run: (editor, range) => {
+      // slash 是键盘流：直接插默认 2 行 3 列（首行表头）。
+      // 自定义尺寸走左侧 "+" floating handle 的网格选择器。
       editor
         .chain()
         .focus()
         .deleteRange(range)
-        .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+        .insertTable({ rows: 2, cols: 3, withHeaderRow: true })
         .run();
     },
   },
