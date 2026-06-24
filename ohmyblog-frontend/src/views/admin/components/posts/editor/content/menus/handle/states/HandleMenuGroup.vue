@@ -46,7 +46,7 @@ const resolved = computed<Resolved[]>(() =>
 
 <template>
   <div>
-    <div class="px-1.5 pb-1 text-xs text-fg-soft select-none">{{ title }}</div>
+    <div class="px-1.5 pb-1 text-sm text-fg-soft select-none">{{ title }}</div>
     <div class="grid grid-cols-4 gap-0.5">
       <template v-for="entry in resolved" :key="entry.key">
         <HandleTableMenuItem v-if="entry.kind === 'table'" :editor="editor" />

@@ -10,9 +10,9 @@ import {
   ListOrdered,
   ListChecks,
   Code2,
-  Quote,
   Minus,
 } from "lucide-vue-next";
+import { RiDoubleQuotesL } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 
 /**
@@ -146,7 +146,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
   {
     id: "quote",
     labelKey: "quote",
-    icon: Quote,
+    icon: RiDoubleQuotesL,
     group: "embed",
     isActive: (e) => e.isActive("blockquote"),
     run: (e) => e.chain().focus().toggleBlockquote().run(),
