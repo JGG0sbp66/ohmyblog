@@ -18,7 +18,8 @@
 		"build:linux": "bun run scripts/build.ts linux",
 		"build:linux-musl": "bun run scripts/build.ts linux-musl",
 		"build:mac": "bun run scripts/build.ts mac",
-		"docker": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) -t ohmyblog -f scripts/Dockerfile .."
+		"docker": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) -t ohmyblog -f scripts/Dockerfile ..",
+		"docker:canary": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) -t ohmyblog:canary -f scripts/Dockerfile.canary .."
 	},
 	"dependencies": {
 		"@elysiajs/jwt": "^1.4.2",

@@ -3,44 +3,51 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // TODO: Tiptap 表格支持
 // ─────────────────────────────────────────────────────────────────────────────
-// 现状：tiptap-markdown 能识别 GFM 表格语法，但项目未装 @tiptap/extension-table，
-// 粘贴 markdown 表格会 fallback 成纯文本。
+// Phase 1（已完成）：装 TableKit + 注册 resizable + 编辑器内表格样式
+//   见本文件下方 TableKit 注册、src/css/tiptap/table.css。
+//   粘贴 GFM 表格 / 斜杠命令 /table 均可插入并保存往返。
 //
-// Phase 1：基础可用（约 30 分钟，先验证可行性）
-//   [ ] P1.1 安装 4 个扩展：
-//            @tiptap/extension-table
-//            @tiptap/extension-table-row
-//            @tiptap/extension-table-header
-//            @tiptap/extension-table-cell
-//   [ ] P1.2 在本文件 useEditorExtensions 数组里注册，开启 resizable: true
-//   [ ] P1.3 编辑器内表格 CSS：
-//            - 边框 / 斑马纹 / 表头底色
-//            - 选中态 .selectedCell
-//            - 列宽拖拽手柄 .column-resize-handle
-//   [ ] P1.4 验证粘贴 markdown 表格能直接渲染（测试用："完整数据汇总"那种 8 行表）
-//   [ ] P1.5 验证保存后再次打开能还原（Markdown 序列化往返无损）
+// ── 组件拆分约定（贯穿 Phase 2，务必遵守）─────────────────────────────────
+//   - 单文件 ~100 行，能拆就拆，仿 PostEditorBubbleMenu 的 sections/ 分区写法
+//   - 几何计算 / selection / 命令封装一律抽进 composable，Vue 文件只「读 + 渲染」
+//   - 走 Vue 浮层 + useBubbleAnchor 路线（与 image/text bubble 一致），不用
+//     ProseMirror DecorationSet，保持风格统一
+//   - 表格命令统一来自 @tiptap/pm/tables（prosemirror-tables）：
+//     CellSelection.colSelection/rowSelection、TableMap、findTable、
+//     addRow*/addColumn*/deleteRow/deleteColumn/mergeCells/splitCell/deleteTable
 //
-// Phase 2：编辑体验（约 1.5 小时）
-//   [ ] P2.1 工具栏"插入表格"按钮（默认 3×3 + 表头）
-//   [ ] P2.2 表格 BubbleMenu：增删行列 / 合并拆分单元格 / 删除整表
+// Phase 2：编辑体验
+//   [ ] P2.1 网格选择器插表（仿飞书：hover 方格网选 N×M 插表）
+//            - TableSizePicker.vue（纯 UI，emit select({rows,cols})）
+//            - 接入 slash /table 命令 + 左侧 "+" floating handle 二级菜单
+//   [ ] P2.2 表格 BubbleMenu：增删行列 / 合并拆分 / 表头切换 / 删除整表
+//            - PostEditorTableBubbleMenu.vue（仅锚点 + 布局）
+//            - sections/TableRowColSection / TableCellSection / TableDangerSection
+//            - composables/use-table-commands.ts（命令封装）
 //   [ ] P2.3 单元格对齐：把现有 TextAlign 的 types 加上 tableCell / tableHeader
-//   [ ] P2.4 帮助文档补快捷键：Tab / Shift+Tab / Mod+Enter
+//   [ ] P2.4 行列把手（仿飞书）：hover 表格在顶部/左侧出把手，点击选中整行/整列
+//            - composables/use-table-geometry.ts（读 DOM 行列矩形，监听滚动/变更重算）
+//            - composables/use-cell-selection.ts（colSelection/rowSelection 封装）
+//            - PostEditorTableControls.vue（容器）+ controls/TableColHandle /
+//              TableRowHandle
+//   [ ] P2.5 行列间「+」插入点（仿飞书）：边界 hover 出 "+" 与蓝色插入线，
+//            点击在该处加行/列。复用 use-table-geometry，新增 controls/TableInsertButton
+//   [ ] P2.6 帮助文档补快捷键：Tab / Shift+Tab / Mod+Enter
 //
-// Phase 3：阅读页 + 移动端（约 45 分钟）
+// Phase 3：阅读页 + 移动端
 //   [ ] P3.1 前台文章渲染区表格样式（去掉编辑态，适配暗色主题）
 //   [ ] P3.2 移动端横向滚动：用 div 包裹，不能直接 table { overflow-x: auto }
 //   [ ] P3.3 单元格内代码块 / 图片 / 长文本换行策略
 //
 // Phase 4：可选优化（看上线后反馈再决定）
-//   [ ] P4.1 拖拽整行 / 整列重排
+//   [ ] P4.1 拖拽整行 / 整列重排（prosemirror-tables 有 moveTableRow/moveTableColumn）
 //   [ ] P4.2 单元格背景色
 //   [ ] P4.3 复制为 markdown / Excel 时的格式保持
-//
-// 验收：粘贴 GFM 表格能直接编辑、工具栏插表、拖列宽、保存还原、移动端横滚
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
+import { TableKit } from "@tiptap/extension-table";
 import { Markdown } from "tiptap-markdown";
 import { useLang } from "@/composables/lang.hook";
 import { getContentExtensions } from "./content-extensions";
@@ -68,6 +75,9 @@ export function useEditorExtensions() {
     SmartSelectAll,
     TrailingNode,
     CharacterCount,
+    TableKit.configure({
+      table: { resizable: true },
+    }),
     Placeholder.configure({
       placeholder: t("views.admin.PostEditor.content.body.placeholder"),
     }),

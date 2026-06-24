@@ -74,9 +74,7 @@ class EmailSenderService {
 			hue,
 		};
 
-		const { SMTPTestEmail } = await import(
-			"../../templates/SMTPTestEmail"
-		);
+		const { SMTPTestEmail } = await import("../../templates/SMTPTestEmail");
 		const html = await this.renderEmail(SMTPTestEmail, templateProps);
 
 		return emailDispatchService.dispatch({
@@ -155,9 +153,7 @@ class EmailSenderService {
 			hue,
 		};
 
-		const { LoginAlertEmail } = await import(
-			"../../templates/LoginAlertEmail"
-		);
+		const { LoginAlertEmail } = await import("../../templates/LoginAlertEmail");
 		const html = await this.renderEmail(LoginAlertEmail, templateProps);
 
 		return emailDispatchService.dispatch({
@@ -368,13 +364,8 @@ class EmailSenderService {
 		// 根据日志类型按需加载并渲染对应模板（lazy import 避免空载吃内存）
 		switch (log.type) {
 			case "smtp_test": {
-				const { SMTPTestEmail } = await import(
-					"../../templates/SMTPTestEmail"
-				);
-				return this.renderEmail(
-					SMTPTestEmail,
-					params as TSMTPTestEmailParams,
-				);
+				const { SMTPTestEmail } = await import("../../templates/SMTPTestEmail");
+				return this.renderEmail(SMTPTestEmail, params as TSMTPTestEmailParams);
 			}
 			case "login_alert": {
 				const { LoginAlertEmail } = await import(

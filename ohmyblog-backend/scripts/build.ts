@@ -74,39 +74,6 @@ async function build(platform: Platform) {
 		);
 	}
 
-	// 5. 创建 README
-	const readme = `# ohmyblog ${platform.toUpperCase()} Distribution
-
-## 运行方式
-
-\`\`\`bash
-./${exeName}
-\`\`\`
-
-## 环境变量
-
-首次运行时会自动生成 data/.env 文件，你可以修改其中的配置。
-
-## 目录结构
-
-- ${exeName} - 主程序（图像处理由 Bun 运行时内置 Bun.Image 提供，无外部依赖）
-- db/drizzle/ - 数据库迁移文件
-- public/ - 前端 SPA 构建产物（可选，挂载在 / 下）
-- data/ - 运行时数据目录（自动创建）
-  - .env - 环境变量配置
-  - sqlite.db - SQLite 数据库
-  - uploads/ - 上传文件
-  - logs/ - 日志文件
-
-## 注意事项
-
-1. 不要删除 db/drizzle 目录，它包含数据库结构定义
-2. data 目录会在首次运行时自动创建
-3. 此发行版仅适用于 ${platform} 平台，不可跨平台使用
-`;
-
-	await Bun.write(join(distDir, "README.md"), readme);
-
 	console.log(`✅ Build complete: ${distDir}/`);
 }
 

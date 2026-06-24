@@ -450,7 +450,16 @@
             "empty": "没有匹配的命令"
           },
           "slashCommands": {
+            "table": { "label": "表格" },
             "clearFormatting": { "label": "清除格式" }
+          },
+          "tablePicker": {
+            "label": "表格",
+            "hint": "选择表格尺寸",
+            "dimensions": "{rows} × {cols}"
+          },
+          "handleMenu": {
+            "groups": { "basic": "基础", "common": "常用", "list": "列表" }
           }
         }
       }
