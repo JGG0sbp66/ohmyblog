@@ -6,13 +6,15 @@ import {
   Heading1,
   Heading2,
   Heading3,
-  List,
-  ListOrdered,
-  ListChecks,
   Code2,
   Minus,
 } from "lucide-vue-next";
-import { RiDoubleQuotesL } from "@remixicon/vue";
+import {
+  RiDoubleQuotesL,
+  RiListCheck3,
+  RiListOrdered,
+  RiListUnordered,
+} from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 
 /**
@@ -113,7 +115,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
   {
     id: "bulletList",
     labelKey: "bulletList",
-    icon: List,
+    icon: RiListUnordered,
     group: "list",
     isActive: (e) => e.isActive("bulletList"),
     run: (e) => switchListType(e, "bulletList"),
@@ -121,7 +123,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
   {
     id: "orderedList",
     labelKey: "orderedList",
-    icon: ListOrdered,
+    icon: RiListOrdered,
     group: "list",
     isActive: (e) => e.isActive("orderedList"),
     run: (e) => switchListType(e, "orderedList"),
@@ -130,7 +132,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     // 任务列表：和 bullet/ordered 是平级 toggle，命令底层会自动处理 lift 嵌套
     id: "taskList",
     labelKey: "taskList",
-    icon: ListChecks,
+    icon: RiListCheck3,
     group: "list",
     isActive: (e) => e.isActive("taskList"),
     run: (e) => e.chain().focus().toggleTaskList().run(),
