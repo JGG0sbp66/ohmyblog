@@ -454,6 +454,7 @@
             "clearFormatting": { "label": "清除格式" }
           },
           "tablePicker": {
+            "label": "表格",
             "hint": "选择表格尺寸",
             "dimensions": "{rows} × {cols}"
           }

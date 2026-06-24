@@ -459,6 +459,7 @@
             "clearFormatting": { "label": "Clear formatting" }
           },
           "tablePicker": {
+            "label": "Table",
             "hint": "Select table size",
             "dimensions": "{rows} × {cols}"
           }

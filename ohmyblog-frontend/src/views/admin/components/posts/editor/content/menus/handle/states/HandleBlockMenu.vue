@@ -3,6 +3,7 @@
 import type { Editor } from "@tiptap/core";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
 import { useBlockCommands } from "../../block-commands";
+import HandleTableMenuItem from "./HandleTableMenuItem.vue";
 
 /**
  * HandleBlockMenu — 浮动手柄的块类型选择菜单（横排图标，飞书风格）
@@ -41,5 +42,6 @@ const { commands, tooltipOf } = useBlockCommands([
     >
       <component :is="cmd.icon" class="w-4 h-4" />
     </IconTipButton>
+    <HandleTableMenuItem :editor="editor" />
   </div>
 </template>
