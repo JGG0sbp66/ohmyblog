@@ -452,6 +452,10 @@
           "slashCommands": {
             "table": { "label": "表格" },
             "clearFormatting": { "label": "清除格式" }
+          },
+          "tablePicker": {
+            "hint": "选择表格尺寸",
+            "dimensions": "{rows} × {cols}"
           }
         }
       }

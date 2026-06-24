@@ -457,6 +457,10 @@
           "slashCommands": {
             "table": { "label": "Table" },
             "clearFormatting": { "label": "Clear formatting" }
+          },
+          "tablePicker": {
+            "hint": "Select table size",
+            "dimensions": "{rows} × {cols}"
           }
         }
       }
