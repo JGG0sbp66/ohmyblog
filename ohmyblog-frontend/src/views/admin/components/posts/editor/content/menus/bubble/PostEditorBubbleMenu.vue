@@ -10,7 +10,6 @@ import BubbleFormatSection from "./sections/BubbleFormatSection.vue";
 import BubbleTableSection from "./sections/BubbleTableSection.vue";
 import { useBubbleAnchor } from "./composables/use-bubble-anchor";
 import { useTableCommands } from "./composables/use-table-commands";
-
 /**
  * PostEditorBubbleMenu — 文本气泡菜单
  *
@@ -62,7 +61,7 @@ const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
   },
 });
 
-const { canMergeOrSplit } = useTableCommands();
+const { showTableSection } = useTableCommands();
 </script>
 
 <template>
@@ -76,8 +75,8 @@ const { canMergeOrSplit } = useTableCommands();
       class="absolute z-50 pointer-events-auto flex items-center gap-1 px-2 py-1.5 bg-bg-card border border-border/40 rounded-xl shadow-lg origin-bottom"
       :style="menuStyle"
     >
-      <!-- 区域零：表格操作（最左，仿飞书；仅可合并/拆分时显示） -->
-      <template v-if="canMergeOrSplit(editor)">
+      <!-- 区域零：表格操作（最左，仿飞书）：合并/拆分、设为表头、删除行列 -->
+      <template v-if="showTableSection(editor)">
         <BubbleTableSection :editor="editor" />
         <div class="w-px h-5 bg-border/50 mx-0.5" />
       </template>

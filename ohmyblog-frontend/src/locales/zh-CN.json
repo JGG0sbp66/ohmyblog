@@ -460,7 +460,10 @@
           },
           "tableMenu": {
             "mergeCells": "合并单元格",
-            "splitCell": "拆分单元格"
+            "splitCell": "拆分单元格",
+            "setHeader": "设为表头",
+            "deleteRow": "删除行",
+            "deleteColumn": "删除列"
           },
           "tableControls": {
             "selectColumn": "选中整列",
