@@ -102,7 +102,11 @@ export function getContentExtensions(opts: ContentExtensionsOptions = {}) {
     CustomHighlight,
     readonly ? ReadonlyImage : ResizableImage,
     Indent,
-    TextAlign.configure({ types: ["heading", "paragraph"] }),
+    TextAlign.configure({
+      // 加入 tableCell / tableHeader：在表格内（含跨格 CellSelection）也能对齐，
+      // 单格内文字选区仍作用于段落，跨格选区则作用于单元格节点。
+      types: ["heading", "paragraph", "tableCell", "tableHeader"],
+    }),
     Link.configure({
       // 编辑模式下点击链接只定位光标，不跳转（否则用户改链接文字时会被带走）
       openOnClick: readonly,

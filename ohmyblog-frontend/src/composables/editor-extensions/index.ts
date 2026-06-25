@@ -25,7 +25,7 @@
 //            - [ ] 设为表头 / 增删行列 / 删除整表（按需再加）
 //            - 复用 PostEditorBubbleMenu，table 区域置于最左
 //            - composables/use-table-commands.ts（命令封装）
-//   [ ] P2.3 单元格对齐：把现有 TextAlign 的 types 加上 tableCell / tableHeader
+//   [x] P2.3 单元格对齐：把现有 TextAlign 的 types 加上 tableCell / tableHeader
 //   [ ] P2.4 行列把手（仿飞书）：hover 表格在顶部/左侧出把手，点击选中整行/整列
 //            - composables/use-table-geometry.ts（读 DOM 行列矩形，监听滚动/变更重算）
 //            - composables/use-cell-selection.ts（colSelection/rowSelection 封装）
