@@ -6,7 +6,9 @@ import { NodeSelection } from "@tiptap/pm/state";
 import BubbleBlockSection from "./sections/BubbleBlockSection.vue";
 import BubbleAlignSection from "./sections/BubbleAlignSection.vue";
 import BubbleFormatSection from "./sections/BubbleFormatSection.vue";
+import BubbleTableSection from "./sections/BubbleTableSection.vue";
 import { useBubbleAnchor } from "./composables/use-bubble-anchor";
+import { useTableCommands } from "./composables/use-table-commands";
 
 /**
  * PostEditorBubbleMenu — 文本气泡菜单
@@ -35,6 +37,8 @@ const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
     return rect;
   },
 });
+
+const { canMergeOrSplit } = useTableCommands();
 </script>
 
 <template>
@@ -48,6 +52,12 @@ const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
       class="absolute z-50 pointer-events-auto flex items-center gap-1 px-2 py-1.5 bg-bg-card border border-border/40 rounded-xl shadow-lg origin-bottom"
       :style="menuStyle"
     >
+      <!-- 区域零：表格操作（最左，仿飞书；仅可合并/拆分时显示） -->
+      <template v-if="canMergeOrSplit(editor)">
+        <BubbleTableSection :editor="editor" />
+        <div class="w-px h-5 bg-border/50 mx-0.5" />
+      </template>
+
       <!-- 区域一：文本块类型 -->
       <BubbleBlockSection :editor="editor" />
 

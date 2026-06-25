@@ -463,6 +463,10 @@
             "hint": "Select table size",
             "dimensions": "{rows} × {cols}"
           },
+          "tableMenu": {
+            "mergeCells": "Merge cells",
+            "splitCell": "Split cell"
+          },
           "handleMenu": {
             "groups": { "basic": "Basic", "common": "Common", "list": "List" }
           }

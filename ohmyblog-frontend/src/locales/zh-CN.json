@@ -458,6 +458,10 @@
             "hint": "选择表格尺寸",
             "dimensions": "{rows} × {cols}"
           },
+          "tableMenu": {
+            "mergeCells": "合并单元格",
+            "splitCell": "拆分单元格"
+          },
           "handleMenu": {
             "groups": { "basic": "基础", "common": "常用", "list": "列表" }
           }
