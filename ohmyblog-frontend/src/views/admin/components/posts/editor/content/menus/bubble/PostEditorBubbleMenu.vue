@@ -3,6 +3,7 @@
 import { toRef } from "vue";
 import type { Editor } from "@tiptap/core";
 import { NodeSelection } from "@tiptap/pm/state";
+import { CellSelection } from "@tiptap/pm/tables";
 import BubbleBlockSection from "./sections/BubbleBlockSection.vue";
 import BubbleAlignSection from "./sections/BubbleAlignSection.vue";
 import BubbleFormatSection from "./sections/BubbleFormatSection.vue";
@@ -27,6 +28,29 @@ const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
   containerRef: toRef(props, "containerRef"),
   computeAnchorRect: (editor) => {
     const { selection } = editor.state;
+
+    // 跨格 / 合并格选区（CellSelection）：window.getSelection() 在 CellSelection
+    // 下取不到稳定矩形，合并/拆分后会让菜单乱跳。改用所选单元格 DOM 的并集矩形，
+    // 菜单稳定锚定在选区上方。
+    if (selection instanceof CellSelection) {
+      let rect: DOMRect | null = null;
+      selection.forEachCell((_node, pos) => {
+        const dom = editor.view.nodeDOM(pos);
+        if (!(dom instanceof HTMLElement)) return;
+        const r = dom.getBoundingClientRect();
+        if (!rect) {
+          rect = r;
+          return;
+        }
+        const left = Math.min(rect.left, r.left);
+        const top = Math.min(rect.top, r.top);
+        const right = Math.max(rect.right, r.right);
+        const bottom = Math.max(rect.bottom, r.bottom);
+        rect = new DOMRect(left, top, right - left, bottom - top);
+      });
+      return rect;
+    }
+
     if (selection.empty || selection instanceof NodeSelection) return null;
 
     const sel = window.getSelection();
