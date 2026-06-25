@@ -469,7 +469,9 @@
           },
           "tableControls": {
             "selectColumn": "Select column",
-            "selectRow": "Select row"
+            "selectRow": "Select row",
+            "insertColumn": "Insert column",
+            "insertRow": "Insert row"
           },
           "handleMenu": {
             "groups": { "basic": "Basic", "common": "Common", "list": "List" }

@@ -464,7 +464,9 @@
           },
           "tableControls": {
             "selectColumn": "选中整列",
-            "selectRow": "选中整行"
+            "selectRow": "选中整行",
+            "insertColumn": "插入列",
+            "insertRow": "插入行"
           },
           "handleMenu": {
             "groups": { "basic": "基础", "common": "常用", "list": "列表" }

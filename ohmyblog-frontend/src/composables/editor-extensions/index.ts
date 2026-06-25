@@ -31,8 +31,9 @@
 //            - composables/use-cell-selection.ts（colSelection/rowSelection 封装）
 //            - PostEditorTableControls.vue（覆盖层容器，内联渲染行/列把手）
 //            - 触发为「选区在表内即显示」（非纯 hover）；合并格几何可能略错位
-//   [ ] P2.5 行列间「+」插入点（仿飞书）：边界 hover 出 "+" 与蓝色插入线，
-//            点击在该处加行/列。复用 use-table-geometry，新增 controls/TableInsertButton
+//   [x] P2.5 行列间「+」插入点（仿飞书）：列/行边界 hover 出 "+" 与主题色插入线，
+//            点击在该处加列/行。复用 use-table-geometry，新增 use-table-insert
+//            + PostEditorTableControls 内联渲染插入点
 //   [ ] P2.6 帮助文档补快捷键：Tab / Shift+Tab / Mod+Enter
 //
 // Phase 3：阅读页 + 移动端
