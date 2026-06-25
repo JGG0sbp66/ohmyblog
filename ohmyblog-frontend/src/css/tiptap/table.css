@@ -17,15 +17,28 @@
    */
   background:
     /* 1. 左遮罩 (local)：滚动到最左侧时，盖住左阴影 */
-    linear-gradient(to right, var(--theme-bg-card) 30%, transparent) left center / 24px 100% no-repeat,
+    linear-gradient(to right, var(--theme-bg-card) 30%, transparent) left
+      center / 24px 100% no-repeat,
     /* 2. 右遮罩 (local)：滚动到最右侧时，盖住右阴影 */
-    linear-gradient(to left, var(--theme-bg-card) 30%, transparent) right center / 24px 100% no-repeat,
+    linear-gradient(to left, var(--theme-bg-card) 30%, transparent) right
+      center / 24px 100% no-repeat,
     /* 3. 左阴影 (scroll)：平直的线性渐变，宽度缩窄至 8px 更为精致 */
-    linear-gradient(to right, color-mix(in oklch, var(--theme-fg) 8%, transparent), transparent) left center / 8px 100% no-repeat,
+    linear-gradient(
+        to right,
+        color-mix(in oklch, var(--theme-fg) 8%, transparent),
+        transparent
+      )
+      left center / 8px 100% no-repeat,
     /* 4. 右阴影 (scroll)：平直的线性渐变 */
-    linear-gradient(to left, color-mix(in oklch, var(--theme-fg) 8%, transparent), transparent) right center / 8px 100% no-repeat;
-  
-  background-attachment: local, local, scroll, scroll;}
+    linear-gradient(
+        to left,
+        color-mix(in oklch, var(--theme-fg) 8%, transparent),
+        transparent
+      )
+      right center / 8px 100% no-repeat;
+
+  background-attachment: local, local, scroll, scroll;
+}
 
 .tiptap table {
   border-collapse: collapse;
