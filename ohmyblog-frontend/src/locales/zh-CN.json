@@ -462,6 +462,10 @@
             "mergeCells": "合并单元格",
             "splitCell": "拆分单元格"
           },
+          "tableControls": {
+            "selectColumn": "选中整列",
+            "selectRow": "选中整行"
+          },
           "handleMenu": {
             "groups": { "basic": "基础", "common": "常用", "list": "列表" }
           }

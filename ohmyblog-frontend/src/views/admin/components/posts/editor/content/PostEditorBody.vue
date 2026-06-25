@@ -8,6 +8,7 @@ import { useEditorExtensions } from "@/composables/editor-extensions";
 import PostEditorBubbleMenu from "./menus/bubble/PostEditorBubbleMenu.vue";
 import PostEditorImageBubbleMenu from "./menus/bubble/PostEditorImageBubbleMenu.vue";
 import PostEditorFloatingHandle from "./menus/handle/PostEditorFloatingHandle.vue";
+import PostEditorTableControls from "./menus/table/PostEditorTableControls.vue";
 import { uploadPostImage } from "@/api/upload.api";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
@@ -157,6 +158,11 @@ onBeforeUnmount(() => editor.value?.destroy());
       :container-ref="containerRef"
     />
     <PostEditorFloatingHandle v-if="editor" :editor="editor" />
+    <PostEditorTableControls
+      v-if="editor"
+      :editor="editor"
+      :container-ref="containerRef"
+    />
     <EditorContent
       :editor="editor"
       class="w-full min-h-[60vh] focus-within:outline-none"

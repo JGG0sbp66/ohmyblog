@@ -467,6 +467,10 @@
             "mergeCells": "Merge cells",
             "splitCell": "Split cell"
           },
+          "tableControls": {
+            "selectColumn": "Select column",
+            "selectRow": "Select row"
+          },
           "handleMenu": {
             "groups": { "basic": "Basic", "common": "Common", "list": "List" }
           }
