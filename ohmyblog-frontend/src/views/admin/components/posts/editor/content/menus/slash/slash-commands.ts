@@ -1,7 +1,8 @@
 // src/views/admin/components/posts/editor/content/menus/slash/slash-commands.ts
 import type { Editor, Range } from "@tiptap/core";
 import type { Component } from "vue";
-import { Eraser, Table } from "lucide-vue-next";
+import { Eraser } from "lucide-vue-next";
+import { RiTableView } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import {
   BLOCK_COMMANDS,
@@ -95,7 +96,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
     id: "table",
     labelKey: "table",
     isSlashOnly: true,
-    icon: Table,
+    icon: RiTableView,
     searchTerms: ["table", "表格", "biaoge", "grid"],
     run: (editor, range) => {
       // slash 是键盘流：直接插默认 2 行 3 列（首行表头）。
