@@ -3,34 +3,41 @@ import { ref, onMounted, onBeforeUnmount, type Ref } from "vue";
 import type { Editor } from "@tiptap/core";
 
 /**
- * useTableGeometry — 计算当前表格的行 / 列把手几何
+ * useTableGeometry — 计算当前表格的行/列把手几何（滑动窗口模型）
  *
- * 触发：鼠标移入表格区域（含把手条区域）或选区落在表格内。读 DOM 矩形，
- * 行用 <tr> 高度、列用首行单元格宽度。监听 mousemove(hover) / selectionUpdate /
- * 内容变更 / 滚动 / resize 重算。
+ * 设计：覆盖层是「固定外壳 + 内层滑动」。
+ * - clip：.tableWrapper 可视框（相对 container），外壳据此固定定位/裁剪，
+ *   不随横向滚动变化（wrapper 在布局中固定，仅其内容滚动）。
+ * - cols/rows + tableWidth/Height：列宽 / 行高等尺寸，只随内容/尺寸变化。
+ * - scrollLeft：wrapper 的横向滚动量；横向滚动时只更新它（顶部内层轨道平移），
+ *   不必重算整套几何。
  *
- * 合并单元格（首行 colspan / 跨行 rowspan）在 v1 下几何可能略错位，属已知限制。
- * 每段附带代表单元格 DOM（点击反解选区）与 active（该行/列当前是否被选中）。
+ * 因为坐标都相对 container，且 wrapper 在布局中固定，纵向页面滚动时
+ * 外壳随 container 一起移动、相对位置不变，故无需在滚动时重算几何。
  */
 
-/** 鼠标命中表格的外扩边距：顶部/左侧多扩一些以覆盖把手条 */
 const HIT_MARGIN_NEAR = 18;
 const HIT_MARGIN_FAR = 4;
 
 export interface HandleSegment {
-  /** 段长度：列为 width，行为 height（按 flex 顺序排布，无需绝对坐标） */
   size: number;
-  /** 代表单元格 DOM，用于反解整列 / 整行选区 */
   cellEl: HTMLElement;
-  /** 该行 / 列当前是否处于选中态（代表单元格带 .selectedCell） */
   active: boolean;
 }
 
-export interface TableGeometry {
+export interface Box {
   left: number;
   top: number;
   width: number;
   height: number;
+}
+
+export interface TableGeometry {
+  /** .tableWrapper 可视框（相对 container），外壳定位/裁剪依据 */
+  clip: Box;
+  /** 表格完整宽 / 高（内层轨道尺寸 / 插入线长度） */
+  tableWidth: number;
+  tableHeight: number;
   cols: HandleSegment[];
   rows: HandleSegment[];
 }
@@ -40,10 +47,12 @@ export function useTableGeometry(
   containerRef: Ref<HTMLElement | null | undefined>,
 ) {
   const geometry = ref<TableGeometry | null>(null);
-  const hoveredTable = ref<HTMLElement | null>(null);
+  /** wrapper 横向滚动量：仅用于顶部内层轨道 translateX */
+  const scrollLeft = ref(0);
+  const hoveredTable = ref<HTMLTableElement | null>(null);
+  let activeWrapper: HTMLElement | null = null;
 
-  /** 选区所在表格 */
-  const selectionTable = (): HTMLElement | null => {
+  const selectionTable = (): HTMLTableElement | null => {
     if (!editor.isActive("table")) return null;
     const dom = editor.view.domAtPos(editor.state.selection.from).node;
     const el = dom instanceof HTMLElement ? dom : dom.parentElement;
@@ -61,16 +70,22 @@ export function useTableGeometry(
 
   const compute = () => {
     const container = containerRef.value;
-    // hover 优先，否则跟随选区所在表格
     const table = hoveredTable.value ?? selectionTable();
     const firstRow = table?.rows[0];
     if (!container || !table || !firstRow) {
       geometry.value = null;
+      activeWrapper = null;
       return;
     }
 
+    const wrapper =
+      (table.closest(".tableWrapper") as HTMLElement | null) ?? table;
+    activeWrapper = wrapper;
+    scrollLeft.value = wrapper.scrollLeft;
+
     const cRect = container.getBoundingClientRect();
     const tRect = table.getBoundingClientRect();
+    const wRect = wrapper.getBoundingClientRect();
 
     const cols = Array.from(firstRow.cells).map((cell) =>
       segment(cell, cell.getBoundingClientRect().width),
@@ -81,10 +96,14 @@ export function useTableGeometry(
     });
 
     geometry.value = {
-      left: tRect.left - cRect.left,
-      top: tRect.top - cRect.top,
-      width: tRect.width,
-      height: tRect.height,
+      clip: {
+        left: wRect.left - cRect.left,
+        top: wRect.top - cRect.top,
+        width: wRect.width,
+        height: wRect.height,
+      },
+      tableWidth: tRect.width,
+      tableHeight: tRect.height,
       cols,
       rows,
     };
@@ -93,11 +112,8 @@ export function useTableGeometry(
   // 选区/内容变更：延后到下一帧，等 .selectedCell 装饰应用后再读取 active
   const scheduleCompute = () => requestAnimationFrame(compute);
 
-  /** 鼠标在某表格的外扩矩形内 → 该表格为 hover 目标（外扩覆盖把手条区域） */
   const onMouseMove = (e: MouseEvent) => {
-    const tables = Array.from(
-      editor.view.dom.querySelectorAll("table"),
-    ) as HTMLElement[];
+    const tables = Array.from(editor.view.dom.querySelectorAll("table"));
     const { clientX: x, clientY: y } = e;
     const hit =
       tables.find((t) => {
@@ -115,23 +131,27 @@ export function useTableGeometry(
     }
   };
 
-  const onScrollOrResize = () => compute();
+  // 横向滚动只平移顶部内层轨道，无需整体重算
+  const onScroll = () => {
+    if (activeWrapper) scrollLeft.value = activeWrapper.scrollLeft;
+  };
+  const onResize = () => compute();
 
   onMounted(() => {
     editor.on("selectionUpdate", scheduleCompute);
     editor.on("update", scheduleCompute);
     window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("scroll", onScrollOrResize, true);
-    window.addEventListener("resize", onScrollOrResize);
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onResize);
   });
 
   onBeforeUnmount(() => {
     editor.off("selectionUpdate", scheduleCompute);
     editor.off("update", scheduleCompute);
     window.removeEventListener("mousemove", onMouseMove);
-    window.removeEventListener("scroll", onScrollOrResize, true);
-    window.removeEventListener("resize", onScrollOrResize);
+    window.removeEventListener("scroll", onScroll, true);
+    window.removeEventListener("resize", onResize);
   });
 
-  return { geometry };
+  return { geometry, scrollLeft };
 }
