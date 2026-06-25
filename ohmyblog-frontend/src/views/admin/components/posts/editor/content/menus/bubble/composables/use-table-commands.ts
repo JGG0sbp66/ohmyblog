@@ -26,6 +26,12 @@ export const useTableCommands = () => {
   /** true = 合并态（跨格选区，可合并）；false = 拆分态（合并过的单元格） */
   const isMergeMode = (e: Editor): boolean => e.can().mergeCells();
 
+  /**
+   * 当前单元格是否已合并（rowspan/colspan > 1）。
+   * 用作按钮 isActive：合并完后停在合并格里，按钮高亮（类似粗体的已应用态）。
+   */
+  const isMergedCell = (e: Editor): boolean => e.can().splitCell();
+
   /** 按当前态返回图标 */
   const iconOf = (e: Editor): Component =>
     isMergeMode(e) ? RiMergeCellsHorizontal : RiSplitCellsHorizontal;
@@ -41,5 +47,5 @@ export const useTableCommands = () => {
     e.chain().focus().mergeOrSplit().run();
   };
 
-  return { canMergeOrSplit, isMergeMode, iconOf, labelOf, run };
+  return { canMergeOrSplit, isMergeMode, isMergedCell, iconOf, labelOf, run };
 };

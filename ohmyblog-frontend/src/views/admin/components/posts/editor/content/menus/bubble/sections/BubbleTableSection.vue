@@ -11,11 +11,15 @@ import { useTableCommands } from "../composables/use-table-commands";
  * 是否显示由 PostEditorBubbleMenu 用 canMergeOrSplit 把关，故此处直接渲染按钮。
  */
 defineProps<{ editor: Editor }>();
-const { iconOf, labelOf, run } = useTableCommands();
+const { iconOf, labelOf, run, isMergedCell } = useTableCommands();
 </script>
 
 <template>
-  <IconTipButton :tooltip="labelOf(editor)" @click="run(editor)">
+  <IconTipButton
+    :tooltip="labelOf(editor)"
+    :is-active="isMergedCell(editor)"
+    @click="run(editor)"
+  >
     <component :is="iconOf(editor)" class="h-4 w-4" />
   </IconTipButton>
 </template>
