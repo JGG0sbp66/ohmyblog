@@ -109,7 +109,16 @@ export function useBubbleAnchor(
 
   // 鼠标按下即进入拖拽态并隐藏菜单；松开后下一帧按最终选区重新定位。
   // 用 capture 阶段确保早于 prosemirror-tables 的处理拿到状态。
-  const onPointerDown = () => {
+  const onPointerDown = (event: PointerEvent) => {
+    // 按下发生在菜单内部（点击合并/拆分等按钮）时不隐藏，
+    // 否则 pointerdown 早于按钮的 mousedown，会在按钮触发前把菜单卸载掉。
+    if (
+      menuRef.value &&
+      event.target instanceof Node &&
+      menuRef.value.contains(event.target)
+    ) {
+      return;
+    }
     isPointerDown = true;
     isVisible.value = false;
   };
