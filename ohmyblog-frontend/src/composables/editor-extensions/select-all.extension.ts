@@ -1,6 +1,25 @@
 // src/composables/editor-extensions/select-all.extension.ts
 import { Extension } from "@tiptap/core";
-import { AllSelection, TextSelection } from "@tiptap/pm/state";
+import {
+  AllSelection,
+  TextSelection,
+  Plugin,
+  PluginKey,
+  type Selection,
+} from "@tiptap/pm/state";
+import { Decoration, DecorationSet } from "@tiptap/pm/view";
+
+/**
+ * 是否为「整块选区」：整篇全选（AllSelection）或跨块的文本选区。
+ * 此状态下用整块背景装饰替代原生 ::selection，得到飞书式整块高亮。
+ */
+const isFullBlockSelect = (selection: Selection): boolean => {
+  if (selection instanceof AllSelection) return true;
+  if (selection instanceof TextSelection) {
+    return !selection.$from.sameParent(selection.$to);
+  }
+  return false;
+};
 
 /**
  * SmartSelectAll — Ctrl/Cmd+A 渐进式选择
@@ -84,5 +103,54 @@ export const SmartSelectAll = Extension.create({
         return true;
       },
     };
+  },
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        key: new PluginKey("smartSelectAllDeco"),
+        props: {
+          // 整块选区激活时给 .tiptap 加 class，让原生 ::selection 让位
+          attributes(state): Record<string, string> {
+            return isFullBlockSelect(state.selection)
+              ? { class: "pm-select-all" }
+              : {};
+          },
+          // 给完整被选中的块 / 单元格铺满背景（含空段落、表格空格）
+          decorations(state) {
+            const sel = state.selection;
+            if (!isFullBlockSelect(sel)) return null;
+
+            const { from, to } = sel;
+            const decos: Decoration[] = [];
+            state.doc.nodesBetween(from, to, (node, pos) => {
+              const inside = pos >= from && pos + node.nodeSize <= to;
+              if (!inside) return undefined; // 部分覆盖：继续下钻找完整子块
+              const name = node.type.name;
+              // 表格单元格：整格填充，且不再下钻到内部段落（避免双层叠色变深）
+              if (name === "tableCell" || name === "tableHeader") {
+                decos.push(
+                  Decoration.node(pos, pos + node.nodeSize, {
+                    class: "pm-block-selected",
+                  }),
+                );
+                return false;
+              }
+              // 文本块（段落 / 标题 / 代码块）：整行铺满
+              if (node.isTextblock) {
+                decos.push(
+                  Decoration.node(pos, pos + node.nodeSize, {
+                    class: "pm-block-selected",
+                  }),
+                );
+                return false;
+              }
+              return undefined; // 容器（list / table / blockquote 等）继续下钻
+            });
+            return DecorationSet.create(state.doc, decos);
+          },
+        },
+      }),
+    ];
   },
 });
