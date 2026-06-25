@@ -105,7 +105,7 @@ export const SLASH_COMMANDS: readonly SlashCommand[] = [
         .chain()
         .focus()
         .deleteRange(range)
-        .insertTable({ rows: 2, cols: 3, withHeaderRow: true })
+        .insertTable({ rows: 2, cols: 3, withHeaderRow: false })
         .run();
     },
   },

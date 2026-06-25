@@ -25,7 +25,7 @@ const onSelect = ({ rows, cols }: { rows: number; cols: number }) => {
   props.editor
     .chain()
     .focus()
-    .insertTable({ rows, cols, withHeaderRow: true })
+    .insertTable({ rows, cols, withHeaderRow: false })
     .run();
   dropRef.value?.close();
 };
