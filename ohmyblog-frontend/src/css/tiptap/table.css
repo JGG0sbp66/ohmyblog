@@ -45,12 +45,12 @@
   color: var(--theme-fg);
 }
 
-/* 选中单元格：中性浅灰蒙层（不用强调色，飞书也是中性选区色） */
+/* 选中单元格：主题色半透明蒙层（与文本选区 ::selection 同思路） */
 .tiptap table .selectedCell::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: color-mix(in oklch, var(--theme-fg) 10%, transparent);
+  background: color-mix(in oklch, var(--theme-accent) 22%, transparent);
   pointer-events: none;
   z-index: 2;
 }
