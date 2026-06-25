@@ -17,21 +17,23 @@
 //     addRow*/addColumn*/deleteRow/deleteColumn/mergeCells/splitCell/deleteTable
 //
 // Phase 2：编辑体验
-//   [ ] P2.1 网格选择器插表（仿飞书：hover 方格网选 N×M 插表）
+//   [x] P2.1 网格选择器插表（仿飞书：hover 方格网选 N×M 插表）
 //            - TableSizePicker.vue（纯 UI，emit select({rows,cols})）
 //            - 接入 slash /table 命令 + 左侧 "+" floating handle 二级菜单
-//   [ ] P2.2 表格 BubbleMenu：增删行列 / 合并拆分 / 表头切换 / 删除整表
-//            - PostEditorTableBubbleMenu.vue（仅锚点 + 布局）
-//            - sections/TableRowColSection / TableCellSection / TableDangerSection
+//   [ ] P2.2 表格 BubbleMenu（最左侧区域，仿飞书精简版）
+//            - [x] 合并 / 拆分单元格开关（mergeOrSplit，可用时才显示）
+//            - [ ] 设为表头 / 增删行列 / 删除整表（按需再加）
+//            - 复用 PostEditorBubbleMenu，table 区域置于最左
 //            - composables/use-table-commands.ts（命令封装）
-//   [ ] P2.3 单元格对齐：把现有 TextAlign 的 types 加上 tableCell / tableHeader
-//   [ ] P2.4 行列把手（仿飞书）：hover 表格在顶部/左侧出把手，点击选中整行/整列
+//   [x] P2.3 单元格对齐：把现有 TextAlign 的 types 加上 tableCell / tableHeader
+//   [x] P2.4 行列把手（仿飞书）：选区在表格内时顶部/左侧出把手，点击选中整行/整列
 //            - composables/use-table-geometry.ts（读 DOM 行列矩形，监听滚动/变更重算）
 //            - composables/use-cell-selection.ts（colSelection/rowSelection 封装）
-//            - PostEditorTableControls.vue（容器）+ controls/TableColHandle /
-//              TableRowHandle
-//   [ ] P2.5 行列间「+」插入点（仿飞书）：边界 hover 出 "+" 与蓝色插入线，
-//            点击在该处加行/列。复用 use-table-geometry，新增 controls/TableInsertButton
+//            - PostEditorTableControls.vue（覆盖层容器，内联渲染行/列把手）
+//            - 触发为「选区在表内即显示」（非纯 hover）；合并格几何可能略错位
+//   [x] P2.5 行列间「+」插入点（仿飞书）：列/行边界 hover 出 "+" 与主题色插入线，
+//            点击在该处加列/行。复用 use-table-geometry，新增 use-table-insert
+//            + PostEditorTableControls 内联渲染插入点
 //   [ ] P2.6 帮助文档补快捷键：Tab / Shift+Tab / Mod+Enter
 //
 // Phase 3：阅读页 + 移动端

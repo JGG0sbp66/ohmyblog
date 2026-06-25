@@ -90,6 +90,8 @@ export const SlashExtension = Extension.create({
 
             onUpdate: (props: SuggestionProps) => {
               (menuRef as any)?.updateQuery(props.query);
+              // 同步最新区间：range 随 query 增长，否则 deleteRange 删不掉 "/table"
+              (menuRef as any)?.updateRange(props.range);
             },
 
             onKeyDown: ({ event }) => {

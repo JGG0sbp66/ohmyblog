@@ -32,6 +32,9 @@ const { labelOf } = useSlashI18n();
 const { t } = useLang();
 
 const query = ref("");
+// 当前 "/xxx" 区间：随用户键入增长。不能直接用 props.range——它只在挂载
+// （onStart）时取一次，那时只有 "/"，否则 deleteRange 删不掉后续键入的 query。
+const currentRange = ref<Range>(props.range);
 const selectedIndex = ref(0);
 const listRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
@@ -89,7 +92,7 @@ onMounted(() => {
 const select = (index: number) => {
   const cmd = items.value[index];
   if (!cmd) return;
-  cmd.run(props.editor, props.range);
+  cmd.run(props.editor, currentRange.value);
 };
 
 const onArrow = (delta: 1 | -1) => {
@@ -116,6 +119,10 @@ defineExpose({
   /** suggestion 通知 query 变化 */
   updateQuery(next: string) {
     query.value = next;
+  },
+  /** suggestion 通知 "/xxx" 区间变化（随键入增长），run 时据此删除 */
+  updateRange(next: Range) {
+    currentRange.value = next;
   },
   /** suggestion 转发键盘事件，返回 true 表示已处理 */
   onKeyDown(event: KeyboardEvent): boolean {

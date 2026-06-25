@@ -1,0 +1,38 @@
+/* src/css/tiptap/selection.css */
+/*
+ * 整块选区高亮（Ctrl/Cmd+A 或跨块拖选）
+ * 由 SmartSelectAll 的装饰插件给「完整被选中的块 / 单元格」加 pm-block-selected，
+ * 整篇选区激活时给 .tiptap 加 pm-select-all。
+ *
+ * - 文本块（段落/标题等）：内容区填充，空出段落 padding → 块间留间隙（仿飞书分条）
+ * - 表格单元格：整格无缝填充
+ * - 代码块：本身是深色分层 NodeView，填充会发脏；改为保留深色 + 主题色描边
+ *   （描边随容器 0.75rem 圆角，有弧度，不是直角）
+ * - 整块选区时隐藏原生 ::selection，避免文字行与空白处深浅斑驳
+ */
+
+/* 文本块 / 单元格填充（代码块除外） */
+.tiptap .pm-block-selected:not(.code-block-container) {
+  background: color-mix(in oklch, var(--theme-accent) 22%, transparent);
+  border-radius: 4px;
+  /* 只画在内容区、空出段落上下 padding → 块与块之间露出间隙 */
+  background-clip: content-box;
+}
+
+/* 表格单元格：整格填充、无缝（不内缩、不圆角） */
+.tiptap td.pm-block-selected,
+.tiptap th.pm-block-selected {
+  background-clip: border-box;
+  border-radius: 0;
+}
+
+/* 代码块：保留自身深色背景，用主题色描边表示选中（圆角随容器，有弧度） */
+.tiptap .code-block-container.pm-block-selected {
+  outline: 2px solid var(--theme-accent);
+  outline-offset: 2px;
+}
+
+/* 整块选区激活时，原生文字选区高亮让位给整块背景 */
+.tiptap.pm-select-all ::selection {
+  background: transparent;
+}

@@ -53,8 +53,17 @@ export function useBubbleAnchor(
   const menuRef = ref<HTMLElement | null>(null);
   const isVisible = ref(false);
   const menuStyle = ref<Record<string, string>>({});
+  // 鼠标按住拖拽中：此时不显示菜单，避免浮层盖住单元格、干扰
+  // prosemirror-tables 基于 posAtCoords 的跨格拖选（导致某些方向选不中）。
+  let isPointerDown = false;
 
   const updateMenu = () => {
+    // 拖拽过程中不弹菜单，松开鼠标后再定位
+    if (isPointerDown) {
+      isVisible.value = false;
+      return;
+    }
+
     // 焦点在菜单内（如链接输入框）时保持显示，不让光标失焦把它收掉
     if (menuRef.value?.contains(document.activeElement)) return;
 
@@ -98,12 +107,36 @@ export function useBubbleAnchor(
     if (isVisible.value) updateMenu();
   };
 
+  // 鼠标按下即进入拖拽态并隐藏菜单；松开后下一帧按最终选区重新定位。
+  // 用 capture 阶段确保早于 prosemirror-tables 的处理拿到状态。
+  const onPointerDown = (event: PointerEvent) => {
+    // 按下发生在菜单内部（点击合并/拆分等按钮）时不隐藏，
+    // 否则 pointerdown 早于按钮的 mousedown，会在按钮触发前把菜单卸载掉。
+    if (
+      menuRef.value &&
+      event.target instanceof Node &&
+      menuRef.value.contains(event.target)
+    ) {
+      return;
+    }
+    isPointerDown = true;
+    isVisible.value = false;
+  };
+  const onPointerUp = () => {
+    if (!isPointerDown) return;
+    isPointerDown = false;
+    // 等 selection 落定后再定位（CellSelection 在 mouseup 后才最终确定）
+    requestAnimationFrame(updateMenu);
+  };
+
   onMounted(() => {
     editor.on("selectionUpdate", updateMenu);
     editor.on("blur", hideOnBlur);
     // capture 阶段：嵌套滚动容器（编辑器内容区可能在 overflow 容器里）也能触发
     window.addEventListener("scroll", onScrollOrResize, true);
     window.addEventListener("resize", onScrollOrResize);
+    window.addEventListener("pointerdown", onPointerDown, true);
+    window.addEventListener("pointerup", onPointerUp, true);
   });
 
   onBeforeUnmount(() => {
@@ -111,6 +144,8 @@ export function useBubbleAnchor(
     editor.off("blur", hideOnBlur);
     window.removeEventListener("scroll", onScrollOrResize, true);
     window.removeEventListener("resize", onScrollOrResize);
+    window.removeEventListener("pointerdown", onPointerDown, true);
+    window.removeEventListener("pointerup", onPointerUp, true);
   });
 
   return { menuRef, isVisible, menuStyle };

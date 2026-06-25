@@ -463,6 +463,19 @@
             "hint": "Select table size",
             "dimensions": "{rows} × {cols}"
           },
+          "tableMenu": {
+            "mergeCells": "Merge cells",
+            "splitCell": "Split cell",
+            "setHeader": "Set as header",
+            "deleteRow": "Delete row",
+            "deleteColumn": "Delete column"
+          },
+          "tableControls": {
+            "selectColumn": "Select column",
+            "selectRow": "Select row",
+            "insertColumn": "Insert column",
+            "insertRow": "Insert row"
+          },
           "handleMenu": {
             "groups": { "basic": "Basic", "common": "Common", "list": "List" }
           }

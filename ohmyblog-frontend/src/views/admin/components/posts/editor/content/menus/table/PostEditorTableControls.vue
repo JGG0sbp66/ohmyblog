@@ -1,0 +1,272 @@
+<!-- src/views/admin/components/posts/editor/content/menus/table/PostEditorTableControls.vue -->
+<script setup lang="ts">
+import { computed, toRef } from "vue";
+import type { Editor } from "@tiptap/core";
+import { Plus } from "lucide-vue-next";
+import { useLang } from "@/composables/lang.hook";
+import { useTableGeometry } from "./composables/use-table-geometry";
+import { useCellSelection } from "./composables/use-cell-selection";
+import { useTableInsert } from "./composables/use-table-insert";
+
+/**
+ * PostEditorTableControls — 表格行/列把手 + 行列间「+」插入点（滑动窗口模型）
+ *
+ * 固定外壳(overflow:hidden) 负责定位/裁剪/圆角；内层轨道随 scrollLeft 平移：
+ * - 列把手条：固定圆角窗 + 内层段轨道滑动（圆角固定在两端，不随滚动）。
+ * - 列插入点/竖线：滑动层（随表格列平移、超出裁剪）。
+ * - 行把手条 / 行插入点：完全固定（行不横向移动）。
+ *
+ * 整组 z-40 置于编辑区之上；外壳 pointer-events-none，仅把手/插入点可点。
+ */
+const props = defineProps<{
+  editor: Editor;
+  containerRef?: HTMLElement | null;
+}>();
+
+const { t } = useLang();
+const { geometry, scrollLeft } = useTableGeometry(
+  props.editor,
+  toRef(props, "containerRef"),
+);
+const { selectColumn, selectRow } = useCellSelection(props.editor);
+const { insertColumn, insertRow } = useTableInsert(props.editor);
+
+const THICKNESS = 8;
+const GUTTER = 28;
+
+/** 内层轨道（列方向）：宽=表格宽，随 scrollLeft 平移 */
+const trackStyle = computed(() => {
+  const g = geometry.value;
+  if (!g) return {};
+  return {
+    width: `${g.tableWidth}px`,
+    transform: `translateX(${-scrollLeft.value}px)`,
+  };
+});
+
+interface Bound {
+  offset: number;
+  cellEl: HTMLElement;
+  before: boolean;
+}
+
+const colBounds = computed<Bound[]>(() => {
+  const g = geometry.value;
+  if (!g || g.cols.length === 0) return [];
+  const out: Bound[] = [];
+  let acc = 0;
+  for (const c of g.cols) {
+    out.push({ offset: acc, cellEl: c.cellEl, before: true });
+    acc += c.size;
+  }
+  const last = g.cols[g.cols.length - 1]!;
+  out.push({ offset: acc, cellEl: last.cellEl, before: false });
+  return out;
+});
+
+const rowBounds = computed<Bound[]>(() => {
+  const g = geometry.value;
+  if (!g || g.rows.length === 0) return [];
+  const out: Bound[] = [];
+  let acc = 0;
+  for (const r of g.rows) {
+    out.push({ offset: acc, cellEl: r.cellEl, before: true });
+    acc += r.size;
+  }
+  const last = g.rows[g.rows.length - 1]!;
+  out.push({ offset: acc, cellEl: last.cellEl, before: false });
+  return out;
+});
+</script>
+
+<template>
+  <template v-if="geometry">
+    <!-- 列把手条：固定圆角窗 + 内层段轨道滑动 -->
+    <div
+      class="th-shell rounded-t-md"
+      :style="{
+        left: `${geometry.clip.left}px`,
+        top: `${geometry.clip.top - THICKNESS}px`,
+        width: `${geometry.clip.width}px`,
+        height: `${THICKNESS}px`,
+      }"
+    >
+      <div class="absolute left-0 top-0 flex h-full" :style="trackStyle">
+        <button
+          v-for="(col, i) in geometry.cols"
+          :key="`col-${i}`"
+          type="button"
+          class="th-seg h-full transition-colors"
+          :class="{ 'is-active': col.active }"
+          :style="{ width: `${col.size}px` }"
+          :aria-label="
+            t('views.admin.PostEditor.content.tableControls.selectColumn')
+          "
+          @mousedown.prevent="selectColumn(col.cellEl)"
+        />
+      </div>
+    </div>
+
+    <!-- 列插入点 + 竖线：滑动层 -->
+    <div
+      class="th-shell"
+      :style="{
+        left: `${geometry.clip.left}px`,
+        top: `${geometry.clip.top - GUTTER}px`,
+        width: `${geometry.clip.width}px`,
+        height: `${GUTTER + geometry.tableHeight}px`,
+      }"
+    >
+      <div class="absolute left-0 top-0 h-full" :style="trackStyle">
+        <button
+          v-for="(b, i) in colBounds"
+          :key="`cins-${i}`"
+          type="button"
+          class="th-ins th-ins-col pointer-events-auto absolute"
+          :style="{ left: `${b.offset}px`, top: `${GUTTER}px` }"
+          :aria-label="
+            t('views.admin.PostEditor.content.tableControls.insertColumn')
+          "
+          @mousedown.prevent="insertColumn(b.cellEl, b.before)"
+        >
+          <span class="th-ins-dot"><Plus class="h-3 w-3" /></span>
+          <span
+            class="th-ins-line-v"
+            :style="{ height: `${geometry.tableHeight}px` }"
+          />
+        </button>
+      </div>
+    </div>
+
+    <!-- 行把手条：固定圆角窗 -->
+    <div
+      class="th-shell rounded-l-md"
+      :style="{
+        left: `${geometry.clip.left - THICKNESS}px`,
+        top: `${geometry.clip.top}px`,
+        width: `${THICKNESS}px`,
+        height: `${geometry.tableHeight}px`,
+      }"
+    >
+      <div class="flex h-full flex-col">
+        <button
+          v-for="(row, i) in geometry.rows"
+          :key="`row-${i}`"
+          type="button"
+          class="th-seg w-full transition-colors"
+          :class="{ 'is-active': row.active }"
+          :style="{ height: `${row.size}px` }"
+          :aria-label="
+            t('views.admin.PostEditor.content.tableControls.selectRow')
+          "
+          @mousedown.prevent="selectRow(row.cellEl)"
+        />
+      </div>
+    </div>
+
+    <!-- 行插入点 + 横线：完全固定 -->
+    <div
+      class="th-shell"
+      :style="{
+        left: `${geometry.clip.left - GUTTER}px`,
+        top: `${geometry.clip.top}px`,
+        width: `${GUTTER + geometry.clip.width}px`,
+        height: `${geometry.tableHeight}px`,
+      }"
+    >
+      <button
+        v-for="(b, i) in rowBounds"
+        :key="`rins-${i}`"
+        type="button"
+        class="th-ins th-ins-row pointer-events-auto absolute"
+        :style="{ left: `${GUTTER}px`, top: `${b.offset}px` }"
+        :aria-label="
+          t('views.admin.PostEditor.content.tableControls.insertRow')
+        "
+        @mousedown.prevent="insertRow(b.cellEl, b.before)"
+      >
+        <span class="th-ins-dot"><Plus class="h-3 w-3" /></span>
+        <span
+          class="th-ins-line-h"
+          :style="{ width: `${geometry.clip.width}px` }"
+        />
+      </button>
+    </div>
+  </template>
+</template>
+
+<style scoped>
+/* 固定外壳：定位 + 裁剪，置于编辑区之上，仅子元素可点 */
+.th-shell {
+  position: absolute;
+  z-index: 40;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ── 行/列把手段（无分隔线，连续一条） ── */
+.th-seg {
+  pointer-events: auto;
+  background: color-mix(in srgb, var(--theme-fg-muted) 14%, transparent);
+}
+.th-seg:hover {
+  background: color-mix(in srgb, var(--theme-fg-muted) 30%, transparent);
+}
+.th-seg.is-active,
+.th-seg.is-active:hover {
+  background: var(--theme-accent);
+}
+
+/* ── 行列间「+」插入点 ── */
+.th-ins {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  background: transparent;
+}
+.th-ins-col {
+  transform: translate(-50%, -100%);
+}
+.th-ins-row {
+  transform: translate(-100%, -50%);
+}
+.th-ins-dot {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: var(--theme-accent);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+.th-ins:hover .th-ins-dot {
+  opacity: 1;
+}
+.th-ins-line-v {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--theme-accent);
+  opacity: 0;
+  pointer-events: none;
+}
+.th-ins-line-h {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: var(--theme-accent);
+  opacity: 0;
+  pointer-events: none;
+}
+.th-ins:hover .th-ins-line-v,
+.th-ins:hover .th-ins-line-h {
+  opacity: 1;
+}
+</style>

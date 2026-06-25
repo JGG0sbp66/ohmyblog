@@ -2,14 +2,42 @@
 /*
  * 表格（Tiptap TableKit / prosemirror-tables）
  * - 结构类名沿用 prosemirror-tables：.tableWrapper / .selectedCell / .column-resize-handle
- * - 配色统一走 --theme-* 变量，暗色模式自动适配
- * - 表头底色用 bg-muted，正文斑马纹用 bg-muted 的低透明度混色
+ * - 飞书风：正常底色 + 浅灰边框，不用强调色 / 斑马纹
+ * - 边框 / 表头底色走低彩度的 --theme-* 中性变量，深色模式自动适配
  */
 
 /* resizable 模式下，表格外层会包一层 .tableWrapper，用于横向滚动 */
 .tiptap .tableWrapper {
   margin: 1rem 0;
   overflow-x: auto;
+
+  /*
+   * 横向溢出阴影（纯 CSS，仿飞书）：浏览器按滚动位置自动显隐，无需 JS。
+   * 优化版：改用平直的 linear-gradient，并微调尺寸，使其与表格网格完美贴合。
+   */
+  background:
+    /* 1. 左遮罩 (local)：滚动到最左侧时，盖住左阴影 */
+    linear-gradient(to right, var(--theme-bg-card) 30%, transparent) left
+      center / 24px 100% no-repeat,
+    /* 2. 右遮罩 (local)：滚动到最右侧时，盖住右阴影 */
+    linear-gradient(to left, var(--theme-bg-card) 30%, transparent) right
+      center / 24px 100% no-repeat,
+    /* 3. 左阴影 (scroll)：平直的线性渐变，宽度缩窄至 8px 更为精致 */
+    linear-gradient(
+        to right,
+        color-mix(in oklch, var(--theme-fg) 8%, transparent),
+        transparent
+      )
+      left center / 8px 100% no-repeat,
+    /* 4. 右阴影 (scroll)：平直的线性渐变 */
+    linear-gradient(
+        to left,
+        color-mix(in oklch, var(--theme-fg) 8%, transparent),
+        transparent
+      )
+      right center / 8px 100% no-repeat;
+
+  background-attachment: local, local, scroll, scroll;
 }
 
 .tiptap table {
@@ -35,37 +63,34 @@
   margin: 0;
 }
 
-/* 表头：底色 + 加粗 + 左对齐 */
+/* 表头：浅灰底 + 加粗 + 左对齐。
+   用 --theme-fg-muted（#00000080 / #ffffff80，纯中性、无 hue）低透明度混色，
+   明暗模式自动黑↔白翻转，无需单独 .dark 覆盖。 */
 .tiptap table th {
-  background: var(--theme-bg-muted);
+  background: color-mix(in srgb, var(--theme-fg-muted) 14%, transparent);
   font-weight: 600;
   text-align: left;
   color: var(--theme-fg);
 }
 
-/* 正文斑马纹：偶数行轻微底色，提升可读性 */
-.tiptap table tbody tr:nth-child(even) td {
-  background: color-mix(in oklch, var(--theme-bg-muted) 35%, transparent);
-}
-
-/* 选中单元格：半透明强调色蒙层（prosemirror-tables 通过 .selectedCell::after 实现） */
+/* 选中单元格：主题色半透明蒙层（与文本选区 ::selection 同思路） */
 .tiptap table .selectedCell::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: color-mix(in oklch, var(--theme-accent) 18%, transparent);
+  background: color-mix(in oklch, var(--theme-accent) 22%, transparent);
   pointer-events: none;
   z-index: 2;
 }
 
-/* 列宽拖拽手柄：悬停/拖拽时在列右边界显示一条强调色竖线 */
+/* 列宽拖拽手柄：中性灰竖线（不用强调色） */
 .tiptap table .column-resize-handle {
   position: absolute;
   right: -2px;
   top: 0;
   bottom: -2px;
   width: 4px;
-  background: var(--theme-accent);
+  background: var(--theme-border);
   pointer-events: none;
   z-index: 3;
 }

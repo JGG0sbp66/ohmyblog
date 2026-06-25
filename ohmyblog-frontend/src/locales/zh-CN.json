@@ -458,6 +458,19 @@
             "hint": "选择表格尺寸",
             "dimensions": "{rows} × {cols}"
           },
+          "tableMenu": {
+            "mergeCells": "合并单元格",
+            "splitCell": "拆分单元格",
+            "setHeader": "设为表头",
+            "deleteRow": "删除行",
+            "deleteColumn": "删除列"
+          },
+          "tableControls": {
+            "selectColumn": "选中整列",
+            "selectRow": "选中整行",
+            "insertColumn": "插入列",
+            "insertRow": "插入行"
+          },
           "handleMenu": {
             "groups": { "basic": "基础", "common": "常用", "list": "列表" }
           }

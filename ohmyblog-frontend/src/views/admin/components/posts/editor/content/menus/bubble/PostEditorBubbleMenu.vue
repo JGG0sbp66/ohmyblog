@@ -3,11 +3,13 @@
 import { toRef } from "vue";
 import type { Editor } from "@tiptap/core";
 import { NodeSelection } from "@tiptap/pm/state";
+import { CellSelection } from "@tiptap/pm/tables";
 import BubbleBlockSection from "./sections/BubbleBlockSection.vue";
 import BubbleAlignSection from "./sections/BubbleAlignSection.vue";
 import BubbleFormatSection from "./sections/BubbleFormatSection.vue";
+import BubbleTableSection from "./sections/BubbleTableSection.vue";
 import { useBubbleAnchor } from "./composables/use-bubble-anchor";
-
+import { useTableCommands } from "./composables/use-table-commands";
 /**
  * PostEditorBubbleMenu — 文本气泡菜单
  *
@@ -25,6 +27,29 @@ const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
   containerRef: toRef(props, "containerRef"),
   computeAnchorRect: (editor) => {
     const { selection } = editor.state;
+
+    // 跨格 / 合并格选区（CellSelection）：window.getSelection() 在 CellSelection
+    // 下取不到稳定矩形，合并/拆分后会让菜单乱跳。改用所选单元格 DOM 的并集矩形，
+    // 菜单稳定锚定在选区上方。
+    if (selection instanceof CellSelection) {
+      let rect: DOMRect | null = null;
+      selection.forEachCell((_node, pos) => {
+        const dom = editor.view.nodeDOM(pos);
+        if (!(dom instanceof HTMLElement)) return;
+        const r = dom.getBoundingClientRect();
+        if (!rect) {
+          rect = r;
+          return;
+        }
+        const left = Math.min(rect.left, r.left);
+        const top = Math.min(rect.top, r.top);
+        const right = Math.max(rect.right, r.right);
+        const bottom = Math.max(rect.bottom, r.bottom);
+        rect = new DOMRect(left, top, right - left, bottom - top);
+      });
+      return rect;
+    }
+
     if (selection.empty || selection instanceof NodeSelection) return null;
 
     const sel = window.getSelection();
@@ -35,6 +60,8 @@ const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
     return rect;
   },
 });
+
+const { showTableSection } = useTableCommands();
 </script>
 
 <template>
@@ -48,6 +75,12 @@ const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
       class="absolute z-50 pointer-events-auto flex items-center gap-1 px-2 py-1.5 bg-bg-card border border-border/40 rounded-xl shadow-lg origin-bottom"
       :style="menuStyle"
     >
+      <!-- 区域零：表格操作（最左，仿飞书）：合并/拆分、设为表头、删除行列 -->
+      <template v-if="showTableSection(editor)">
+        <BubbleTableSection :editor="editor" />
+        <div class="w-px h-5 bg-border/50 mx-0.5" />
+      </template>
+
       <!-- 区域一：文本块类型 -->
       <BubbleBlockSection :editor="editor" />
 

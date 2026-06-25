@@ -22,6 +22,8 @@ import { decideBlockIcon } from "./block-icon";
 
 const HANDLE_HEIGHT = 32;
 const HANDLE_OFFSET = 6;
+// 表格内容：手柄锚到表格外左缘时，额外让出行把手条（~8px）+ 间隙
+const TABLE_HANDLE_CLEARANCE = 14;
 const HIDE_DELAY_MS = 120;
 const X_SAFE_MARGIN = 56;
 
@@ -152,8 +154,24 @@ export const useEditorHoverBlock = (
 
       const wasVisible = visible.value;
 
+      // 表格内容：posAtCoords 解析到的是单元格内段落，rect.left 在表格内部，
+      // 会让手柄跑进表格里。改为锚到表格外左缘，并额外让出行把手条宽度。
+      let tableLeft: number | null = null;
+      for (let d = $pos.depth; d >= 1; d--) {
+        if ($pos.node(d).type.name === "table") {
+          const tableDom = view.nodeDOM($pos.before(d));
+          if (tableDom instanceof HTMLElement) {
+            tableLeft = tableDom.getBoundingClientRect().left;
+          }
+          break;
+        }
+      }
+
       top.value = lineTop + (lineHeight - HANDLE_HEIGHT) / 2;
-      left.value = (listItemLeft ?? rect.left) - HANDLE_OFFSET;
+      left.value =
+        tableLeft !== null
+          ? tableLeft - TABLE_HANDLE_CLEARANCE
+          : (listItemLeft ?? rect.left) - HANDLE_OFFSET;
       // 空行判定：考虑 leaf inline node（image / hardBreak 等），
       // 一个段落只含图片时不应被当作空行
       isEmpty.value = blockNode.content.size === 0;
