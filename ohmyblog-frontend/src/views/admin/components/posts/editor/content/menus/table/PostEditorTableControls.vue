@@ -7,6 +7,7 @@ import { useLang } from "@/composables/lang.hook";
 import { useTableGeometry } from "./composables/use-table-geometry";
 import { useCellSelection } from "./composables/use-cell-selection";
 import { useTableInsert } from "./composables/use-table-insert";
+import { useTableReorder } from "./composables/use-table-reorder";
 
 /**
  * PostEditorTableControls — 表格行/列把手 + 行列间「+」插入点（滑动窗口模型）
@@ -41,6 +42,7 @@ const { geometry, scrollLeft } = useTableGeometry(
 );
 const { selectColumn, selectRow } = useCellSelection(props.editor);
 const { insertColumn, insertRow } = useTableInsert(props.editor);
+const { reorder, begin } = useTableReorder(props.editor);
 
 const THICKNESS = 8;
 const GUTTER = 28;
@@ -108,12 +110,17 @@ const rowBounds = computed<Bound[]>(() => {
           :key="`col-${i}`"
           type="button"
           class="th-seg h-full transition-colors"
-          :class="{ 'is-active': col.active }"
+          :class="{
+            'is-active': col.active,
+            'is-dragging': reorder?.axis === 'col' && reorder.from === i,
+          }"
           :style="{ width: `${col.size}px` }"
           :aria-label="
             t('views.admin.PostEditor.content.tableControls.selectColumn')
           "
-          @mousedown.prevent="selectColumn(col.cellEl)"
+          @mousedown.prevent="
+            begin('col', i, col.cellEl, $event, () => selectColumn(col.cellEl))
+          "
         />
       </div>
     </div>
@@ -146,10 +153,19 @@ const rowBounds = computed<Bound[]>(() => {
             :style="{ height: `${geometry.tableHeight}px` }"
           />
         </button>
+
+        <!-- 列拖拽落点线 -->
+        <span
+          v-if="reorder?.axis === 'col' && colBounds[reorder.boundary]"
+          class="th-drop th-drop-v"
+          :style="{
+            left: `${colBounds[reorder.boundary]!.offset}px`,
+            top: `${GUTTER}px`,
+            height: `${geometry.tableHeight}px`,
+          }"
+        />
       </div>
     </div>
-
-    <!-- 行把手条：固定圆角窗 -->
     <div
       class="th-shell rounded-l-md"
       :style="{
@@ -165,12 +181,17 @@ const rowBounds = computed<Bound[]>(() => {
           :key="`row-${i}`"
           type="button"
           class="th-seg w-full transition-colors"
-          :class="{ 'is-active': row.active }"
+          :class="{
+            'is-active': row.active,
+            'is-dragging': reorder?.axis === 'row' && reorder.from === i,
+          }"
           :style="{ height: `${row.size}px` }"
           :aria-label="
             t('views.admin.PostEditor.content.tableControls.selectRow')
           "
-          @mousedown.prevent="selectRow(row.cellEl)"
+          @mousedown.prevent="
+            begin('row', i, row.cellEl, $event, () => selectRow(row.cellEl))
+          "
         />
       </div>
     </div>
@@ -202,6 +223,17 @@ const rowBounds = computed<Bound[]>(() => {
           :style="{ width: `${geometry.clip.width}px` }"
         />
       </button>
+
+      <!-- 行拖拽落点线 -->
+      <span
+        v-if="reorder?.axis === 'row' && rowBounds[reorder.boundary]"
+        class="th-drop th-drop-h"
+        :style="{
+          top: `${rowBounds[reorder.boundary]!.offset}px`,
+          left: `${GUTTER}px`,
+          width: `${geometry.clip.width}px`,
+        }"
+      />
     </div>
   </template>
 </template>
@@ -218,6 +250,7 @@ const rowBounds = computed<Bound[]>(() => {
 /* ── 行/列把手段（无分隔线，连续一条） ── */
 .th-seg {
   pointer-events: auto;
+  cursor: grab;
   background: color-mix(in srgb, var(--theme-fg-muted) 14%, transparent);
 }
 .th-seg:hover {
@@ -226,6 +259,11 @@ const rowBounds = computed<Bound[]>(() => {
 .th-seg.is-active,
 .th-seg.is-active:hover {
   background: var(--theme-accent);
+}
+/* 拖拽中的源行/列把手：半透明强调色，提示「正在移动」 */
+.th-seg.is-dragging {
+  background: color-mix(in srgb, var(--theme-accent) 55%, transparent);
+  cursor: grabbing;
 }
 
 /* ── 行列间「+」插入点 ── */
@@ -279,5 +317,22 @@ const rowBounds = computed<Bound[]>(() => {
 .th-ins:hover .th-ins-line-v,
 .th-ins:hover .th-ins-line-h {
   opacity: 1;
+}
+
+/* ── 拖拽落点线（重排时显示，比插入线略粗以区分） ── */
+.th-drop {
+  position: absolute;
+  z-index: 1;
+  background: var(--theme-accent);
+  border-radius: 9999px;
+  pointer-events: none;
+}
+.th-drop-v {
+  width: 3px;
+  transform: translateX(-50%);
+}
+.th-drop-h {
+  height: 3px;
+  transform: translateY(-50%);
 }
 </style>

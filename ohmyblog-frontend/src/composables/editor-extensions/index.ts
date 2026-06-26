@@ -48,7 +48,10 @@
 //            - 单元格 overflow-wrap/word-break：break-word；代码块去投影收进格内并内部横滚；图片 max-width:100%
 //
 // Phase 4：可选优化（看上线后反馈再决定）
-//   [ ] P4.1 拖拽整行 / 整列重排（prosemirror-tables 有 moveTableRow/moveTableColumn）
+//   [x] P4.1 拖拽整行 / 整列重排（prosemirror-tables 的 moveTableRow/moveTableColumn）
+//            - use-table-reorder.ts：行/列把手按下不动=点击（选中整行列），拖动=重排
+//            - 落点吸附最近行/列边界；松开调 moveTableRow/Column（to=移动后最终索引）
+//            - PostEditorTableControls 画主题色落点线 + 源把手半透明强调
 //   [x] P4.2 单元格背景色
 //            - cell-background.extension.ts：addGlobalAttributes 给 tableCell/tableHeader
 //              注入 backgroundColor（进共享 schema，JSON 往返 + 前台只读渲染均支持）
