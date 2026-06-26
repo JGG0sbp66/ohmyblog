@@ -80,7 +80,7 @@ const postTitle = () =>
   <div class="w-20 shrink-0 flex items-center justify-end gap-1" @click.stop>
     <!-- 编辑按钮 -->
     <ButtonSecondary
-      class="w-8! h-8! p-0! text-fg-subtle hover:text-accent"
+      class="w-8! h-8! p-0! hover:text-accent"
       :title="t('views.admin.Posts.table.actions.edit')"
       @click="emit('edit')"
     >
