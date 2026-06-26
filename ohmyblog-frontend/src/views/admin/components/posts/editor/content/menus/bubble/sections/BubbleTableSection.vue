@@ -1,6 +1,7 @@
 <!-- src/views/admin/components/posts/editor/content/menus/bubble/sections/BubbleTableSection.vue -->
 <script setup lang="ts">
 import type { Editor } from "@tiptap/core";
+import { Trash2 } from "lucide-vue-next";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
 import { useTableCommands } from "../composables/use-table-commands";
 
@@ -8,7 +9,7 @@ import { useTableCommands } from "../composables/use-table-commands";
  * BubbleTableSection — 气泡菜单「表格」区域（最左侧）
  *
  * - 合并 / 拆分单元格：跨格选区可用时显示。
- * - 选中整行 / 整列（点行列把手）时：设为表头 + 删除行/列（删除为红色系）。
+ * - 选中整行 / 整列（点行列把手）时：设为表头 + 删除行/列（danger 样式）。
  *
  * 区域整体是否出现由 PostEditorBubbleMenu 用 showTableSection 把关。
  */
@@ -24,7 +25,6 @@ const {
   headerLabel,
   isHeaderActive,
   toggleHeader,
-  deleteIconOf,
   deleteLabel,
   deleteLine,
 } = useTableCommands();
@@ -52,13 +52,11 @@ const {
     </IconTipButton>
 
     <IconTipButton
+      danger
       :tooltip="deleteLabel(props.editor)"
       @click="deleteLine(props.editor)"
     >
-      <component
-        :is="deleteIconOf(props.editor)"
-        class="h-4 w-4 text-red-500"
-      />
+      <Trash2 class="h-4 w-4" />
     </IconTipButton>
   </template>
 </template>
