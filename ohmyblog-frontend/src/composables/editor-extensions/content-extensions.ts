@@ -11,6 +11,7 @@ import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
+import { TableKit } from "@tiptap/extension-table";
 import { CustomListItem } from "./list-item.extension";
 import { CustomOrderedList } from "./ordered-list.extension";
 import {
@@ -101,6 +102,17 @@ export function getContentExtensions(opts: ContentExtensionsOptions = {}) {
     Color,
     CustomHighlight,
     readonly ? ReadonlyImage : ResizableImage,
+    // 表格（TableKit = table / tableRow / tableHeader / tableCell 四件套）。
+    // 放进共享 schema，确保前台只读渲染也能识别表格节点（否则被当未知节点丢弃）。
+    // - resizable: !readonly —— 只读端去掉列宽拖拽（编辑态），仅编辑器保留手柄。
+    // - renderWrapper: true —— 只读端无 columnResizing/TableView，不会自动包 .tableWrapper，
+    //   这里让 renderHTML 阶段输出 <div class="tableWrapper">，供移动端横向滚动样式挂靠。
+    TableKit.configure({
+      table: {
+        resizable: !readonly,
+        renderWrapper: true,
+      },
+    }),
     Indent,
     TextAlign.configure({
       // 加入 tableCell / tableHeader：在表格内（含跨格 CellSelection）也能对齐，

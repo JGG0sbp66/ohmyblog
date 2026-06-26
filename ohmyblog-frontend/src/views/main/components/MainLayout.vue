@@ -35,7 +35,10 @@ const systemStore = useSystemStore();
         </aside>
 
         <!-- 主要内容 (router-view) -->
-        <div class="flex-1 w-full order-2">
+        <!-- min-w-0：行 flex 子项默认 min-width:auto=min-content，宽表格/代码块会把本列
+             撑到 min-content 宽度从而横向撑破整页。置 0 让本列可收缩，超宽内容回到各自
+             的 overflow-x 容器（如 .tableWrapper）内部滚动。 -->
+        <div class="flex-1 w-full min-w-0 order-2">
           <div class="onload-animation">
             <router-view />
           </div>

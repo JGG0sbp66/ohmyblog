@@ -4,7 +4,8 @@
 // TODO: Tiptap 表格支持
 // ─────────────────────────────────────────────────────────────────────────────
 // Phase 1（已完成）：装 TableKit + 注册 resizable + 编辑器内表格样式
-//   见本文件下方 TableKit 注册、src/css/tiptap/table.css。
+//   表格四件套现已并入共享 schema（content-extensions.ts 的 TableKit），
+//   编辑器与前台只读渲染共用，样式见 src/css/tiptap/table.css。
 //   粘贴 GFM 表格 / 斜杠命令 /table 均可插入并保存往返。
 //
 // ── 组件拆分约定（贯穿 Phase 2，务必遵守）─────────────────────────────────
@@ -37,9 +38,14 @@
 //   [ ] P2.6 帮助文档补快捷键：Tab / Shift+Tab / Mod+Enter
 //
 // Phase 3：阅读页 + 移动端
-//   [ ] P3.1 前台文章渲染区表格样式（去掉编辑态，适配暗色主题）
-//   [ ] P3.2 移动端横向滚动：用 div 包裹，不能直接 table { overflow-x: auto }
-//   [ ] P3.3 单元格内代码块 / 图片 / 长文本换行策略
+//   [x] P3.1 前台文章渲染区表格样式（去掉编辑态，适配暗色主题）
+//            - TableKit 并入共享 schema（content-extensions.ts），前台只读端现可渲染表格
+//            - resizable:!readonly 让只读端不出列宽手柄；暗色由 --theme-* 变量自动适配
+//   [x] P3.2 移动端横向滚动：用 div 包裹，不能直接 table { overflow-x: auto }
+//            - 只读端 renderWrapper:true 输出 .tableWrapper 容器（overflow-x:auto + 溢出阴影）
+//            - @media(max-width:640px) 表格转 table-layout:auto + 列 min-width，超宽即横滚
+//   [x] P3.3 单元格内代码块 / 图片 / 长文本换行策略
+//            - 单元格 overflow-wrap/word-break：break-word；代码块去投影收进格内并内部横滚；图片 max-width:100%
 //
 // Phase 4：可选优化（看上线后反馈再决定）
 //   [ ] P4.1 拖拽整行 / 整列重排（prosemirror-tables 有 moveTableRow/moveTableColumn）
@@ -49,7 +55,6 @@
 
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
-import { TableKit } from "@tiptap/extension-table";
 import { Markdown } from "tiptap-markdown";
 import { useLang } from "@/composables/lang.hook";
 import { getContentExtensions } from "./content-extensions";
@@ -77,9 +82,6 @@ export function useEditorExtensions() {
     SmartSelectAll,
     TrailingNode,
     CharacterCount,
-    TableKit.configure({
-      table: { resizable: true },
-    }),
     Placeholder.configure({
       placeholder: t("views.admin.PostEditor.content.body.placeholder"),
     }),

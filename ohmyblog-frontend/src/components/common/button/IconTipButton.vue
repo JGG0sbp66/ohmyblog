@@ -33,10 +33,9 @@ const emit = defineEmits<{ click: [] }>();
 
 const buttonClass = computed(() => {
   if (!props.danger) return props.size;
-  return [
-    props.size,
-    "hover:!text-red-500 hover:before:!bg-red-500/10",
-  ].join(" ");
+  return [props.size, "hover:!text-red-500 hover:before:!bg-red-500/10"].join(
+    " ",
+  );
 });
 </script>
 

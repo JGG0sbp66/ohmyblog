@@ -4,6 +4,12 @@
  * - 结构类名沿用 prosemirror-tables：.tableWrapper / .selectedCell / .column-resize-handle
  * - 飞书风：正常底色 + 浅灰边框，不用强调色 / 斑马纹
  * - 边框 / 表头底色走低彩度的 --theme-* 中性变量，深色模式自动适配
+ *
+ * 前后台共用：编辑器（可编辑）与前台 PostContent（只读）共享同一份 .tiptap 样式。
+ * - 编辑态专属修饰（.selectedCell / .column-resize-handle / .resize-cursor）仅在
+ *   editable + resizable 时由 ProseMirror 注入 DOM，只读端天然不出现，无需额外剥离。
+ * - 只读端的 .tableWrapper 由 Table 扩展 renderWrapper:true 在 renderHTML 阶段输出
+ *   （只读无 columnResizing/TableView，不会自动包裹），见 content-extensions.ts。
  */
 
 /* resizable 模式下，表格外层会包一层 .tableWrapper，用于横向滚动 */
@@ -63,6 +69,29 @@
   margin: 0;
 }
 
+/* ── P3.3 单元格内容策略 ─────────────────────────────────────────────────
+   table-layout: fixed 下，单元格不会被内容撑宽，长串文本 / URL 必须主动换行，
+   否则会溢出单元格盖住边框。代码块 / 图片限制不超出单元格宽度。 */
+.tiptap table td,
+.tiptap table th {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* 单元格内代码块：去掉外边距与圆角投影的「悬浮卡片感」，收进格内并允许内部横滚 */
+.tiptap table td .code-block-container,
+.tiptap table th .code-block-container {
+  margin: 0.25rem 0;
+  max-width: 100%;
+  box-shadow: none;
+}
+
+/* 单元格内图片：不超出列宽 */
+.tiptap table td .image-block,
+.tiptap table th .image-block {
+  max-width: 100%;
+}
+
 /* 表头：浅灰底 + 加粗 + 左对齐。
    用 --theme-fg-muted（#00000080 / #ffffff80，纯中性、无 hue）低透明度混色，
    明暗模式自动黑↔白翻转，无需单独 .dark 覆盖。 */
@@ -99,4 +128,27 @@
 .tiptap.resize-cursor {
   cursor: ew-resize;
   cursor: col-resize;
+}
+
+/* ── P3.2 移动端横向滚动 ─────────────────────────────────────────────────
+   桌面端 table-layout: fixed + width:100% 让列等分铺满容器，阅读舒适。
+   但窄屏（手机）等分会把多列挤成竖排长文，可读性差。仿飞书：窄屏让表格按
+   内容自然展开、给每列一个最小宽度，超出视口时由外层 .tableWrapper 横向滚动
+   （overflow-x:auto 已在上方定义，并自带溢出阴影提示）。
+
+   注意：横滚必须靠 .tableWrapper 容器，不能直接给 table 设 overflow-x —— 这也是
+   只读端必须 renderWrapper:true 输出该容器的原因（见 content-extensions.ts）。*/
+@media (max-width: 640px) {
+  .tiptap table {
+    /* 改为 auto：列宽随内容伸展；min-width:100% 保证少列时仍铺满容器 */
+    table-layout: auto;
+    width: auto;
+    min-width: 100%;
+  }
+
+  .tiptap table td,
+  .tiptap table th {
+    /* 每列下限，避免被压成一字一行；超过视口即触发外层横向滚动 */
+    min-width: 8rem;
+  }
 }
