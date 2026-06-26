@@ -62,7 +62,10 @@ onMounted(fetchList);
       卡片列表
       - 移动端：破出 main 的 px-4 让卡片贴边；用点状分割线在卡间做轻量分隔；
         整体 overflow-hidden + rounded-2xl 让首尾卡片四角圆角，与 Header 底部圆角呼应。
-      - 桌面端：恢复 gap-4，去除分隔线和裁剪。
+        阴影只能加在容器本身：overflow-hidden 会裁掉内部卡片的投影，给最后一个卡片
+        加 shadow 也看不见；加在容器上（自身投影不被自己的 overflow 裁剪），视觉上即
+        「整块列表到最后一个元素结束处带上 BaseCard 的 shadow-lg」。
+      - 桌面端：恢复 gap-4，去除分隔线和裁剪；阴影回归各 PostCard 自身（md:shadow-none）。
     -->
     <div
       v-else-if="posts.length > 0"
@@ -70,6 +73,7 @@ onMounted(fetchList);
         'flex flex-col stagger-container transition-opacity duration-200 [--content-delay:0ms]',
         '-mx-4 md:mx-0 md:gap-4',
         'overflow-hidden rounded-2xl md:overflow-visible md:rounded-none',
+        'shadow-lg md:shadow-none',
         loading ? 'opacity-50 pointer-events-none' : '',
       ]"
     >
