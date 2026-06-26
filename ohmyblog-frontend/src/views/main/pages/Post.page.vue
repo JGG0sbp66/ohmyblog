@@ -73,36 +73,42 @@ watch(slug, fetchPost, { immediate: true });
 
   <!-- Post content -->
   <!--
-    TODO(mobile-flush-layout): 手机端文章渲染左右贴合
-    - 现状：移动端 BaseCard 内层有 p-6 内边距 + MainLayout 的 px-4，文章正文左右留白偏大，
-      空间利用率低。
-    - 目标：参考首页文章列表（Home.page / PostCard）的移动端处理，窄屏下让正文区左右尽量
-      贴合屏幕边缘，最大化可用宽度（表格/代码块等宽内容尤其受益）。
-    - 注意：仅改窄屏（< md），桌面端维持现有 md:p-8 留白；标题/日期/正文要统一对齐，
-      不要只动正文导致错位；改完回归检查表格横向滚动仍正常。
+    移动端文章全宽布局：用 width:auto 的外层 wrapper 承载 -mx-4，破出 main 的 px-4，
+    让卡片在窄屏贴齐视口左右边缘、最大化正文宽度；桌面端 md:mx-0 复原。
+
+    为什么 wrapper 用 width:auto 而不是直接给 BaseCard 加 -mx-4：
+      BaseCard 自带 w-full（width:100%）是定宽，负 margin 只会把它整体左移、不会加宽，
+      导致「左贴边、右留 2rem 空」的不对称（margin-right 对定宽元素不生效）。改用外层
+      width:auto 元素：遇负 margin 会按「容器宽 + 2rem」扩展，BaseCard 再 w-full 撑满
+      → 左右对称贴边。圆角 / 阴影保持 BaseCard 默认，不再做 rounded-none 之类的破坏。
+    内层 padding 由 p-6 收到 p-4（窄屏），桌面仍 md:p-8。
   -->
-  <BaseCard
-    v-else-if="post"
-    padding="none"
-    class="flex flex-col overflow-hidden onload-animation"
-  >
-    <div class="flex flex-col gap-5 p-6 md:p-8">
-      <!-- Back button -->
-      <ButtonSecondary :text="t('views.main.post.back')" @click="router.back()">
-        <ArrowLeft class="w-4 h-4" />
-      </ButtonSecondary>
+  <div v-else-if="post" class="-mx-4 md:mx-0">
+    <BaseCard
+      padding="none"
+      class="flex flex-col overflow-hidden onload-animation"
+    >
+      <div class="flex flex-col gap-5 p-4 md:p-8">
+        <!-- Back button -->
+        <ButtonSecondary
+          :text="t('views.main.post.back')"
+          @click="router.back()"
+        >
+          <ArrowLeft class="w-4 h-4" />
+        </ButtonSecondary>
 
-      <PostHeader
-        :title="post.title ?? ''"
-        :formatted-date="formattedDate"
-        :tags="post.tags"
-        :word-count="wordCount"
-        :view-count="post.viewCount"
-      />
+        <PostHeader
+          :title="post.title ?? ''"
+          :formatted-date="formattedDate"
+          :tags="post.tags"
+          :word-count="wordCount"
+          :view-count="post.viewCount"
+        />
 
-      <div class="border-t border-fg-subtle/10" />
+        <div class="border-t border-fg-subtle/10" />
 
-      <PostContent :content-json="(post.content as object | null) ?? null" />
-    </div>
-  </BaseCard>
+        <PostContent :content-json="(post.content as object | null) ?? null" />
+      </div>
+    </BaseCard>
+  </div>
 </template>
