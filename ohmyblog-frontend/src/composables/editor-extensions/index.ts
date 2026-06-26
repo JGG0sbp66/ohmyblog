@@ -49,7 +49,11 @@
 //
 // Phase 4：可选优化（看上线后反馈再决定）
 //   [ ] P4.1 拖拽整行 / 整列重排（prosemirror-tables 有 moveTableRow/moveTableColumn）
-//   [ ] P4.2 单元格背景色
+//   [x] P4.2 单元格背景色
+//            - cell-background.extension.ts：addGlobalAttributes 给 tableCell/tableHeader
+//              注入 backgroundColor（进共享 schema，JSON 往返 + 前台只读渲染均支持）
+//            - use-table-commands：setCellBg/currentCellBg，命令走 TableKit setCellAttribute
+//            - BubbleCellBgButton.vue：表格区色板，低透明度 rgba 明暗自适配；跨格批量着色
 //   [ ] P4.3 复制为 markdown / Excel 时的格式保持
 // ─────────────────────────────────────────────────────────────────────────────
 

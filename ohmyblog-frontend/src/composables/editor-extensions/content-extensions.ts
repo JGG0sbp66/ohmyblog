@@ -12,6 +12,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import { TableKit } from "@tiptap/extension-table";
+import { CellBackground } from "./cell-background.extension";
 import { CustomListItem } from "./list-item.extension";
 import { CustomOrderedList } from "./ordered-list.extension";
 import {
@@ -113,6 +114,9 @@ export function getContentExtensions(opts: ContentExtensionsOptions = {}) {
         renderWrapper: true,
       },
     }),
+    // 单元格背景色：给 tableCell / tableHeader 注入 backgroundColor 全局属性，
+    // 配合 TableKit 内置 setCellAttribute 命令着色（见 use-table-commands）。
+    CellBackground,
     Indent,
     TextAlign.configure({
       // 加入 tableCell / tableHeader：在表格内（含跨格 CellSelection）也能对齐，

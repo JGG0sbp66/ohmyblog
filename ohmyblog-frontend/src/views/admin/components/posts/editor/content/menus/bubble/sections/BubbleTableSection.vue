@@ -3,6 +3,7 @@
 import type { Editor } from "@tiptap/core";
 import { Trash2 } from "lucide-vue-next";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
+import BubbleCellBgButton from "./BubbleCellBgButton.vue";
 import { useTableCommands } from "../composables/use-table-commands";
 
 /**
@@ -31,6 +32,9 @@ const {
 </script>
 
 <template>
+  <!-- 单元格背景色：选区在表内即可用 -->
+  <BubbleCellBgButton :editor="props.editor" />
+
   <!-- 合并 / 拆分单元格 -->
   <IconTipButton
     v-if="canMergeOrSplit(props.editor)"

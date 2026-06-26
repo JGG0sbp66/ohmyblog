@@ -468,7 +468,8 @@
             "splitCell": "Split cell",
             "setHeader": "Set as header",
             "deleteRow": "Delete row",
-            "deleteColumn": "Delete column"
+            "deleteColumn": "Delete column",
+            "cellBackground": "Cell background"
           },
           "tableControls": {
             "selectColumn": "Select column",
