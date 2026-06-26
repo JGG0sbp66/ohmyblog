@@ -458,6 +458,24 @@
             "table": { "label": "Table" },
             "clearFormatting": { "label": "Clear formatting" }
           },
+          "colorMenu": {
+            "tooltip": "Text / background color",
+            "textColor": "Text color",
+            "bgColor": "Background color",
+            "colors": {
+              "default": "Default",
+              "none": "None",
+              "gray": "Gray",
+              "brown": "Brown",
+              "orange": "Orange",
+              "yellow": "Yellow",
+              "green": "Green",
+              "blue": "Blue",
+              "purple": "Purple",
+              "pink": "Pink",
+              "red": "Red"
+            }
+          },
           "tablePicker": {
             "label": "Table",
             "hint": "Select table size",

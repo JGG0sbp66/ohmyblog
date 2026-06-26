@@ -453,6 +453,24 @@
             "table": { "label": "表格" },
             "clearFormatting": { "label": "清除格式" }
           },
+          "colorMenu": {
+            "tooltip": "字体颜色 / 背景色",
+            "textColor": "字体颜色",
+            "bgColor": "背景颜色",
+            "colors": {
+              "default": "默认",
+              "none": "无",
+              "gray": "灰色",
+              "brown": "棕色",
+              "orange": "橙色",
+              "yellow": "黄色",
+              "green": "绿色",
+              "blue": "蓝色",
+              "purple": "紫色",
+              "pink": "粉色",
+              "red": "红色"
+            }
+          },
           "tablePicker": {
             "label": "表格",
             "hint": "选择表格尺寸",

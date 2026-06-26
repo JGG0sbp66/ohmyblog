@@ -5,6 +5,7 @@ import type { Editor } from "@tiptap/core";
 import { Type } from "lucide-vue-next";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
 import BasePop from "@/components/base/pop/BasePop.vue";
+import { useLang } from "@/composables/lang.hook";
 
 /**
  * BubbleColorButton — 字体颜色 & 背景高亮选色器
@@ -12,44 +13,53 @@ import BasePop from "@/components/base/pop/BasePop.vue";
  * 复用 BasePop + IconTipButton，模式与 BubbleLinkButton 一致。
  * - 上半区：预设字体颜色（Color 扩展）
  * - 下半区：预设背景高亮色（Highlight 扩展，multicolor）
+ *
+ * 色名 / 标题统一走 i18n（colorMenu.*）；色值与 i18n key 解耦，便于复用。
  */
 const props = defineProps<{ editor: Editor }>();
+
+const { t } = useLang();
 
 const isOpen = ref(false);
 const btnRef = ref<HTMLElement | null>(null);
 
 /**
- * 字体颜色预设 — Tailwind 600 级，饱和度统一，深浅背景均可辨识
+ * 字体颜色预设 — Tailwind 600 级，饱和度统一，深浅背景均可辨识。
+ * key 对应 colorMenu.colors.* 的 i18n 文案。
  */
 const textColors = [
-  { label: "默认", value: null },
-  { label: "灰色", value: "#6B7280" },
-  { label: "棕色", value: "#92400E" },
-  { label: "橙色", value: "#EA580C" },
-  { label: "黄色", value: "#D97706" },
-  { label: "绿色", value: "#16A34A" },
-  { label: "蓝色", value: "#2563EB" },
-  { label: "紫色", value: "#7C3AED" },
-  { label: "粉色", value: "#DB2777" },
-  { label: "红色", value: "#DC2626" },
+  { key: "default", value: null },
+  { key: "gray", value: "#6B7280" },
+  { key: "brown", value: "#92400E" },
+  { key: "orange", value: "#EA580C" },
+  { key: "yellow", value: "#D97706" },
+  { key: "green", value: "#16A34A" },
+  { key: "blue", value: "#2563EB" },
+  { key: "purple", value: "#7C3AED" },
+  { key: "pink", value: "#DB2777" },
+  { key: "red", value: "#DC2626" },
 ];
 
 /**
- * 背景高亮颜色预设 — rgba 直接复用文字色 RGB，色相天然对齐
- * 透明度 0.12 ~ 0.14（600 级饱和度高，浓度低也足够辨识）
+ * 背景高亮颜色预设 — rgba 直接复用文字色 RGB，色相天然对齐。
+ * 透明度 0.12 ~ 0.14（600 级饱和度高，浓度低也足够辨识）。
  */
 const bgColors = [
-  { label: "无", value: null },
-  { label: "灰色", value: "rgba(107,114,128,0.14)" },
-  { label: "棕色", value: "rgba(146,64,14,0.12)" },
-  { label: "橙色", value: "rgba(234,88,12,0.12)" },
-  { label: "黄色", value: "rgba(217,119,6,0.14)" },
-  { label: "绿色", value: "rgba(22,163,74,0.12)" },
-  { label: "蓝色", value: "rgba(37,99,235,0.12)" },
-  { label: "紫色", value: "rgba(124,58,237,0.12)" },
-  { label: "粉色", value: "rgba(219,39,119,0.12)" },
-  { label: "红色", value: "rgba(220,38,38,0.12)" },
+  { key: "none", value: null },
+  { key: "gray", value: "rgba(107,114,128,0.14)" },
+  { key: "brown", value: "rgba(146,64,14,0.12)" },
+  { key: "orange", value: "rgba(234,88,12,0.12)" },
+  { key: "yellow", value: "rgba(217,119,6,0.14)" },
+  { key: "green", value: "rgba(22,163,74,0.12)" },
+  { key: "blue", value: "rgba(37,99,235,0.12)" },
+  { key: "purple", value: "rgba(124,58,237,0.12)" },
+  { key: "pink", value: "rgba(219,39,119,0.12)" },
+  { key: "red", value: "rgba(220,38,38,0.12)" },
 ];
+
+/** 色名 i18n */
+const colorLabel = (key: string) =>
+  t(`views.admin.PostEditor.content.colorMenu.colors.${key}`);
 
 const currentTextColor = computed(
   () => props.editor.getAttributes("textStyle").color ?? null,
@@ -85,7 +95,7 @@ const setBgColor = (color: string | null) => {
   <div class="relative" ref="btnRef">
     <!-- 触发按钮：Type 图标 + 底部颜色指示条 -->
     <IconTipButton
-      tooltip="字体颜色 / 背景色"
+      :tooltip="t('views.admin.PostEditor.content.colorMenu.tooltip')"
       :isActive="isOpen || hasAnyColor"
       @click="isOpen = !isOpen"
     >
@@ -107,12 +117,14 @@ const setBgColor = (color: string | null) => {
     >
       <!-- 字体颜色 -->
       <div>
-        <p class="text-xs text-fg-subtle font-medium mb-2">字体颜色</p>
+        <p class="text-xs text-fg-subtle font-medium mb-2">
+          {{ t("views.admin.PostEditor.content.colorMenu.textColor") }}
+        </p>
         <div class="flex flex-wrap gap-1.5">
           <button
             v-for="c in textColors"
-            :key="c.label"
-            :title="c.label"
+            :key="c.key"
+            :title="colorLabel(c.key)"
             class="w-5 h-5 rounded-full transition-transform hover:scale-110"
             :class="{
               'ring-2 ring-accent ring-offset-1 ring-offset-bg-card':
@@ -135,12 +147,14 @@ const setBgColor = (color: string | null) => {
 
       <!-- 背景颜色 -->
       <div>
-        <p class="text-xs text-fg-subtle font-medium mb-2">背景颜色</p>
+        <p class="text-xs text-fg-subtle font-medium mb-2">
+          {{ t("views.admin.PostEditor.content.colorMenu.bgColor") }}
+        </p>
         <div class="flex flex-wrap gap-1.5">
           <button
             v-for="c in bgColors"
-            :key="c.label"
-            :title="c.label"
+            :key="c.key"
+            :title="colorLabel(c.key)"
             class="w-5 h-5 rounded-full transition-transform hover:scale-110"
             :class="{
               'ring-2 ring-accent ring-offset-1 ring-offset-bg-card':
