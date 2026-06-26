@@ -17,6 +17,17 @@ import { useTableInsert } from "./composables/use-table-insert";
  * - 行把手条 / 行插入点：完全固定（行不横向移动）。
  *
  * 整组 z-40 置于编辑区之上；外壳 pointer-events-none，仅把手/插入点可点。
+ *
+ * TODO(table-block-handle): 表格左上角块手柄 + 操作菜单（仿飞书）
+ * - 交互：鼠标移入表格时，在表格左上角（行把手条 ∩ 列把手条的拐角处）显示一个手柄按钮；
+ *   点击弹出菜单。本期菜单先做三项：剪切 / 复制 / 删除（整张表格为操作单元）。
+ * - 定位：可复用本组件的 geometry.clip（left/top）做锚点，按钮固定在
+ *   (clip.left - THICKNESS, clip.top - THICKNESS) 的拐角；随表格滚动/尺寸变化重算。
+ * - 命令：删除走 TableKit 的 deleteTable；剪切/复制需选中整表（CellSelection 覆盖所有单元格，
+ *   见 use-cell-selection）后触发 ProseMirror 的 cut/copy（document.execCommand 或自定义
+ *   slice 写剪贴板），剪切 = 复制 + deleteTable。
+ * - 菜单组件：复用 DropButton + IconTipButton/ButtonSecondary 风格，保持与 handle 菜单一致；
+ *   注意菜单也要做向上翻转（见 DropButton 的 smart-flip TODO）。
  */
 const props = defineProps<{
   editor: Editor;

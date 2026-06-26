@@ -1,4 +1,16 @@
 <!-- src/components/common/button/DropButton.vue -->
+<!--
+  TODO(dropbutton-smart-flip): 菜单智能翻转（底部空间不足时向上展开）
+  - 现状：弹层固定在触发器下方（popOffset 默认 mt-6 + placement），靠近视口底部时
+    会被裁剪或溢出，handle 块菜单在页面底部尤其明显。
+  - 目标：仿飞书/常见下拉——挂载/打开时测量触发器在视口中的位置与弹层高度，
+    若下方剩余空间不足而上方足够，则向上翻转（改用 bottom 锚 + 向上的 offset/桥接层）。
+  - 实现建议：在 BasePop 内或本组件用 useElementBounding/useWindowSize（VueUse）算可用空间，
+    输出 direction = 'down' | 'up'，据此切换 placement/offset 与桥接层方向；保持 hover 模式下
+    桥接层仍连续（避免鼠标移动到弹层途中触发关闭）。
+  - 影响面：本组件被 handle 空行/块菜单、表格块手柄菜单等复用，翻转逻辑下沉到 DropButton/BasePop
+    即可统一受益。
+-->
 <script lang="ts" setup>
 import BasePop from "@/components/base/pop/BasePop.vue";
 import { ref } from "vue";

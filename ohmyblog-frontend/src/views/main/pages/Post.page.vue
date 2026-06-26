@@ -72,6 +72,15 @@ watch(slug, fetchPost, { immediate: true });
   </div>
 
   <!-- Post content -->
+  <!--
+    TODO(mobile-flush-layout): 手机端文章渲染左右贴合
+    - 现状：移动端 BaseCard 内层有 p-6 内边距 + MainLayout 的 px-4，文章正文左右留白偏大，
+      空间利用率低。
+    - 目标：参考首页文章列表（Home.page / PostCard）的移动端处理，窄屏下让正文区左右尽量
+      贴合屏幕边缘，最大化可用宽度（表格/代码块等宽内容尤其受益）。
+    - 注意：仅改窄屏（< md），桌面端维持现有 md:p-8 留白；标题/日期/正文要统一对齐，
+      不要只动正文导致错位；改完回归检查表格横向滚动仍正常。
+  -->
   <BaseCard
     v-else-if="post"
     padding="none"
