@@ -473,7 +473,8 @@
               "blue": "Blue",
               "purple": "Purple",
               "pink": "Pink",
-              "red": "Red"
+              "red": "Red",
+              "custom": "Custom"
             }
           },
           "tablePicker": {

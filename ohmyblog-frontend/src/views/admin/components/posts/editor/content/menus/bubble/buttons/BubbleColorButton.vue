@@ -6,6 +6,7 @@ import { Type } from "lucide-vue-next";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
 import BasePop from "@/components/base/pop/BasePop.vue";
 import { useLang } from "@/composables/lang.hook";
+import ColorSwatchGrid from "./parts/ColorSwatchGrid.vue";
 
 /**
  * BubbleColorButton — 字体颜色 & 背景高亮选色器
@@ -14,7 +15,7 @@ import { useLang } from "@/composables/lang.hook";
  * - 上半区：预设字体颜色（Color 扩展）
  * - 下半区：预设背景高亮色（Highlight 扩展，multicolor）
  *
- * 色名 / 标题统一走 i18n（colorMenu.*）；色值与 i18n key 解耦，便于复用。
+ * 色板（含自定义取色）抽到 ColorSwatchGrid 共享；色名 / 标题走 i18n（colorMenu.*）。
  */
 const props = defineProps<{ editor: Editor }>();
 
@@ -56,10 +57,6 @@ const bgColors = [
   { key: "pink", value: "rgba(219,39,119,0.12)" },
   { key: "red", value: "rgba(220,38,38,0.12)" },
 ];
-
-/** 色名 i18n */
-const colorLabel = (key: string) =>
-  t(`views.admin.PostEditor.content.colorMenu.colors.${key}`);
 
 const currentTextColor = computed(
   () => props.editor.getAttributes("textStyle").color ?? null,
@@ -120,27 +117,11 @@ const setBgColor = (color: string | null) => {
         <p class="text-xs text-fg-subtle font-medium mb-2">
           {{ t("views.admin.PostEditor.content.colorMenu.textColor") }}
         </p>
-        <div class="flex flex-wrap gap-1.5">
-          <button
-            v-for="c in textColors"
-            :key="c.key"
-            :title="colorLabel(c.key)"
-            class="w-5 h-5 rounded-full transition-transform hover:scale-110"
-            :class="{
-              'ring-2 ring-accent ring-offset-1 ring-offset-bg-card':
-                currentTextColor === c.value,
-            }"
-            :style="
-              c.value
-                ? {
-                    background: c.value,
-                    border: '1px solid rgba(255,255,255,0.12)',
-                  }
-                : { background: 'transparent', border: '1.5px dashed #9ca3af' }
-            "
-            @mousedown.prevent="setTextColor(c.value)"
-          />
-        </div>
+        <ColorSwatchGrid
+          :colors="textColors"
+          :current="currentTextColor"
+          @select="setTextColor"
+        />
       </div>
 
       <div class="w-full h-px bg-border/40 my-2.5" />
@@ -150,27 +131,11 @@ const setBgColor = (color: string | null) => {
         <p class="text-xs text-fg-subtle font-medium mb-2">
           {{ t("views.admin.PostEditor.content.colorMenu.bgColor") }}
         </p>
-        <div class="flex flex-wrap gap-1.5">
-          <button
-            v-for="c in bgColors"
-            :key="c.key"
-            :title="colorLabel(c.key)"
-            class="w-5 h-5 rounded-full transition-transform hover:scale-110"
-            :class="{
-              'ring-2 ring-accent ring-offset-1 ring-offset-bg-card':
-                currentBgColor === c.value,
-            }"
-            :style="
-              c.value
-                ? {
-                    background: c.value,
-                    border: '1px solid rgba(255,255,255,0.12)',
-                  }
-                : { background: 'transparent', border: '1.5px dashed #9ca3af' }
-            "
-            @mousedown.prevent="setBgColor(c.value)"
-          />
-        </div>
+        <ColorSwatchGrid
+          :colors="bgColors"
+          :current="currentBgColor"
+          @select="setBgColor"
+        />
       </div>
     </BasePop>
   </div>

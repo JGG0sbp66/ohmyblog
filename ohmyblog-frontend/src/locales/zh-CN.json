@@ -468,7 +468,8 @@
               "blue": "蓝色",
               "purple": "紫色",
               "pink": "粉色",
-              "red": "红色"
+              "red": "红色",
+              "custom": "自定义"
             }
           },
           "tablePicker": {
