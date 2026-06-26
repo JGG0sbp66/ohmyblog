@@ -116,7 +116,7 @@ onMounted(fetchList);
     height: 1px;
     background-image: radial-gradient(
       circle,
-      color-mix(in oklab, var(--color-fg-muted) 10%, transparent) 1px,
+      color-mix(in oklab, var(--color-fg-muted) 28%, transparent) 1px,
       transparent 1px
     );
     background-size: 4px 1px;
