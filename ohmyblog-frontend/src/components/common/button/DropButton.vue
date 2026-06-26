@@ -1,20 +1,8 @@
 <!-- src/components/common/button/DropButton.vue -->
-<!--
-  TODO(dropbutton-smart-flip): 菜单智能翻转（底部空间不足时向上展开）
-  - 现状：弹层固定在触发器下方（popOffset 默认 mt-6 + placement），靠近视口底部时
-    会被裁剪或溢出，handle 块菜单在页面底部尤其明显。
-  - 目标：仿飞书/常见下拉——挂载/打开时测量触发器在视口中的位置与弹层高度，
-    若下方剩余空间不足而上方足够，则向上翻转（改用 bottom 锚 + 向上的 offset/桥接层）。
-  - 实现建议：在 BasePop 内或本组件用 useElementBounding/useWindowSize（VueUse）算可用空间，
-    输出 direction = 'down' | 'up'，据此切换 placement/offset 与桥接层方向；保持 hover 模式下
-    桥接层仍连续（避免鼠标移动到弹层途中触发关闭）。
-  - 影响面：本组件被 handle 空行/块菜单、表格块手柄菜单等复用，翻转逻辑下沉到 DropButton/BasePop
-    即可统一受益。
--->
 <script lang="ts" setup>
 import BasePop from "@/components/base/pop/BasePop.vue";
-import { ref } from "vue";
-import { useMediaQuery } from "@vueuse/core";
+import { ref, computed, watch, nextTick } from "vue";
+import { useMediaQuery, useWindowSize } from "@vueuse/core";
 
 interface Props {
   triggerClass?: string;
@@ -35,7 +23,7 @@ const {
 } = defineProps<Props>();
 
 const isShow = ref(false);
-const btnRef = ref(null);
+const btnRef = ref<HTMLElement | null>(null);
 
 /**
  * 设备是否支持精细悬停（鼠标）。
@@ -44,6 +32,68 @@ const btnRef = ref(null);
  *   onClickOutside 兜底
  */
 const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
+
+const { height: winHeight } = useWindowSize();
+
+/**
+ * 智能翻转方向：
+ * - "down"（默认）→ 弹层在触发器下方展开。
+ * - "up"          → 底部空间不足且上方更充足时，向上展开（仿飞书）。
+ */
+const direction = ref<"down" | "up">("down");
+
+/** 向上展开时，把下偏移 mt-* 镜像为上偏移 mb-*（保持调用方只传一个 popOffset） */
+const upOffset = computed(() => popOffset.replace(/(^|\s)mt-/g, "$1mb-"));
+
+/**
+ * 是否允许翻转：仅对「竖向向下展开」的菜单（popOffset 含 mt-*）启用。
+ * 横向展开的菜单（如表格尺寸选择器用 placement="left-full" + ml-0）不能翻转，
+ * 否则会被加上 bottom-full 破坏定位，这里直接排除。
+ */
+const canFlip = computed(() => /(^|\s)mt-/.test(popOffset));
+
+/**
+ * 传给 BasePop 的定位类：
+ * - down：沿用静态位置 + popOffset（不显式设 top，靠 DOM 顺序落在触发器下方）。
+ * - up：bottom-full 把弹层底边贴到触发器顶边，再用 mb-* 留间距向上顶。
+ */
+const popClass = computed(() =>
+  direction.value === "up"
+    ? `${placement} bottom-full ${upOffset.value}`
+    : `${placement} ${popOffset}`,
+);
+
+/** 桥接层锚点随方向翻转：向上时贴触发器上沿，向下时贴下沿 */
+const bridgeAnchor = computed(() =>
+  direction.value === "up" ? "bottom-full" : "top-full",
+);
+
+/**
+ * 打开时测量：触发器视口位置 + 弹层实际高度，决定向上 / 向下。
+ * 仅当「下方放不下且上方比下方更宽裕」时翻转，否则保持向下。
+ */
+const decideDirection = () => {
+  if (!canFlip.value) return; // 横向菜单不翻转
+  const el = btnRef.value;
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const panel = el.querySelector<HTMLElement>("[data-pop-panel]");
+  const panelHeight = panel?.offsetHeight ?? 0;
+  const gap = 12; // 间距 + 余量
+  const need = panelHeight + gap;
+  const spaceBelow = winHeight.value - rect.bottom;
+  const spaceAbove = rect.top;
+  direction.value =
+    spaceBelow < need && spaceAbove > spaceBelow ? "up" : "down";
+};
+
+watch(isShow, (open) => {
+  if (!open) return;
+  // 先复位为 down，待弹层渲染出来后（nextTick）按真实高度重新判断，
+  // 避免沿用上一次打开时的方向。nextTick 在浏览器绘制前 flush，基本无闪烁。
+  direction.value = "down";
+  nextTick(decideDirection);
+});
 
 const close = () => (isShow.value = false);
 defineExpose({ close });
@@ -61,16 +111,21 @@ defineExpose({ close });
       <slot name="trigger" :active="isShow"></slot>
     </div>
 
-    <!-- 桥接层：仅 hover 模式下需要，触屏设备无需防"鼠标移出消失"  -->
+    <!-- 桥接层：仅 hover 模式下需要，触屏设备无需防"鼠标移出消失"。
+         锚点随展开方向翻转，保证鼠标从触发器移到弹层途中不断开。 -->
     <div
       v-if="isShow && canHover"
-      :class="['absolute w-[500%] top-full left-[-200%] z-50', bridgeHeight]"
+      :class="[
+        'absolute w-[500%] left-[-200%] z-50',
+        bridgeAnchor,
+        bridgeHeight,
+      ]"
     ></div>
 
     <BasePop
       v-model="isShow"
       :trigger-ref="btnRef"
-      :class="[contentClass, placement, popOffset]"
+      :class="[contentClass, popClass]"
     >
       <slot name="content"></slot>
     </BasePop>

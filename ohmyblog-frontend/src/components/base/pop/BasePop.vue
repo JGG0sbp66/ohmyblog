@@ -31,6 +31,7 @@ onClickOutside(panelRef, (event) => {
     <div
       v-if="modelValue"
       ref="panelRef"
+      data-pop-panel
       class="bg-bg-card absolute z-50 rounded-lg shadow-lg"
       :class="$attrs.class"
     >
