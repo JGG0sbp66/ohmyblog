@@ -1,4 +1,4 @@
-<!-- src/views/admin/components/posts/editor/content/menus/bubble/sections/BubbleCellBgButton.vue -->
+<!-- src/views/admin/components/posts/editor/content/menus/bubble/buttons/BubbleCellBgButton.vue -->
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import type { Editor } from "@tiptap/core";

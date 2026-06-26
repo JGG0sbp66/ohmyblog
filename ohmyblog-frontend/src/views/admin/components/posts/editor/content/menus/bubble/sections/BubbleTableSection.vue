@@ -3,7 +3,7 @@
 import type { Editor } from "@tiptap/core";
 import { Trash2 } from "lucide-vue-next";
 import IconTipButton from "@/components/common/button/IconTipButton.vue";
-import BubbleCellBgButton from "./BubbleCellBgButton.vue";
+import BubbleCellBgButton from "../buttons/BubbleCellBgButton.vue";
 import { useTableCommands } from "../composables/use-table-commands";
 
 /**
