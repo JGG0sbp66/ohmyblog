@@ -8,6 +8,7 @@ import { useTableGeometry } from "./composables/use-table-geometry";
 import { useCellSelection } from "./composables/use-cell-selection";
 import { useTableInsert } from "./composables/use-table-insert";
 import { useTableReorder } from "./composables/use-table-reorder";
+import TableBlockHandle from "./TableBlockHandle.vue";
 
 /**
  * PostEditorTableControls — 表格行/列把手 + 行列间「+」插入点（滑动窗口模型）
@@ -19,16 +20,7 @@ import { useTableReorder } from "./composables/use-table-reorder";
  *
  * 整组 z-40 置于编辑区之上；外壳 pointer-events-none，仅把手/插入点可点。
  *
- * TODO(table-block-handle): 表格左上角块手柄 + 操作菜单（仿飞书）
- * - 交互：鼠标移入表格时，在表格左上角（行把手条 ∩ 列把手条的拐角处）显示一个手柄按钮；
- *   点击弹出菜单。本期菜单先做三项：剪切 / 复制 / 删除（整张表格为操作单元）。
- * - 定位：可复用本组件的 geometry.clip（left/top）做锚点，按钮固定在
- *   (clip.left - THICKNESS, clip.top - THICKNESS) 的拐角；随表格滚动/尺寸变化重算。
- * - 命令：删除走 TableKit 的 deleteTable；剪切/复制需选中整表（CellSelection 覆盖所有单元格，
- *   见 use-cell-selection）后触发 ProseMirror 的 cut/copy（document.execCommand 或自定义
- *   slice 写剪贴板），剪切 = 复制 + deleteTable。
- * - 菜单组件：复用 DropButton + IconTipButton/ButtonSecondary 风格，保持与 handle 菜单一致；
- *   注意菜单也要做向上翻转（见 DropButton 的 smart-flip TODO）。
+ * 左上角块手柄（TableBlockHandle）：行/列把手条拐角处，hover 弹出剪切/复制/删除整表菜单。
  */
 const props = defineProps<{
   editor: Editor;
@@ -94,6 +86,18 @@ const rowBounds = computed<Bound[]>(() => {
 
 <template>
   <template v-if="geometry">
+    <!-- 左上角块手柄：卡片浮在表格左上角外侧（右下角对齐表格左上角） -->
+    <div
+      v-if="geometry.rows.length"
+      class="th-corner"
+      :style="{
+        left: `${geometry.clip.left}px`,
+        top: `${geometry.clip.top}px`,
+      }"
+    >
+      <TableBlockHandle :editor="editor" :cell-el="geometry.rows[0]!.cellEl" />
+    </div>
+
     <!-- 列把手条：固定圆角窗 + 内层段轨道滑动 -->
     <div
       class="th-shell rounded-t-md"
@@ -245,6 +249,14 @@ const rowBounds = computed<Bound[]>(() => {
   z-index: 40;
   overflow: hidden;
   pointer-events: none;
+}
+
+/* 左上角块手柄容器：卡片右下角对齐表格左上角，浮在左上方外侧；在外壳之上可点 */
+.th-corner {
+  position: absolute;
+  z-index: 50;
+  transform: translate(-100%, -100%);
+  pointer-events: auto;
 }
 
 /* ── 行/列把手段（无分隔线，连续一条） ── */

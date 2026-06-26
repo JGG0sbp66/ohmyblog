@@ -483,7 +483,10 @@
             "setHeader": "设为表头",
             "deleteRow": "删除行",
             "deleteColumn": "删除列",
-            "cellBackground": "单元格背景色"
+            "cellBackground": "单元格背景色",
+            "cut": "剪切表格",
+            "copy": "复制表格",
+            "deleteTable": "删除表格"
           },
           "tableControls": {
             "selectColumn": "选中整列",

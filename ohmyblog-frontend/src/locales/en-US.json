@@ -488,7 +488,10 @@
             "setHeader": "Set as header",
             "deleteRow": "Delete row",
             "deleteColumn": "Delete column",
-            "cellBackground": "Cell background"
+            "cellBackground": "Cell background",
+            "cut": "Cut table",
+            "copy": "Copy table",
+            "deleteTable": "Delete table"
           },
           "tableControls": {
             "selectColumn": "Select column",
