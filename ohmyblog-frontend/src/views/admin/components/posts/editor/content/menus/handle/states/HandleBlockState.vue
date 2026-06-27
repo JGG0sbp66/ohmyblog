@@ -23,6 +23,7 @@ defineEmits<{ gripDragStart: [event: DragEvent]; gripDragEnd: [] }>();
     <!-- 块类型图标：hover 展开类型菜单（远离内容侧） -->
     <DropButton
       trigger-class=""
+      content-class="w-52 p-1.5"
       pop-offset="mt-2"
       bridge-height="h-2"
       placement="left-0"

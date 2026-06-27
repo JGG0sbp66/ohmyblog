@@ -29,6 +29,12 @@ export interface MenuItem {
   danger?: boolean;
   /** 禁用态 */
   disabled?: boolean;
+  /**
+   * 具名插槽渲染：设置后，本项不走默认按钮，而是渲染 CategoryMenu 上同名的
+   * 作用域插槽（用于带子弹层/子菜单的特殊项，由插槽自行渲染整行触发器与箭头，
+   * 如表格尺寸选择器）。插槽接收 { item }。
+   */
+  slot?: string;
   /** 点击回调；组件同时会 emit("select", item) */
   onSelect?: () => void;
 }
