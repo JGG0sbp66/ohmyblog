@@ -71,7 +71,10 @@ const openAt = (el: HTMLElement) => {
   index.value = Number(el.getAttribute("data-ol-index")) || 0;
   editing.value = false;
   open.value = true;
-  // 弹层渲染后按真实尺寸智能落位（下方优先，空间不足翻上 + 水平 clamp）
+  // 先同步按锚点做下方预定位（首帧即落位，避免 BasePop transition:all 把
+  // 初值 (0,0) 当动画起点「从左上角飞入」），再于 nextTick 用真实面板尺寸
+  // 精修（上下翻转 + 水平 clamp）
+  updatePosition();
   nextTick(updatePosition);
 };
 

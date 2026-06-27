@@ -52,14 +52,22 @@ export function useAnchoredPosition(options: AnchoredPositionOptions) {
 
   /**
    * 按当前锚点与面板尺寸重算位置。
-   * 锚点或面板任一不可用时静默跳过（不改动已有 position）。
+   *
+   * 锚点不可用时静默跳过。面板尚未渲染（getPanel 返回 null）时，
+   * 退化为「按锚点做一次下方预定位」（面板尺寸按 0 计算）——
+   * 这样调用方可在弹层 open 后、渲染前先同步 seed 一次，
+   * 让首帧就落在大致正确的位置，避免 `transition: all` 类过渡把
+   * 默认初值 (0,0) 当成动画起点「从左上角飞入」；待 nextTick 面板
+   * 渲染出来后再调一次 update() 用真实尺寸精修（翻转 / 边界 clamp）。
    */
   const update = () => {
     const rect = getAnchorRect();
-    const panel = getPanel();
-    if (!rect || !panel) return;
+    if (!rect) return;
 
-    const panelRect = panel.getBoundingClientRect();
+    const panel = getPanel();
+    const panelRect = panel?.getBoundingClientRect();
+    const panelW = panelRect?.width ?? 0;
+    const panelH = panelRect?.height ?? 0;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
@@ -67,14 +75,12 @@ export function useAnchoredPosition(options: AnchoredPositionOptions) {
     const spaceBelow = vh - rect.bottom - padding;
     const spaceAbove = rect.top - padding;
     const placeBelow =
-      !flip || spaceBelow >= panelRect.height + gap || spaceBelow >= spaceAbove;
-    const top = placeBelow
-      ? rect.bottom + gap
-      : rect.top - panelRect.height - gap;
+      !flip || spaceBelow >= panelH + gap || spaceBelow >= spaceAbove;
+    const top = placeBelow ? rect.bottom + gap : rect.top - panelH - gap;
 
     // 水平：按 align 对齐锚点，再 clamp 进视口
-    const rawLeft = align === "end" ? rect.right - panelRect.width : rect.left;
-    const maxLeft = vw - panelRect.width - padding;
+    const rawLeft = align === "end" ? rect.right - panelW : rect.left;
+    const maxLeft = vw - panelW - padding;
     const left = Math.max(padding, Math.min(rawLeft, maxLeft));
 
     placement.value = placeBelow ? "bottom" : "top";
