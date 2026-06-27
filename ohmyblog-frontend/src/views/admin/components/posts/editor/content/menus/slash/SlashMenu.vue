@@ -67,6 +67,7 @@ const menuGroups = computed<MenuGroup[]>(() => {
       return {
         key: cmd.id,
         icon: cmd.icon,
+        iconClass: cmd.color,
         label: labelOf(cmd),
         danger: group.danger,
         active: index === selectedIndex.value,

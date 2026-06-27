@@ -69,7 +69,7 @@ const onSelect = (item: MenuItem) => {
               @click="onSelect(item)"
               @mouseenter="emit('hover', item)"
             >
-              <component :is="item.icon" class="h-5 w-5" />
+              <component :is="item.icon" :class="['h-5 w-5', item.iconClass]" />
             </IconTipButton>
           </template>
         </div>
@@ -90,7 +90,7 @@ const onSelect = (item: MenuItem) => {
               @mousedown.prevent="onSelect(item)"
               @mouseenter="emit('hover', item)"
             >
-              <component :is="item.icon" class="h-4 w-4" />
+              <component :is="item.icon" :class="['h-4 w-4', item.iconClass]" />
             </ButtonSecondary>
           </template>
         </div>

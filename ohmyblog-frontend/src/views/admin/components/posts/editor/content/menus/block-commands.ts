@@ -42,6 +42,8 @@ export interface BlockCommand {
   /** i18n 文案 key，相对 views.admin.PostEditor.content.blockCommands */
   labelKey: string;
   icon: Component;
+  /** 图标语义色（Tailwind text-* 类，含 dark: 变体）；菜单按类别上色用 */
+  color: string;
   group: BlockCommandGroup;
   /** 当前光标是否处于该块内 */
   isActive: (e: Editor) => boolean;
@@ -94,6 +96,7 @@ const headingCommand = (level: 1 | 2 | 3, icon: Component): BlockCommand => ({
   id: `heading${level}` as BlockCommandId,
   labelKey: `heading${level}`,
   icon,
+  color: "text-blue-500 dark:text-blue-400",
   group: "text",
   isActive: (e) => e.isActive("heading", { level }),
   run: (e) => e.chain().focus().toggleHeading({ level }).run(),
@@ -105,6 +108,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "paragraph",
     labelKey: "paragraph",
     icon: Type,
+    color: "text-slate-500 dark:text-slate-400",
     group: "text",
     isActive: (e) => e.isActive("paragraph"),
     run: (e) => e.chain().focus().setParagraph().run(),
@@ -116,6 +120,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "bulletList",
     labelKey: "bulletList",
     icon: RiListUnordered,
+    color: "text-violet-500 dark:text-violet-400",
     group: "list",
     isActive: (e) => e.isActive("bulletList"),
     run: (e) => switchListType(e, "bulletList"),
@@ -124,6 +129,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "orderedList",
     labelKey: "orderedList",
     icon: RiListOrdered,
+    color: "text-violet-500 dark:text-violet-400",
     group: "list",
     isActive: (e) => e.isActive("orderedList"),
     run: (e) => switchListType(e, "orderedList"),
@@ -133,6 +139,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "taskList",
     labelKey: "taskList",
     icon: RiListCheck3,
+    color: "text-violet-500 dark:text-violet-400",
     group: "list",
     isActive: (e) => e.isActive("taskList"),
     run: (e) => e.chain().focus().toggleTaskList().run(),
@@ -141,6 +148,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "codeBlock",
     labelKey: "codeBlock",
     icon: Code2,
+    color: "text-emerald-500 dark:text-emerald-400",
     group: "embed",
     isActive: (e) => e.isActive("codeBlock"),
     run: (e) => e.chain().focus().toggleCodeBlock().run(),
@@ -149,6 +157,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "quote",
     labelKey: "quote",
     icon: RiDoubleQuotesL,
+    color: "text-amber-500 dark:text-amber-400",
     group: "embed",
     isActive: (e) => e.isActive("blockquote"),
     run: (e) => e.chain().focus().toggleBlockquote().run(),
@@ -158,6 +167,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "horizontalRule",
     labelKey: "horizontalRule",
     icon: Minus,
+    color: "text-orange-500 dark:text-orange-400",
     group: "embed",
     isActive: () => false,
     run: (e) => e.chain().focus().setHorizontalRule().run(),

@@ -50,7 +50,7 @@ const onSelect = ({ rows, cols }: { rows: number; cols: number }) => {
           class="w-full! justify-start! gap-2.5! px-2.5! py-2!"
           :text="t('views.admin.PostEditor.content.tablePicker.label')"
         >
-          <RiTableView class="h-4 w-4" />
+          <RiTableView class="h-4 w-4 text-teal-500 dark:text-teal-400" />
         </ButtonSecondary>
         <ChevronRight
           class="pointer-events-none absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-fg"

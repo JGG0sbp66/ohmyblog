@@ -53,6 +53,7 @@ const menuGroups = computed<MenuGroup[]>(() =>
         {
           key: entry.id,
           icon: cmd.icon,
+          iconClass: cmd.color,
           label: labelOf(cmd),
           tooltip: tooltipOf(cmd),
           active: cmd.isActive(props.editor),

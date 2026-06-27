@@ -24,6 +24,8 @@ export interface SlashCommand {
   /** true 表示走 slashCommands.{labelKey}.label，false 走 blockCommands.{labelKey}.tooltip 第一行 */
   isSlashOnly: boolean;
   icon: Component;
+  /** 图标语义色（Tailwind text-* 类）；缺省则继承文字色（如清除格式走 danger 红） */
+  color?: string;
   searchTerms: string[];
   run: (editor: Editor, range: Range) => void;
 }
@@ -37,6 +39,7 @@ const fromBlockCommand = (
   labelKey: block.labelKey,
   isSlashOnly: false,
   icon: block.icon,
+  color: block.color,
   searchTerms,
   run: (editor, range) => {
     editor.chain().focus().deleteRange(range).run();
@@ -75,6 +78,7 @@ const TABLE_COMMAND: SlashCommand = {
   labelKey: "table",
   isSlashOnly: true,
   icon: RiTableView,
+  color: "text-teal-500 dark:text-teal-400",
   searchTerms: ["table", "表格", "biaoge", "grid"],
   run: (editor, range) => {
     // slash 是键盘流：直接插默认 2 行 3 列（首行表头）。

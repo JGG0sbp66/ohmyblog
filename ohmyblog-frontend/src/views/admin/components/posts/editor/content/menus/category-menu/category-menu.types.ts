@@ -19,6 +19,8 @@ export interface MenuItem {
   key: string;
   /** 图标组件（lucide / remixicon 等） */
   icon?: Component;
+  /** 图标语义色（Tailwind text-* 类）；缺省则继承按钮文字色 */
+  iconClass?: string;
   /** 文字：list 模式显示在图标右侧；grid 模式作为 tooltip 兜底 */
   label?: string;
   /** grid 模式 hover 提示（缺省时回退到 label） */
