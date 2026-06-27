@@ -15,17 +15,24 @@ import type { BlockCommandId } from "../block-commands";
  */
 export type HandleMenuEntry =
   | { type: "command"; id: BlockCommandId }
-  | { type: "table" };
+  | { type: "table" }
+  | { type: "image" };
 
 export interface HandleMenuGroup {
   /** i18n key，相对 views.admin.PostEditor.content.handleMenu.groups */
   labelKey: string;
+  /** 组内布局：基础块用 grid（紧凑纯 icon），其余组用 list（icon + 文字，仿飞书） */
+  layout: "grid" | "list";
+  /** grid 模式列数（仅 layout="grid" 生效），缺省由 CategoryMenu 默认 4 */
+  cols?: number;
   entries: HandleMenuEntry[];
 }
 
 export const HANDLE_MENU_GROUPS: readonly HandleMenuGroup[] = [
   {
     labelKey: "basic",
+    layout: "grid",
+    cols: 5,
     entries: [
       { type: "command", id: "paragraph" },
       { type: "command", id: "heading1" },
@@ -38,10 +45,12 @@ export const HANDLE_MENU_GROUPS: readonly HandleMenuGroup[] = [
   },
   {
     labelKey: "common",
-    entries: [{ type: "table" }],
+    layout: "list",
+    entries: [{ type: "table" }, { type: "image" }],
   },
   {
     labelKey: "list",
+    layout: "list",
     entries: [
       { type: "command", id: "bulletList" },
       { type: "command", id: "orderedList" },

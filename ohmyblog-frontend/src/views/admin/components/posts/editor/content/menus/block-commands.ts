@@ -42,6 +42,8 @@ export interface BlockCommand {
   /** i18n 文案 key，相对 views.admin.PostEditor.content.blockCommands */
   labelKey: string;
   icon: Component;
+  /** 图标语义色（Tailwind text-* 类，含 dark: 变体）；菜单按类别上色用 */
+  color: string;
   group: BlockCommandGroup;
   /** 当前光标是否处于该块内 */
   isActive: (e: Editor) => boolean;
@@ -94,6 +96,7 @@ const headingCommand = (level: 1 | 2 | 3, icon: Component): BlockCommand => ({
   id: `heading${level}` as BlockCommandId,
   labelKey: `heading${level}`,
   icon,
+  color: "text-blue-500 dark:text-blue-400",
   group: "text",
   isActive: (e) => e.isActive("heading", { level }),
   run: (e) => e.chain().focus().toggleHeading({ level }).run(),
@@ -105,6 +108,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "paragraph",
     labelKey: "paragraph",
     icon: Type,
+    color: "text-slate-500 dark:text-slate-400",
     group: "text",
     isActive: (e) => e.isActive("paragraph"),
     run: (e) => e.chain().focus().setParagraph().run(),
@@ -116,6 +120,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "bulletList",
     labelKey: "bulletList",
     icon: RiListUnordered,
+    color: "text-violet-500 dark:text-violet-400",
     group: "list",
     isActive: (e) => e.isActive("bulletList"),
     run: (e) => switchListType(e, "bulletList"),
@@ -124,6 +129,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "orderedList",
     labelKey: "orderedList",
     icon: RiListOrdered,
+    color: "text-violet-500 dark:text-violet-400",
     group: "list",
     isActive: (e) => e.isActive("orderedList"),
     run: (e) => switchListType(e, "orderedList"),
@@ -133,6 +139,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "taskList",
     labelKey: "taskList",
     icon: RiListCheck3,
+    color: "text-violet-500 dark:text-violet-400",
     group: "list",
     isActive: (e) => e.isActive("taskList"),
     run: (e) => e.chain().focus().toggleTaskList().run(),
@@ -141,6 +148,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "codeBlock",
     labelKey: "codeBlock",
     icon: Code2,
+    color: "text-emerald-500 dark:text-emerald-400",
     group: "embed",
     isActive: (e) => e.isActive("codeBlock"),
     run: (e) => e.chain().focus().toggleCodeBlock().run(),
@@ -149,6 +157,7 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "quote",
     labelKey: "quote",
     icon: RiDoubleQuotesL,
+    color: "text-amber-500 dark:text-amber-400",
     group: "embed",
     isActive: (e) => e.isActive("blockquote"),
     run: (e) => e.chain().focus().toggleBlockquote().run(),
@@ -158,11 +167,29 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     id: "horizontalRule",
     labelKey: "horizontalRule",
     icon: Minus,
+    color: "text-orange-500 dark:text-orange-400",
     group: "embed",
     isActive: () => false,
     run: (e) => e.chain().focus().setHorizontalRule().run(),
   },
 ];
+
+/**
+ * 表格图标语义色（单一真源）
+ *
+ * 表格不是 BlockCommand（不在注册表里），但在各菜单里作为「可插入块」与块命令并列，
+ * 需要统一的语义色。TableBlockHandle 手柄 / handle 菜单表格行 / slash 表格命令共用此值，
+ * 避免散落硬编码。与块命令配色保持同一档（teal）。
+ */
+export const TABLE_ICON_COLOR = "text-teal-500 dark:text-teal-400";
+
+/**
+ * 图片图标语义色（单一真源）
+ *
+ * 图片同样不是 BlockCommand（走「上传 + setImage」而非块切换命令），但在菜单里作为
+ * 可插入块与块命令并列。handle 菜单 / slash 菜单的图片项共用此值。
+ */
+export const IMAGE_ICON_COLOR = "text-pink-500 dark:text-pink-400";
 
 const COMMAND_BY_ID = new Map(BLOCK_COMMANDS.map((c) => [c.id, c]));
 

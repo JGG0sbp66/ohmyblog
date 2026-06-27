@@ -1,11 +1,13 @@
 // src/views/admin/components/posts/editor/content/menus/slash/slash-commands.ts
 import type { Editor, Range } from "@tiptap/core";
 import type { Component } from "vue";
-import { Eraser } from "lucide-vue-next";
+import { Eraser, Image as ImageIcon } from "lucide-vue-next";
 import { RiTableView } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import {
   BLOCK_COMMANDS,
+  TABLE_ICON_COLOR,
+  IMAGE_ICON_COLOR,
   type BlockCommand,
   type BlockCommandId,
 } from "../block-commands";
@@ -24,6 +26,8 @@ export interface SlashCommand {
   /** true 表示走 slashCommands.{labelKey}.label，false 走 blockCommands.{labelKey}.tooltip 第一行 */
   isSlashOnly: boolean;
   icon: Component;
+  /** 图标语义色（Tailwind text-* 类）；缺省则继承文字色（如清除格式走 danger 红） */
+  color?: string;
   searchTerms: string[];
   run: (editor: Editor, range: Range) => void;
 }
@@ -37,6 +41,7 @@ const fromBlockCommand = (
   labelKey: block.labelKey,
   isSlashOnly: false,
   icon: block.icon,
+  color: block.color,
   searchTerms,
   run: (editor, range) => {
     editor.chain().focus().deleteRange(range).run();
@@ -51,96 +56,158 @@ const blockById = (id: BlockCommandId): BlockCommand => {
 };
 
 /**
- * SlashMenu 命令列表（顺序即菜单显示顺序）
+ * SlashMenu 命令分组（顺序即菜单显示顺序，与 handle 块菜单一致：基础 / 常用 / 列表）
  *
- * 来源：
- * - 全部块命令（paragraph / h1-3 / lists / codeBlock / quote / hr）
- *   → 直接从 BLOCK_COMMANDS 复用，统一文案与图标
- * - slash 专属：clearFormatting（"清除格式"在块命令注册表里没意义，仅 slash 用）
+ * - 基础：正文 / H1-H3 / 代码块 / 引用 / 分割线
+ * - 常用：表格（slash 直插 2×3）
+ * - 列表：无序 / 有序 / 待办
+ * - 清除格式：slash 专属的破坏性操作，单独成「无标题 + 红色」组
+ *   （CategoryMenu 对无标题组自动加分隔线，danger 走红色样式，仿「删除表格」）
  */
-export const SLASH_COMMANDS: readonly SlashCommand[] = [
-  fromBlockCommand(blockById("paragraph"), ["paragraph", "正文", "p"]),
-  fromBlockCommand(blockById("heading1"), ["heading1", "h1", "一级标题"]),
-  fromBlockCommand(blockById("heading2"), ["heading2", "h2", "二级标题"]),
-  fromBlockCommand(blockById("heading3"), ["heading3", "h3", "三级标题"]),
-  fromBlockCommand(blockById("bulletList"), [
-    "bulletList",
-    "ul",
-    "无序列表",
-    "list",
-  ]),
-  fromBlockCommand(blockById("orderedList"), [
-    "orderedList",
-    "ol",
-    "有序列表",
-    "1.",
-  ]),
-  fromBlockCommand(blockById("taskList"), [
-    "taskList",
-    "todo",
-    "task",
-    "待办",
-    "任务",
-    "checklist",
-    "[]",
-  ]),
-  fromBlockCommand(blockById("codeBlock"), ["codeBlock", "code", "代码块"]),
-  fromBlockCommand(blockById("quote"), ["quote", "blockquote", "引用"]),
-  fromBlockCommand(blockById("horizontalRule"), [
-    "horizontalRule",
-    "hr",
-    "divider",
-    "分割线",
-  ]),
+export interface SlashGroup {
+  /**
+   * i18n key fragment，相对 views.admin.PostEditor.content.slashMenu.groups。
+   * 省略表示无标题组（如末尾的清除格式组）。
+   */
+  labelKey?: string;
+  /** 整组标记为破坏性（红色），用于清除格式这类项 */
+  danger?: boolean;
+  commands: SlashCommand[];
+}
+
+const TABLE_COMMAND: SlashCommand = {
+  id: "table",
+  labelKey: "table",
+  isSlashOnly: true,
+  icon: RiTableView,
+  color: TABLE_ICON_COLOR,
+  searchTerms: ["table", "表格", "biaoge", "grid"],
+  run: (editor, range) => {
+    // slash 是键盘流：直接插默认 2 行 3 列（首行表头）。
+    // 自定义尺寸走左侧 "+" floating handle 的网格选择器。
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .insertTable({ rows: 2, cols: 3, withHeaderRow: false })
+      .run();
+  },
+};
+
+const IMAGE_COMMAND: SlashCommand = {
+  id: "image",
+  labelKey: "image",
+  isSlashOnly: true,
+  icon: ImageIcon,
+  color: IMAGE_ICON_COLOR,
+  searchTerms: ["image", "图片", "img", "picture", "photo", "tupian"],
+  // 仅删除 "/img" 文本；弹文件框 + 上传 + 插入由 SlashMenu 选中后接管
+  // （需要 setup 上下文的 useImageInsert，不能写在这个纯模块里）。
+  run: (editor, range) => {
+    editor.chain().focus().deleteRange(range).run();
+  },
+};
+
+const CLEAR_FORMATTING_COMMAND: SlashCommand = {
+  id: "clearFormatting",
+  labelKey: "clearFormatting",
+  isSlashOnly: true,
+  icon: Eraser,
+  searchTerms: ["clearFormatting", "clear", "清除", "remove"],
+  run: (editor, range) => {
+    editor
+      .chain()
+      .focus()
+      .deleteRange(range)
+      .clearNodes()
+      .unsetAllMarks()
+      .run();
+  },
+};
+
+export const SLASH_GROUPS: readonly SlashGroup[] = [
   {
-    id: "table",
-    labelKey: "table",
-    isSlashOnly: true,
-    icon: RiTableView,
-    searchTerms: ["table", "表格", "biaoge", "grid"],
-    run: (editor, range) => {
-      // slash 是键盘流：直接插默认 2 行 3 列（首行表头）。
-      // 自定义尺寸走左侧 "+" floating handle 的网格选择器。
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertTable({ rows: 2, cols: 3, withHeaderRow: false })
-        .run();
-    },
+    labelKey: "basic",
+    commands: [
+      fromBlockCommand(blockById("paragraph"), ["paragraph", "正文", "p"]),
+      fromBlockCommand(blockById("heading1"), ["heading1", "h1", "一级标题"]),
+      fromBlockCommand(blockById("heading2"), ["heading2", "h2", "二级标题"]),
+      fromBlockCommand(blockById("heading3"), ["heading3", "h3", "三级标题"]),
+      fromBlockCommand(blockById("codeBlock"), ["codeBlock", "code", "代码块"]),
+      fromBlockCommand(blockById("quote"), ["quote", "blockquote", "引用"]),
+      fromBlockCommand(blockById("horizontalRule"), [
+        "horizontalRule",
+        "hr",
+        "divider",
+        "分割线",
+      ]),
+    ],
   },
   {
-    id: "clearFormatting",
-    labelKey: "clearFormatting",
-    isSlashOnly: true,
-    icon: Eraser,
-    searchTerms: ["clearFormatting", "clear", "清除", "remove"],
-    run: (editor, range) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .clearNodes()
-        .unsetAllMarks()
-        .run();
-    },
+    labelKey: "common",
+    commands: [TABLE_COMMAND, IMAGE_COMMAND],
+  },
+  {
+    labelKey: "list",
+    commands: [
+      fromBlockCommand(blockById("bulletList"), [
+        "bulletList",
+        "ul",
+        "无序列表",
+        "list",
+      ]),
+      fromBlockCommand(blockById("orderedList"), [
+        "orderedList",
+        "ol",
+        "有序列表",
+        "1.",
+      ]),
+      fromBlockCommand(blockById("taskList"), [
+        "taskList",
+        "todo",
+        "task",
+        "待办",
+        "任务",
+        "checklist",
+        "[]",
+      ]),
+    ],
+  },
+  {
+    // 无标题 + 红色：破坏性操作单独成组，仿「删除表格」
+    danger: true,
+    commands: [CLEAR_FORMATTING_COMMAND],
   },
 ];
 
+/** 过滤后的分组（结构同 SlashGroup，commands 为命中项） */
+export interface FilteredSlashGroup {
+  labelKey?: string;
+  danger?: boolean;
+  commands: SlashCommand[];
+}
+
 /**
- * 过滤命令：query 匹配 label / searchTerms 任一即保留
+ * 按 query 过滤分组：每组保留 label / searchTerms 命中的命令，丢弃空组。
+ * 组内/组间顺序即键盘导航的扁平顺序（见 SlashMenu.flatItems）。
  */
-export const filterSlashCommands = (
+export const filterSlashGroups = (
   query: string,
   labelOf: (cmd: SlashCommand) => string,
-): SlashCommand[] => {
+): FilteredSlashGroup[] => {
   const q = query.trim().toLowerCase();
-  if (!q) return [...SLASH_COMMANDS];
-
-  return SLASH_COMMANDS.filter((cmd) => {
-    const haystack = [labelOf(cmd), ...cmd.searchTerms].join(" ").toLowerCase();
-    return haystack.includes(q);
-  });
+  return SLASH_GROUPS.map((group) => ({
+    labelKey: group.labelKey,
+    danger: group.danger,
+    commands: q
+      ? group.commands.filter((cmd) => {
+          const haystack = [labelOf(cmd), ...cmd.searchTerms]
+            .join(" ")
+            .toLowerCase();
+          return haystack.includes(q);
+        })
+      : [...group.commands],
+  })).filter((group) => group.commands.length > 0);
 };
 
 /**

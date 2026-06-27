@@ -2,23 +2,32 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted } from "vue";
 import type { Editor, Range } from "@tiptap/core";
-import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import { useLang } from "@/composables/lang.hook";
-import { filterSlashCommands, useSlashI18n } from "./slash-commands";
+import CategoryMenu from "../category-menu/CategoryMenu.vue";
+import type { MenuGroup, MenuItem } from "../category-menu/category-menu.types";
+import { useImageInsert } from "../../composables/use-image-insert";
+import { useAnchoredPosition } from "../../composables/use-anchored-position";
+import {
+  filterSlashGroups,
+  useSlashI18n,
+  type SlashCommand,
+} from "./slash-commands";
 
 /**
- * SlashMenu — Notion 风格 / 命令面板
+ * SlashMenu — Notion / 飞书 风格 / 命令面板（分组 + 标题，复用 CategoryMenu 渲染）
  *
  * 由 slash.extension 在用户输入 "/" 时挂载到 body 并定位。
- * 菜单项复用 ButtonSecondary，与 GroupedDropButton / BubbleBlockSection
- * 视觉保持一致（icon + 单行文字，激活态自动响应）。
+ * 渲染交给 CategoryMenu（组标题 + icon+文字行），本组件保留键盘流的全部编排：
+ * 过滤、上下/Enter 导航、选中项 scrollIntoView、视窗翻转定位。
  *
- * 视窗边界处理：菜单优先贴 "/" 下方；下方空间不足则翻到上方。
- * 水平方向左对齐 "/" 起点；超出右边界则向左 clamp 进视窗。
+ * 键盘游标 selectedIndex 是「扁平索引」（跨组连续），active = 扁平下标命中。
+ * 滚动定位用 querySelectorAll('button')[index]：组标题是 <div> 不计入，按钮即命令行，
+ * 故扁平下标与按钮顺序一一对应，分组插入标题不影响定位。
  *
  * 所有交互通过 expose 给 extension 调用：
- * - update(query)  : 用户键入字符，刷新过滤
- * - onKeyDown(evt) : 键盘事件透传（上/下/Enter）
+ * - updateQuery(query) : 用户键入字符，刷新过滤
+ * - updateRange(range) : "/xxx" 区间随键入增长，run 时据此 deleteRange
+ * - onKeyDown(evt)     : 键盘事件透传（上/下/Enter）
  */
 const props = defineProps<{
   editor: Editor;
@@ -30,6 +39,7 @@ const props = defineProps<{
 
 const { labelOf } = useSlashI18n();
 const { t } = useLang();
+const { pickAndInsert } = useImageInsert();
 
 const query = ref("");
 // 当前 "/xxx" 区间：随用户键入增长。不能直接用 props.range——它只在挂载
@@ -39,47 +49,48 @@ const selectedIndex = ref(0);
 const listRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 
-const items = computed(() => filterSlashCommands(query.value, labelOf));
+/** 过滤后的分组（保留组标题，丢弃空组） */
+const groups = computed(() => filterSlashGroups(query.value, labelOf));
+/** 跨组扁平命令列表：键盘导航与 run 的真源 */
+const flatItems = computed<SlashCommand[]>(() =>
+  groups.value.flatMap((g) => g.commands),
+);
 
-/** 弹层位置（绝对 viewport 坐标，按需翻转） */
-const position = ref({ top: 0, left: 0 });
-
-const VIEWPORT_PADDING = 8; // 距离视窗边缘的最小留白
-const ANCHOR_GAP = 8; // 菜单与 "/" 的间距
+/** 映射成 CategoryMenu 数据：list 布局 + 组标题，active 走扁平下标 */
+const menuGroups = computed<MenuGroup[]>(() => {
+  let flatIndex = 0;
+  return groups.value.map((group) => ({
+    key: group.labelKey ?? "more",
+    title: group.labelKey
+      ? t(`views.admin.PostEditor.content.slashMenu.groups.${group.labelKey}`)
+      : undefined,
+    layout: "list",
+    items: group.commands.map<MenuItem>((cmd) => {
+      const index = flatIndex++;
+      return {
+        key: cmd.id,
+        icon: cmd.icon,
+        iconClass: cmd.color,
+        label: labelOf(cmd),
+        danger: group.danger,
+        active: index === selectedIndex.value,
+        onSelect: () => select(index),
+      };
+    }),
+  }));
+});
 
 /**
- * 算菜单位置：
- * 1. 默认贴 "/" 下方
- * 2. 下方剩余空间装不下完整菜单 → 翻到上方
- * 3. left 超出右边界 → 向左 clamp
+ * 弹层位置：贴 "/" 下方，空间不足翻上，左对齐 "/" 并 clamp 进视口。
+ * 复用编辑器统一的浮层智能定位逻辑（见 useAnchoredPosition）。
  */
-const updatePosition = () => {
-  const rect = props.clientRect();
-  const panel = panelRef.value;
-  if (!rect || !panel) return;
-
-  const panelRect = panel.getBoundingClientRect();
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  // 垂直：默认下方，空间不足则翻上
-  const spaceBelow = vh - rect.bottom - VIEWPORT_PADDING;
-  const spaceAbove = rect.top - VIEWPORT_PADDING;
-  const placeBelow =
-    spaceBelow >= panelRect.height + ANCHOR_GAP || spaceBelow >= spaceAbove; // 都装不下时选空间多的一侧
-  const top = placeBelow
-    ? rect.bottom + ANCHOR_GAP
-    : rect.top - panelRect.height - ANCHOR_GAP;
-
-  // 水平：左对齐 "/"，超出右边界则向左收
-  const maxLeft = vw - panelRect.width - VIEWPORT_PADDING;
-  const left = Math.max(VIEWPORT_PADDING, Math.min(rect.left, maxLeft));
-
-  position.value = { top, left };
-};
+const { position, update: updatePosition } = useAnchoredPosition({
+  getAnchorRect: () => props.clientRect(),
+  getPanel: () => panelRef.value,
+});
 
 /** items 变化菜单高度变 → 下一帧重新定位 */
-watch(items, () => {
+watch(groups, () => {
   selectedIndex.value = 0;
   nextTick(updatePosition);
 });
@@ -90,13 +101,16 @@ onMounted(() => {
 });
 
 const select = (index: number) => {
-  const cmd = items.value[index];
+  const cmd = flatItems.value[index];
   if (!cmd) return;
   cmd.run(props.editor, currentRange.value);
+  // 图片项：run 只删了 "/img" 文本，这里接着弹文件框上传插入
+  // （pickAndInsert 依赖 setup 的 useImageInsert，故由组件而非命令 run 触发）
+  if (cmd.id === "image") pickAndInsert(props.editor);
 };
 
 const onArrow = (delta: 1 | -1) => {
-  const len = items.value.length;
+  const len = flatItems.value.length;
   if (len === 0) return;
   selectedIndex.value = (selectedIndex.value + delta + len) % len;
   scrollSelectedIntoView();
@@ -106,12 +120,17 @@ const onEnter = () => {
   select(selectedIndex.value);
 };
 
+/** 鼠标悬停同步键盘游标（item.key === cmd.id） */
+const onHover = (item: MenuItem) => {
+  const index = flatItems.value.findIndex((c) => c.id === item.key);
+  if (index >= 0) selectedIndex.value = index;
+};
+
 const scrollSelectedIntoView = () => {
   nextTick(() => {
-    const list = listRef.value;
-    if (!list) return;
-    const item = list.children[selectedIndex.value] as HTMLElement | undefined;
-    item?.scrollIntoView({ block: "nearest" });
+    // 组标题为 <div>，命令行为 <button>，故按钮顺序 == 扁平下标顺序
+    const buttons = panelRef.value?.querySelectorAll<HTMLElement>("button");
+    buttons?.[selectedIndex.value]?.scrollIntoView({ block: "nearest" });
   });
 };
 
@@ -147,31 +166,17 @@ defineExpose({
   <Teleport to="body">
     <div
       ref="panelRef"
-      class="fixed z-50 bg-bg-card border border-border/40 rounded-xl shadow-xl py-1.5 min-w-56 max-h-80 overflow-hidden flex flex-col"
+      class="fixed z-50 flex max-h-80 min-w-56 flex-col overflow-hidden rounded-xl border border-border/40 bg-bg-card py-1.5 shadow-xl"
       :style="{ top: `${position.top}px`, left: `${position.left}px` }"
     >
       <div
-        v-if="items.length === 0"
-        class="px-3 py-3 text-sm text-fg-soft text-center"
+        v-if="flatItems.length === 0"
+        class="px-3 py-3 text-center text-sm text-fg-soft"
       >
         {{ t("views.admin.PostEditor.content.slashMenu.empty") }}
       </div>
-      <div
-        v-else
-        ref="listRef"
-        class="overflow-y-auto px-1 flex flex-col gap-0.5"
-      >
-        <ButtonSecondary
-          v-for="(cmd, i) in items"
-          :key="cmd.id"
-          :is-active="i === selectedIndex"
-          :text="labelOf(cmd)"
-          class="w-full justify-start px-2.5 py-1.5 text-sm"
-          @mousedown.prevent="select(i)"
-          @mouseenter="selectedIndex = i"
-        >
-          <component :is="cmd.icon" class="w-4 h-4 shrink-0" />
-        </ButtonSecondary>
+      <div v-else ref="listRef" class="overflow-y-auto px-1">
+        <CategoryMenu :groups="menuGroups" @hover="onHover" />
       </div>
     </div>
   </Teleport>

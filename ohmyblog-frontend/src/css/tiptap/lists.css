@@ -67,3 +67,44 @@
 .tiptap :is(ul, ol) li :is(h1, h2, h3, h4, h5, h6) {
   margin-top: 0;
 }
+
+/* ── 有序列表序号：可交互元素（仅编辑态，OrderedListNumber 扩展注入 widget） ── */
+/* 编辑器根带 .ol-interactive → 隐藏 ol 的 ::before 计数器，改用真实可交互的 .ol-number。
+   只读前台（PostContent）不加载该扩展、无此类，仍用 CSS 计数器，前后台互不影响。 */
+.tiptap.ol-interactive ol > li > :first-child::before {
+  content: none;
+}
+
+/* 真实序号：主题色、行内、hover 主题色高亮框 + 「设置编号」tooltip */
+.tiptap .ol-number {
+  position: relative;
+  display: inline-block;
+  margin-right: 0.35em;
+  padding: 0 0.15em;
+  border-radius: 4px;
+  color: var(--theme-accent);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.12s ease;
+}
+.tiptap .ol-number:hover {
+  background: color-mix(in oklch, var(--theme-accent) 18%, transparent);
+}
+.tiptap .ol-number:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  padding: 0.35rem 0.5rem;
+  background: oklch(0.2 0.02 var(--app-hue));
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1;
+  pointer-events: none;
+}

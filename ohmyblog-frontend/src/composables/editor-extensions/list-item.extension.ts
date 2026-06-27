@@ -10,16 +10,8 @@ import { Decoration, DecorationSet } from "prosemirror-view";
  * - Enter：若在标题列表项内换行，延续相同标题级别；否则走默认 splitListItem
  * - Tab / Shift-Tab：保留原缩进/取消缩进快捷键
  *
- * //TODO(ordered-list-hover-menu):
- * - 新增“有序列表 hover 高亮 + 点击弹出菜单”的交互：
- *   - hover 到 orderedList / listItem 区域时，类似 link hover 的背景高亮
- *   - 点击后弹出 DropButton 菜单（ButtonSecondary 风格 item，icon + text）
- *   - 菜单项：
- *     - 继续之前的编号（从上一段 orderedList 的末尾继续）
- *     - 开始新列表（start=1）
- *     - 修改编号值（设置 orderedList.attrs.start）
- *   方向：ProseMirror Plugin + DecorationSet 计算 hover range；点击定位到对应 orderedList；
- *   或者实现一个 NodeView/Overlay 组件承载交互层。
+ * 注：有序列表的「起始编号」hover 菜单已独立实现，见
+ * menus/ordered-list/PostEditorOrderedListControls.vue（浮层 + CategoryMenu）。
  */
 export const CustomListItem = ListItem.extend({
   content: "(paragraph | heading) block*",

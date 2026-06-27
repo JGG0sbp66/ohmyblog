@@ -7,6 +7,8 @@ import { useLang } from "@/composables/lang.hook";
 import { useTableGeometry } from "./composables/use-table-geometry";
 import { useCellSelection } from "./composables/use-cell-selection";
 import { useTableInsert } from "./composables/use-table-insert";
+import { useTableReorder } from "./composables/use-table-reorder";
+import TableBlockHandle from "./TableBlockHandle.vue";
 
 /**
  * PostEditorTableControls — 表格行/列把手 + 行列间「+」插入点（滑动窗口模型）
@@ -17,6 +19,8 @@ import { useTableInsert } from "./composables/use-table-insert";
  * - 行把手条 / 行插入点：完全固定（行不横向移动）。
  *
  * 整组 z-40 置于编辑区之上；外壳 pointer-events-none，仅把手/插入点可点。
+ *
+ * 左上角块手柄（TableBlockHandle）：行/列把手条拐角处，hover 弹出剪切/复制/删除整表菜单。
  */
 const props = defineProps<{
   editor: Editor;
@@ -30,6 +34,7 @@ const { geometry, scrollLeft } = useTableGeometry(
 );
 const { selectColumn, selectRow } = useCellSelection(props.editor);
 const { insertColumn, insertRow } = useTableInsert(props.editor);
+const { reorder, begin } = useTableReorder(props.editor);
 
 const THICKNESS = 8;
 const GUTTER = 28;
@@ -81,6 +86,18 @@ const rowBounds = computed<Bound[]>(() => {
 
 <template>
   <template v-if="geometry">
+    <!-- 左上角块手柄：卡片浮在表格左上角外侧（右下角对齐表格左上角） -->
+    <div
+      v-if="geometry.rows.length"
+      class="th-corner"
+      :style="{
+        left: `${geometry.clip.left}px`,
+        top: `${geometry.clip.top}px`,
+      }"
+    >
+      <TableBlockHandle :editor="editor" :cell-el="geometry.rows[0]!.cellEl" />
+    </div>
+
     <!-- 列把手条：固定圆角窗 + 内层段轨道滑动 -->
     <div
       class="th-shell rounded-t-md"
@@ -97,12 +114,17 @@ const rowBounds = computed<Bound[]>(() => {
           :key="`col-${i}`"
           type="button"
           class="th-seg h-full transition-colors"
-          :class="{ 'is-active': col.active }"
+          :class="{
+            'is-active': col.active,
+            'is-dragging': reorder?.axis === 'col' && reorder.from === i,
+          }"
           :style="{ width: `${col.size}px` }"
           :aria-label="
             t('views.admin.PostEditor.content.tableControls.selectColumn')
           "
-          @mousedown.prevent="selectColumn(col.cellEl)"
+          @mousedown.prevent="
+            begin('col', i, col.cellEl, $event, () => selectColumn(col.cellEl))
+          "
         />
       </div>
     </div>
@@ -135,10 +157,19 @@ const rowBounds = computed<Bound[]>(() => {
             :style="{ height: `${geometry.tableHeight}px` }"
           />
         </button>
+
+        <!-- 列拖拽落点线 -->
+        <span
+          v-if="reorder?.axis === 'col' && colBounds[reorder.boundary]"
+          class="th-drop th-drop-v"
+          :style="{
+            left: `${colBounds[reorder.boundary]!.offset}px`,
+            top: `${GUTTER}px`,
+            height: `${geometry.tableHeight}px`,
+          }"
+        />
       </div>
     </div>
-
-    <!-- 行把手条：固定圆角窗 -->
     <div
       class="th-shell rounded-l-md"
       :style="{
@@ -154,12 +185,17 @@ const rowBounds = computed<Bound[]>(() => {
           :key="`row-${i}`"
           type="button"
           class="th-seg w-full transition-colors"
-          :class="{ 'is-active': row.active }"
+          :class="{
+            'is-active': row.active,
+            'is-dragging': reorder?.axis === 'row' && reorder.from === i,
+          }"
           :style="{ height: `${row.size}px` }"
           :aria-label="
             t('views.admin.PostEditor.content.tableControls.selectRow')
           "
-          @mousedown.prevent="selectRow(row.cellEl)"
+          @mousedown.prevent="
+            begin('row', i, row.cellEl, $event, () => selectRow(row.cellEl))
+          "
         />
       </div>
     </div>
@@ -191,6 +227,17 @@ const rowBounds = computed<Bound[]>(() => {
           :style="{ width: `${geometry.clip.width}px` }"
         />
       </button>
+
+      <!-- 行拖拽落点线 -->
+      <span
+        v-if="reorder?.axis === 'row' && rowBounds[reorder.boundary]"
+        class="th-drop th-drop-h"
+        :style="{
+          top: `${rowBounds[reorder.boundary]!.offset}px`,
+          left: `${GUTTER}px`,
+          width: `${geometry.clip.width}px`,
+        }"
+      />
     </div>
   </template>
 </template>
@@ -204,9 +251,18 @@ const rowBounds = computed<Bound[]>(() => {
   pointer-events: none;
 }
 
+/* 左上角块手柄容器：卡片右下角对齐表格左上角，浮在左上方外侧；在外壳之上可点 */
+.th-corner {
+  position: absolute;
+  z-index: 50;
+  transform: translate(-100%, -100%);
+  pointer-events: auto;
+}
+
 /* ── 行/列把手段（无分隔线，连续一条） ── */
 .th-seg {
   pointer-events: auto;
+  cursor: grab;
   background: color-mix(in srgb, var(--theme-fg-muted) 14%, transparent);
 }
 .th-seg:hover {
@@ -215,6 +271,11 @@ const rowBounds = computed<Bound[]>(() => {
 .th-seg.is-active,
 .th-seg.is-active:hover {
   background: var(--theme-accent);
+}
+/* 拖拽中的源行/列把手：半透明强调色，提示「正在移动」 */
+.th-seg.is-dragging {
+  background: color-mix(in srgb, var(--theme-accent) 55%, transparent);
+  cursor: grabbing;
 }
 
 /* ── 行列间「+」插入点 ── */
@@ -268,5 +329,22 @@ const rowBounds = computed<Bound[]>(() => {
 .th-ins:hover .th-ins-line-v,
 .th-ins:hover .th-ins-line-h {
   opacity: 1;
+}
+
+/* ── 拖拽落点线（重排时显示，比插入线略粗以区分） ── */
+.th-drop {
+  position: absolute;
+  z-index: 1;
+  background: var(--theme-accent);
+  border-radius: 9999px;
+  pointer-events: none;
+}
+.th-drop-v {
+  width: 3px;
+  transform: translateX(-50%);
+}
+.th-drop-h {
+  height: 3px;
+  transform: translateY(-50%);
 }
 </style>

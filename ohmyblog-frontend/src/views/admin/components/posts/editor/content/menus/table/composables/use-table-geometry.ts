@@ -16,8 +16,11 @@ import type { Editor } from "@tiptap/core";
  * 外壳随 container 一起移动、相对位置不变，故无需在滚动时重算几何。
  */
 
-const HIT_MARGIN_NEAR = 18;
-const HIT_MARGIN_FAR = 4;
+// 命中区：鼠标进入「表格周边一圈」即显示控件（含左上角手柄）。
+// NEAR（左 / 上）更大——把手条、行列插入点、左上角手柄都在这一侧，需覆盖到手柄区；
+// FAR（右 / 下）适当放宽，让表格四周一圈都能触发显示，手柄不易够不到。
+const HIT_MARGIN_NEAR = 48;
+const HIT_MARGIN_FAR = 32;
 
 export interface HandleSegment {
   size: number;
@@ -113,6 +116,14 @@ export function useTableGeometry(
   const scheduleCompute = () => requestAnimationFrame(compute);
 
   const onMouseMove = (e: MouseEvent) => {
+    // 指针落在表格覆盖层控件（把手 / 插入点 / 左上角手柄及其菜单）上时，
+    // 保持当前 hovered 不变 —— 否则移向表格外侧的手柄会离开命中区导致整组消失。
+    if (
+      e.target instanceof Element &&
+      e.target.closest(".th-shell, .th-corner")
+    )
+      return;
+
     const tables = Array.from(editor.view.dom.querySelectorAll("table"));
     const { clientX: x, clientY: y } = e;
     const hit =

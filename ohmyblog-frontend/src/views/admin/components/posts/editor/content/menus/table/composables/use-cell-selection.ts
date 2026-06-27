@@ -14,7 +14,7 @@ import { CellSelection } from "@tiptap/pm/tables";
  */
 
 /** 由单元格 DOM 反解出「指向该格前面」的 ResolvedPos（colSelection/rowSelection 所需的 $anchorCell） */
-const resolveCellBefore = (editor: Editor, cellEl: HTMLElement) => {
+export const resolveCellBefore = (editor: Editor, cellEl: HTMLElement) => {
   const pos = editor.view.posAtDOM(cellEl, 0);
   if (pos < 0) return null;
   const $pos = editor.state.doc.resolve(pos);

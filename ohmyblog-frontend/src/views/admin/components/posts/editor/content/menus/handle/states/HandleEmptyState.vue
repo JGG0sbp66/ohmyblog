@@ -15,6 +15,7 @@ defineProps<{ editor: Editor }>();
 <template>
   <DropButton
     trigger-class=""
+    content-class="w-52 p-1.5"
     pop-offset="mt-2"
     bridge-height="h-2"
     placement="left-0"

@@ -30,6 +30,17 @@ export const useTableCommands = () => {
     return sel instanceof CellSelection ? sel : null;
   };
 
+  /** 选区是否落在表格单元格内（含光标在单格、跨格 CellSelection） */
+  const isInTable = (e: Editor): boolean => {
+    if (e.state.selection instanceof CellSelection) return true;
+    const { $anchor } = e.state.selection;
+    for (let d = $anchor.depth; d > 0; d--) {
+      const name = $anchor.node(d).type.name;
+      if (name === "tableCell" || name === "tableHeader") return true;
+    }
+    return false;
+  };
+
   // ── 合并 / 拆分 ──
   const canMergeOrSplit = (e: Editor): boolean => e.can().mergeOrSplit();
   const isMergeMode = (e: Editor): boolean => e.can().mergeCells();
@@ -55,7 +66,25 @@ export const useTableCommands = () => {
 
   /** 区域整体是否显示 */
   const showTableSection = (e: Editor): boolean =>
-    canMergeOrSplit(e) || hasLineSelection(e);
+    canMergeOrSplit(e) || hasLineSelection(e) || isInTable(e);
+
+  // ── 单元格背景色 ──
+  /** 当前格背景色（跨格取锚点格；单格取所在 cell 节点） */
+  const currentCellBg = (e: Editor): string | null => {
+    const sel = cellSelection(e);
+    if (sel) return sel.$anchorCell.nodeAfter?.attrs.backgroundColor ?? null;
+    const { $anchor } = e.state.selection;
+    for (let d = $anchor.depth; d > 0; d--) {
+      const node = $anchor.node(d);
+      if (node.type.name === "tableCell" || node.type.name === "tableHeader")
+        return (node.attrs.backgroundColor as string | null) ?? null;
+    }
+    return null;
+  };
+  /** 设置 / 清除（color=null）当前选中格背景色；跨格作用所有选中格 */
+  const setCellBg = (e: Editor, color: string | null): void => {
+    e.chain().focus().setCellAttribute("backgroundColor", color).run();
+  };
 
   // ── 设为表头（行选区 → 表头行；列选区 → 表头列） ──
   const headerIconOf = (e: Editor): Component =>
@@ -95,6 +124,10 @@ export const useTableCommands = () => {
     // section visibility & line selection
     showTableSection,
     hasLineSelection,
+    isInTable,
+    // cell background
+    currentCellBg,
+    setCellBg,
     // set header
     headerIconOf,
     headerLabel,

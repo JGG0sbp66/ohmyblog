@@ -452,23 +452,57 @@
             "languageEmpty": "No matching language"
           },
           "slashMenu": {
-            "empty": "No matching commands"
+            "empty": "No matching commands",
+            "groups": { "basic": "Basic", "common": "Common", "list": "List" }
           },
           "slashCommands": {
             "table": { "label": "Table" },
+            "image": { "label": "Image" },
             "clearFormatting": { "label": "Clear formatting" }
+          },
+          "colorMenu": {
+            "tooltip": "Text / background color",
+            "textColor": "Text color",
+            "bgColor": "Background color",
+            "colors": {
+              "default": "Default",
+              "none": "None",
+              "gray": "Gray",
+              "brown": "Brown",
+              "orange": "Orange",
+              "yellow": "Yellow",
+              "green": "Green",
+              "blue": "Blue",
+              "purple": "Purple",
+              "pink": "Pink",
+              "red": "Red",
+              "custom": "Custom"
+            }
           },
           "tablePicker": {
             "label": "Table",
             "hint": "Select table size",
             "dimensions": "{rows} × {cols}"
           },
+          "imagePicker": {
+            "label": "Image"
+          },
+          "orderedListMenu": {
+            "continue": "Continue numbering",
+            "startNew": "Start from 1",
+            "setStart": "Start at",
+            "tooltip": "Set numbering"
+          },
           "tableMenu": {
             "mergeCells": "Merge cells",
             "splitCell": "Split cell",
             "setHeader": "Set as header",
             "deleteRow": "Delete row",
-            "deleteColumn": "Delete column"
+            "deleteColumn": "Delete column",
+            "cellBackground": "Cell background",
+            "cut": "Cut table",
+            "copy": "Copy table",
+            "deleteTable": "Delete table"
           },
           "tableControls": {
             "selectColumn": "Select column",

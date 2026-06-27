@@ -447,23 +447,57 @@
             "languageEmpty": "未匹配语言"
           },
           "slashMenu": {
-            "empty": "没有匹配的命令"
+            "empty": "没有匹配的命令",
+            "groups": { "basic": "基础", "common": "常用", "list": "列表" }
           },
           "slashCommands": {
             "table": { "label": "表格" },
+            "image": { "label": "图片" },
             "clearFormatting": { "label": "清除格式" }
+          },
+          "colorMenu": {
+            "tooltip": "字体颜色 / 背景色",
+            "textColor": "字体颜色",
+            "bgColor": "背景颜色",
+            "colors": {
+              "default": "默认",
+              "none": "无",
+              "gray": "灰色",
+              "brown": "棕色",
+              "orange": "橙色",
+              "yellow": "黄色",
+              "green": "绿色",
+              "blue": "蓝色",
+              "purple": "紫色",
+              "pink": "粉色",
+              "red": "红色",
+              "custom": "自定义"
+            }
           },
           "tablePicker": {
             "label": "表格",
             "hint": "选择表格尺寸",
             "dimensions": "{rows} × {cols}"
           },
+          "imagePicker": {
+            "label": "图片"
+          },
+          "orderedListMenu": {
+            "continue": "继续上一段编号",
+            "startNew": "从 1 开始",
+            "setStart": "起始编号",
+            "tooltip": "设置编号"
+          },
           "tableMenu": {
             "mergeCells": "合并单元格",
             "splitCell": "拆分单元格",
             "setHeader": "设为表头",
             "deleteRow": "删除行",
-            "deleteColumn": "删除列"
+            "deleteColumn": "删除列",
+            "cellBackground": "单元格背景色",
+            "cut": "剪切表格",
+            "copy": "复制表格",
+            "deleteTable": "删除表格"
           },
           "tableControls": {
             "selectColumn": "选中整列",
