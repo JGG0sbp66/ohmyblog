@@ -1,11 +1,13 @@
 <!-- src/views/admin/components/posts/editor/content/menus/table/TableBlockHandle.vue -->
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { Editor } from "@tiptap/core";
 import { GripVertical, Scissors, Copy, Trash2 } from "lucide-vue-next";
 import { RiTableView } from "@remixicon/vue";
 import DropButton from "@/components/common/button/DropButton.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
+import CategoryMenu from "../category-menu/CategoryMenu.vue";
+import type { MenuGroup } from "../category-menu/category-menu.types";
 import { useLang } from "@/composables/lang.hook";
 import { useTableBlock } from "./composables/use-table-block";
 import { useBlockDrag } from "../handle/composables/use-block-drag";
@@ -31,6 +33,41 @@ const run = (fn: (el: HTMLElement) => void) => {
   fn(props.cellEl);
   dropRef.value?.close();
 };
+
+/** 菜单分组（数据驱动 CategoryMenu）：剪切/复制 一组，删除整表 单独成组（自动分隔线） */
+const menuGroups = computed<MenuGroup[]>(() => [
+  {
+    key: "clipboard",
+    layout: "list",
+    items: [
+      {
+        key: "cut",
+        icon: Scissors,
+        label: t("views.admin.PostEditor.content.tableMenu.cut"),
+        onSelect: () => run(cutTable),
+      },
+      {
+        key: "copy",
+        icon: Copy,
+        label: t("views.admin.PostEditor.content.tableMenu.copy"),
+        onSelect: () => run(copyTable),
+      },
+    ],
+  },
+  {
+    key: "danger",
+    layout: "list",
+    items: [
+      {
+        key: "deleteTable",
+        icon: Trash2,
+        label: t("views.admin.PostEditor.content.tableMenu.deleteTable"),
+        danger: true,
+        onSelect: () => run(deleteTable),
+      },
+    ],
+  },
+]);
 
 /** 由代表单元格反解出 table 节点的前置位置（NodeSelection 拖拽锚点） */
 const resolveTablePos = (): number => {
@@ -68,32 +105,7 @@ const drag = useBlockDrag(props.editor, resolveTablePos);
       </template>
 
       <template #content>
-        <div class="flex flex-col gap-0.5">
-          <ButtonSecondary
-            class="w-full! justify-start! gap-2.5! px-2.5! py-2!"
-            :text="t('views.admin.PostEditor.content.tableMenu.cut')"
-            @click="run(cutTable)"
-          >
-            <Scissors class="h-4 w-4" />
-          </ButtonSecondary>
-          <ButtonSecondary
-            class="w-full! justify-start! gap-2.5! px-2.5! py-2!"
-            :text="t('views.admin.PostEditor.content.tableMenu.copy')"
-            @click="run(copyTable)"
-          >
-            <Copy class="h-4 w-4" />
-          </ButtonSecondary>
-
-          <div class="my-1 h-px bg-border/40" />
-
-          <ButtonSecondary
-            class="w-full! justify-start! gap-2.5! px-2.5! py-2! text-red-500! hover:text-red-600!"
-            :text="t('views.admin.PostEditor.content.tableMenu.deleteTable')"
-            @click="run(deleteTable)"
-          >
-            <Trash2 class="h-4 w-4" />
-          </ButtonSecondary>
-        </div>
+        <CategoryMenu :groups="menuGroups" />
       </template>
     </DropButton>
 
