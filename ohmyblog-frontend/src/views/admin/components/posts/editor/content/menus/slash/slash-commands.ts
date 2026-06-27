@@ -1,12 +1,13 @@
 // src/views/admin/components/posts/editor/content/menus/slash/slash-commands.ts
 import type { Editor, Range } from "@tiptap/core";
 import type { Component } from "vue";
-import { Eraser } from "lucide-vue-next";
+import { Eraser, Image as ImageIcon } from "lucide-vue-next";
 import { RiTableView } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import {
   BLOCK_COMMANDS,
   TABLE_ICON_COLOR,
+  IMAGE_ICON_COLOR,
   type BlockCommand,
   type BlockCommandId,
 } from "../block-commands";
@@ -93,6 +94,20 @@ const TABLE_COMMAND: SlashCommand = {
   },
 };
 
+const IMAGE_COMMAND: SlashCommand = {
+  id: "image",
+  labelKey: "image",
+  isSlashOnly: true,
+  icon: ImageIcon,
+  color: IMAGE_ICON_COLOR,
+  searchTerms: ["image", "图片", "img", "picture", "photo", "tupian"],
+  // 仅删除 "/img" 文本；弹文件框 + 上传 + 插入由 SlashMenu 选中后接管
+  // （需要 setup 上下文的 useImageInsert，不能写在这个纯模块里）。
+  run: (editor, range) => {
+    editor.chain().focus().deleteRange(range).run();
+  },
+};
+
 const CLEAR_FORMATTING_COMMAND: SlashCommand = {
   id: "clearFormatting",
   labelKey: "clearFormatting",
@@ -130,7 +145,7 @@ export const SLASH_GROUPS: readonly SlashGroup[] = [
   },
   {
     labelKey: "common",
-    commands: [TABLE_COMMAND],
+    commands: [TABLE_COMMAND, IMAGE_COMMAND],
   },
   {
     labelKey: "list",

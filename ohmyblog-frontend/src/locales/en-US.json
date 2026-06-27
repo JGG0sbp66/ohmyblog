@@ -457,6 +457,7 @@
           },
           "slashCommands": {
             "table": { "label": "Table" },
+            "image": { "label": "Image" },
             "clearFormatting": { "label": "Clear formatting" }
           },
           "colorMenu": {
@@ -482,6 +483,9 @@
             "label": "Table",
             "hint": "Select table size",
             "dimensions": "{rows} × {cols}"
+          },
+          "imagePicker": {
+            "label": "Image"
           },
           "tableMenu": {
             "mergeCells": "Merge cells",

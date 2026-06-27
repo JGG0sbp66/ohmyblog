@@ -9,9 +9,7 @@ import PostEditorBubbleMenu from "./menus/bubble/PostEditorBubbleMenu.vue";
 import PostEditorImageBubbleMenu from "./menus/bubble/PostEditorImageBubbleMenu.vue";
 import PostEditorFloatingHandle from "./menus/handle/PostEditorFloatingHandle.vue";
 import PostEditorTableControls from "./menus/table/PostEditorTableControls.vue";
-import { uploadPostImage } from "@/api/upload.api";
-import { useToast } from "@/composables/toast.hook";
-import { useLang } from "@/composables/lang.hook";
+import { useImageInsert } from "./composables/use-image-insert";
 
 /**
  * PostEditorBody — Tiptap 富文本编辑区
@@ -29,8 +27,7 @@ const selectedCharCount = defineModel<number>("selectedCharCount", {
 });
 const containerRef = ref<HTMLElement | null>(null);
 
-const { t } = useLang();
-const uuid = useRoute().params.uuid as string;
+const { uploadAndInsert: uploadAndInsertImage } = useImageInsert();
 
 /**
  * 标记最近一次 model 写入是由编辑器内部 onUpdate 触发的。
@@ -41,21 +38,6 @@ const uuid = useRoute().params.uuid as string;
  * watch 触发后立刻把标记复位，下一次外部（父组件加载文章）的 model 写入仍能正常 setContent。
  */
 let internalUpdate = false;
-
-/**
- * 把图片文件上传到后端，成功后插入到当前光标位置
- */
-const uploadAndInsertImage = (editor: Editor, file: File) => {
-  uploadPostImage(uuid, { image: file })
-    .then((result) => {
-      if (!result?.url) return;
-      editor.chain().focus().setImage({ src: result.url }).run();
-    })
-    .catch((e: unknown) => {
-      const msg = typeof e === "string" ? e : (e as any)?.message || "Error";
-      useToast.error(t(`api.errors.${msg}`));
-    });
-};
 
 /**
  * 同步字数：总数 + 当前选区。

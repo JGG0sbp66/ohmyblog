@@ -5,6 +5,7 @@ import type { Editor, Range } from "@tiptap/core";
 import { useLang } from "@/composables/lang.hook";
 import CategoryMenu from "../category-menu/CategoryMenu.vue";
 import type { MenuGroup, MenuItem } from "../category-menu/category-menu.types";
+import { useImageInsert } from "../../composables/use-image-insert";
 import {
   filterSlashGroups,
   useSlashI18n,
@@ -37,6 +38,7 @@ const props = defineProps<{
 
 const { labelOf } = useSlashI18n();
 const { t } = useLang();
+const { pickAndInsert } = useImageInsert();
 
 const query = ref("");
 // 当前 "/xxx" 区间：随用户键入增长。不能直接用 props.range——它只在挂载
@@ -129,6 +131,9 @@ const select = (index: number) => {
   const cmd = flatItems.value[index];
   if (!cmd) return;
   cmd.run(props.editor, currentRange.value);
+  // 图片项：run 只删了 "/img" 文本，这里接着弹文件框上传插入
+  // （pickAndInsert 依赖 setup 的 useImageInsert，故由组件而非命令 run 触发）
+  if (cmd.id === "image") pickAndInsert(props.editor);
 };
 
 const onArrow = (delta: 1 | -1) => {

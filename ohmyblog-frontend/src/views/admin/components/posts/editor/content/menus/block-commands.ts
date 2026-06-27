@@ -183,6 +183,14 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
  */
 export const TABLE_ICON_COLOR = "text-teal-500 dark:text-teal-400";
 
+/**
+ * 图片图标语义色（单一真源）
+ *
+ * 图片同样不是 BlockCommand（走「上传 + setImage」而非块切换命令），但在菜单里作为
+ * 可插入块与块命令并列。handle 菜单 / slash 菜单的图片项共用此值。
+ */
+export const IMAGE_ICON_COLOR = "text-pink-500 dark:text-pink-400";
+
 const COMMAND_BY_ID = new Map(BLOCK_COMMANDS.map((c) => [c.id, c]));
 
 /**

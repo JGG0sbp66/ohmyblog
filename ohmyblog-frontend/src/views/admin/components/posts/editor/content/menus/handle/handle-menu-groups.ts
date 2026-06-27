@@ -15,7 +15,8 @@ import type { BlockCommandId } from "../block-commands";
  */
 export type HandleMenuEntry =
   | { type: "command"; id: BlockCommandId }
-  | { type: "table" };
+  | { type: "table" }
+  | { type: "image" };
 
 export interface HandleMenuGroup {
   /** i18n key，相对 views.admin.PostEditor.content.handleMenu.groups */
@@ -45,7 +46,7 @@ export const HANDLE_MENU_GROUPS: readonly HandleMenuGroup[] = [
   {
     labelKey: "common",
     layout: "list",
-    entries: [{ type: "table" }],
+    entries: [{ type: "table" }, { type: "image" }],
   },
   {
     labelKey: "list",

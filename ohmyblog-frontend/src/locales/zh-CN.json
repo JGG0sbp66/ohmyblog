@@ -452,6 +452,7 @@
           },
           "slashCommands": {
             "table": { "label": "表格" },
+            "image": { "label": "图片" },
             "clearFormatting": { "label": "清除格式" }
           },
           "colorMenu": {
@@ -477,6 +478,9 @@
             "label": "表格",
             "hint": "选择表格尺寸",
             "dimensions": "{rows} × {cols}"
+          },
+          "imagePicker": {
+            "label": "图片"
           },
           "tableMenu": {
             "mergeCells": "合并单元格",

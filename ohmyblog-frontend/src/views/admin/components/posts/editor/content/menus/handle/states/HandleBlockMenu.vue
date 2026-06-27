@@ -2,14 +2,16 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Editor } from "@tiptap/core";
+import { Image as ImageIcon } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import { HANDLE_MENU_GROUPS } from "../handle-menu-groups";
-import { useBlockCommands } from "../../block-commands";
+import { useBlockCommands, IMAGE_ICON_COLOR } from "../../block-commands";
 import CategoryMenu from "../../category-menu/CategoryMenu.vue";
 import type {
   MenuGroup,
   MenuItem,
 } from "../../category-menu/category-menu.types";
+import { useImageInsert } from "../../../composables/use-image-insert";
 import HandleTableMenuItem from "./HandleTableMenuItem.vue";
 
 /**
@@ -27,6 +29,7 @@ const props = defineProps<{ editor: Editor }>();
 
 const { t } = useLang();
 const { commands, labelOf, tooltipOf } = useBlockCommands();
+const { pickAndInsert } = useImageInsert();
 const byId = new Map(commands.map((c) => [c.id, c] as const));
 
 const menuGroups = computed<MenuGroup[]>(() =>
@@ -44,6 +47,17 @@ const menuGroups = computed<MenuGroup[]>(() =>
             key: "table",
             slot: "table",
             label: t("views.admin.PostEditor.content.tablePicker.label"),
+          },
+        ];
+      }
+      if (entry.type === "image") {
+        return [
+          {
+            key: "image",
+            icon: ImageIcon,
+            iconClass: IMAGE_ICON_COLOR,
+            label: t("views.admin.PostEditor.content.imagePicker.label"),
+            onSelect: () => pickAndInsert(props.editor),
           },
         ];
       }
