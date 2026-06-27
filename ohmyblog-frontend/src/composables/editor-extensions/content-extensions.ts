@@ -83,6 +83,7 @@ export function getContentExtensions(opts: ContentExtensionsOptions = {}) {
       codeBlock: false, // 由 CustomCodeBlock 替代，挂载 Vue NodeView + lowlight
       link: false, // 由下方 Link.configure 替代（v3 StarterKit 已内置）
       underline: false, // 由 CustomUnderline 替代（v3 StarterKit 已内置）
+      trailingNode: false, // 由自定义 TrailingNode 替代（见 trailing-node.extension），避免与 v3 内置重名冲突
       // 拖拽 drop 时的指示器：默认 1px 浅色几乎看不见，加粗 + 主题色让落点清晰
       dropcursor: {
         color: "var(--theme-accent)",

@@ -67,7 +67,6 @@ const onSelect = (item: MenuItem) => {
               :danger="item.danger"
               size="w-8 h-8"
               @click="onSelect(item)"
-              @mouseenter="emit('hover', item)"
             >
               <component :is="item.icon" :class="['h-5 w-5', item.iconClass]" />
             </IconTipButton>
