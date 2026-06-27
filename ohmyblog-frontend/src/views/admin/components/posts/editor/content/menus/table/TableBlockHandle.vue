@@ -88,7 +88,7 @@ const drag = useBlockDrag(props.editor, resolveTablePos);
 
 <template>
   <div
-    class="flex items-center gap-0.5 rounded-lg border border-border/30 bg-bg-card px-1 py-0.5 shadow-sm select-none"
+    class="flex items-center gap-0.5 rounded-lg border border-border/40 bg-bg-card px-1 py-0.5 shadow-sm select-none"
   >
     <!-- table icon：仅此处触发菜单 + 高亮 -->
     <DropButton
