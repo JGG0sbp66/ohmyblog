@@ -447,7 +447,8 @@
             "languageEmpty": "未匹配语言"
           },
           "slashMenu": {
-            "empty": "没有匹配的命令"
+            "empty": "没有匹配的命令",
+            "groups": { "basic": "基础", "common": "常用", "list": "列表" }
           },
           "slashCommands": {
             "table": { "label": "表格" },

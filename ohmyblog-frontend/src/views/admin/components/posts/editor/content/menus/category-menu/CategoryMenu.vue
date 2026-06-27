@@ -23,7 +23,10 @@ import type { MenuGroup, MenuItem } from "./category-menu.types";
  */
 defineProps<{ groups: MenuGroup[] }>();
 
-const emit = defineEmits<{ select: [item: MenuItem] }>();
+const emit = defineEmits<{
+  select: [item: MenuItem];
+  hover: [item: MenuItem];
+}>();
 
 const onSelect = (item: MenuItem) => {
   if (item.disabled) return;
@@ -64,6 +67,7 @@ const onSelect = (item: MenuItem) => {
               :danger="item.danger"
               size="w-8 h-8"
               @click="onSelect(item)"
+              @mouseenter="emit('hover', item)"
             >
               <component :is="item.icon" class="h-5 w-5" />
             </IconTipButton>
@@ -83,7 +87,8 @@ const onSelect = (item: MenuItem) => {
               :is-active="item.active"
               :disabled="item.disabled"
               :text="item.label"
-              @click="onSelect(item)"
+              @mousedown.prevent="onSelect(item)"
+              @mouseenter="emit('hover', item)"
             >
               <component :is="item.icon" class="h-4 w-4" />
             </ButtonSecondary>

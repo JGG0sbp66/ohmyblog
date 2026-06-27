@@ -452,7 +452,8 @@
             "languageEmpty": "No matching language"
           },
           "slashMenu": {
-            "empty": "No matching commands"
+            "empty": "No matching commands",
+            "groups": { "basic": "Basic", "common": "Common", "list": "List" }
           },
           "slashCommands": {
             "table": { "label": "Table" },
