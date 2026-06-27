@@ -13,7 +13,7 @@ import { useLang } from "@/composables/lang.hook";
  *
  * 职责：
  * - 从路由参数 uuid 加载已有文章数据，初始化表单
- * - 持有编辑器各字段的响应式状态（slug、tags、status、TODO: title/content 等）
+ * - 持有编辑器各字段的响应式状态（slug、title、tags、status、content、coverImage、excerpt 等）
  * - 提供 save() 方法：并行调用 savePost + updatePostStatus
  *
  * 用法：在 PostEditor.page.vue 中调用，通过 v-model 传递给子组件
@@ -115,7 +115,7 @@ export const usePostEditor = () => {
    * 保存文章
    *
    * 分两步并行执行：
-   * 1. savePost() — 保存内容字段（slug、tags、TODO: title/content 等）
+   * 1. savePost() — 保存内容字段（slug、title、tags、content、coverImage、excerpt 等）
    * 2. updatePostStatus() — 更新文章状态（独立接口）
    */
   const save = async () => {
