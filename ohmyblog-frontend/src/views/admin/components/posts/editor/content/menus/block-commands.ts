@@ -174,6 +174,15 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
   },
 ];
 
+/**
+ * 表格图标语义色（单一真源）
+ *
+ * 表格不是 BlockCommand（不在注册表里），但在各菜单里作为「可插入块」与块命令并列，
+ * 需要统一的语义色。TableBlockHandle 手柄 / handle 菜单表格行 / slash 表格命令共用此值，
+ * 避免散落硬编码。与块命令配色保持同一档（teal）。
+ */
+export const TABLE_ICON_COLOR = "text-teal-500 dark:text-teal-400";
+
 const COMMAND_BY_ID = new Map(BLOCK_COMMANDS.map((c) => [c.id, c]));
 
 /**

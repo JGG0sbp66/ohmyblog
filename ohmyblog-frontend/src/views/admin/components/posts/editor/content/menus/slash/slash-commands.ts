@@ -6,6 +6,7 @@ import { RiTableView } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import {
   BLOCK_COMMANDS,
+  TABLE_ICON_COLOR,
   type BlockCommand,
   type BlockCommandId,
 } from "../block-commands";
@@ -78,7 +79,7 @@ const TABLE_COMMAND: SlashCommand = {
   labelKey: "table",
   isSlashOnly: true,
   icon: RiTableView,
-  color: "text-teal-500 dark:text-teal-400",
+  color: TABLE_ICON_COLOR,
   searchTerms: ["table", "表格", "biaoge", "grid"],
   run: (editor, range) => {
     // slash 是键盘流：直接插默认 2 行 3 列（首行表头）。

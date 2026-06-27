@@ -8,6 +8,7 @@ import DropButton from "@/components/common/button/DropButton.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import CategoryMenu from "../category-menu/CategoryMenu.vue";
 import type { MenuGroup } from "../category-menu/category-menu.types";
+import { TABLE_ICON_COLOR } from "../block-commands";
 import { useLang } from "@/composables/lang.hook";
 import { useTableBlock } from "./composables/use-table-block";
 import { useBlockDrag } from "../handle/composables/use-block-drag";
@@ -100,7 +101,7 @@ const drag = useBlockDrag(props.editor, resolveTablePos);
     >
       <template #trigger="{ active }">
         <ButtonSecondary :is-active="active" class="h-7 w-7 p-0 shrink-0">
-          <RiTableView class="h-4 w-4 text-accent" />
+          <RiTableView :class="['h-4 w-4', TABLE_ICON_COLOR]" />
         </ButtonSecondary>
       </template>
 
