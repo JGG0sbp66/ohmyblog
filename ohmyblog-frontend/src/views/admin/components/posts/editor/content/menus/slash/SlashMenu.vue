@@ -6,6 +6,7 @@ import { useLang } from "@/composables/lang.hook";
 import CategoryMenu from "../category-menu/CategoryMenu.vue";
 import type { MenuGroup, MenuItem } from "../category-menu/category-menu.types";
 import { useImageInsert } from "../../composables/use-image-insert";
+import { useAnchoredPosition } from "../../composables/use-anchored-position";
 import {
   filterSlashGroups,
   useSlashI18n,
@@ -79,42 +80,14 @@ const menuGroups = computed<MenuGroup[]>(() => {
   }));
 });
 
-/** 弹层位置（绝对 viewport 坐标，按需翻转） */
-const position = ref({ top: 0, left: 0 });
-
-const VIEWPORT_PADDING = 8; // 距离视窗边缘的最小留白
-const ANCHOR_GAP = 8; // 菜单与 "/" 的间距
-
 /**
- * 算菜单位置：
- * 1. 默认贴 "/" 下方
- * 2. 下方剩余空间装不下完整菜单 → 翻到上方
- * 3. left 超出右边界 → 向左 clamp
+ * 弹层位置：贴 "/" 下方，空间不足翻上，左对齐 "/" 并 clamp 进视口。
+ * 复用编辑器统一的浮层智能定位逻辑（见 useAnchoredPosition）。
  */
-const updatePosition = () => {
-  const rect = props.clientRect();
-  const panel = panelRef.value;
-  if (!rect || !panel) return;
-
-  const panelRect = panel.getBoundingClientRect();
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  // 垂直：默认下方，空间不足则翻上
-  const spaceBelow = vh - rect.bottom - VIEWPORT_PADDING;
-  const spaceAbove = rect.top - VIEWPORT_PADDING;
-  const placeBelow =
-    spaceBelow >= panelRect.height + ANCHOR_GAP || spaceBelow >= spaceAbove; // 都装不下时选空间多的一侧
-  const top = placeBelow
-    ? rect.bottom + ANCHOR_GAP
-    : rect.top - panelRect.height - ANCHOR_GAP;
-
-  // 水平：左对齐 "/"，超出右边界则向左收
-  const maxLeft = vw - panelRect.width - VIEWPORT_PADDING;
-  const left = Math.max(VIEWPORT_PADDING, Math.min(rect.left, maxLeft));
-
-  position.value = { top, left };
-};
+const { position, update: updatePosition } = useAnchoredPosition({
+  getAnchorRect: () => props.clientRect(),
+  getPanel: () => panelRef.value,
+});
 
 /** items 变化菜单高度变 → 下一帧重新定位 */
 watch(groups, () => {

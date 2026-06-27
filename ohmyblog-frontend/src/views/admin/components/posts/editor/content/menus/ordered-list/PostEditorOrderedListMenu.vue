@@ -9,6 +9,7 @@ import CategoryMenu from "../category-menu/CategoryMenu.vue";
 import type { MenuGroup } from "../category-menu/category-menu.types";
 import { useLang } from "@/composables/lang.hook";
 import { useOrderedListMenu } from "./composables/use-ordered-list-menu";
+import { useAnchoredPosition } from "../../composables/use-anchored-position";
 
 /**
  * PostEditorOrderedListMenu — 有序列表「编号」菜单（单一入口：点击序号）
@@ -37,13 +38,22 @@ const {
 const open = ref(false);
 const listPos = ref(-1);
 const index = ref(0);
-const anchor = ref({ top: 0, left: 0 });
 const editing = ref(false);
 const triggerEl = ref<HTMLElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 
-const PANEL_WIDTH = 224; // w-56
 const GAP = 6;
+
+/**
+ * 弹层位置：贴序号下方，空间不足翻上，左对齐序号并 clamp 进视口。
+ * 复用编辑器统一的浮层智能定位逻辑（见 useAnchoredPosition）。
+ * 锚点取被点击的序号元素，面板取 BasePop 渲染出的 .ol-num-pop。
+ */
+const { position: anchor, update: updatePosition } = useAnchoredPosition({
+  getAnchorRect: () => triggerEl.value?.getBoundingClientRect() ?? null,
+  getPanel: () => document.querySelector<HTMLElement>(".ol-num-pop"),
+  gap: GAP,
+});
 
 /** 被点项当前显示的编号（输入框初值 = 该项现在的数字） */
 const currentNumber = computed(() => itemNumber(listPos.value, index.value));
@@ -56,16 +66,13 @@ watch(open, (v) => {
 const openAt = (el: HTMLElement) => {
   const pos = Number(el.getAttribute("data-ol-list-pos"));
   if (Number.isNaN(pos)) return;
-  const r = el.getBoundingClientRect();
   triggerEl.value = el;
   listPos.value = pos;
   index.value = Number(el.getAttribute("data-ol-index")) || 0;
-  anchor.value = {
-    top: r.bottom + GAP,
-    left: Math.min(r.left, window.innerWidth - PANEL_WIDTH - 8),
-  };
   editing.value = false;
   open.value = true;
+  // 弹层渲染后按真实尺寸智能落位（下方优先，空间不足翻上 + 水平 clamp）
+  nextTick(updatePosition);
 };
 
 // 点击序号 → 打开菜单（preventDefault 防止编辑器移动光标 / 失焦）
@@ -152,7 +159,7 @@ const menuGroups = computed<MenuGroup[]>(() => {
     <BasePop
       v-model="open"
       :trigger-ref="triggerEl"
-      class="fixed! w-56 p-1.5"
+      class="ol-num-pop fixed! w-56 p-1.5"
       :style="{ top: `${anchor.top}px`, left: `${anchor.left}px` }"
     >
       <CategoryMenu v-if="!editing" :groups="menuGroups" />

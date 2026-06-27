@@ -12,6 +12,7 @@ import { onClickOutside } from "@vueuse/core";
 import { Copy, Check } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import { listAvailableLanguages } from "@/composables/editor-extensions/code-block.extension";
+import { useAnchoredPosition } from "../composables/use-anchored-position";
 
 const props = defineProps(nodeViewProps);
 const { t } = useLang();
@@ -28,11 +29,27 @@ const langPickerOpen = ref(false);
 const selectedIndex = ref(0);
 const langInputRef = ref<HTMLInputElement | null>(null);
 const langPopupRef = ref<HTMLElement | null>(null);
-const popupStyle = ref<{ top: string; left: string; minWidth: string }>({
-  top: "0",
-  left: "0",
-  minWidth: "0",
-});
+
+/**
+ * 语言下拉位置：贴 input 下方、右对齐 input 右沿，超出视口则 clamp。
+ * 复用编辑器统一的浮层智能定位逻辑（见 useAnchoredPosition）；
+ * 该下拉始终向下展开，故关闭翻转（flip:false）。
+ */
+const { position: popupPosition, update: updatePopupPosition } =
+  useAnchoredPosition({
+    getAnchorRect: () => langInputRef.value?.getBoundingClientRect() ?? null,
+    getPanel: () => langPopupRef.value,
+    gap: 4,
+    align: "end",
+    flip: false,
+  });
+
+/** 合并定位坐标与固定最小宽度，供模板 style 绑定 */
+const popupStyle = computed(() => ({
+  top: `${popupPosition.value.top}px`,
+  left: `${popupPosition.value.left}px`,
+  minWidth: "9rem",
+}));
 
 /** 过滤候选：前缀优先 → 包含匹配；空 query 时全量 */
 const filteredLanguages = computed<string[]>(() => {
@@ -46,18 +63,6 @@ const filteredLanguages = computed<string[]>(() => {
   }
   return [...prefix, ...include];
 });
-
-/** 根据 input 位置实时算 popup 坐标（fixed 定位） */
-const updatePopupPosition = () => {
-  const input = langInputRef.value;
-  if (!input) return;
-  const rect = input.getBoundingClientRect();
-  popupStyle.value = {
-    top: `${rect.bottom + 4}px`,
-    left: `${rect.right - 144}px`, // 右对齐 input，宽 144 = min-w 9rem
-    minWidth: "9rem",
-  };
-};
 
 const commitLanguage = (lang: string) => {
   langInput.value = lang;
