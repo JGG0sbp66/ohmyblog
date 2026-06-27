@@ -8,6 +8,7 @@ import { getContentExtensions } from "./content-extensions";
 import { SmartSelectAll } from "./select-all.extension";
 import { TrailingNode } from "./trailing-node.extension";
 import { SlashExtension } from "@/views/admin/components/posts/editor/content/menus/slash/slash.extension";
+import { OrderedListNumber } from "@/views/admin/components/posts/editor/content/menus/ordered-list/ordered-list-number.extension";
 
 /**
  * useEditorExtensions — 后台编辑器扩展数组
@@ -37,5 +38,6 @@ export function useEditorExtensions() {
       transformPastedText: true,
     }),
     SlashExtension,
+    OrderedListNumber,
   ];
 }

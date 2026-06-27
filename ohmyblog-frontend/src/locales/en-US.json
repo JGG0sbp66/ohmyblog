@@ -487,6 +487,12 @@
           "imagePicker": {
             "label": "Image"
           },
+          "orderedListMenu": {
+            "continue": "Continue numbering",
+            "startNew": "Start from 1",
+            "setStart": "Start at",
+            "tooltip": "Set numbering"
+          },
           "tableMenu": {
             "mergeCells": "Merge cells",
             "splitCell": "Split cell",

@@ -9,6 +9,7 @@ import PostEditorBubbleMenu from "./menus/bubble/PostEditorBubbleMenu.vue";
 import PostEditorImageBubbleMenu from "./menus/bubble/PostEditorImageBubbleMenu.vue";
 import PostEditorFloatingHandle from "./menus/handle/PostEditorFloatingHandle.vue";
 import PostEditorTableControls from "./menus/table/PostEditorTableControls.vue";
+import PostEditorOrderedListMenu from "./menus/ordered-list/PostEditorOrderedListMenu.vue";
 import { useImageInsert } from "./composables/use-image-insert";
 
 /**
@@ -140,6 +141,7 @@ onBeforeUnmount(() => editor.value?.destroy());
       :container-ref="containerRef"
     />
     <PostEditorFloatingHandle v-if="editor" :editor="editor" />
+    <PostEditorOrderedListMenu v-if="editor" :editor="editor" />
     <PostEditorTableControls
       v-if="editor"
       :editor="editor"

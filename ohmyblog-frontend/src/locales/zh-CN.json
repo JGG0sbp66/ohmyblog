@@ -482,6 +482,12 @@
           "imagePicker": {
             "label": "图片"
           },
+          "orderedListMenu": {
+            "continue": "继续上一段编号",
+            "startNew": "从 1 开始",
+            "setStart": "起始编号",
+            "tooltip": "设置编号"
+          },
           "tableMenu": {
             "mergeCells": "合并单元格",
             "splitCell": "拆分单元格",
