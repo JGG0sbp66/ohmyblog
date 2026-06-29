@@ -121,7 +121,20 @@ class PostService {
 			}
 		}
 
-		const updated = await postDao.update(uuid, data);
+		// 置顶：前端只传布尔，这里翻译成 pinnedAt 时间戳（单一转换边界）。
+		// pinnedAt 不来自请求体，杜绝前端直接塞任意时间戳。
+		const { pinned, ...rest } = data;
+		const patch: Parameters<typeof postDao.update>[1] = { ...rest };
+		if (pinned !== undefined) {
+			// 首次置顶才写时间；已置顶再传 true 不刷新，保持原有排序位置
+			if (pinned) {
+				if (!post.pinnedAt) patch.pinnedAt = new Date();
+			} else {
+				patch.pinnedAt = null;
+			}
+		}
+
+		const updated = await postDao.update(uuid, patch);
 		this.logger.info({ postId: uuid }, "文章已保存");
 		return updated;
 	}
@@ -160,9 +173,13 @@ class PostService {
 			}
 		} else if (targetStatus === "deleted") {
 			patch.deletedAt = now;
+			// 移入回收站时取消置顶（非发布态不应保留置顶标记）
+			patch.pinnedAt = null;
 		} else {
 			// draft / archived：从回收站恢复，清除 deletedAt
 			patch.deletedAt = null;
+			// 非发布态不应保留置顶标记
+			patch.pinnedAt = null;
 		}
 
 		const updated = await postDao.update(uuid, patch);
