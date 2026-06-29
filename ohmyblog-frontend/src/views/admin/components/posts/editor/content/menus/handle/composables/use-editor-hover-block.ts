@@ -42,6 +42,8 @@ export interface EditorHoverBlock {
   left: Ref<number>;
   isEmpty: Ref<boolean>;
   icon: Ref<Component>;
+  /** 当前块图标的语义色（Tailwind text-* 类，与菜单配色一致） */
+  iconColor: Ref<string>;
   transitionTop: Ref<boolean>;
   /** 用于拖拽 NodeSelection 的位置（list 项内取 listItem，其他取顶层块） */
   dragPos: Ref<number>;
@@ -60,6 +62,7 @@ export const useEditorHoverBlock = (
   const left = ref(0);
   const isEmpty = ref(false);
   const icon = ref<Component>(Type);
+  const iconColor = ref<string>("");
   const transitionTop = ref(false);
   const dragPos = ref(-1);
 
@@ -225,7 +228,9 @@ export const useEditorHoverBlock = (
       // 空行判定：考虑 leaf inline node（image / hardBreak 等），
       // 一个段落只含图片时不应被当作空行
       isEmpty.value = blockNode.content.size === 0;
-      icon.value = decideBlockIcon(blockNode, $pos, blockDepth);
+      const blockIcon = decideBlockIcon(blockNode, $pos, blockDepth);
+      icon.value = blockIcon.icon;
+      iconColor.value = blockIcon.color;
       dragPos.value = resolvedDragPos;
       visible.value = true;
 
@@ -261,6 +266,7 @@ export const useEditorHoverBlock = (
     left,
     isEmpty,
     icon,
+    iconColor,
     transitionTop,
     dragPos,
     cancelHide,

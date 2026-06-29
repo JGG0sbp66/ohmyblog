@@ -11,10 +11,11 @@ import HandleBlockMenu from "./HandleBlockMenu.vue";
  * HandleBlockState — 有内容行状态：[拖拽点] + [块类型图标（hover 展开菜单）]
  *
  * Props:
- * - icon  : 当前块类型对应的 Lucide 图标组件
- * - editor: Tiptap 编辑器实例，供菜单执行命令
+ * - icon     : 当前块类型对应的 Lucide 图标组件
+ * - iconColor: 该块类型的语义色（Tailwind text-* 类，与菜单配色一致）
+ * - editor   : Tiptap 编辑器实例，供菜单执行命令
  */
-defineProps<{ icon: Component; editor: Editor }>();
+defineProps<{ icon: Component; iconColor?: string; editor: Editor }>();
 defineEmits<{ gripDragStart: [event: DragEvent]; gripDragEnd: [] }>();
 </script>
 
@@ -30,7 +31,7 @@ defineEmits<{ gripDragStart: [event: DragEvent]; gripDragEnd: [] }>();
     >
       <template #trigger="{ active }">
         <ButtonSecondary :isActive="active" class="w-7 h-7 p-0 shrink-0">
-          <component :is="icon" class="w-3.5 h-3.5" />
+          <component :is="icon" class="w-3.5 h-3.5" :class="iconColor" />
         </ButtonSecondary>
       </template>
       <template #content>
