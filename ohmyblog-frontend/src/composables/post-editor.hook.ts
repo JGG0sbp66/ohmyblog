@@ -32,6 +32,8 @@ export const usePostEditor = () => {
   const contentText = ref("");
   const coverImage = ref<string | null>(null);
   const excerpt = ref("");
+  /** 是否置顶（布尔；后端把它翻译成 pinnedAt 时间戳） */
+  const pinned = ref(false);
 
   // --- UI 状态 ---
   const isSaving = ref(false);
@@ -53,6 +55,8 @@ export const usePostEditor = () => {
       content.value = (post.content as object) ?? undefined;
       coverImage.value = post.coverImage ?? null;
       excerpt.value = post.excerpt ?? "";
+      // 时间戳 → 布尔：非空即置顶。转换边界只此一处，表单层只跟布尔打交道
+      pinned.value = post.pinnedAt != null;
     } catch {
       useToast.error("加载文章失败");
     } finally {
@@ -60,7 +64,7 @@ export const usePostEditor = () => {
       // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
       // deep: true — 捕获 tags 数组的 push/splice 就地变更（浅监听感知不到引用未变的数组修改）
       watch(
-        [slug, tags, status, title, content, excerpt],
+        [slug, tags, status, title, content, excerpt, pinned],
         () => {
           isDirty.value = true;
         },
@@ -78,7 +82,7 @@ export const usePostEditor = () => {
       });
       // title/content 防抖自动保存
       watchDebounced(
-        [title, content, contentText, coverImage, excerpt, tags, slug],
+        [title, content, contentText, coverImage, excerpt, tags, slug, pinned],
         () => {
           if (!isDirty.value) return;
           autoSave();
@@ -96,6 +100,7 @@ export const usePostEditor = () => {
     contentText: contentText.value || undefined,
     coverImage: coverImage.value ?? undefined,
     excerpt: excerpt.value || undefined,
+    pinned: pinned.value,
   });
 
   const autoSave = async () => {
@@ -147,6 +152,7 @@ export const usePostEditor = () => {
     contentText,
     coverImage,
     excerpt,
+    pinned,
     isSaving,
     isLoading,
     isDirty,

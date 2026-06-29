@@ -5,6 +5,7 @@ import PostEditorSlugSetting from "@/views/admin/components/posts/editor/setting
 import PostEditorStatusSetting from "@/views/admin/components/posts/editor/setting/PostEditorStatusSetting.vue";
 import PostEditorCoverSetting from "@/views/admin/components/posts/editor/setting/PostEditorCoverSetting.vue";
 import PostEditorExcerptSetting from "@/views/admin/components/posts/editor/setting/PostEditorExcerptSetting.vue";
+import PostEditorPropertySetting from "@/views/admin/components/posts/editor/setting/PostEditorPropertySetting.vue";
 import { useLang } from "@/composables/lang.hook";
 import type { TPostStatus } from "@server/db/constants/post.constants";
 
@@ -19,6 +20,7 @@ const tags = defineModel<string[]>("tags", { default: () => [] });
 const status = defineModel<TPostStatus>("status", { default: "draft" });
 const excerpt = defineModel<string>("excerpt", { default: "" });
 const coverImage = defineModel<string | null>("coverImage", { default: null });
+const pinned = defineModel<boolean>("pinned", { default: false });
 </script>
 
 <template>
@@ -49,6 +51,9 @@ const coverImage = defineModel<string | null>("coverImage", { default: null });
 
       <!-- 封面图上传 -->
       <PostEditorCoverSetting v-model="coverImage" :uuid="props.uuid" />
+
+      <!-- 文章属性：置顶等布尔开关 -->
+      <PostEditorPropertySetting v-model:pinned="pinned" />
     </div>
   </div>
 </template>

@@ -106,7 +106,8 @@
           "untitled": "新文章",
           "words": "字",
           "views": "阅读",
-          "empty": "暂无文章"
+          "empty": "暂无文章",
+          "pinned": "置顶"
         }
       },
       "post": {
@@ -381,6 +382,14 @@
             "label": "封面图",
             "tooltip": "设置文章封面图，将在列表与详情页展示",
             "hint": "点击上传，建议 16:9"
+          },
+          "properties": {
+            "label": "文章属性",
+            "tooltip": "控制文章在前台的展示行为",
+            "pinned": {
+              "label": "置顶文章",
+              "tooltip": "置顶后将在前台文章列表中排在最前"
+            }
           }
         },
         "content": {
