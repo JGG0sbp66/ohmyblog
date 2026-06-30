@@ -29,6 +29,7 @@ const hero = useImageUpload();
 
 const handleFileChange = (file: File) => {
   emit("change", file);
+  // TODO: 限制上传图片的大小，或在前端进行压缩，防止 Nginx 因为 client_max_body_size 限制而拦截大体积的 Hero 图上传
   hero.handleUpload(
     file,
     (f) => uploadHero({ hero: f }),

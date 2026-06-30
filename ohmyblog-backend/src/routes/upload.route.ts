@@ -46,6 +46,7 @@ export const uploadRoute = new Elysia({ name: "uploadRoute" })
 			.post(
 				"/hero",
 				async ({ body: { hero } }) => {
+					// TODO: 考虑 Nginx 默认 client_max_body_size 限制，如果图片体积过大可能会被拦截。后续可增加大小限制提示或在后端做分片/流式上传，或在部署文档中注明调大 Nginx 的 body 限制。
 					const result = await uploadService.uploadHero(hero);
 
 					return {
