@@ -22,9 +22,8 @@ WORKDIR /monorepo/ohmyblog-frontend
 RUN bun run build-only
 
 # --- 阶段 2: 构建后端 ---
-# canary = Bun 1.4.x，运行时由 Rust 实现（实验性）
-# 注：canary 暂不提供 bun-linux-x64-musl compile target，故使用 linux (glibc)
-FROM oven/bun:canary AS builder
+# canary-alpine = Bun 1.4.x，运行时由 Rust 实现（实验性）
+FROM oven/bun:canary-alpine AS builder
 
 WORKDIR /app
 
@@ -39,17 +38,17 @@ COPY ohmyblog-backend/ .
 COPY --from=frontend-builder /monorepo/ohmyblog-frontend/dist ./frontend-dist
 
 # 图像处理由 Bun 运行时内置 Bun.Image 提供，无 native 模块依赖
-RUN bun run scripts/build.ts linux
+RUN bun run scripts/build.ts linux-musl
 
-# --- 阶段 3: 提供运行库（用于 scratch，glibc） ---
-FROM debian:bookworm-slim AS runtime
+# --- 阶段 3: 提供运行库（用于 scratch，musl） ---
+FROM alpine:3.23 AS runtime
 
 # 只安装运行时必需的库和证书，并创建非 root 用户
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates \
-    && rm -rf /var/lib/apt/lists/* \
-    && groupadd -r app \
-    && useradd -r -g app -u 10001 app \
+RUN apk add --no-cache \
+    ca-certificates \
+    libstdc++ \
+    && addgroup -S app \
+    && adduser -S -G app -u 10001 app \
     && mkdir -p /app/data \
     && chown -R app:app /app
 
@@ -65,11 +64,9 @@ LABEL git-commit=$GIT_COMMIT
 ENV NODE_ENV=production
 
 # 必需的运行库、证书与用户信息
-COPY --from=runtime /lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 /lib64/
-COPY --from=runtime /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/
-COPY --from=runtime /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/
-COPY --from=runtime /lib/x86_64-linux-gnu/libpthread.so.0 /lib/x86_64-linux-gnu/
-COPY --from=runtime /lib/x86_64-linux-gnu/libdl.so.2 /lib/x86_64-linux-gnu/
+COPY --from=runtime /lib/ld-musl-x86_64.so.1 /lib/
+COPY --from=runtime /usr/lib/libstdc++.so.6* /usr/lib/
+COPY --from=runtime /usr/lib/libgcc_s.so.1 /usr/lib/
 COPY --from=runtime /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=runtime /etc/passwd /etc/passwd
 COPY --from=runtime /etc/group /etc/group
@@ -79,9 +76,9 @@ WORKDIR /app
 
 # 从构建阶段复制编译好的资源
 # 仅复制必要的二进制文件、迁移文件和前端产物
-COPY --from=builder --chmod=755 --chown=10001:10001 /app/scripts/dist/linux/ohmyblog /app/ohmyblog
-COPY --from=builder --chown=10001:10001 /app/scripts/dist/linux/db/ /app/db/
-COPY --from=builder --chown=10001:10001 /app/scripts/dist/linux/public/ /app/public/
+COPY --from=builder --chmod=755 --chown=10001:10001 /app/scripts/dist/linux-musl/ohmyblog /app/ohmyblog
+COPY --from=builder --chown=10001:10001 /app/scripts/dist/linux-musl/db/ /app/db/
+COPY --from=builder --chown=10001:10001 /app/scripts/dist/linux-musl/public/ /app/public/
 
 # 定义数据挂载点
 VOLUME ["/app/data"]
