@@ -11,6 +11,8 @@
 
 ## 🖼️ 预览
 
+### 桌面端
+
 <p align="center">
 	<img alt="初始化向导" src="./img/setup.page.webp" width="960" />
 </p>
@@ -20,6 +22,23 @@
 <p align="center">
 	<img alt="管理后台" src="./img/admin.page.webp" width="960" />
 </p>
+
+### 📱 移动端
+
+<div align="center">
+  <table>
+    <tr>
+      <td width="33%"><img src="./img/phone.home.page.webp" alt="首页" width="100%" /></td>
+      <td width="33%"><img src="./img/phone.achive.page.webp" alt="归档页" width="100%" /></td>
+      <td width="33%"><img src="./img/phone.friend.page.webp" alt="友链页" width="100%" /></td>
+    </tr>
+    <tr>
+      <td align="center"><strong>首页</strong></td>
+      <td align="center"><strong>归档页</strong></td>
+      <td align="center"><strong>友链页</strong></td>
+    </tr>
+  </table>
+</div>
 
 ## ✨ 功能特性
 
