@@ -1,4 +1,20 @@
 <!-- src/views/admin/components/layout/AdminHeader.vue -->
+<!--
+  ============================================================================
+  TODO[移动端适配 · 顶部栏]：Header 在手机上需要做两件事——加汉堡按钮、收缩间距：
+
+  1. 新增「汉堡菜单按钮」用于唤出侧边栏抽屉：
+     - 仅移动端显示（md:hidden），放在左侧页面名称之前；
+     - 点击时 emit('toggleMenu') 通知 AdminLayout 切换 isMobileMenuOpen；
+     - 图标可用 lucide-vue-next 的 Menu。
+  2. 响应式间距/尺寸（当前都是固定值，小屏偏挤、易溢出）：
+     - 外层 px-6 -> px-3 md:px-6；左右两侧 ml-4 / mr-4 在小屏可减小或去掉；
+     - 中间二级导航插槽 #admin-header-center 在窄屏可能放不下，考虑 max-md:hidden
+       或挪到第二行；
+     - 标题 text-xl -> text-base md:text-xl，必要时 truncate 防止换行。
+  3. 右侧按钮组（返回首页 + 通知）在移动端保留即可，注意与汉堡按钮的间距平衡。
+  ============================================================================
+-->
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";

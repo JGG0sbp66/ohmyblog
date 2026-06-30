@@ -1,4 +1,20 @@
 <!-- src/views/admin/components/layout/AdminSidebar.vue -->
+<!--
+  ============================================================================
+  TODO[移动端适配 · 侧边栏]：当前侧边栏靠 hover 展开（w-20 ↔ w-52，@mouseenter/@mouseleave），
+  触屏没有 hover，这套交互在手机上完全失效，需要改成「抽屉(Drawer)」形态：
+
+  - 桌面端（md 及以上）：保留现有 hover 展开逻辑不变。
+  - 移动端（< md）：
+      1. 默认隐藏（如 max-md:hidden 或 fixed + -translate-x-full）；
+      2. 由 AdminLayout 的 isMobileMenuOpen 控制显隐：打开时 translate-x-0 滑入，
+         并在侧边栏外铺一层半透明遮罩（点遮罩关闭）；
+      3. 抽屉态下宽度应固定为展开宽度（w-52 左右），而不是 w-20；
+      4. 点击任意菜单项后调用 handleNavClick 的同时关闭抽屉（emit('close') 给父组件）。
+  - isExpanded 这个 hover 状态在移动端应被 isMobileMenuOpen 接管，避免两套状态打架。
+  - z-index：抽屉 + 遮罩需高于主内容（参考现有 header 的 z-50）。
+  ============================================================================
+-->
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
