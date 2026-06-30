@@ -69,6 +69,7 @@ class UploadService {
 	 * @returns 处理后的访问路径
 	 */
 	async uploadSocialIcon(file: File, key: string, mode: "light" | "dark") {
+		// TODO: 如果 key（平台名词）包含中文，生成的文件名包含中文，在某些静态文件服务中由于未进行 URL 解码/编码匹配可能会导致 404 错误。后续需兼容中文（例如对 key 进行 url 安全的编码/转换，或在 Elysia 静态插件中支持对请求 URL 进行 decode 匹配）。
 		const filename = `${key}-${mode}.png`;
 		return this.uploadAsset(
 			file,
