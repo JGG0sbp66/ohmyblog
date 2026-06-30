@@ -29,6 +29,7 @@ const listColumns = {
 	slug: post.slug,
 	excerpt: post.excerpt,
 	viewCount: post.viewCount,
+	pinnedAt: post.pinnedAt,
 	publishedAt: post.publishedAt,
 	deletedAt: post.deletedAt,
 	createdAt: post.createdAt,
@@ -124,6 +125,7 @@ class PostDao {
 					slug: post.slug,
 					excerpt: post.excerpt,
 					viewCount: post.viewCount,
+					pinnedAt: post.pinnedAt,
 					publishedAt: post.publishedAt,
 					createdAt: post.createdAt,
 					updatedAt: post.updatedAt,
@@ -193,7 +195,7 @@ class PostDao {
 					.select(listColumns)
 					.from(post)
 					.where(where)
-					.orderBy(desc(post.publishedAt))
+					.orderBy(desc(post.pinnedAt), desc(post.publishedAt))
 					.limit(pageSize)
 					.offset(offset),
 				db.select({ total: count() }).from(post).where(where),

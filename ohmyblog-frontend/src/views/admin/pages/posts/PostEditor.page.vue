@@ -20,6 +20,7 @@ const {
   contentText,
   coverImage,
   excerpt,
+  pinned,
   isSaving,
   isDirty,
   save,
@@ -65,6 +66,7 @@ const {
         v-model:status="status"
         v-model:excerpt="excerpt"
         v-model:coverImage="coverImage"
+        v-model:pinned="pinned"
       />
     </div>
   </BaseCard>

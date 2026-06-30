@@ -43,6 +43,13 @@ export const post = sqliteTable("post", {
 	// 观看人数，前台每次访问时自增，默认为 0
 	viewCount: integer("view_count").notNull().default(0),
 
+	// 置顶时间：null 表示未置顶，非空表示已置顶。
+	// 一个字段同时承担两个职责：
+	//   - 是否置顶 → 判空（null / 非 null）
+	//   - 多篇置顶间排序 → 按此时间倒序（最近置顶的排最前）
+	// 前台已发布列表中，置顶文章排在普通文章之前。
+	pinnedAt: integer("pinned_at", { mode: "timestamp" }),
+
 	// 发布时间，仅 status 为 published 时有值
 	publishedAt: integer("published_at", { mode: "timestamp" }),
 

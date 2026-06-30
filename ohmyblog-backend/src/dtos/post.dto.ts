@@ -57,6 +57,14 @@ export const SavePostDTO = t.Object({
 			error: "post.excerpt_range",
 		}),
 	),
+	// 是否置顶。前端只传布尔，后端 service 翻译为 pinnedAt 时间戳（单一转换边界）。
+	// 刻意不暴露 pinnedAt：杜绝前端直接塞任意时间戳。
+	pinned: t.Optional(
+		t.Boolean({
+			description: "是否置顶（true 置顶 / false 取消置顶）",
+			error: "post.pinned_invalid",
+		}),
+	),
 });
 
 // 2. 更改文章状态 DTO

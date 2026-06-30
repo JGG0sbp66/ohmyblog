@@ -71,6 +71,13 @@
 			"when": 1779094773934,
 			"tag": "0009_perfect_pandemic",
 			"breakpoints": true
+		},
+		{
+			"idx": 10,
+			"version": "6",
+			"when": 1782712210497,
+			"tag": "0010_brief_karma",
+			"breakpoints": true
 		}
 	]
 }

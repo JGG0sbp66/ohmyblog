@@ -52,6 +52,7 @@ const drag = useBlockDrag(props.editor, () => hover.dragPos.value);
       <HandleBlockState
         v-else
         :icon="hover.icon.value"
+        :icon-color="hover.iconColor.value"
         :editor="editor"
         @grip-drag-start="drag.onDragStart"
         @grip-drag-end="drag.onDragEnd"

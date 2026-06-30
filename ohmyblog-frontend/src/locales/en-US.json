@@ -106,7 +106,8 @@
           "untitled": "New Post",
           "words": "words",
           "views": "reads",
-          "empty": "No posts yet"
+          "empty": "No posts yet",
+          "pinned": "Pinned"
         }
       },
       "post": {
@@ -383,6 +384,14 @@
             "label": "Cover Image",
             "tooltip": "Set the post cover image, displayed on listing and detail pages",
             "hint": "Click to upload · 16:9 recommended"
+          },
+          "properties": {
+            "label": "Properties",
+            "tooltip": "Control how this post behaves on the public site",
+            "pinned": {
+              "label": "Pin Post",
+              "tooltip": "Pinned posts appear at the top of the public post list"
+            }
           }
         },
         "content": {

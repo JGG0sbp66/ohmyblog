@@ -2,9 +2,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { Eye, FileText, ChevronRight } from "lucide-vue-next";
+import { Eye, FileText, ChevronRight, Pin } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import BaseCard from "@/components/base/card/BaseCard.vue";
+import BaseTag from "@/components/base/tag/BaseTag.vue";
 import PostMeta from "@/components/base/tag/PostMeta.vue";
 import type { PostListItem } from "@/api/post.api";
 
@@ -14,6 +15,9 @@ const props = defineProps<{
 
 const router = useRouter();
 const { t } = useLang();
+
+/** 是否置顶（pinnedAt 非空即置顶） */
+const isPinned = computed(() => props.post.pinnedAt != null);
 
 const navigate = () => {
   if (!props.post.slug) return;
@@ -46,12 +50,21 @@ const wordCount = computed(() => props.post.contentText?.length ?? 0);
   >
     <!-- 信息区域（桌面：左；移动：下） -->
     <div class="flex-1 min-w-0 p-4 md:p-5 flex flex-col gap-2.5">
-      <!-- 标题 -->
-      <h2
-        class="text-xl md:text-[26px] font-bold leading-snug text-fg line-clamp-2 border-l-4 border-accent pl-3 -ml-0.5"
-      >
-        {{ post.title || t("views.main.home.PostCard.untitled") }}
-      </h2>
+      <!-- 标题行：标题（左） + 置顶徽章（右，与标题并列） -->
+      <div class="flex items-start justify-between gap-3">
+        <h2
+          class="min-w-0 flex-1 text-xl md:text-[26px] font-bold leading-snug text-fg line-clamp-2 border-l-4 border-accent pl-3 -ml-0.5"
+        >
+          {{ post.title || t("views.main.home.PostCard.untitled") }}
+        </h2>
+
+        <BaseTag v-if="isPinned" type="primary" size="sm" class="mt-1">
+          <template #icon>
+            <Pin class="w-3 h-3 fill-current" />
+          </template>
+          {{ t("views.main.home.PostCard.pinned") }}
+        </BaseTag>
+      </div>
 
       <!-- Meta 行：日期 + 标签（提取为组件） -->
       <PostMeta :date="formattedDate" :tags="post.tags" :max-tags="3" />
