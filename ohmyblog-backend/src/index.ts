@@ -37,6 +37,9 @@ const app = new Elysia()
 		staticPlugin({
 			assets: UPLOADS_DIR,
 			prefix: "/api/uploads",
+			// 上传资源文件名可能含非 ASCII 字符（如中文平台名生成的社交图标），
+			// 浏览器会对其做 percent 编码，需解码后再匹配磁盘文件，否则 404
+			decodeURI: true,
 		}),
 	)
 	// 挂载路由
