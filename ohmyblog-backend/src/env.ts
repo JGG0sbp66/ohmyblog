@@ -6,6 +6,7 @@ import {
 	ENV_PATH,
 	LOGS_DIR,
 	SOCIAL_UPLOADS_DIR,
+	SQLITE_DIR,
 	SYSTEM_UPLOADS_DIR,
 	UPLOADS_DIR,
 } from "./constants";
@@ -43,6 +44,7 @@ const configDefaults = {
 // =================================================================
 const REQUIRED_DIRS = [
 	DATA_DIR,
+	SQLITE_DIR,
 	UPLOADS_DIR,
 	SYSTEM_UPLOADS_DIR,
 	SOCIAL_UPLOADS_DIR,
