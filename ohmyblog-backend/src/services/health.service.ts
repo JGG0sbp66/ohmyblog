@@ -3,35 +3,41 @@ import { logger } from "../plugins/logger.plugin";
 
 export class HealthService {
 	private commitHash: string = "unknown";
+	private appVersion: string = "unknown";
 	private logger = logger.withTag("HealthService");
 
 	constructor() {
 		// 在服务初始化时就确定版本号，避免每次请求都去判断
-		this.initCommitHash();
+		this.initVersionInfo();
 	}
 
 	/**
-	 * 初始化版本号，优先从环境变量读取，失败则尝试 Git 命令
+	 * 初始化版本信息，优先从环境变量读取，失败则尝试 Git 命令
 	 */
-	private async initCommitHash() {
-		// 策略 1: 优先读取环境变量 (Docker/生产环境)
+	private async initVersionInfo() {
+		// 读取语义化版本号 (由 CI 构建时注入)
+		if (process.env.APP_VERSION) {
+			this.appVersion = process.env.APP_VERSION;
+		}
+
+		// 读取 commit hash
 		if (process.env.GIT_COMMIT) {
 			this.commitHash = process.env.GIT_COMMIT;
 			this.logger.info(
-				{ commitHash: this.commitHash },
-				"已从环境变量加载 Git版本",
+				{ version: this.appVersion, commit: this.commitHash },
+				"已从环境变量加载版本信息",
 			);
 			return;
 		}
 
-		// 策略 2: 尝试本地 Git 命令 (本地开发环境)
+		// 本地开发环境：尝试 Git 命令获取 commit hash
 		try {
 			const proc = Bun.spawn(["git", "rev-parse", "--short", "HEAD"]);
 			const text = await new Response(proc.stdout).text();
 			this.commitHash = text.trim();
 			this.logger.info(
-				{ commitHash: this.commitHash },
-				"已通过本地 Git 命令加载版本",
+				{ version: this.appVersion, commit: this.commitHash },
+				"已通过本地 Git 命令加载版本信息",
 			);
 		} catch (e) {
 			this.logger.warn(
@@ -43,12 +49,13 @@ export class HealthService {
 
 	/**
 	 * 获取健康状态数据
-	 * @returns 当前版本号及是否已初始化管理员
+	 * @returns 当前版本号、commit hash 及是否已初始化管理员
 	 */
 	async getSystemStatus() {
 		const hasAdmin = await userDao.hasAnyAdmin();
 		return {
-			version: this.commitHash,
+			version: this.appVersion,
+			commit: this.commitHash,
 			initialized: hasAdmin,
 		};
 	}
