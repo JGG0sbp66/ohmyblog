@@ -2,6 +2,11 @@
 	<h1>ohmyblog</h1>
 	<p>一个现代化、可自部署的全栈博客系统（前台 + 管理后台 + API）。</p>
 	<p>
+		<a href="https://github.com/JGG0sbp66/ohmyblog/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/JGG0sbp66/ohmyblog?style=flat&color=blue" /></a>
+		<a href="https://github.com/JGG0sbp66/ohmyblog/pkgs/container/ohmyblog"><img alt="Docker" src="https://img.shields.io/badge/ghcr.io-ohmyblog-2496ED?style=flat&logo=docker&logoColor=white" /></a>
+		<img alt="License" src="https://img.shields.io/github/license/JGG0sbp66/ohmyblog?style=flat" />
+	</p>
+	<p>
 		<img alt="Bun" src="https://img.shields.io/badge/Bun-000000?style=flat&logo=bun&logoColor=white" />
 		<img alt="Vue" src="https://img.shields.io/badge/Vue-3.5-42b883?style=flat&logo=vue.js&logoColor=white" />
 		<img alt="Elysia" src="https://img.shields.io/badge/Elysia-1.4-111827?style=flat" />
@@ -135,6 +140,14 @@ bun run dev
 
 > 镜像会同时打包前后端，后端通过 Elysia 挂载前端静态文件。
 
+**方式一：从 GitHub Container Registry 拉取（推荐）**
+
+```bash
+docker run --rm -p 3000:3000 ghcr.io/jgg0sbp66/ohmyblog:latest
+```
+
+**方式二：本地构建镜像**
+
 ```bash
 # 进入后端目录
 cd ohmyblog-backend
@@ -144,7 +157,7 @@ bun run docker
 ```
 
 ```bash
-# 运行镜像（端口映射决定访问端口）
+# 运行镜像
 docker run --rm -p 3000:3000 ohmyblog
 ```
 
