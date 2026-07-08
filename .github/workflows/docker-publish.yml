@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Release
 
 on:
   push:
@@ -20,14 +20,145 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog from commits
+        id: changelog
+        run: |
+          # 获取上一个 tag
+          PREV_TAG=$(git tag --sort=-version:refname | sed -n '2p')
+          if [ -z "$PREV_TAG" ]; then
+            RANGE="HEAD"
+          else
+            RANGE="${PREV_TAG}..HEAD"
+          fi
+
+          # 按 commit message 前缀分类
+          FEATS=$(git log $RANGE --pretty=format:"- %s" --grep="^feat" --regexp-ignore-case)
+          FIXES=$(git log $RANGE --pretty=format:"- %s" --grep="^fix" --regexp-ignore-case)
+          CI=$(git log $RANGE --pretty=format:"- %s" --grep="^ci" --regexp-ignore-case)
+          CHORES=$(git log $RANGE --pretty=format:"- %s" --grep="^chore" --regexp-ignore-case)
+          # 其他不匹配前缀的 commit
+          ALL=$(git log $RANGE --pretty=format:"%s")
+          OTHERS=""
+          while IFS= read -r line; do
+            if ! echo "$line" | grep -qiE "^(feat|fix|ci|chore)"; then
+              OTHERS="$OTHERS- $line\n"
+            fi
+          done <<< "$ALL"
+
+          # 拼接 changelog
+          BODY=""
+          if [ -n "$FEATS" ]; then
+            BODY="${BODY}## ✨ 新功能\n${FEATS}\n\n"
+          fi
+          if [ -n "$FIXES" ]; then
+            BODY="${BODY}## 🐛 Bug 修复\n${FIXES}\n\n"
+          fi
+          if [ -n "$CI" ]; then
+            BODY="${BODY}## 🔧 CI/CD\n${CI}\n\n"
+          fi
+          if [ -n "$CHORES" ]; then
+            BODY="${BODY}## 🧹 其他维护\n${CHORES}\n\n"
+          fi
+          if [ -n "$OTHERS" ]; then
+            BODY="${BODY}## 📝 其他\n${OTHERS}\n"
+          fi
+
+          # 添加 Full Changelog 链接
+          if [ -n "$PREV_TAG" ]; then
+            BODY="${BODY}**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${{ github.ref_name }}"
+          fi
+
+          # 添加下载表格
+          VERSION="${GITHUB_REF_NAME#v}"
+          REPO="${{ github.repository }}"
+          DL_BASE="https://github.com/${REPO}/releases/download/${{ github.ref_name }}"
+
+          BODY="${BODY}\n\n---\n\n"
+          BODY="${BODY}[![downloads](https://img.shields.io/github/downloads/${REPO}/${{ github.ref_name }}/total?style=flat-square&label=downloads%40${VERSION})](${DL_BASE})\n\n"
+          BODY="${BODY}### 📦 下载\n\n"
+          BODY="${BODY}| 平台 | 下载 |\n"
+          BODY="${BODY}|------|------|\n"
+          BODY="${BODY}| Linux x64 | [![tar.gz](https://img.shields.io/badge/tar.gz-x64-blue?style=flat-square)](${DL_BASE}/ohmyblog-linux-x64.tar.gz) |\n"
+          BODY="${BODY}| Linux x64 (musl/Alpine) | [![tar.gz](https://img.shields.io/badge/tar.gz-musl-blue?style=flat-square)](${DL_BASE}/ohmyblog-linux-x64-musl.tar.gz) |\n"
+          BODY="${BODY}| Windows x64 | [![zip](https://img.shields.io/badge/zip-x64-green?style=flat-square)](${DL_BASE}/ohmyblog-windows-x64.exe.zip) |\n"
+          BODY="${BODY}| macOS ARM64 | [![tar.gz](https://img.shields.io/badge/tar.gz-Apple_Silicon-purple?style=flat-square)](${DL_BASE}/ohmyblog-darwin-arm64.tar.gz) |\n"
+          BODY="${BODY}| Docker | \`docker pull ghcr.io/jgg0sbp66/ohmyblog:${VERSION}\` |\n"
+
+          echo -e "$BODY" > release_notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
+          body_path: release_notes.md
+
+  # 构建多平台二进制文件并上传到 Release Assets
+  build-binaries:
+    runs-on: ubuntu-latest
+    needs: create-release
+
+    permissions:
+      contents: write
+
+    strategy:
+      matrix:
+        include:
+          - platform: linux
+            artifact_name: ohmyblog-linux-x64
+          - platform: linux-musl
+            artifact_name: ohmyblog-linux-x64-musl
+          - platform: win
+            artifact_name: ohmyblog-windows-x64.exe
+          - platform: mac
+            artifact_name: ohmyblog-darwin-arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
+
+      - name: Install backend dependencies
+        run: bun install --frozen-lockfile
+        working-directory: ohmyblog-backend
+
+      - name: Install frontend dependencies
+        run: bun install --frozen-lockfile
+        working-directory: ohmyblog-frontend
+
+      - name: Build frontend
+        run: bun run build-only
+        working-directory: ohmyblog-frontend
+
+      - name: Copy frontend dist to backend
+        run: cp -r ohmyblog-frontend/dist ohmyblog-backend/frontend-dist
+
+      - name: Build binary for ${{ matrix.platform }}
+        run: bun run scripts/build.ts ${{ matrix.platform }}
+        working-directory: ohmyblog-backend
+
+      - name: Package binary
+        run: |
+          cd ohmyblog-backend/scripts/dist/${{ matrix.platform }}
+          if [ "${{ matrix.platform }}" = "win" ]; then
+            zip -r ../../../../${{ matrix.artifact_name }}.zip .
+          else
+            tar -czf ../../../../${{ matrix.artifact_name }}.tar.gz .
+          fi
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ matrix.platform == 'win' && format('{0}.zip', matrix.artifact_name) || format('{0}.tar.gz', matrix.artifact_name) }}
 
   # 构建并推送 Docker 镜像
-  build-and-push:
+  build-docker:
     runs-on: ubuntu-latest
     needs: create-release
 
