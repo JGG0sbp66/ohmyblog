@@ -1,6 +1,6 @@
 {
 	"name": "ohmyblog-backend",
-	"version": "1.0.50",
+	"version": "1.0.0",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "bun run --watch src/index.ts",
@@ -18,7 +18,7 @@
 		"build:linux": "bun run scripts/build.ts linux",
 		"build:linux-musl": "bun run scripts/build.ts linux-musl",
 		"build:mac": "bun run scripts/build.ts mac",
-		"docker": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) -t ohmyblog -f scripts/Dockerfile ..",
+		"docker": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) --build-arg APP_VERSION=$(node -p \"require('./package.json').version\") -t ohmyblog -f scripts/Dockerfile ..",
 		"docker:canary": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) -t ohmyblog:canary -f scripts/Dockerfile.canary .."
 	},
 	"dependencies": {
