@@ -80,9 +80,9 @@ jobs:
           BODY="${BODY}### 📦 下载\n\n"
           BODY="${BODY}| 平台 | 下载 |\n"
           BODY="${BODY}|------|------|\n"
-          BODY="${BODY}| Linux | [![glibc](https://img.shields.io/badge/tar.gz-glibc-blue?style=flat-square)](${DL_BASE}/ohmyblog-linux-x64.tar.gz) [![musl](https://img.shields.io/badge/tar.gz-musl-blue?style=flat-square)](${DL_BASE}/ohmyblog-linux-x64-musl.tar.gz) [![docker](https://img.shields.io/badge/Docker-ghcr.io-blue?style=flat-square)](https://ghcr.io/jgg0sbp66/ohmyblog) |\n"
-          BODY="${BODY}| Windows | [![x64](https://img.shields.io/badge/zip-x64-green?style=flat-square)](${DL_BASE}/ohmyblog-windows-x64.exe.zip) |\n"
-          BODY="${BODY}| macOS | [![Apple Silicon](https://img.shields.io/badge/tar.gz-Apple_Silicon-purple?style=flat-square)](${DL_BASE}/ohmyblog-darwin-arm64.tar.gz) |\n"
+          BODY="${BODY}| Linux | [![glibc](https://img.shields.io/badge/tar.gz-glibc-blue?style=flat-square&logo=linux&logoColor=white)](${DL_BASE}/ohmyblog-linux-x64.tar.gz) [![musl](https://img.shields.io/badge/tar.gz-musl-blue?style=flat-square&logo=alpine-linux&logoColor=white)](${DL_BASE}/ohmyblog-linux-x64-musl.tar.gz) [![docker](https://img.shields.io/badge/Docker-ghcr.io-2496ED?style=flat-square&logo=docker&logoColor=white)](https://ghcr.io/jgg0sbp66/ohmyblog) |\n"
+          BODY="${BODY}| Windows | [![x64](https://img.shields.io/badge/zip-x64-0078D4?style=flat-square&logo=windows&logoColor=white)](${DL_BASE}/ohmyblog-windows-x64.exe.zip) |\n"
+          BODY="${BODY}| macOS | [![Apple Silicon](https://img.shields.io/badge/tar.gz-Apple_Silicon-black?style=flat-square&logo=apple&logoColor=white)](${DL_BASE}/ohmyblog-darwin-arm64.tar.gz) |\n"
 
           echo -e "$BODY" > release_notes.md
 
