@@ -77,7 +77,6 @@ jobs:
           DL_BASE="https://github.com/${REPO}/releases/download/${{ github.ref_name }}"
 
           BODY="${BODY}\n\n---\n\n"
-          BODY="${BODY}[![downloads](https://img.shields.io/github/downloads/${REPO}/${{ github.ref_name }}/total?style=flat-square&label=downloads%40${VERSION})](${DL_BASE})\n\n"
           BODY="${BODY}### 📦 下载\n\n"
           BODY="${BODY}| 平台 | 下载 |\n"
           BODY="${BODY}|------|------|\n"
