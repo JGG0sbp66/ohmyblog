@@ -40,45 +40,37 @@ COPY --from=frontend-builder /monorepo/ohmyblog-frontend/dist ./frontend-dist
 # 图像处理由 Bun 运行时内置 Bun.Image 提供，无 native 模块依赖
 RUN bun run scripts/build.ts linux-musl
 
-# --- 阶段 3: 提供运行库（用于 scratch） ---
-FROM alpine:3.23 AS runtime
-
-# 只安装运行时必需的库和证书，并创建非 root 用户
-RUN apk add --no-cache \
-    ca-certificates \
-    libstdc++ \
-    && addgroup -S app \
-    && adduser -S -G app -u 10001 app \
-    && mkdir -p /app/data \
-    && chown -R app:app /app
-
-# --- 阶段 4: 运行阶段（scratch） ---
-FROM scratch
+# --- 阶段 3: 运行阶段（Alpine 最小化） ---
+FROM alpine:3.23
 
 # 从构建阶段继承 GIT_COMMIT
 ARG GIT_COMMIT=unknown
 ENV GIT_COMMIT=$GIT_COMMIT
 LABEL git-commit=$GIT_COMMIT
 
-# 设置运行时环境变量，确保应用以生产模式运行
+# 设置运行时环境变量
 ENV NODE_ENV=production
 
-# 必需的运行库、证书与用户信息
-COPY --from=runtime /lib/ld-musl-x86_64.so.1 /lib/
-COPY --from=runtime /usr/lib/libstdc++.so.6* /usr/lib/
-COPY --from=runtime /usr/lib/libgcc_s.so.1 /usr/lib/
-COPY --from=runtime /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=runtime /etc/passwd /etc/passwd
-COPY --from=runtime /etc/group /etc/group
-COPY --from=runtime /app /app
+# 安装运行时依赖 + su-exec（轻量 gosu 替代，仅 ~10KB）
+RUN apk add --no-cache \
+    ca-certificates \
+    libstdc++ \
+    su-exec \
+    && addgroup -S app \
+    && adduser -S -G app -u 10001 app \
+    && mkdir -p /app/data \
+    && chown -R app:app /app
 
 WORKDIR /app
 
 # 从构建阶段复制编译好的资源
-# 仅复制必要的二进制文件、迁移文件和前端产物
-COPY --from=builder --chmod=755 --chown=10001:10001 /app/scripts/dist/linux-musl/ohmyblog /app/ohmyblog
-COPY --from=builder --chown=10001:10001 /app/scripts/dist/linux-musl/db/ /app/db/
-COPY --from=builder --chown=10001:10001 /app/scripts/dist/linux-musl/public/ /app/public/
+COPY --from=builder --chmod=755 /app/scripts/dist/linux-musl/ohmyblog /app/ohmyblog
+COPY --from=builder /app/scripts/dist/linux-musl/db/ /app/db/
+COPY --from=builder /app/scripts/dist/linux-musl/public/ /app/public/
+
+# 复制 entrypoint 脚本
+COPY ohmyblog-backend/scripts/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # 定义数据挂载点
 VOLUME ["/app/data"]
@@ -86,8 +78,5 @@ VOLUME ["/app/data"]
 # 声明服务端口
 EXPOSE 3000
 
-# 非 root 运行
-USER 10001:10001
-
-# 运行程序
-CMD ["/app/ohmyblog"]
+# 以 root 启动 entrypoint，由脚本内部降权到 app 用户
+ENTRYPOINT ["/app/entrypoint.sh"]

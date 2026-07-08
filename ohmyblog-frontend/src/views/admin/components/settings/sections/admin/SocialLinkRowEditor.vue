@@ -44,7 +44,6 @@ const handleFileChange = async (file: File, mode: "light" | "dark") => {
   // 清除错误状态
   nameError.value = "";
 
-  // TODO: 如果平台名词（name/key）输入中文，上传后在某些静态服务（如 Elysia staticPlugin）下由于未处理 URL 编码可能会导致 404 错误。后续需要兼容中文，或在上传时对 key 进行安全的 URL 编码/哈希转换，或在服务端路由匹配中进行 decodeURIComponent。
   // 使用通用的 handleUpload 逻辑
   uploader.handleUpload(
     file,

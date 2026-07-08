@@ -23,8 +23,11 @@ export const LOGS_DIR = join(DATA_DIR, "logs");
 /** 自动化生成的环境变量配置文件路径 */
 export const ENV_PATH = join(DATA_DIR, ".env");
 
+/** SQLite 数据库文件所在目录 */
+export const SQLITE_DIR = join(DATA_DIR, "sqlite");
+
 /** SQLite 数据库文件的物理存储路径 */
-export const DB_PATH = join(DATA_DIR, "sqlite.db");
+export const DB_PATH = join(SQLITE_DIR, "sqlite.db");
 
 /** 文章图片的存放根目录，按文章 UUID 分子目录存储
  *  结构：posts/{post-uuid}/cover.webp（封面）、{cuid}.webp（行内图）
