@@ -5,6 +5,7 @@
 <script setup lang="ts">
 import DeleteButton from "@/components/common/button/DeleteButton.vue";
 import { RiArrowDownSLine } from "@remixicon/vue";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 
 defineProps<{
   /** 是否展开 */
@@ -19,6 +20,8 @@ defineEmits<{
   /** 删除该项 */
   (e: "remove"): void;
 }>();
+
+const [contentRef] = useAutoAnimate();
 </script>
 
 <template>
@@ -46,9 +49,11 @@ defineEmits<{
       </div>
     </div>
 
-    <!-- 内容区域（展开时显示） -->
-    <div v-show="expanded" class="px-4 py-3">
-      <slot />
+    <!-- 内容区域（展开时显示，带动画） -->
+    <div ref="contentRef">
+      <div v-if="expanded" class="px-4 py-3">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
