@@ -1,24 +1,16 @@
 <!-- src/components/theme/ToggleTheme.vue -->
 <script lang="ts" setup>
-import { useTheme } from "@/composables/theme.hook";
-import ButtonSecondary from "../base/button/ButtonSecondary.vue";
-import { RiContrastLine, RiSunLine, RiMoonLine } from "@remixicon/vue";
 import { computed } from "vue";
-import { useMediaQuery } from "@vueuse/core";
+import { RiContrastLine, RiSunLine, RiMoonLine, RiCheckLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
-import DropButton from "../common/button/DropButton.vue";
+import { useTheme } from "@/composables/theme.hook";
 import { type TThemeMode, THEME_MODES } from "@/api/shared";
+import FooterDrop from "@/components/common/button/FooterDrop.vue";
 
 const { t } = useLang();
-const { colorMode, cycleTheme, setTheme } = useTheme();
+const { colorMode, setTheme } = useTheme();
 
-// 桌面端（支持 hover 的精细指针）保留"点击循环切换"快捷操作；
-// 触屏设备改用 DropButton 的 click 打开下拉，避免双重触发。
-const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
-const onTriggerClick = () => {
-  if (canHover.value) cycleTheme();
-};
-
+// 主题选项列表
 const themeOptions = computed(() => {
   return THEME_MODES.map((mode: TThemeMode) => ({
     value: mode,
@@ -26,42 +18,41 @@ const themeOptions = computed(() => {
   }));
 });
 
-// 判断当前主题是否为选中主题
-const isActive = (value: TThemeMode) => {
-  return colorMode.value === value;
-};
+// 当前主题的显示标签
+const currentLabel = computed(() => {
+  const current = themeOptions.value.find((o) => o.value === colorMode.value);
+  return current?.label ?? "";
+});
 </script>
 
 <template>
-  <DropButton placement="-left-10">
-    <template #trigger="{ active }">
-      <!-- 点击触发循环切换 -->
-      <ButtonSecondary
-        :isActive="active"
-        @click="onTriggerClick"
-        class="w-full h-full"
-      >
-        <RiContrastLine v-if="colorMode === 'auto'" class="w-5 h-5" />
-        <RiSunLine v-if="colorMode === 'light'" class="w-5 h-5" />
-        <RiMoonLine v-if="colorMode === 'dark'" class="w-5 h-5" />
-      </ButtonSecondary>
+  <FooterDrop :text="currentLabel" contentClass="min-w-32 p-1.5">
+    <template #icon>
+      <RiContrastLine v-if="colorMode === 'auto'" class="w-3.5 h-3.5" />
+      <RiSunLine v-if="colorMode === 'light'" class="w-3.5 h-3.5" />
+      <RiMoonLine v-if="colorMode === 'dark'" class="w-3.5 h-3.5" />
     </template>
 
-    <template #content>
-      <div class="flex flex-col gap-1">
-        <ButtonSecondary
-          v-for="option in themeOptions"
-          :key="option.value"
-          @click="setTheme(option.value)"
-          :text="option.label"
-          class="w-full py-2.5 px-4 justify-start"
-          :isActive="isActive(option.value)"
-        >
-          <RiContrastLine v-if="option.value === 'auto'" class="w-5 h-5" />
-          <RiSunLine v-if="option.value === 'light'" class="w-5 h-5" />
-          <RiMoonLine v-if="option.value === 'dark'" class="w-5 h-5" />
-        </ButtonSecondary>
-      </div>
-    </template>
-  </DropButton>
+    <div class="flex flex-col gap-0.5">
+      <button
+        v-for="option in themeOptions"
+        :key="option.value"
+        type="button"
+        class="flex items-center justify-between w-full px-3 py-2 rounded-md text-xs cursor-pointer hover:text-fg hover:bg-bg-muted transition-colors duration-150"
+        :class="colorMode === option.value ? 'text-fg' : 'text-fg-muted'"
+        @click="setTheme(option.value)"
+      >
+        <span class="flex items-center gap-1.5">
+          <RiContrastLine v-if="option.value === 'auto'" class="w-3.5 h-3.5" />
+          <RiSunLine v-if="option.value === 'light'" class="w-3.5 h-3.5" />
+          <RiMoonLine v-if="option.value === 'dark'" class="w-3.5 h-3.5" />
+          {{ option.label }}
+        </span>
+        <RiCheckLine
+          v-if="colorMode === option.value"
+          class="w-4 h-4 text-accent"
+        />
+      </button>
+    </div>
+  </FooterDrop>
 </template>

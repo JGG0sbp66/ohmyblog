@@ -1,6 +1,5 @@
 <!-- src/components/common/layout/Header.vue -->
 <script lang="ts" setup>
-import ToggleTheme from "@/components/theme/ToggleTheme.vue";
 import ToggleColor from "@/components/theme/ToggleColor.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import HeaderSearch from "@/components/base/search/HeaderSearch.vue";
@@ -73,7 +72,6 @@ watch(
         class="flex items-center mr-3 md:mr-4 gap-1 md:gap-2 stagger-container"
       >
         <ToggleColor class="onload-animation" />
-        <ToggleTheme class="onload-animation" />
         <SettingsButton class="onload-animation" />
 
         <!-- 移动端汉堡按钮：用于打开导航抽屉 -->
