@@ -1,6 +1,6 @@
 <!-- src/components/base/button/ButtonThird.vue -->
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, useSlots } from "vue";
 import { RouterLink, type RouteLocationRaw } from "vue-router";
 
 /**
@@ -19,9 +19,9 @@ import { RouterLink, type RouteLocationRaw } from "vue-router";
  * - href: 外链地址；传入时渲染为 <a>
  * - to: 站内路由地址；传入时渲染为 RouterLink，优先级高于 href
  * - target / rel: 外链 <a> 的原生属性
- *
  * 插槽：
  * - default: 文本前的可选图标
+ * - suffix: 文本后的可选尾部内容（如箭头图标）
  */
 const props = withDefaults(
   defineProps<{
@@ -43,6 +43,9 @@ const props = withDefaults(
     rel: undefined,
   },
 );
+
+const slots = useSlots();
+const hasSuffix = computed(() => !!slots.suffix);
 
 const componentTag = computed(() => {
   if (props.to) return RouterLink;
@@ -79,6 +82,9 @@ const componentProps = computed(() => {
   >
     <slot />
     <span v-if="text">{{ text }}</span>
+    <span v-if="hasSuffix" class="inline-flex items-center">
+      <slot name="suffix" />
+    </span>
 
     <!-- 底部下划线：从左向右展开动画 -->
     <span
