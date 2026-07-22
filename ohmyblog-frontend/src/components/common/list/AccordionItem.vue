@@ -28,7 +28,7 @@ const [contentRef] = useAutoAnimate();
   <div class="border border-fg-muted/10 rounded-xl overflow-hidden">
     <!-- 头部：点击区域 -->
     <div
-      class="flex items-center justify-between px-4 py-3 bg-bg-muted/30 cursor-pointer select-none hover:bg-bg-muted/50 transition-colors"
+      class="flex items-center justify-between gap-3 px-4 py-3 bg-bg-muted/30 cursor-pointer select-none transition-colors"
       @click="$emit('toggle')"
     >
       <div class="flex items-center gap-3 flex-1 min-w-0">
