@@ -28,6 +28,9 @@ export const useSystemStore = defineStore("system", () => {
     footerLinks: [],
   });
 
+  // 站点创建时间（取自 site_info 配置的 createdAt 表字段）
+  const siteCreatedAt = ref<Date | string>("");
+
   // 个性化配置 (Hero, 头像, 简介, 显示名称等)
   const personalInfo = ref<TPersonalInfoConfigUpsertDTO["configValue"]>({
     username: "",
@@ -41,6 +44,7 @@ export const useSystemStore = defineStore("system", () => {
 
   /**
    * 通用配置获取辅助函数
+   * @returns 原始响应，调用方可按需取表级字段（如 createdAt）
    */
   async function fetchConfig(
     configKey: TConfigKey,
@@ -55,10 +59,12 @@ export const useSystemStore = defineStore("system", () => {
           ...res.config.configValue,
         };
       }
+      return res;
     } catch (error) {
       if (initialized.value == null || initialized.value) {
         useToast.error(t(errorMsgMask));
       }
+      return null;
     }
   }
 
@@ -66,7 +72,10 @@ export const useSystemStore = defineStore("system", () => {
    * 获取站点基本信息
    */
   async function fetchSiteInfo() {
-    await fetchConfig("site_info", siteInfo, "api.errors.获取站点基本信息失败");
+    const res = await fetchConfig("site_info", siteInfo, "api.errors.获取站点基本信息失败");
+    if (res?.config) {
+      siteCreatedAt.value = res.config.createdAt;
+    }
   }
 
   /**
@@ -140,6 +149,7 @@ export const useSystemStore = defineStore("system", () => {
     version,
     initialized,
     siteInfo,
+    siteCreatedAt,
     personalInfo,
     fetchSiteInfo,
     fetchPersonalInfo,
