@@ -19,13 +19,17 @@ class UploadService {
 	 * @returns 处理后的访问路径
 	 */
 	async uploadFavicon(file: File) {
+		// ICO 文件保留原格式，其他格式统一转 PNG
+		const isIco = file.name?.toLowerCase().endsWith(".ico");
+		const filename = isIco ? "favicon.ico" : "favicon.png";
+
 		return this.uploadAsset(
 			file,
 			SYSTEM_UPLOADS_DIR,
 			"/api/uploads/system",
-			"favicon.png",
+			filename,
 			"网站图标",
-			true,
+			!isIco, // ICO 不走图像管道
 		);
 	}
 

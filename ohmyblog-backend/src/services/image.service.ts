@@ -23,6 +23,12 @@ export const ImageService = {
 		const absolutePath = path.resolve(targetPath);
 		await mkdir(path.dirname(absolutePath), { recursive: true });
 
+		// ICO 文件：浏览器原生支持，跳过图像管道直接保存
+		if (file.name?.toLowerCase().endsWith(".ico")) {
+			await Bun.write(absolutePath, file);
+			return absolutePath;
+		}
+
 		// File 是 Blob 的子类，可直接调用 .image() 走零拷贝管道
 		const pipeline = file.image();
 
