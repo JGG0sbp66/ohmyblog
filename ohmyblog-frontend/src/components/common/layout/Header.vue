@@ -1,6 +1,5 @@
 <!-- src/components/common/layout/Header.vue -->
 <script lang="ts" setup>
-import ToggleLanguage from "@/components/theme/ToggleLanguage.vue";
 import ToggleTheme from "@/components/theme/ToggleTheme.vue";
 import ToggleColor from "@/components/theme/ToggleColor.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
@@ -75,7 +74,6 @@ watch(
       >
         <ToggleColor class="onload-animation" />
         <ToggleTheme class="onload-animation" />
-        <ToggleLanguage class="onload-animation" />
         <SettingsButton class="onload-animation" />
 
         <!-- 移动端汉堡按钮：用于打开导航抽屉 -->
