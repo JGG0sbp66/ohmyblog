@@ -3,7 +3,7 @@ import { logger } from "../plugins/logger.plugin";
 
 export class HealthService {
 	private commitHash: string = "unknown";
-	private appVersion: string = "unknown";
+	private appVersion: string = "latest";
 	private logger = logger.withTag("HealthService");
 
 	constructor() {
