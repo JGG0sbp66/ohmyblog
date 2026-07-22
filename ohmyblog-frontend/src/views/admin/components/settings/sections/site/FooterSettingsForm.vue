@@ -5,7 +5,10 @@ import SettingCard from "@/components/base/card/SettingCard.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import { RiAddLine, RiDeleteBinLine, RiArrowDownSLine } from "@remixicon/vue";
+import AccordionItem from "@/components/common/list/AccordionItem.vue";
+import ListRowLayout from "@/components/common/list/ListRowLayout.vue";
+import EmptyState from "@/components/common/list/EmptyState.vue";
+import { RiAddLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useToast } from "@/composables/toast.hook";
@@ -113,7 +116,8 @@ const handleSave = async () => {
 
       <!-- 5. 页脚分组链接 -->
       <div class="flex flex-col gap-4">
-        <div class="flex items-center justify-between">
+        <!-- 头部：标题 + 添加分组按钮 -->
+        <div class="flex items-center justify-between gap-3">
           <h3
             class="text-sm font-bold tracking-wider text-fg-subtle uppercase"
           >
@@ -139,98 +143,75 @@ const handleSave = async () => {
           "
           class="flex flex-col gap-3"
         >
-          <div
+          <AccordionItem
             v-for="(group, gIndex) in systemStore.siteInfo.footerLinks"
             :key="gIndex"
-            class="border border-fg-muted/10 rounded-xl overflow-hidden"
+            :expanded="expandedGroup === gIndex"
+            @toggle="toggleGroup(gIndex)"
+            @remove="removeGroup(gIndex)"
           >
-            <!-- 分组头部 -->
-            <div
-              class="flex items-center justify-between px-4 py-3 bg-bg-muted/30 cursor-pointer select-none hover:bg-bg-muted/50 transition-colors"
-              @click="toggleGroup(gIndex)"
-            >
-              <div class="flex items-center gap-3 flex-1 min-w-0">
-                <RiArrowDownSLine
-                  class="w-4 h-4 text-fg-muted transition-transform duration-200 shrink-0"
-                  :class="{ '-rotate-90': expandedGroup !== gIndex }"
-                />
-                <input
-                  v-model="group.title"
-                  :placeholder="
-                    t(
-                      'views.admin.Settings.site.footer.links.groupTitlePlaceholder',
-                    )
-                  "
-                  class="flex-1 min-w-0 bg-transparent text-sm font-medium text-fg outline-none placeholder:text-fg-muted/50"
-                  @click.stop
-                />
-              </div>
-              <button
-                class="p-1.5 rounded-lg text-fg-muted hover:text-danger hover:bg-danger/10 transition-colors shrink-0"
-                @click.stop="removeGroup(gIndex)"
-              >
-                <RiDeleteBinLine class="w-4 h-4" />
-              </button>
-            </div>
+            <!-- 分组标题输入 -->
+            <template #header>
+              <TipInput
+                v-model="group.title"
+                :placeholder="
+                  t(
+                    'views.admin.Settings.site.footer.links.groupTitlePlaceholder',
+                  )
+                "
+              />
+            </template>
 
-            <!-- 分组内容 (展开时显示) -->
-            <div v-show="expandedGroup === gIndex" class="px-4 py-3">
-              <div class="flex flex-col gap-2">
-                <!-- 链接列表 -->
-                <div
-                  v-for="(link, lIndex) in group.links"
-                  :key="lIndex"
-                  class="flex items-center gap-2"
-                >
-                  <div class="flex-1 flex items-center gap-2 min-w-0">
-                    <input
+            <!-- 分组内的链接列表 -->
+            <div class="flex flex-col gap-3">
+              <ListRowLayout
+                v-for="(link, lIndex) in group.links"
+                :key="lIndex"
+                @remove="removeLink(gIndex, lIndex)"
+              >
+                <div class="flex items-start gap-3">
+                  <!-- 链接名称 -->
+                  <div class="w-1/3 min-w-20">
+                    <TipInput
                       v-model="link.name"
                       :placeholder="
                         t(
                           'views.admin.Settings.site.footer.links.namePlaceholder',
                         )
                       "
-                      class="w-1/3 min-w-0 px-3 py-2 rounded-lg bg-bg-muted/50 text-sm text-fg outline-none border border-transparent focus:border-primary/30 transition-colors placeholder:text-fg-muted/50"
                     />
-                    <input
+                  </div>
+                  <!-- 链接 URL -->
+                  <div class="flex-1 min-w-0">
+                    <TipInput
                       v-model="link.url"
                       :placeholder="
                         t(
                           'views.admin.Settings.site.footer.links.urlPlaceholder',
                         )
                       "
-                      class="flex-1 min-w-0 px-3 py-2 rounded-lg bg-bg-muted/50 text-sm text-fg outline-none border border-transparent focus:border-primary/30 transition-colors placeholder:text-fg-muted/50"
                     />
                   </div>
-                  <button
-                    class="p-1.5 rounded-lg text-fg-muted hover:text-danger hover:bg-danger/10 transition-colors shrink-0"
-                    @click="removeLink(gIndex, lIndex)"
-                  >
-                    <RiDeleteBinLine class="w-3.5 h-3.5" />
-                  </button>
                 </div>
+              </ListRowLayout>
 
-                <!-- 添加链接按钮 -->
-                <ButtonSecondary
-                  :text="t('views.admin.Settings.site.footer.links.addLink')"
-                  size="sm"
-                  class="self-start mt-1"
-                  @click="addLink(gIndex)"
-                >
-                  <RiAddLine class="w-4 h-4" />
-                </ButtonSecondary>
-              </div>
+              <!-- 添加链接按钮 -->
+              <ButtonSecondary
+                :text="t('views.admin.Settings.site.footer.links.addLink')"
+                size="sm"
+                class="self-start group/addlink"
+                @click="addLink(gIndex)"
+              >
+                <RiAddLine
+                  class="w-4 h-4 transition-transform duration-300 group-hover/addlink:rotate-90"
+                />
+              </ButtonSecondary>
             </div>
-          </div>
+          </AccordionItem>
         </div>
 
         <!-- 空状态 -->
-        <div
-          v-else
-          class="text-sm text-fg-muted/60 text-center py-6 border border-dashed border-fg-muted/20 rounded-xl"
-        >
-          {{ t("common.list.empty") }}
-        </div>
+        <EmptyState v-else />
       </div>
     </div>
 
