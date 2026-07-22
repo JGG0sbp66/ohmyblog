@@ -47,3 +47,18 @@ export function formatDate(raw: RawDate, locale?: string): string {
     day: "2-digit",
   }).format(new Date(raw as string | number | Date));
 }
+
+/**
+ * 生成版权年份文本
+ * - 起始年 === 当前年 → "2026"
+ * - 起始年 !== 当前年 → "2025-2026"
+ * - raw 为空时 fallback 到当前年份
+ */
+export function formatCopyrightYear(raw: RawDate): string {
+  const currentYear = new Date().getFullYear();
+  if (!raw) return `${currentYear}`;
+  const startYear = new Date(raw as string | number | Date).getFullYear();
+  return startYear === currentYear
+    ? `${currentYear}`
+    : `${startYear}-${currentYear}`;
+}
