@@ -18,7 +18,6 @@ const { isSubmitting, runStep } = useSetupStep();
 const systemStore = useSystemStore();
 
 const titleInputRef = ref<Validatable | null>(null);
-const footerInputRef = ref<Validatable | null>(null);
 const icpInputRef = ref<Validatable | null>(null);
 
 const handleNext = () => {
@@ -31,11 +30,11 @@ const handleNext = () => {
       return upsertConfig({
         configKey: "site_info",
         configValue,
-        description: "站点基本信息（标题、图标、页脚、备案号）",
+        description: "站点基本信息（标题、图标、备案号）",
       });
     },
     {
-      validate: [titleInputRef.value, footerInputRef.value, icpInputRef.value],
+      validate: [titleInputRef.value, icpInputRef.value],
     },
   );
 };
@@ -63,22 +62,8 @@ const handleNext = () => {
       />
     </div>
 
-    <!-- 页脚版权 -->
-    <div class="onload-animation anim-delay-50">
-      <TipInput
-        ref="footerInputRef"
-        v-model="systemStore.siteInfo.footer"
-        :label="t('views.setup.steps.step2.footer.label')"
-        :placeholder="t('views.setup.steps.step2.footer.placeholder')"
-        :hint="t('views.setup.steps.step2.footer.hint')"
-        :schema="
-          SiteInfoConfigUpsertDTO.properties.configValue.properties.footer
-        "
-      />
-    </div>
-
     <!-- 备案号 -->
-    <div class="onload-animation anim-delay-100">
+    <div class="onload-animation anim-delay-50">
       <TipInput
         ref="icpInputRef"
         v-model="systemStore.siteInfo.icp"
@@ -90,7 +75,7 @@ const handleNext = () => {
     </div>
 
     <!-- 站点图标上传 -->
-    <div class="onload-animation anim-delay-150">
+    <div class="onload-animation anim-delay-100">
       <FaviconUpload v-model="systemStore.siteInfo.favicon" />
     </div>
   </StepLayout>
