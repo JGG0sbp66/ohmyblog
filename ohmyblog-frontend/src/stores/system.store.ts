@@ -60,7 +60,10 @@ export const useSystemStore = defineStore("system", () => {
         };
       }
       return res;
-    } catch (error) {
+    } catch (error: any) {
+      // "配置不存在" 是正常状态（用户可能跳过了某个 setup 步骤），静默忽略
+      if (error === "配置不存在") return null;
+
       if (initialized.value == null || initialized.value) {
         useToast.error(t(errorMsgMask));
       }
