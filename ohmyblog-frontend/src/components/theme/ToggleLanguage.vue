@@ -1,17 +1,18 @@
 <!-- src/components/theme/ToggleLanguage.vue -->
 <script lang="ts" setup>
-import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import { RiTranslate, RiEmphasisCn, RiEnglishInput } from "@remixicon/vue";
+import { computed } from "vue";
+import { RiTranslate, RiCheckLine } from "@remixicon/vue";
 import type { TLanguage } from "@/api/shared";
 import { useLang } from "@/composables/lang.hook";
-import DropButton from "../common/button/DropButton.vue";
+import FooterDrop from "@/components/common/button/FooterDrop.vue";
 
 const { locale, setLocale, SUPPORTED_LOCALES } = useLang();
 
-// 判断当前语言是否为选中语言
-const isActive = (value: TLanguage) => {
-  return locale.value === value;
-};
+// 当前语言的显示标签
+const currentLabel = computed(() => {
+  const current = SUPPORTED_LOCALES.find((l) => l.value === locale.value);
+  return current?.label ?? "";
+});
 
 // 切换语言
 const switchLanguage = (value: TLanguage) => {
@@ -20,27 +21,26 @@ const switchLanguage = (value: TLanguage) => {
 </script>
 
 <template>
-  <DropButton :contentClass="'min-w-36 p-2'" placement="-left-22">
-    <template #trigger="{ active }">
-      <ButtonSecondary :isActive="active" class="w-full h-full">
-        <RiTranslate class="w-5 h-5" />
-      </ButtonSecondary>
+  <FooterDrop :text="currentLabel" contentClass="min-w-32 p-1.5">
+    <template #icon>
+      <RiTranslate class="w-3.5 h-3.5" />
     </template>
 
-    <template #content>
-      <div class="flex flex-col gap-1">
-        <ButtonSecondary
-          v-for="value in SUPPORTED_LOCALES"
-          :key="value.label"
-          @click="switchLanguage(value.value)"
-          :text="value.label"
-          class="w-full py-2.5 px-4 justify-start"
-          :isActive="isActive(value.value)"
-        >
-          <RiEmphasisCn v-if="value.value === 'zh-CN'" class="w-5 h-5" />
-          <RiEnglishInput v-if="value.value === 'en-US'" class="w-5 h-5" />
-        </ButtonSecondary>
-      </div>
-    </template>
-  </DropButton>
+    <div class="flex flex-col gap-0.5">
+      <button
+        v-for="item in SUPPORTED_LOCALES"
+        :key="item.value"
+        type="button"
+        class="flex items-center justify-between w-full px-3 py-2 rounded-md text-xs cursor-pointer hover:text-fg hover:bg-bg-muted transition-colors duration-150"
+        :class="locale === item.value ? 'text-fg' : 'text-fg-muted'"
+        @click="switchLanguage(item.value)"
+      >
+        <span>{{ item.label }}</span>
+        <RiCheckLine
+          v-if="locale === item.value"
+          class="w-4 h-4 text-accent"
+        />
+      </button>
+    </div>
+  </FooterDrop>
 </template>
