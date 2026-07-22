@@ -262,9 +262,21 @@
           "footer": {
             "title": "Footer Settings",
             "description": "Configure the content displayed in the site footer.",
+            "footerTitle": {
+              "label": "Footer Title",
+              "placeholder": "e.g., Your nickname or site name",
+              "hint": "Title displayed at the top-left of the footer, can differ from site title"
+            },
+            "footerSlogan": {
+              "label": "Footer Slogan",
+              "placeholder": "e.g., Stay hungry. Stay foolish.",
+              "hint": "A short tagline displayed below the footer title"
+            },
             "links": {
               "title": "Footer Links",
-              "add": "Add Link",
+              "addGroup": "Add Group",
+              "addLink": "Add Link",
+              "groupTitlePlaceholder": "Group title (e.g., About)",
               "namePlaceholder": "Name (e.g., GitHub)",
               "urlPlaceholder": "URL (e.g., https://...)"
             }

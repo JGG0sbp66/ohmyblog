@@ -262,9 +262,21 @@
           "footer": {
             "title": "页脚设置",
             "description": "配置站点页脚显示内容",
+            "footerTitle": {
+              "label": "页脚标题",
+              "placeholder": "例如：你的昵称或站点名",
+              "hint": "显示在页脚左上角的标题，可以与站点标题不同"
+            },
+            "footerSlogan": {
+              "label": "页脚标语",
+              "placeholder": "例如：Stay hungry. Stay foolish.",
+              "hint": "显示在页脚标题下方的一句话"
+            },
             "links": {
               "title": "页脚链接",
-              "add": "添加链接",
+              "addGroup": "添加分组",
+              "addLink": "添加链接",
+              "groupTitlePlaceholder": "分组标题 (如 关于)",
               "namePlaceholder": "名称 (如 GitHub)",
               "urlPlaceholder": "地址 (如 https://...)"
             }

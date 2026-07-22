@@ -22,6 +22,8 @@ export const useSystemStore = defineStore("system", () => {
     title: "",
     favicon: "",
     footer: "",
+    footerTitle: "",
+    footerSlogan: "",
     icp: "",
     footerLinks: [],
   });
