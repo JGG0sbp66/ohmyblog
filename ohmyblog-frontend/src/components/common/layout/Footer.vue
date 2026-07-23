@@ -3,6 +3,7 @@
 import { useSystemStore } from "@/stores/system.store";
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 import ButtonThird from "@/components/base/button/ButtonThird.vue";
 import ToggleLanguage from "@/components/theme/ToggleLanguage.vue";
 import ToggleTheme from "@/components/theme/ToggleTheme.vue";
@@ -15,6 +16,7 @@ import { formatCopyrightYear } from "@/utils/date";
 const systemStore = useSystemStore();
 const { siteInfo } = storeToRefs(systemStore);
 const { t } = useLang();
+const router = useRouter();
 
 const [footerContentRef] = useAutoAnimate();
 
@@ -22,6 +24,14 @@ const [footerContentRef] = useAutoAnimate();
 const copyrightYear = computed(() =>
   formatCopyrightYear(systemStore.siteCreatedAt),
 );
+
+// 点击标题：平滑滚动到顶部并导航回首页
+function scrollToTopAndGoHome() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (router.currentRoute.value.path !== "/") {
+    router.push("/");
+  }
+}
 </script>
 
 <template>
@@ -37,7 +47,8 @@ const copyrightYear = computed(() =>
           <!-- 页脚标题 -->
           <h2
             v-if="siteInfo.footerTitle"
-            class="text-xl font-bold text-fg"
+            class="text-xl font-bold text-fg cursor-pointer transition-opacity hover:opacity-70"
+            @click="scrollToTopAndGoHome"
           >
             {{ siteInfo.footerTitle }}
           </h2>
