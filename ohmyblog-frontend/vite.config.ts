@@ -14,6 +14,19 @@ export default defineConfig({
         target: "http://localhost:3000",
         changeOrigin: true,
       },
+      // RSS Feed / Sitemap / robots.txt 转发到后端
+      "/feed": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+      "/sitemap.xml": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+      "/robots.txt": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
     },
   },
   plugins: [vue(), vueDevTools(), tailwindcss()],
