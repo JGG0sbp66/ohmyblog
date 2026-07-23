@@ -31,6 +31,7 @@
 		"culori": "^4.0.2",
 		"drizzle-orm": "^0.45.2",
 		"elysia": "^1.4.28",
+		"feed": "^6.0.0",
 		"nodemailer": "^8.0.7",
 		"react": "^19.2.5",
 		"react-dom": "^19.2.5",
