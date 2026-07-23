@@ -9,7 +9,7 @@ import type {
 } from "@server/dtos/post.dto";
 
 /** 文章列表项（用于管理端列表展示） */
-export type PostListItem = Omit<TPost, "content">;
+export type PostListItem = Omit<TPost, "content" | "contentHtml">;
 /** 文章详情（用于编辑器加载，含完整 ProseMirror JSON） */
 export type PostDetail = TPost;
 

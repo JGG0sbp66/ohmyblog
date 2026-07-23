@@ -17,11 +17,13 @@ import { useImageInsert } from "./composables/use-image-insert";
  *
  * v-model:json              → ProseMirror JSON（存入 content 字段，唯一真源）
  * v-model:text              → 纯文本（存入 contentText 字段，用于搜索/预览）
+ * v-model:html              → HTML（存入 contentHtml 字段，用于前台展示/RSS）
  * v-model:totalCharCount    → 全文字符数
  * v-model:selectedCharCount → 当前选区字符数（无选区时为 0）
  */
 const json = defineModel<object | undefined>("json");
 const text = defineModel<string>("text", { default: "" });
+const html = defineModel<string>("html", { default: "" });
 const totalCharCount = defineModel<number>("totalCharCount", { default: 0 });
 const selectedCharCount = defineModel<number>("selectedCharCount", {
   default: 0,
@@ -98,6 +100,7 @@ const editor = useEditor({
     internalUpdate = true;
     json.value = editor.getJSON();
     text.value = editor.getText();
+    html.value = editor.getHTML();
     syncCharCount(editor);
   },
   onSelectionUpdate({ editor }) {

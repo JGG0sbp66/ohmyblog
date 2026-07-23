@@ -30,6 +30,7 @@ export const usePostEditor = () => {
   const title = ref("");
   const content = ref<object | undefined>(undefined);
   const contentText = ref("");
+  const contentHtml = ref("");
   const coverImage = ref<string | null>(null);
   const excerpt = ref("");
   /** 是否置顶（布尔；后端把它翻译成 pinnedAt 时间戳） */
@@ -82,7 +83,7 @@ export const usePostEditor = () => {
       });
       // title/content 防抖自动保存
       watchDebounced(
-        [title, content, contentText, coverImage, excerpt, tags, slug, pinned],
+        [title, content, contentText, contentHtml, coverImage, excerpt, tags, slug, pinned],
         () => {
           if (!isDirty.value) return;
           autoSave();
@@ -98,6 +99,7 @@ export const usePostEditor = () => {
     title: title.value || undefined,
     content: content.value,
     contentText: contentText.value || undefined,
+    contentHtml: contentHtml.value || undefined,
     coverImage: coverImage.value ?? undefined,
     excerpt: excerpt.value || undefined,
     pinned: pinned.value,
@@ -150,6 +152,7 @@ export const usePostEditor = () => {
     title,
     content,
     contentText,
+    contentHtml,
     coverImage,
     excerpt,
     pinned,
