@@ -16,7 +16,9 @@
         },
         "Footer": {
           "rssSubscribe": "RSS 订阅",
-          "sitemap": "站点地图"
+          "sitemap": "站点地图",
+          "viewerCount": "正被{count}人浏览",
+          "offline": "未连接"
         }
       },
       "admin": {

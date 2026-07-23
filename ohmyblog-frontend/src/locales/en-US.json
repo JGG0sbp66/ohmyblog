@@ -16,7 +16,9 @@
         },
         "Footer": {
           "rssSubscribe": "RSS",
-          "sitemap": "Sitemap"
+          "sitemap": "Sitemap",
+          "viewerCount": "Being viewed by {count}",
+          "offline": "Offline"
         }
       },
       "admin": {
