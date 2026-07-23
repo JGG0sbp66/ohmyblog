@@ -13,6 +13,9 @@
             "open": "Open menu",
             "close": "Close menu"
           }
+        },
+        "Footer": {
+          "rssSubscribe": "RSS"
         }
       },
       "admin": {

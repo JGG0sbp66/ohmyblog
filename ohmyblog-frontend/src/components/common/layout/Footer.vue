@@ -103,8 +103,18 @@ const copyrightYear = computed(() =>
       <div
         class="mt-8 pt-4 border-t border-fg-muted/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-fg-muted/60"
       >
-        <!-- 左侧：主题色 + 主题切换 + 语言切换 -->
+        <!-- 左侧：RSS 订阅 + 主题色 + 主题切换 + 语言切换 -->
         <div class="flex items-center gap-1 flex-wrap justify-center">
+          <!-- RSS 订阅 -->
+          <ButtonThird
+            :text="t('components.common.layout.Footer.rssSubscribe')"
+            href="/feed"
+            target="_blank"
+            class="text-xs!"
+          />
+
+          <span class="text-fg-muted/30 mx-1">|</span>
+
           <!-- 主题色 -->
           <ToggleColor />
 

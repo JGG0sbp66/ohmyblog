@@ -13,6 +13,9 @@
             "open": "打开菜单",
             "close": "关闭菜单"
           }
+        },
+        "Footer": {
+          "rssSubscribe": "RSS 订阅"
         }
       },
       "admin": {
