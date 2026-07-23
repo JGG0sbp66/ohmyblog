@@ -15,7 +15,8 @@
           }
         },
         "Footer": {
-          "rssSubscribe": "RSS"
+          "rssSubscribe": "RSS",
+          "sitemap": "Sitemap"
         }
       },
       "admin": {

@@ -13,6 +13,7 @@ import { feedRoute } from "./routes/feed.route.js";
 import { friendLinkRoute } from "./routes/friend-link.route.js";
 import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
+import { sitemapRoute } from "./routes/sitemap.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
 import { isProduction } from "./utils/runtime";
@@ -45,6 +46,7 @@ const app = new Elysia()
 	)
 	// 挂载路由
 	.use(feedRoute)
+	.use(sitemapRoute)
 	.group("/api", (app) =>
 		app
 			.use(healthRoute)

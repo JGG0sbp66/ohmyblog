@@ -15,7 +15,8 @@
           }
         },
         "Footer": {
-          "rssSubscribe": "RSS 订阅"
+          "rssSubscribe": "RSS 订阅",
+          "sitemap": "站点地图"
         }
       },
       "admin": {

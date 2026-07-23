@@ -36,3 +36,9 @@ export const POST_UPLOADS_DIR = join(UPLOADS_DIR, "posts");
 
 /** 前端 SPA 构建产物目录，挂载在根路径 / 下（由 Docker build 阶段注入） */
 export const PUBLIC_DIR = join(process.cwd(), "public");
+
+/**
+ * Sitemap 静态页面路径列表
+ * 新增公开前台页面时在此追加即可自动纳入 sitemap.xml
+ */
+export const SITEMAP_STATIC_PATHS = ["/", "/archive", "/friends"];

@@ -113,6 +113,16 @@ const copyrightYear = computed(() =>
             class="text-xs!"
           />
 
+          <span class="text-fg-muted/30">·</span>
+
+          <!-- 站点地图 -->
+          <ButtonThird
+            :text="t('components.common.layout.Footer.sitemap')"
+            href="/sitemap.xml"
+            target="_blank"
+            class="text-xs!"
+          />
+
           <span class="text-fg-muted/30 mx-1">|</span>
 
           <!-- 主题色 -->
