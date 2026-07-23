@@ -45,7 +45,7 @@ const copyrightYear = computed(() =>
           <!-- 页脚标语 -->
           <p
             v-if="siteInfo.footerSlogan"
-            class="text-xs text-fg-muted italic leading-relaxed"
+            class="text-[13px] text-fg-muted italic leading-relaxed"
           >
             {{ siteInfo.footerSlogan }}
           </p>
@@ -53,7 +53,7 @@ const copyrightYear = computed(() =>
           <!-- 版权信息：有 footer 文本时才显示 -->
           <p
             v-if="siteInfo.footer"
-            class="text-xs text-fg-muted/70 mt-2 leading-relaxed"
+            class="text-[13px] text-fg-muted/70 mt-2 leading-relaxed"
           >
             <span>&copy; {{ copyrightYear }}</span>
             <span class="ml-1">{{ siteInfo.footer }}</span>
@@ -71,7 +71,7 @@ const copyrightYear = computed(() =>
             class="flex flex-col gap-2"
           >
             <!-- 分组标题 -->
-            <h3 class="text-xs font-semibold text-fg tracking-wide px-1">
+            <h3 class="text-[13px] font-semibold text-fg tracking-wide px-1">
               {{ group.title }}
             </h3>
             <!-- 分组链接：HTTP(S) 外链新窗口打开并显示箭头，其余链接走站内路由 -->
@@ -91,7 +91,7 @@ const copyrightYear = computed(() =>
                   :rel="
                     isExternalLink(link.url) ? 'noopener noreferrer' : undefined
                   "
-                  class="text-xs!"
+                  class="text-[13px]!"
                 />
               </div>
             </div>
