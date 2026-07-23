@@ -10,6 +10,7 @@ import ToggleTheme from "@/components/theme/ToggleTheme.vue";
 import ToggleColor from "@/components/theme/ToggleColor.vue";
 import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import { useLang } from "@/composables/lang.hook";
+import { useViewerCount } from "@/composables/viewer-count.hook";
 import { isExternalLink, normalizeInternalPath } from "@/utils/url";
 import { formatCopyrightYear } from "@/utils/date";
 
@@ -19,6 +20,7 @@ const { t } = useLang();
 const router = useRouter();
 
 const [footerContentRef] = useAutoAnimate();
+const { viewerCount, isConnected } = useViewerCount();
 
 // 版权年份
 const copyrightYear = computed(() =>
@@ -68,6 +70,26 @@ function scrollToTopAndGoHome() {
           >
             <span>&copy; {{ copyrightYear }}</span>
             <span class="ml-1">{{ siteInfo.footer }}</span>
+          </p>
+
+          <!-- 在线浏览人数 -->
+          <p class="text-[13px] text-fg-muted/70 mt-1 leading-relaxed flex items-center gap-1.5">
+            <span class="relative inline-flex items-center justify-center size-3">
+              <span
+                v-if="isConnected"
+                class="absolute inline-flex size-[6px] animate-ping rounded-full bg-green-400 opacity-75"
+              />
+              <span
+                class="relative inline-flex size-[6px] rounded-full"
+                :class="isConnected ? 'bg-green-500' : 'bg-red-400'"
+              />
+            </span>
+            <span v-if="isConnected">
+              {{ t('components.common.layout.Footer.viewerCount', { count: viewerCount }) }}
+            </span>
+            <span v-else>
+              {{ t('components.common.layout.Footer.offline') }}
+            </span>
           </p>
         </div>
 
