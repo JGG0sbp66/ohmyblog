@@ -9,10 +9,11 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   server: {
     proxy: {
-      // 开发环境将 /api 前缀转发到后端 3000
+      // 开发环境将 /api 前缀转发到后端 3000（含 WebSocket）
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
+        ws: true,
       },
       // RSS Feed / Sitemap / robots.txt 转发到后端
       "/feed": {
