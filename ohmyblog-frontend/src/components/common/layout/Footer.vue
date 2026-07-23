@@ -37,7 +37,7 @@ const copyrightYear = computed(() =>
           <!-- 页脚标题 -->
           <h2
             v-if="siteInfo.footerTitle"
-            class="text-lg font-bold text-fg"
+            class="text-xl font-bold text-fg"
           >
             {{ siteInfo.footerTitle }}
           </h2>
@@ -101,7 +101,7 @@ const copyrightYear = computed(() =>
 
       <!-- 下半部分：底部栏 -->
       <div
-        class="mt-8 pt-4 border-t border-fg-muted/10 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-fg-muted/60"
+        class="mt-8 pt-4 border-t border-fg-muted/10 flex flex-col md:flex-row items-center justify-between gap-3 text-[13px] text-fg-muted/60"
       >
         <!-- 左侧：RSS 订阅 + 主题色 + 主题切换 + 语言切换 -->
         <div class="flex items-center gap-1 flex-wrap justify-center">
@@ -110,7 +110,6 @@ const copyrightYear = computed(() =>
             :text="t('components.common.layout.Footer.rssSubscribe')"
             href="/feed"
             target="_blank"
-            class="text-xs!"
           />
 
           <span class="text-fg-muted/30">·</span>
@@ -120,7 +119,6 @@ const copyrightYear = computed(() =>
             :text="t('components.common.layout.Footer.sitemap')"
             href="/sitemap.xml"
             target="_blank"
-            class="text-xs!"
           />
 
           <span class="text-fg-muted/30 mx-1">|</span>
@@ -146,7 +144,6 @@ const copyrightYear = computed(() =>
           href="https://beian.miit.gov.cn/"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-xs!"
         />
       </div>
     </div>
