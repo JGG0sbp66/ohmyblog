@@ -9,6 +9,7 @@ import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
 import { configRoute } from "./routes/config.route.js";
 import { emailRoute } from "./routes/email.route.js";
+import { feedRoute } from "./routes/feed.route.js";
 import { friendLinkRoute } from "./routes/friend-link.route.js";
 import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
@@ -43,6 +44,7 @@ const app = new Elysia()
 		}),
 	)
 	// 挂载路由
+	.use(feedRoute)
 	.group("/api", (app) =>
 		app
 			.use(healthRoute)
