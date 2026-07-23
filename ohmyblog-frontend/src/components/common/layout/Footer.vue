@@ -45,12 +45,13 @@ function scrollToTopAndGoHome() {
         <!-- 左栏：品牌信息 -->
         <div class="flex flex-col gap-2 md:max-w-72">
           <!-- 页脚标题 -->
-          <ButtonThird
+          <h2
             v-if="siteInfo.footerTitle"
-            :text="siteInfo.footerTitle"
-            class="text-xl! font-bold! px-0!"
+            class="text-xl font-bold text-fg cursor-pointer transition-opacity hover:opacity-70"
             @click="scrollToTopAndGoHome"
-          />
+          >
+            {{ siteInfo.footerTitle }}
+          </h2>
 
           <!-- 页脚标语 -->
           <p
