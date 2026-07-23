@@ -15,6 +15,7 @@ import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
 import { sitemapRoute } from "./routes/sitemap.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
+import { viewerRoute } from "./routes/viewer.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
 import { isProduction } from "./utils/runtime";
 
@@ -55,7 +56,8 @@ const app = new Elysia()
 			.use(emailRoute)
 			.use(friendLinkRoute)
 			.use(postRoute)
-			.use(uploadRoute),
+			.use(uploadRoute)
+			.use(viewerRoute),
 	);
 
 // 挂载前端静态资源（public/ 目录由 Docker build 阶段注入）
