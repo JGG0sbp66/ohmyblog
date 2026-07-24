@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { useSystemStore } from "@/stores/system.store";
 import { storeToRefs } from "pinia";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import ButtonThird from "@/components/base/button/ButtonThird.vue";
 import ToggleLanguage from "@/components/theme/ToggleLanguage.vue";
 import ToggleTheme from "@/components/theme/ToggleTheme.vue";
@@ -10,10 +11,12 @@ import { useLang } from "@/composables/lang.hook";
 
 const { siteInfo } = storeToRefs(useSystemStore());
 const { t } = useLang();
+const [toolbarRef] = useAutoAnimate();
 </script>
 
 <template>
   <div
+    ref="toolbarRef"
     class="mt-8 pt-4 border-t border-fg-muted/10 flex flex-col md:flex-row items-center justify-between gap-3 text-[13px] text-fg-muted/60"
   >
     <!-- 左侧：RSS 订阅 + 站点地图 + 主题色 + 主题切换 + 语言切换 -->

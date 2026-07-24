@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useLang } from "@/composables/lang.hook";
 import { useViewerCount } from "@/composables/viewer-count.hook";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import { formatCopyrightYear } from "@/utils/date";
 
 const systemStore = useSystemStore();
@@ -14,6 +15,8 @@ const { t } = useLang();
 const router = useRouter();
 
 const { viewerCount, isConnected } = useViewerCount();
+
+const [containerRef] = useAutoAnimate();
 
 // 版权年份
 const copyrightYear = computed(() =>
@@ -30,7 +33,7 @@ function scrollToTopAndGoHome() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 md:max-w-72">
+  <div ref="containerRef" class="flex flex-col gap-2 md:max-w-72">
     <!-- 页脚标题 -->
     <h2
       v-if="siteInfo.footerTitle"

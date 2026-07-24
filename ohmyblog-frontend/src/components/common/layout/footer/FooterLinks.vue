@@ -2,15 +2,18 @@
 <script setup lang="ts">
 import { useSystemStore } from "@/stores/system.store";
 import { storeToRefs } from "pinia";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import ButtonThird from "@/components/base/button/ButtonThird.vue";
 import { isExternalLink, normalizeInternalPath } from "@/utils/url";
 
 const { siteInfo } = storeToRefs(useSystemStore());
+const [containerRef] = useAutoAnimate();
 </script>
 
 <template>
   <div
     v-if="siteInfo.footerLinks && siteInfo.footerLinks.length > 0"
+    ref="containerRef"
     class="flex-1 flex flex-wrap gap-x-12 gap-y-6 md:gap-x-30 md:justify-end"
   >
     <div
