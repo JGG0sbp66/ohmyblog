@@ -275,7 +275,7 @@
             },
             "footerSlogan": {
               "label": "Footer Slogan",
-              "placeholder": "e.g., Stay hungry. Stay foolish.",
+              "placeholder": "e.g., Lorem Ipsum",
               "hint": "A short tagline displayed below the footer title"
             },
             "links": {

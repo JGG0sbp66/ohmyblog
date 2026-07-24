@@ -275,7 +275,7 @@
             },
             "footerSlogan": {
               "label": "页脚标语",
-              "placeholder": "例如：Stay hungry. Stay foolish.",
+              "placeholder": "例如：Lorem Ipsum",
               "hint": "显示在页脚标题下方的一句话"
             },
             "links": {
