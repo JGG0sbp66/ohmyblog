@@ -18,6 +18,7 @@ const {
   title,
   content,
   contentText,
+  contentHtml,
   coverImage,
   excerpt,
   pinned,
@@ -46,6 +47,7 @@ const {
         v-model:title="title"
         v-model:content="content"
         v-model:contentText="contentText"
+        v-model:contentHtml="contentHtml"
         v-model:total-char-count="totalCharCount"
         v-model:selected-char-count="selectedCharCount"
       />

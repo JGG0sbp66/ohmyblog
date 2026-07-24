@@ -1,73 +1,29 @@
 <!-- src/components/common/layout/Footer.vue -->
 <script setup lang="ts">
-import { useSystemStore } from "@/stores/system.store";
-import { storeToRefs } from "pinia";
-import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import { useAutoAnimate } from "@formkit/auto-animate/vue";
+import FooterBrand from "@/components/common/layout/footer/FooterBrand.vue";
+import FooterLinks from "@/components/common/layout/footer/FooterLinks.vue";
+import FooterToolbar from "@/components/common/layout/footer/FooterToolbar.vue";
 
-const systemStore = useSystemStore();
-const { siteInfo } = storeToRefs(systemStore);
-
-const currentYear = new Date().getFullYear();
-
-// 使用 auto-animate 自动处理备案信息的显示/隐藏动画
 const [footerContentRef] = useAutoAnimate();
 </script>
 
 <template>
   <footer id="footer" class="w-full bg-bg onload-animation">
-    <div class="w-2/3 mx-auto border-t border-fg-muted/10"></div>
-
-    <div class="max-w-250 mx-auto py-4 px-6">
-      <div ref="footerContentRef" class="flex flex-col items-center gap-1">
-        <!-- 版权与驱动信息 -->
-        <div
-          class="flex flex-col items-center gap-1.5 text-sm text-fg-muted text-center"
-        >
-          <div
-            class="flex items-center flex-wrap justify-center leading-relaxed"
-          >
-            <span> © {{ currentYear }} </span>
-            <ButtonSecondary
-              :text="siteInfo.title || 'ohmyblog'"
-              class="h-7! font-medium text-fg-subtle/60!"
-            />
-
-            <span v-if="siteInfo.footer">
-              {{ siteInfo.footer }}
-            </span>
-          </div>
-        </div>
-
-        <!-- 页脚链接 -->
-        <div
-          v-if="siteInfo.footerLinks && siteInfo.footerLinks.length > 0"
-          class="flex items-center flex-wrap justify-center gap-x-1"
-        >
-          <template v-for="(link, index) in siteInfo.footerLinks" :key="index">
-            <span v-if="index > 0" class="text-fg-subtle/30">/</span>
-            <a :href="link.url" target="_blank" rel="noopener noreferrer">
-              <ButtonSecondary
-                :text="link.name"
-                class="h-7! text-sm! text-fg-subtle/60! hover:text-primary!"
-              />
-            </a>
-          </template>
-        </div>
-
-        <!-- 备案信息 -->
-        <a
-          v-if="siteInfo.icp"
-          href="https://beian.miit.gov.cn/"
-          target="_blank"
-          class="h-7 flex justify-center"
-        >
-          <ButtonSecondary
-            :text="siteInfo.icp"
-            class="h-7! text-[10px]! text-fg-subtle/60! font-normal!"
-          />
-        </a>
+    <div
+      ref="footerContentRef"
+      class="w-full max-w-280 mx-auto py-10 px-6"
+    >
+      <!-- 上半部分：左右分栏 -->
+      <div class="flex flex-col md:flex-row gap-10 md:gap-16">
+        <!-- 左栏：品牌信息 -->
+        <FooterBrand />
+        <!-- 右栏：分组链接 -->
+        <FooterLinks />
       </div>
+
+      <!-- 下半部分：底部栏 -->
+      <FooterToolbar />
     </div>
   </footer>
 </template>

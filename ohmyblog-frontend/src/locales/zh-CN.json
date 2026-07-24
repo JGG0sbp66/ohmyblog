@@ -13,6 +13,12 @@
             "open": "打开菜单",
             "close": "关闭菜单"
           }
+        },
+        "Footer": {
+          "rssSubscribe": "RSS 订阅",
+          "sitemap": "站点地图",
+          "viewerCount": "正被{count}人浏览",
+          "offline": "未连接"
         }
       },
       "admin": {
@@ -262,9 +268,21 @@
           "footer": {
             "title": "页脚设置",
             "description": "配置站点页脚显示内容",
+            "footerTitle": {
+              "label": "页脚标题",
+              "placeholder": "例如：你的昵称或站点名",
+              "hint": "显示在页脚左上角的标题，可以与站点标题不同"
+            },
+            "footerSlogan": {
+              "label": "页脚标语",
+              "placeholder": "例如：Lorem Ipsum",
+              "hint": "显示在页脚标题下方的一句话"
+            },
             "links": {
               "title": "页脚链接",
-              "add": "添加链接",
+              "addGroup": "添加分组",
+              "addLink": "添加链接",
+              "groupTitlePlaceholder": "分组标题 (如 关于)",
               "namePlaceholder": "名称 (如 GitHub)",
               "urlPlaceholder": "地址 (如 https://...)"
             }
@@ -886,6 +904,12 @@
       "请上传 100MB 以内的有效图片": "请上传 100MB 以内的有效图片",
       "\"body.image\" has invalid file type": "文章图片格式不支持，请上传图片文件",
       "文章行内图处理失败，请重试": "图片处理失败，请重试",
+      "图片处理失败，请重试": "图片处理失败，请重试",
+      "网站图标处理失败，请重试": "网站图标处理失败，请重试",
+      "首页横幅处理失败，请重试": "首页横幅处理失败，请重试",
+      "管理员头像处理失败，请重试": "管理员头像处理失败，请重试",
+      "社交图标处理失败，请重试": "社交图标处理失败，请重试",
+      "文章封面图处理失败，请重试": "文章封面图处理失败，请重试",
       "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP 连接失败：用户名无效",
       "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP 连接失败：认证凭据（密码或授权码）无效",
       "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP 连接失败：无法解析服务器地址 (DNS 错误)",

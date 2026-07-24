@@ -18,6 +18,12 @@ export const SavePostDTO = t.Object({
 			description: "ProseMirror JSON，编辑器源数据",
 		}),
 	),
+	// 由前端 editor.getHTML() 导出的 HTML，用于前台文章渲染和 RSS 全文输出
+	contentHtml: t.Optional(
+		t.String({
+			description: "HTML 格式内容，由前端编辑器导出",
+		}),
+	),
 	// 由前端 editor.getText() 导出的纯文本，用于搜索和列表预览
 	contentText: t.Optional(
 		t.String({

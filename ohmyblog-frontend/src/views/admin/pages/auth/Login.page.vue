@@ -114,7 +114,7 @@ const handleLogin = async () => {
         >
           <ButtonThird
             :text="t('views.login.forgotPassword')"
-            @click="router.push({ name: 'forgot-password' })"
+            :to="{ name: 'forgot-password' }"
           />
         </div>
 

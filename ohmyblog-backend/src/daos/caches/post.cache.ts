@@ -49,6 +49,7 @@ export type PublishedListRow = {
 	slug: string | null;
 	excerpt: string | null;
 	viewCount: number;
+	pinnedAt: Date | null;
 	publishedAt: Date | null;
 	deletedAt: Date | null;
 	createdAt: Date;

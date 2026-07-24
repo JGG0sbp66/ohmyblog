@@ -62,8 +62,22 @@ export const SiteInfoConfigUpsertDTO = t.Object({
 		footer: t.Optional(
 			t.String({
 				maxLength: 255,
-				description: "页脚信息",
+				description: "页脚版权信息",
 				error: "site_info.footer_range",
+			}),
+		),
+		footerTitle: t.Optional(
+			t.String({
+				maxLength: 100,
+				description: "页脚标题",
+				error: "site_info.footer_title_range",
+			}),
+		),
+		footerSlogan: t.Optional(
+			t.String({
+				maxLength: 255,
+				description: "页脚标语",
+				error: "site_info.footer_slogan_range",
 			}),
 		),
 		icp: t.Optional(
@@ -76,20 +90,33 @@ export const SiteInfoConfigUpsertDTO = t.Object({
 		footerLinks: t.Optional(
 			t.Array(
 				t.Object({
-					name: t.String({
+					title: t.String({
 						minLength: 1,
 						maxLength: 50,
-						description: "链接名称",
-						error: "site_info.footer_link_name_range",
+						description: "分组标题",
+						error: "site_info.footer_link_group_title_range",
 					}),
-					url: t.String({
-						minLength: 1,
-						description: "链接地址",
-						error: "site_info.footer_link_url_invalid",
-					}),
+					links: t.Array(
+						t.Object({
+							name: t.String({
+								minLength: 1,
+								maxLength: 50,
+								description: "链接名称",
+								error: "site_info.footer_link_name_range",
+							}),
+							url: t.String({
+								minLength: 1,
+								description: "链接地址",
+								error: "site_info.footer_link_url_invalid",
+							}),
+						}),
+						{
+							description: "分组内的链接列表",
+						},
+					),
 				}),
 				{
-					description: "页脚链接列表",
+					description: "页脚分组链接列表",
 				},
 			),
 		),

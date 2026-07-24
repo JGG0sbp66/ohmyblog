@@ -9,10 +9,13 @@ import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
 import { configRoute } from "./routes/config.route.js";
 import { emailRoute } from "./routes/email.route.js";
+import { feedRoute } from "./routes/feed.route.js";
 import { friendLinkRoute } from "./routes/friend-link.route.js";
 import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
+import { sitemapRoute } from "./routes/sitemap.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
+import { viewerRoute } from "./routes/viewer.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
 import { isProduction } from "./utils/runtime";
 
@@ -43,6 +46,8 @@ const app = new Elysia()
 		}),
 	)
 	// 挂载路由
+	.use(feedRoute)
+	.use(sitemapRoute)
 	.group("/api", (app) =>
 		app
 			.use(healthRoute)
@@ -51,7 +56,8 @@ const app = new Elysia()
 			.use(emailRoute)
 			.use(friendLinkRoute)
 			.use(postRoute)
-			.use(uploadRoute),
+			.use(uploadRoute)
+			.use(viewerRoute),
 	);
 
 // 挂载前端静态资源（public/ 目录由 Docker build 阶段注入）

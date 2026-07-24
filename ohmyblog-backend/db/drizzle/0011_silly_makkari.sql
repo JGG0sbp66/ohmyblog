@@ -1,0 +1,1 @@
+ALTER TABLE `post` ADD `content_html` text;

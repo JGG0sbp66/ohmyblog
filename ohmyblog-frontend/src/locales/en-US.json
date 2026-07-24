@@ -13,6 +13,12 @@
             "open": "Open menu",
             "close": "Close menu"
           }
+        },
+        "Footer": {
+          "rssSubscribe": "RSS",
+          "sitemap": "Sitemap",
+          "viewerCount": "Being viewed by {count}",
+          "offline": "Offline"
         }
       },
       "admin": {
@@ -262,9 +268,21 @@
           "footer": {
             "title": "Footer Settings",
             "description": "Configure the content displayed in the site footer.",
+            "footerTitle": {
+              "label": "Footer Title",
+              "placeholder": "e.g., Your nickname or site name",
+              "hint": "Title displayed at the top-left of the footer, can differ from site title"
+            },
+            "footerSlogan": {
+              "label": "Footer Slogan",
+              "placeholder": "e.g., Lorem Ipsum",
+              "hint": "A short tagline displayed below the footer title"
+            },
             "links": {
               "title": "Footer Links",
-              "add": "Add Link",
+              "addGroup": "Add Group",
+              "addLink": "Add Link",
+              "groupTitlePlaceholder": "Group title (e.g., About)",
               "namePlaceholder": "Name (e.g., GitHub)",
               "urlPlaceholder": "URL (e.g., https://...)"
             }
@@ -891,6 +909,12 @@
       "请上传 100MB 以内的有效图片": "Please upload a valid image under 100MB.",
       "\"body.image\" has invalid file type": "Invalid file type. Please upload an image file.",
       "文章行内图处理失败，请重试": "Failed to process the image. Please try again.",
+      "图片处理失败，请重试": "Failed to process the image. Please try again.",
+      "网站图标处理失败，请重试": "Failed to process the favicon. Please try again.",
+      "首页横幅处理失败，请重试": "Failed to process the hero image. Please try again.",
+      "管理员头像处理失败，请重试": "Failed to process the avatar. Please try again.",
+      "社交图标处理失败，请重试": "Failed to process the social icon. Please try again.",
+      "文章封面图处理失败，请重试": "Failed to process the cover image. Please try again.",
       "SMTP 服务器连接失败: Invalid login: 535 Invalid username": "SMTP connection failed: Invalid username",
       "SMTP 服务器连接失败: Invalid login: 535 Authentication credentials invalid": "SMTP connection failed: Authentication credentials (password or auth code) invalid",
       "SMTP 服务器连接失败: getaddrinfo ENOTFOUND": "SMTP connection failed: Hostname not found (DNS error)",

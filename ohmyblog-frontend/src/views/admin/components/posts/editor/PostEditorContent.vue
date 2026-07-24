@@ -10,12 +10,14 @@ import PostEditorBody from "./content/PostEditorBody.vue";
  * v-model:title              → 文章标题
  * v-model:content            → ProseMirror JSON
  * v-model:contentText        → 纯文本（搜索/预览）
+ * v-model:contentHtml        → HTML（前台展示/RSS）
  * v-model:totalCharCount     → 全文字符数（来自 CharacterCount）
  * v-model:selectedCharCount  → 当前选区字符数
  */
 const title = defineModel<string>("title", { default: "" });
 const content = defineModel<object | undefined>("content");
 const contentText = defineModel<string>("contentText", { default: "" });
+const contentHtml = defineModel<string>("contentHtml", { default: "" });
 const totalCharCount = defineModel<number>("totalCharCount", { default: 0 });
 const selectedCharCount = defineModel<number>("selectedCharCount", {
   default: 0,
@@ -36,6 +38,7 @@ const selectedCharCount = defineModel<number>("selectedCharCount", {
       <PostEditorBody
         v-model:json="content"
         v-model:text="contentText"
+        v-model:html="contentHtml"
         v-model:total-char-count="totalCharCount"
         v-model:selected-char-count="selectedCharCount"
       />

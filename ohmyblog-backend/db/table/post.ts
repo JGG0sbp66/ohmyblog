@@ -17,6 +17,11 @@ export const post = sqliteTable("post", {
 	// 也是前台文章渲染的输入（只读 Tiptap 实例直接 setContent(json)）
 	content: text("content", { mode: "json" }),
 
+	// 【前台展示 / RSS Feed 专用】HTML 格式的文章内容
+	// 由前端 editor.getHTML() 导出。用于前台文章详情页直接渲染和 RSS 全文输出，
+	// 避免后端依赖 Tiptap 做 JSON→HTML 转换
+	contentHtml: text("content_html"),
+
 	// 【搜索/预览专用】纯文本摘要
 	// 由前端 editor.getText() 导出。用于数据库全文搜索 (FTS) 和文章列表的预览文字
 	contentText: text("content_text"),
