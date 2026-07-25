@@ -8,6 +8,7 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, watch } from "vue";
 import { useLang } from "@/composables/lang.hook";
+import { useIsMobile } from "@/composables/breakpoint.hook";
 import { useFriendLinkList } from "@/composables/friend-link-list.hook";
 import FriendLinkListCard from "./FriendLinkListCard.vue";
 import type { FriendLinkItem, FriendLinkFilters } from "../types";
@@ -22,6 +23,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useLang();
+const isMobile = useIsMobile();
 
 const scrollContainer = ref<HTMLElement | null>(null);
 
@@ -30,8 +32,9 @@ const { list, isLoading, isFinished, fetchList } = useFriendLinkList(
   scrollContainer,
   {
     onFetch() {
-      // 首次加载且无选中项时，默认选中第一项
-      if (!props.modelValue && list.value.length > 0) {
+      // 桌面端右侧详情常驻，首次加载默认选中第一项以免详情区空白；
+      // 移动端详情是独立视图，自动选中会跳过列表，必须由用户显式选择。
+      if (!isMobile.value && !props.modelValue && list.value.length > 0) {
         emit("update:modelValue", list.value[0] ?? null);
       }
     },

@@ -32,7 +32,10 @@ const handleUpdated = () => {
 </script>
 
 <template>
-  <AdminSplitLayout>
+  <AdminSplitLayout
+    :has-selection="selectedItem !== null"
+    @back="selectedItem = null"
+  >
     <template #left>
       <!-- 筛选操作区 -->
       <FriendLinkListActions v-model:status="filters.status" />

@@ -42,7 +42,10 @@ watch(() => emailStore.pendingOpenItem, consumePending);
 </script>
 
 <template>
-  <AdminSplitLayout>
+  <AdminSplitLayout
+    :has-selection="selectedItem !== null"
+    @back="selectedItem = null"
+  >
     <template #left>
       <!-- 操作区域 -->
       <EmailListActions
