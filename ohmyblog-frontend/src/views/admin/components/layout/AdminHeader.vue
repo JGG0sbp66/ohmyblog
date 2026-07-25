@@ -1,27 +1,16 @@
 <!-- src/views/admin/components/layout/AdminHeader.vue -->
-<!--
-  ============================================================================
-  TODO[移动端适配 · 顶部栏]：Header 在手机上需要做两件事——加汉堡按钮、收缩间距：
-
-  1. 新增「汉堡菜单按钮」用于唤出侧边栏抽屉：
-     - 仅移动端显示（md:hidden），放在左侧页面名称之前；
-     - 点击时 emit('toggleMenu') 通知 AdminLayout 切换 isMobileMenuOpen；
-     - 图标可用 lucide-vue-next 的 Menu。
-  2. 响应式间距/尺寸（当前都是固定值，小屏偏挤、易溢出）：
-     - 外层 px-6 -> px-3 md:px-6；左右两侧 ml-4 / mr-4 在小屏可减小或去掉；
-     - 中间二级导航插槽 #admin-header-center 在窄屏可能放不下，考虑 max-md:hidden
-       或挪到第二行；
-     - 标题 text-xl -> text-base md:text-xl，必要时 truncate 防止换行。
-  3. 右侧按钮组（返回首页 + 通知）在移动端保留即可，注意与汉堡按钮的间距平衡。
-  ============================================================================
--->
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { Menu } from "lucide-vue-next";
+import { RiHome5Line } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import { RiHome5Line } from "@remixicon/vue";
 import NotificationButton from "@/components/common/button/NotificationButton.vue";
+
+const emit = defineEmits<{
+  (e: "open-menu"): void;
+}>();
 
 const router = useRouter();
 const route = useRoute();
@@ -44,35 +33,62 @@ const goToHome = () => {
 <template>
   <header class="relative z-10">
     <div
-      class="w-full md:max-w-300 md:w-[95%] mx-auto h-18 flex items-center justify-between bg-bg-card rounded-b-2xl shadow-sm px-6"
+      class="mx-auto flex w-full flex-wrap items-center rounded-b-2xl bg-bg-card px-3 shadow-sm md:w-[95%] md:max-w-300 md:flex-nowrap md:px-6"
     >
-      <!-- 左侧页面名称 -->
-      <div class="flex items-center ml-4 onload-animation">
-        <h1 class="text-xl font-semibold text-fg">{{ currentPageName }}</h1>
+      <!-- 第一行左侧：页面名称 -->
+      <div
+        class="order-1 flex h-18 min-w-0 flex-1 items-center onload-animation md:ml-4 md:flex-none"
+      >
+        <h1 class="min-w-0 truncate text-base font-semibold text-fg md:text-xl">
+          {{ currentPageName }}
+        </h1>
       </div>
 
-      <!-- 中间二级导航插槽 -->
+      <!-- 桌面端位于中间；移动端有内容时成为可横向滚动的第二行。 -->
       <div
         id="admin-header-center"
-        class="flex-1 flex justify-center mx-4"
+        class="order-3 flex min-w-0 basis-full items-center justify-start gap-2 overflow-x-auto border-t border-fg-muted/10 px-1 py-2 custom-scrollbar [&>*]:shrink-0 md:order-2 md:mx-4 md:flex-1 md:basis-auto md:justify-center md:overflow-visible md:border-0 md:px-0 md:py-0"
       ></div>
 
-      <!-- 右侧按钮组 -->
-      <div class="flex items-center gap-2 mr-4 stagger-container">
+      <!-- 第一行右侧按钮组 -->
+      <div
+        class="order-2 flex h-18 shrink-0 items-center gap-2 stagger-container md:order-3 md:mr-4"
+      >
         <!-- 返回首页按钮 -->
-        <div class="w-11 h-11 onload-animation">
+        <div class="h-11 w-11 onload-animation">
           <ButtonSecondary
             @click="goToHome"
             :title="t('components.common.admin.AdminHeader.actions.goHome')"
-            class="w-full h-full"
+            class="h-full w-full"
           >
-            <RiHome5Line class="w-5 h-5" />
+            <RiHome5Line class="h-5 w-5" />
           </ButtonSecondary>
         </div>
 
         <!-- 消息通知按钮 -->
         <NotificationButton class="onload-animation" />
+
+        <!-- 移动端菜单入口：置于最右，与前台 Header 保持一致 -->
+        <div class="h-11 w-11 shrink-0 onload-animation md:hidden">
+          <ButtonSecondary
+            class="h-full w-full"
+            :title="t('components.common.layout.Header.menu.title')"
+            :aria-label="t('components.common.layout.Header.menu.title')"
+            @click="emit('open-menu')"
+          >
+            <Menu class="h-5 w-5" />
+          </ButtonSecondary>
+        </div>
       </div>
     </div>
   </header>
 </template>
+
+<style scoped>
+/* 普通后台页面没有二级导航时，不保留空白的移动端第二行。 */
+@media (max-width: 47.999rem) {
+  #admin-header-center:empty {
+    display: none;
+  }
+}
+</style>
