@@ -103,7 +103,7 @@ const handleNavClick = (name: string) => {
               :text="item.label"
               :isActive="route.name === item.name"
               :aria-current="route.name === item.name ? 'page' : undefined"
-              class="w-full h-full px-4 justify-start text-base"
+              class="w-full h-full px-4 justify-start text-base font-medium"
               @click="handleNavClick(item.name)"
             />
           </div>
