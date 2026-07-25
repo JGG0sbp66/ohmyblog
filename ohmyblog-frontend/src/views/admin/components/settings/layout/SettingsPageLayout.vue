@@ -3,10 +3,17 @@
   通用的配置页面布局组件。
   提供左侧预览、右侧滚动的标准结构，并内置 Viewport 扩展逻辑以防止阴影截断。
 -->
+<script setup lang="ts">
+import { useIsMobile } from "@/composables/breakpoint.hook";
+
+// 移动端显示区域过小，实时预览无参考意义，统一不渲染预览列，让配置表单占满整宽。
+const isMobile = useIsMobile();
+</script>
+
 <template>
   <div class="flex flex-col lg:flex-row gap-8 onload-animation min-h-0 flex-1">
-    <!-- 左侧：展示/预览区域 (通常不滚动) -->
-    <div class="flex-1 flex flex-col min-h-0">
+    <!-- 左侧：展示/预览区域（移动端不渲染） -->
+    <div v-if="!isMobile" class="flex-1 flex flex-col min-h-0">
       <slot name="preview" />
     </div>
 
