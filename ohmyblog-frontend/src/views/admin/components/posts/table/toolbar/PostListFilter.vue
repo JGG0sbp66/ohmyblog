@@ -62,16 +62,23 @@ const badgeClass = (key: PostStatusFilter) => POST_STATUS_COLORS[key ?? "all"];
 </script>
 
 <template>
-  <!-- 外层 items-center 让按钮与 SearchInput 自然对齐 -->
-  <div class="flex items-center gap-1">
-    <div v-for="item in items" :key="String(item.key)" class="relative">
+  <!-- 外层 items-center 让按钮与 SearchInput 自然对齐；窄屏时 tab 横向可滚动，
+       pb/-mb 为绝对定位的高亮下划线预留纵向空间，避免被 overflow 裁掉。 -->
+  <div
+    class="flex items-center gap-1 min-w-0 overflow-x-auto custom-scrollbar pb-4 -mb-4"
+  >
+    <div
+      v-for="item in items"
+      :key="String(item.key)"
+      class="relative shrink-0"
+    >
       <ButtonSecondary
         :isActive="modelValue === item.key"
         class="h-10 px-4"
         @click="emit('update:modelValue', item.key)"
       >
         <!-- max-width + margin-left 同步过渡：无 gap 残留；inline-flex 保证垂直居中 -->
-        <span class="flex items-center text-sm">
+        <span class="flex items-center text-sm whitespace-nowrap">
           <span>{{ item.label }}</span>
           <span
             class="inline-flex items-center overflow-hidden transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
@@ -101,3 +108,14 @@ const badgeClass = (key: PostStatusFilter) => POST_STATUS_COLORS[key ?? "all"];
     </div>
   </div>
 </template>
+
+<style scoped>
+/* 隐藏 tab 条横向滚动条，仅保留窄屏滑动能力 */
+.custom-scrollbar {
+  scrollbar-width: none;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+</style>

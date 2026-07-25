@@ -1,6 +1,6 @@
 <!-- src/components/common/input/SearchInput.vue -->
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useVModel } from "@vueuse/core";
 import { RiSearchLine, RiCloseLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
@@ -11,11 +11,14 @@ interface Props {
   placeholder?: string;
   /** 输入框宽度，默认 w-56 */
   width?: string;
+  /** 挂载时自动聚焦（用于弹窗内搜索） */
+  autofocus?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: undefined,
   width: "w-56",
+  autofocus: false,
 });
 
 const emit = defineEmits<{
@@ -27,6 +30,12 @@ const emit = defineEmits<{
 const { t } = useLang();
 
 const innerValue = useVModel(props, "modelValue", emit);
+
+const inputRef = ref<HTMLInputElement | null>(null);
+onMounted(() => {
+  // 弹窗内打开时自动聚焦，省去一次点击
+  if (props.autofocus) inputRef.value?.focus();
+});
 
 const resolvedPlaceholder = computed(
   () =>
@@ -55,6 +64,7 @@ const handleEnter = () => {
 
     <!-- 输入框 -->
     <input
+      ref="inputRef"
       v-model="innerValue"
       :placeholder="resolvedPlaceholder"
       class="flex-1 min-w-0 bg-transparent outline-none text-sm text-fg placeholder:text-fg-soft"

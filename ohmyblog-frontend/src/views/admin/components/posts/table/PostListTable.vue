@@ -3,6 +3,7 @@
 import { computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useLang } from "@/composables/lang.hook";
+import { useIsMobile } from "@/composables/breakpoint.hook";
 import BasePagination from "@/components/base/table/BasePagination.vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
 import BaseCheckbox from "@/components/base/table/BaseCheckbox.vue";
@@ -29,6 +30,8 @@ const selected = defineModel<string[]>("selected", { default: () => [] });
 
 const { t } = useLang();
 const router = useRouter();
+// 移动端空间有限，隐藏标签/浏览/时间列，避免文章标题列被挤成竖排。
+const isMobile = useIsMobile();
 
 const totalPages = computed(() =>
   Math.ceil(props.total / (props.pageSize ?? 10)),
@@ -92,13 +95,13 @@ const handleEdit = (uuid: string) => {
       <div class="w-24 shrink-0 text-center">
         {{ t("views.admin.Posts.table.col.status") }}
       </div>
-      <div class="w-36 shrink-0 pl-1.5">
+      <div v-if="!isMobile" class="w-36 shrink-0 pl-1.5">
         {{ t("views.admin.Posts.table.col.tags") }}
       </div>
-      <div class="w-24 shrink-0 text-center">
+      <div v-if="!isMobile" class="w-24 shrink-0 text-center">
         {{ t("views.admin.Posts.table.col.views") }}
       </div>
-      <div class="w-32 shrink-0">
+      <div v-if="!isMobile" class="w-32 shrink-0">
         {{ t("views.admin.Posts.table.col.time") }}
       </div>
       <div class="w-20 shrink-0 text-right">
@@ -148,15 +151,18 @@ const handleEdit = (uuid: string) => {
           </div>
 
           <!-- 标签 -->
-          <PostTagsCell :tags="post.tags" />
+          <PostTagsCell v-if="!isMobile" :tags="post.tags" />
 
           <!-- 观看人数 -->
-          <div class="w-24 shrink-0 text-xs text-fg-muted text-center">
+          <div
+            v-if="!isMobile"
+            class="w-24 shrink-0 text-xs text-fg-muted text-center"
+          >
             {{ post.viewCount.toLocaleString() }}
           </div>
 
           <!-- 时间 -->
-          <PostTimeCell :post="post" />
+          <PostTimeCell v-if="!isMobile" :post="post" />
 
           <!-- 操作：弹窗逻辑由 PostRowActions 内部处理 -->
           <PostRowActions
