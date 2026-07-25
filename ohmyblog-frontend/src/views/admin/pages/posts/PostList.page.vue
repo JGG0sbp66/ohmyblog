@@ -1,6 +1,7 @@
 <!-- src/views/admin/pages/posts/PostList.page.vue -->
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useDebounceFn } from "@vueuse/core";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import PostListFilter from "@/views/admin/components/posts/table/toolbar/PostListFilter.vue";
@@ -8,6 +9,11 @@ import type { PostStatusFilter } from "@/views/admin/components/posts/table/tool
 import PostBulkStatusButton from "@/views/admin/components/posts/table/toolbar/PostBulkStatusButton.vue";
 import PostBulkDeleteButton from "@/views/admin/components/posts/table/toolbar/PostBulkDeleteButton.vue";
 import SearchInput from "@/components/common/input/SearchInput.vue";
+import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
+import PostSearchModal from "@/views/admin/components/posts/table/toolbar/PostSearchModal.vue";
+import { RiSearchLine } from "@remixicon/vue";
+import { useIsMobile } from "@/composables/breakpoint.hook";
+import { useLang } from "@/composables/lang.hook";
 import { getPostList, getPostCounts } from "@/api/post.api";
 import type { PostListItem } from "@/api/post.api";
 import PostListTable from "@/views/admin/components/posts/table/PostListTable.vue";
@@ -16,6 +22,18 @@ import PageToolbar from "@/views/admin/components/posts/layout/PageToolbar.vue";
 const activeFilter = ref<PostStatusFilter>(null);
 const searchQuery = ref("");
 const pageSize = 10;
+
+const { t } = useLang();
+const router = useRouter();
+// 移动端搜索改为图标 + 弹窗，避免内联输入框占据过大横向空间。
+const isMobile = useIsMobile();
+const searchModalOpen = ref(false);
+
+// 点击弹窗内的搜索结果：关闭弹窗并跳转到该文章的编辑页。
+const openPost = (uuid: string) => {
+  searchModalOpen.value = false;
+  router.push({ name: "post-edit", params: { uuid } });
+};
 
 const counts = ref<{
   all?: number;
@@ -108,8 +126,8 @@ defineExpose({
         <PostListFilter v-model="activeFilter" :counts="counts" />
       </template>
       <template #right>
-        <!-- 批量操作 + 搜索框 -->
-        <div class="flex items-center gap-2">
+        <!-- 批量操作 + 搜索 -->
+        <div class="flex items-center gap-2 shrink-0">
           <Transition name="bulk-fade">
             <div
               v-if="selectedUuids.length > 0"
@@ -131,8 +149,33 @@ defineExpose({
               />
             </div>
           </Transition>
-          <!-- 搜索框（与 filter 按钮自然居中对齐） -->
-          <SearchInput v-model="searchQuery" />
+
+          <!-- 桌面端：内联搜索框（与 filter 按钮自然居中对齐） -->
+          <SearchInput v-if="!isMobile" v-model="searchQuery" />
+
+          <!-- 移动端：搜索图标 + 弹窗 -->
+          <template v-else>
+            <div class="h-10 w-10 shrink-0">
+              <ButtonSecondary
+                class="h-full w-full"
+                :isActive="!!searchQuery"
+                :aria-label="
+                  t('components.common.input.SearchInput.placeholder')
+                "
+                @click="searchModalOpen = true"
+              >
+                <RiSearchLine class="h-4 w-4" />
+              </ButtonSecondary>
+            </div>
+
+            <PostSearchModal
+              v-model="searchModalOpen"
+              v-model:query="searchQuery"
+              :posts="posts"
+              :loading="loading"
+              @select="openPost"
+            />
+          </template>
         </div>
       </template>
     </PageToolbar>

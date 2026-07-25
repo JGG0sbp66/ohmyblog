@@ -19,38 +19,45 @@ const [toolbarRef] = useAutoAnimate();
     ref="toolbarRef"
     class="mt-8 pt-4 border-t border-fg-muted/10 flex flex-col md:flex-row items-center justify-between gap-3 text-[13px] text-fg-muted/60"
   >
-    <!-- 左侧：RSS 订阅 + 站点地图 + 主题色 + 主题切换 + 语言切换 -->
-    <div class="flex items-center gap-1 flex-wrap justify-center">
-      <!-- RSS 订阅 -->
-      <ButtonThird
-        :text="t('components.common.layout.Footer.rssSubscribe')"
-        href="/feed"
-        target="_blank"
-      />
+    <!-- 左侧：链接组 + 开关组；移动端上下两行堆叠，桌面端并排一行 -->
+    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-1">
+      <!-- A 组：RSS 订阅 · 站点地图 -->
+      <div class="flex items-center gap-1">
+        <!-- RSS 订阅 -->
+        <ButtonThird
+          :text="t('components.common.layout.Footer.rssSubscribe')"
+          href="/feed"
+          target="_blank"
+        />
 
-      <span class="text-fg-muted/30">·</span>
+        <span class="text-fg-muted/30">·</span>
 
-      <!-- 站点地图 -->
-      <ButtonThird
-        :text="t('components.common.layout.Footer.sitemap')"
-        href="/sitemap.xml"
-        target="_blank"
-      />
+        <!-- 站点地图 -->
+        <ButtonThird
+          :text="t('components.common.layout.Footer.sitemap')"
+          href="/sitemap.xml"
+          target="_blank"
+        />
+      </div>
 
-      <span class="text-fg-muted/30 mx-1">|</span>
+      <!-- A / B 分隔符：仅桌面端并排时显示 -->
+      <span class="hidden md:inline text-fg-muted/30 mx-1">|</span>
 
-      <!-- 主题色 -->
-      <ToggleColor />
+      <!-- B 组：主题色 | 主题 | 语言 -->
+      <div class="flex items-center gap-1 flex-wrap justify-center">
+        <!-- 主题色 -->
+        <ToggleColor />
 
-      <span class="text-fg-muted/30 mx-1">|</span>
+        <span class="text-fg-muted/30 mx-1">|</span>
 
-      <!-- 主题切换 -->
-      <ToggleTheme />
+        <!-- 主题切换 -->
+        <ToggleTheme />
 
-      <span class="text-fg-muted/30 mx-1">|</span>
+        <span class="text-fg-muted/30 mx-1">|</span>
 
-      <!-- 语言切换 -->
-      <ToggleLanguage />
+        <!-- 语言切换 -->
+        <ToggleLanguage />
+      </div>
     </div>
 
     <!-- 右侧：备案号 -->

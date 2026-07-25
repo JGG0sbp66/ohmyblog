@@ -60,7 +60,7 @@ watch(
           :text="item.label"
           :isActive="route.name === item.name"
           :aria-current="route.name === item.name ? 'page' : undefined"
-          class="h-11 px-4 onload-animation"
+          class="h-11 px-4 font-medium onload-animation"
           @click="handleNavClick(item.name)"
         >
         </ButtonSecondary>
