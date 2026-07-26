@@ -468,6 +468,10 @@
             "horizontalRule": {
               "label": "分割线",
               "tooltip": "分割线\nmarkdown:--- 换行"
+            },
+            "details": {
+              "label": "折叠块",
+              "tooltip": "折叠块"
             }
           },
           "codeBlock": {

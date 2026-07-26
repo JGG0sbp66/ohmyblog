@@ -46,7 +46,11 @@ export const HANDLE_MENU_GROUPS: readonly HandleMenuGroup[] = [
   {
     labelKey: "common",
     layout: "list",
-    entries: [{ type: "table" }, { type: "image" }],
+    entries: [
+      { type: "table" },
+      { type: "image" },
+      { type: "command", id: "details" },
+    ],
   },
   {
     labelKey: "list",

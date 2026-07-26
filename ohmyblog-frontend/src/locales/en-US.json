@@ -473,6 +473,10 @@
             "horizontalRule": {
               "label": "Divider",
               "tooltip": "Divider\nmarkdown:--- Enter"
+            },
+            "details": {
+              "label": "Toggle",
+              "tooltip": "Toggle block"
             }
           },
           "codeBlock": {
