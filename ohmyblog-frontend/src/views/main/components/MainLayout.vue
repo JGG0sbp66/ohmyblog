@@ -1,5 +1,7 @@
 <!-- src/views/main/components/MainLayout.vue -->
 <script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import Header from "@/components/common/layout/Header.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 import HeroSection from "@/views/main/components/hero/HeroSection.vue";
@@ -7,6 +9,10 @@ import ProfileCard from "@/components/common/item/ProfileCard.vue";
 import { useSystemStore } from "@/stores/system.store";
 
 const systemStore = useSystemStore();
+const route = useRoute();
+
+// 文章详情页不展示侧边栏，让正文独占整行宽度
+const showSidebar = computed(() => route.name !== "post");
 </script>
 
 <template>
@@ -24,8 +30,9 @@ const systemStore = useSystemStore();
     >
       <!-- 两栏布局：左侧侧边栏 + 右侧内容区（侧边栏仅桌面端显示） -->
       <div class="flex flex-col md:flex-row gap-7 items-start">
-        <!-- 侧边栏 (Widgets) - 移动端隐藏 -->
+        <!-- 侧边栏 (Widgets) - 移动端隐藏；文章详情页不显示 -->
         <aside
+          v-if="showSidebar"
           class="hidden md:flex md:w-70 flex-col gap-7 sticky top-24 order-1 sidebar"
         >
           <div class="onload-animation">
