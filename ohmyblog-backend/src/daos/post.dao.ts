@@ -118,7 +118,7 @@ class PostDao {
 				.select({
 					uuid: post.uuid,
 					title: post.title,
-					content: post.content,
+					contentHtml: post.contentHtml,
 					wordCount: sql<number>`LENGTH(${post.contentText})`,
 					coverImage: post.coverImage,
 					tags: post.tags,
