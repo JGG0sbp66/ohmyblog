@@ -1,8 +1,10 @@
 /* src/css/tiptap/selection.css */
 /*
- * 整块选区高亮（Ctrl/Cmd+A 或跨块拖选）
+ * 整块选区高亮（Ctrl/Cmd+A 渐进全选的整篇阶段）
  * 由 SmartSelectAll 的装饰插件给「完整被选中的块 / 单元格」加 pm-block-selected，
  * 整篇选区激活时给 .tiptap 加 pm-select-all。
+ * 普通鼠标拖选（包括跨块拖选）继续使用原生 ::selection，保证首尾部分选中的
+ * 文字也有连续、准确的视觉反馈。
  *
  * - 文本块（段落/标题等）：内容区填充，空出段落 padding → 块间留间隙（仿飞书分条）
  * - 表格单元格：整格无缝填充

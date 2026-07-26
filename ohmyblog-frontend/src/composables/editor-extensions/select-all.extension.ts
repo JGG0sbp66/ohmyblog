@@ -10,15 +10,14 @@ import {
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 
 /**
- * 是否为「整块选区」：整篇全选（AllSelection）或跨块的文本选区。
- * 此状态下用整块背景装饰替代原生 ::selection，得到飞书式整块高亮。
+ * 是否为「整块选区」。
+ *
+ * 普通 TextSelection（包括鼠标跨段拖选）必须保留原生 ::selection：首尾块
+ * 往往只选中部分文字，若在此时隐藏原生高亮，会让选区看起来凭空消失。
+ * 只有明确的整篇 AllSelection 才改用整块背景装饰。
  */
 const isFullBlockSelect = (selection: Selection): boolean => {
-  if (selection instanceof AllSelection) return true;
-  if (selection instanceof TextSelection) {
-    return !selection.$from.sameParent(selection.$to);
-  }
-  return false;
+  return selection instanceof AllSelection;
 };
 
 /**
