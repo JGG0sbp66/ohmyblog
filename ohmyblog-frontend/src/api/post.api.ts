@@ -16,12 +16,13 @@ export type PostDetail = TPost;
 /**
  * 公开文章详情（前台 GET /api/public/posts/:slug 的返回）
  *
- * 前台用 content（ProseMirror JSON）渲染，保留全部编辑器样式细节。
+ * 前台改用 contentHtml（editor.getHTML() 导出）直接渲染，不再下发 content（ProseMirror JSON）：
+ * 阅读端无需加载 Tiptap，代码块高亮 / 外壳在渲染后由 enhanceCodeBlocks 重建。
  * contentText 不返回（仅用于取长度），改成 SQL 直接算 wordCount。
  */
 export type PublicPostDetail = Omit<
   TPost,
-  "contentText" | "status" | "deletedAt"
+  "content" | "contentText" | "status" | "deletedAt"
 > & {
   wordCount: number;
 };
@@ -102,7 +103,7 @@ export const getPublicPostArchive = () => {
 
 /**
  * GET /api/public/posts/:slug
- * 根据 slug 获取单篇已发布文章（含 ProseMirror JSON）
+ * 根据 slug 获取单篇已发布文章（含 contentHtml，供前台直接渲染）
  */
 export const getPublicPostBySlug = (slug: string) => {
   return unwrap(api.api.public.posts({ slug }).get());

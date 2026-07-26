@@ -1,44 +1,41 @@
 <!-- src/views/main/components/post/PostContent.vue -->
 <script setup lang="ts">
-import { onBeforeUnmount, watch } from "vue";
-import { useEditor, EditorContent } from "@tiptap/vue-3";
-import { getContentExtensions } from "@/composables/editor-extensions/content-extensions";
+import { ref, watch, nextTick } from "vue";
+import DOMPurify from "dompurify";
+import { enhanceCodeBlocks } from "./enhance-code-blocks";
 
 /**
- * PostContent — 前台文章渲染组件（只读 Tiptap 实例）
+ * PostContent — 前台文章渲染组件（纯 HTML 渲染，不加载 Tiptap）
  *
- * 渲染源：ProseMirror JSON
+ * 渲染源：contentHtml（后台 editor.getHTML() 导出、存库的 HTML）。
+ * 相比旧的「只读 Tiptap 实例」，阅读端不再打包 ProseMirror / 编辑器扩展。
  *
- * 扩展集合通过 getContentExtensions({ readonly: true }) 与编辑器共用同一份，
- * 避免节点 / 标记 schema 不一致导致 JSON 中的内容被丢弃。
+ * 一致性保障：
+ * - 包裹类 .tiptap（与编辑器同名）复用全局 css/tiptap/*.css，正文样式与后台逐像素一致。
+ * - 代码块的语法高亮 / MacOS 外壳 / 行号 / 复制按钮是运行时产物，getHTML 不含，
+ *   由 enhanceCodeBlocks 在挂载后就地重建（见该模块注释）。
+ * - v-html 前先经 DOMPurify 过滤，防御性去除潜在恶意标记。
  */
 
 const props = defineProps<{
-  contentJson?: object | null;
+  contentHtml?: string | null;
 }>();
 
-const editor = useEditor({
-  extensions: getContentExtensions({ readonly: true }),
-  content: null,
-  editable: false,
-});
+const rootRef = ref<HTMLElement | null>(null);
+const safeHtml = ref("");
 
 watch(
-  [() => props.contentJson, editor],
-  ([json, ed]) => {
-    if (!ed) return;
-    if (json && Object.keys(json).length > 0) {
-      ed.commands.setContent(json as object);
-    } else {
-      ed.commands.clearContent();
-    }
+  () => props.contentHtml,
+  async (raw) => {
+    safeHtml.value = raw ? DOMPurify.sanitize(raw) : "";
+    // 等 v-html 落地后再增强代码块：v-html 变化会整体重置内部 DOM，需重新增强
+    await nextTick();
+    if (rootRef.value) enhanceCodeBlocks(rootRef.value);
   },
   { immediate: true },
 );
-
-onBeforeUnmount(() => editor.value?.destroy());
 </script>
 
 <template>
-  <EditorContent :editor="editor" />
+  <div ref="rootRef" class="tiptap ProseMirror" v-html="safeHtml"></div>
 </template>
