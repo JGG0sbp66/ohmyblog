@@ -61,7 +61,9 @@ function scrollToTopAndGoHome() {
     </p>
 
     <!-- 在线浏览人数 -->
-    <p class="text-[13px] text-fg-muted/70 mt-1 leading-relaxed flex items-center gap-1.5">
+    <p
+      class="text-[13px] text-fg-muted/70 mt-1 leading-relaxed flex items-center gap-1.5"
+    >
       <span class="relative inline-flex items-center justify-center size-3">
         <span
           v-if="isConnected"
@@ -73,10 +75,14 @@ function scrollToTopAndGoHome() {
         />
       </span>
       <span v-if="isConnected">
-        {{ t('components.common.layout.Footer.viewerCount', { count: viewerCount }) }}
+        {{
+          t("components.common.layout.Footer.viewerCount", {
+            count: viewerCount,
+          })
+        }}
       </span>
       <span v-else>
-        {{ t('components.common.layout.Footer.offline') }}
+        {{ t("components.common.layout.Footer.offline") }}
       </span>
     </p>
   </div>

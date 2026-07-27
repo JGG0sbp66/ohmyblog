@@ -75,7 +75,11 @@ export const useSystemStore = defineStore("system", () => {
    * 获取站点基本信息
    */
   async function fetchSiteInfo() {
-    const res = await fetchConfig("site_info", siteInfo, "api.errors.获取站点基本信息失败");
+    const res = await fetchConfig(
+      "site_info",
+      siteInfo,
+      "api.errors.获取站点基本信息失败",
+    );
     if (res?.config) {
       siteCreatedAt.value = res.config.createdAt;
     }

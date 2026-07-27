@@ -34,10 +34,7 @@ const displayValue = computed(() => {
 </script>
 
 <template>
-  <BaseCard
-    padding="sm"
-    class="relative overflow-hidden p-4! sm:p-6!"
-  >
+  <BaseCard padding="sm" class="relative overflow-hidden p-4! sm:p-6!">
     <div
       :class="[
         'absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-xl sm:top-4 sm:right-4 sm:h-10 sm:w-10 sm:rounded-2xl',

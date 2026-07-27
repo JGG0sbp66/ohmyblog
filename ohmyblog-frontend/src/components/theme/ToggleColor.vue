@@ -11,7 +11,10 @@ const { t } = useLang();
 </script>
 
 <template>
-  <FooterDrop :text="t('components.theme.ToggleColor.paletteTitle')" contentClass="min-w-52 p-3">
+  <FooterDrop
+    :text="t('components.theme.ToggleColor.paletteTitle')"
+    contentClass="min-w-52 p-3"
+  >
     <template #icon>
       <Palette class="w-3.5 h-3.5" />
     </template>
@@ -29,7 +32,8 @@ const { t } = useLang();
         </div>
         <span
           class="px-1.5 py-0.5 bg-bg-muted flex items-center justify-center text-fg-subtle rounded text-xs font-bold"
-        >{{ currentHue }}</span>
+          >{{ currentHue }}</span
+        >
       </div>
 
       <ColorSlider v-model="currentHue" />

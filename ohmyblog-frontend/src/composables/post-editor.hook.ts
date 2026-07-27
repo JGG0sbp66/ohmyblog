@@ -83,7 +83,17 @@ export const usePostEditor = () => {
       });
       // title/content 防抖自动保存
       watchDebounced(
-        [title, content, contentText, contentHtml, coverImage, excerpt, tags, slug, pinned],
+        [
+          title,
+          content,
+          contentText,
+          contentHtml,
+          coverImage,
+          excerpt,
+          tags,
+          slug,
+          pinned,
+        ],
         () => {
           if (!isDirty.value) return;
           autoSave();

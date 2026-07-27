@@ -76,7 +76,9 @@ const componentProps = computed(() => {
     :aria-disabled="disabled || undefined"
     class="btn-third group/third inline-flex items-center gap-1 bg-transparent border-none px-1 py-0.5 transition-colors duration-200 relative"
     :class="[
-      disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'cursor-pointer',
+      disabled
+        ? 'opacity-50 cursor-not-allowed pointer-events-none'
+        : 'cursor-pointer',
       isActive ? 'text-fg' : 'text-fg-muted hover:text-fg',
     ]"
   >

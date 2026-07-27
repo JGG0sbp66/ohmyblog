@@ -118,9 +118,7 @@ const handleSave = async () => {
       <div class="flex flex-col gap-4">
         <!-- 头部：标题 + 添加分组按钮 -->
         <div class="flex items-center justify-between gap-3">
-          <h3
-            class="text-sm font-bold tracking-wider text-fg-subtle uppercase"
-          >
+          <h3 class="text-sm font-bold tracking-wider text-fg-subtle uppercase">
             {{ t("views.admin.Settings.site.footer.links.title") }}
           </h3>
           <ButtonSecondary

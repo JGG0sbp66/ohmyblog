@@ -29,9 +29,7 @@ const [containerRef] = useAutoAnimate();
       <div class="flex flex-col gap-2">
         <div v-for="(link, lIndex) in group.links" :key="lIndex">
           <ButtonThird
-            :text="
-              isExternalLink(link.url) ? `${link.name} ↗` : link.name
-            "
+            :text="isExternalLink(link.url) ? `${link.name} ↗` : link.name"
             :href="isExternalLink(link.url) ? link.url : undefined"
             :to="
               isExternalLink(link.url)
@@ -39,9 +37,7 @@ const [containerRef] = useAutoAnimate();
                 : normalizeInternalPath(link.url)
             "
             :target="isExternalLink(link.url) ? '_blank' : undefined"
-            :rel="
-              isExternalLink(link.url) ? 'noopener noreferrer' : undefined
-            "
+            :rel="isExternalLink(link.url) ? 'noopener noreferrer' : undefined"
             class="text-[13px]!"
           />
         </div>

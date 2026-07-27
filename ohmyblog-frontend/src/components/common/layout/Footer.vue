@@ -10,10 +10,7 @@ const [footerContentRef] = useAutoAnimate();
 
 <template>
   <footer id="footer" class="w-full bg-bg onload-animation">
-    <div
-      ref="footerContentRef"
-      class="w-full max-w-280 mx-auto py-10 px-6"
-    >
+    <div ref="footerContentRef" class="w-full max-w-280 mx-auto py-10 px-6">
       <!-- 上半部分：左右分栏 -->
       <div class="flex flex-col md:flex-row gap-10 md:gap-16">
         <!-- 左栏：品牌信息 -->
