@@ -14,6 +14,7 @@
 import {
   highlightToHtml,
   resolveLanguageIcon,
+  formatLanguageLabel,
   countCodeLines,
   COPY_FEEDBACK_MS,
 } from "@/composables/code-block";
@@ -87,7 +88,7 @@ function enhanceOne(pre: HTMLPreElement): void {
   // 后台那侧同位置是可编辑 input + 语言下拉，样式由 code-block.css 统一。
   const langLabel = document.createElement("span");
   langLabel.className = "code-block-lang-input";
-  langLabel.textContent = language || "text";
+  langLabel.textContent = formatLanguageLabel(language || "text");
 
   langBox.appendChild(icon);
   langBox.appendChild(langLabel);

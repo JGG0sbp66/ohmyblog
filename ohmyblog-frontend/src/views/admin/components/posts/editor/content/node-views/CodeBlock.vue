@@ -17,6 +17,7 @@ import { useLang } from "@/composables/lang.hook";
 import {
   listAvailableLanguages,
   resolveLanguageIcon,
+  formatLanguageLabel,
   countCodeLines,
   COPY_FEEDBACK_MS,
 } from "@/composables/code-block";
@@ -29,10 +30,16 @@ const { t } = useLang();
 // 输入框作为搜索 trigger：focus / 键入时显示候选列表，typo 即时反馈
 // 而不是裸输入字符串（之前版本：错一个字母整个高亮失效）
 //
+// 展示名与语法名分离：输入框与候选列表显示 "TypeScript"，attrs 里存的始终是
+// 语法名 "typescript"（见 composables/code-block/labels.ts）。
+// 用户键入期间输入框保留原始文本（作为搜索词），选中或失焦后规范化为展示名。
+//
 // 弹层 Teleport 到 body：代码块容器有 overflow:hidden（为了 header 圆角），
 // 内部 absolute 定位的下拉会被裁掉；fixed 定位绕开父级 overflow
 const allLanguages = listAvailableLanguages();
-const langInput = ref<string>(props.node.attrs.language ?? "");
+const langInput = ref<string>(
+  formatLanguageLabel(props.node.attrs.language ?? ""),
+);
 const langPickerOpen = ref(false);
 const selectedIndex = ref(0);
 const langInputRef = ref<HTMLInputElement | null>(null);
@@ -59,21 +66,24 @@ const popupStyle = computed(() => ({
   minWidth: "9rem",
 }));
 
-/** 过滤候选：前缀优先 → 包含匹配；空 query 时全量 */
+/** 过滤候选：前缀优先 → 包含匹配；空 query 时全量。
+ *  语法名与展示名都参与匹配，因此 "objectivec" 和 "Objective-C" 都能搜到。 */
 const filteredLanguages = computed<string[]>(() => {
   const q = langInput.value.trim().toLowerCase();
   if (!q) return allLanguages;
   const prefix: string[] = [];
   const include: string[] = [];
   for (const lang of allLanguages) {
-    if (lang.startsWith(q)) prefix.push(lang);
-    else if (lang.includes(q)) include.push(lang);
+    const label = formatLanguageLabel(lang).toLowerCase();
+    if (lang.startsWith(q) || label.startsWith(q)) prefix.push(lang);
+    else if (lang.includes(q) || label.includes(q)) include.push(lang);
   }
   return [...prefix, ...include];
 });
 
 const commitLanguage = (lang: string) => {
-  langInput.value = lang;
+  // 输入框显示展示名，attrs 存语法名
+  langInput.value = formatLanguageLabel(lang);
   props.updateAttributes({ language: lang });
   langPickerOpen.value = false;
 };
@@ -84,12 +94,18 @@ const onLangFocus = () => {
   nextTick(updatePopupPosition);
 };
 
+/** 失焦：把输入框内容规范化回当前语言的展示名，丢弃未成型的搜索词 */
+const onLangBlur = () => {
+  langInput.value = formatLanguageLabel(props.node.attrs.language ?? "");
+};
+
 const onLangInput = (event: Event) => {
   langInput.value = (event.target as HTMLInputElement).value;
   langPickerOpen.value = true;
   selectedIndex.value = 0;
-  // 输入即同步到 attrs，让用户即时看到（错的也写进去，反正下次选会覆盖）
-  props.updateAttributes({ language: langInput.value });
+  // 输入即同步到 attrs，让用户即时看到（错的也写进去，反正下次选会覆盖）。
+  // 存的是语法名，故统一小写去空格 —— 展示名的大小写只活在渲染层。
+  props.updateAttributes({ language: langInput.value.trim().toLowerCase() });
   nextTick(updatePopupPosition);
 };
 
@@ -196,10 +212,11 @@ const lineCount = computed(() => countCodeLines(props.node.textContent));
           type="text"
           :value="langInput"
           class="code-block-lang-input"
-          placeholder="TEXT"
+          placeholder="Text"
           spellcheck="false"
           autocomplete="off"
           @focus="onLangFocus"
+          @blur="onLangBlur"
           @input="onLangInput"
           @keydown="onLangKeydown"
         />
@@ -248,7 +265,7 @@ const lineCount = computed(() => countCodeLines(props.node.textContent));
           @mousedown.prevent="commitLanguage(lang)"
           @mouseenter="selectedIndex = i"
         >
-          {{ lang }}
+          {{ formatLanguageLabel(lang) }}
         </button>
       </div>
     </Teleport>

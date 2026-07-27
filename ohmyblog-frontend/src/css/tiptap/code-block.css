@@ -93,8 +93,8 @@
   min-width: 2.5rem;
   max-width: 10rem;
   font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  /* 展示名已是规范大小写（TypeScript / C++），不再强制大写 */
+  letter-spacing: 0.01em;
 }
 
 /* 阅读端同位置是 <span>（纯展示，无需可编辑），按内容自适应即可。
