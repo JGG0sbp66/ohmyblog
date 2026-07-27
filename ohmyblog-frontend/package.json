@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
+    "gen:icons": "node scripts/gen-code-block-icons.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {
