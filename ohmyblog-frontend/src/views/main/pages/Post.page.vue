@@ -107,7 +107,7 @@ watch(slug, fetchPost, { immediate: true });
 
         <div class="border-t border-fg-subtle/10" />
 
-        <PostContent :content-json="(post.content as object | null) ?? null" />
+        <PostContent :content-html="post.contentHtml ?? ''" />
       </div>
     </BaseCard>
   </div>

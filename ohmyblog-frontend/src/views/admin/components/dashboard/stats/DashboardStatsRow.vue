@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 仪表盘统计卡片行
- * 统一拉取文章计数数据，以 4 列栅格展示总访问量、已发布、草稿、未读邮件
+ * 统一拉取文章计数数据，移动端以 2×2、桌面端以 4 列展示统计信息
  */
 import { onMounted, ref } from "vue";
 import TotalVisitsCard from "./cards/TotalVisitsCard.vue";
@@ -39,7 +39,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+  <div class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
     <TotalVisitsCard :counts="counts" :loading="loading" />
     <PublishedPostsCard :counts="counts" :loading="loading" />
     <UnreadEmailsCard />

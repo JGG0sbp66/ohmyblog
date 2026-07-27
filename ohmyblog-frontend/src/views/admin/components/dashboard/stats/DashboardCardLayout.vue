@@ -34,10 +34,13 @@ const displayValue = computed(() => {
 </script>
 
 <template>
-  <BaseCard padding="sm" class="relative overflow-hidden">
+  <BaseCard
+    padding="sm"
+    class="relative overflow-hidden p-4! sm:p-6!"
+  >
     <div
       :class="[
-        'absolute top-4 right-4 w-10 h-10 rounded-2xl flex items-center justify-center',
+        'absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-xl sm:top-4 sm:right-4 sm:h-10 sm:w-10 sm:rounded-2xl',
         iconBgClass,
       ]"
     >
@@ -46,22 +49,28 @@ const displayValue = computed(() => {
       </div>
     </div>
 
-    <div class="pr-14">
+    <div class="pr-10 sm:pr-14">
       <div class="text-xs font-semibold text-fg-muted tracking-wide">
         {{ label }}
       </div>
 
-      <div v-if="loading" class="mt-2 h-8 w-36 rounded bg-bg-muted/40" />
+      <div
+        v-if="loading"
+        class="mt-2 h-7 w-full max-w-36 rounded bg-bg-muted/40 sm:h-8"
+      />
       <div v-else class="mt-1 flex items-baseline gap-2 min-w-0">
         <div
           :class="[
-            'text-[30px] leading-none font-extrabold truncate',
+            'truncate text-2xl leading-none font-extrabold sm:text-[30px]',
             valueClass,
           ]"
         >
           {{ displayValue }}
         </div>
-        <div v-if="unit" class="text-[14px] leading-none text-fg-muted">
+        <div
+          v-if="unit"
+          class="shrink-0 whitespace-nowrap text-xs leading-none text-fg-muted sm:text-[14px]"
+        >
           {{ unit }}
         </div>
       </div>

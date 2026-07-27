@@ -17,7 +17,8 @@ import { TTLCache } from "../../utils/cache";
 export type PublishedPostRow = {
 	uuid: string;
 	title: string;
-	content: unknown;
+	// 前台渲染源：editor.getHTML() 导出的 HTML（不再下发 ProseMirror JSON）
+	contentHtml: string | null;
 	wordCount: number;
 	coverImage: string | null;
 	tags: unknown;

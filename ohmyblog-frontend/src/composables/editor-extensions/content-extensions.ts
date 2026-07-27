@@ -27,6 +27,11 @@ import { TextStyle, Color, CustomHighlight } from "./color.extension";
 import { ResizableImage } from "./image.extension";
 import { Indent } from "./indent.extension";
 import { TaskList, CustomTaskItem } from "./task-list.extension";
+import {
+  Details,
+  DetailsContent,
+  DetailsSummary,
+} from "@tiptap/extension-details";
 
 /**
  * 只读图片扩展：保留 width 属性渲染，不挂 NodeView / resize handle。
@@ -118,6 +123,13 @@ export function getContentExtensions(opts: ContentExtensionsOptions = {}) {
     // 单元格背景色：给 tableCell / tableHeader 注入 backgroundColor 全局属性，
     // 配合 TableKit 内置 setCellAttribute 命令着色（见 use-table-commands）。
     CellBackground,
+    // 折叠块（<details>/<summary>）：
+    // - persist: true —— open 状态写入文档，作者可控制文章里的默认展开态；
+    //   前台纯 HTML 渲染（PostContent v-html）依赖原生 <details open> 行为。
+    // - 编辑态由扩展自带 NodeView 提供 toggle 按钮（样式见 css/tiptap/details.css）。
+    Details.configure({ persist: true }),
+    DetailsSummary,
+    DetailsContent,
     Indent,
     TextAlign.configure({
       // 加入 tableCell / tableHeader：在表格内（含跨格 CellSelection）也能对齐，

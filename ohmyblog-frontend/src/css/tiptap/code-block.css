@@ -13,58 +13,65 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem 0.4rem 0.85rem;
   background: oklch(0.17 0.015 var(--app-hue)); /* 统一背景色 */
   font-family: var(--font-sans);
   font-size: 0.75rem;
   user-select: none;
 }
 
-/* 模拟 Fuwari/MacOS 的三个小圆点 */
-.tiptap .code-block-header::before {
-  content: "";
+/* header 左侧：语言图标 + 语言名（后台是可编辑 input，前台是纯展示 span） */
+.tiptap .code-block-lang {
   display: flex;
-  width: 40px;
-  height: 10px;
-  background:
-    radial-gradient(circle, #ff5f56 4px, transparent 5px),
-    radial-gradient(circle, #ffbd2e 4px, transparent 5px),
-    radial-gradient(circle, #27c93f 4px, transparent 5px);
-  background-size: 14px 10px;
-  background-repeat: no-repeat;
-  background-position:
-    0 center,
-    14px center,
-    28px center;
-  opacity: 0.8;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
-/* 悬浮复制按钮：默认隐藏，容器 hover 时淡入到右上角 */
+.tiptap .code-block-lang-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  /* 兜底图标是单色 currentColor，跟随语言名配色；品牌图标自带颜色不受影响 */
+  color: oklch(0.7 0.1 var(--app-hue));
+}
+
+.tiptap .code-block-lang-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* 常驻复制按钮：位于 header 右侧，静息态降透明度、hover 提亮 */
 .tiptap .code-block-copy-btn {
-  position: absolute;
-  top: 2.1rem; /* header 底部（padding 0.5rem + 内容 ~1rem + padding 0.5rem ≈ 2rem） */
-  right: 0.75rem;
-  z-index: 10;
-  background: oklch(0.24 0.015 var(--app-hue));
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid transparent;
   cursor: pointer;
   color: oklch(0.6 0.04 var(--app-hue));
   padding: 0.3rem;
   border-radius: 0.375rem;
   display: flex;
   align-items: center;
-  opacity: 0;
+  opacity: 0.65;
   transition:
     opacity 0.15s,
     color 0.15s,
-    background 0.15s;
+    background 0.15s,
+    border-color 0.15s;
 }
 .tiptap .code-block-container:hover .code-block-copy-btn {
   opacity: 1;
 }
 .tiptap .code-block-copy-btn:hover {
+  opacity: 1;
   color: oklch(0.88 0.06 var(--app-hue));
-  background: oklch(0.28 0.015 var(--app-hue));
+  background: oklch(0.24 0.015 var(--app-hue));
+  border-color: rgba(255, 255, 255, 0.08);
 }
 .tiptap .code-block-copy-btn.copied {
   opacity: 1; /* 复制成功期间保持可见 */
@@ -75,13 +82,28 @@
   background: transparent;
   border: none;
   outline: none;
+  padding: 0;
   color: oklch(0.7 0.1 var(--app-hue)); /* 浅色文字 */
   font-weight: 600;
-  text-align: right;
-  width: 80px;
+  font-family: var(--font-sans);
+  text-align: left;
+  /* 宽度随内容伸缩（不支持 field-sizing 的浏览器回落到 6rem 上限内的固定宽度） */
+  width: 6rem;
+  field-sizing: content;
+  min-width: 2.5rem;
+  max-width: 10rem;
   font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  /* 展示名已是规范大小写（TypeScript / C++），不再强制大写 */
+  letter-spacing: 0.01em;
+}
+
+/* 阅读端同位置是 <span>（纯展示，无需可编辑），按内容自适应即可。
+   两端宽度不必一致：header 用 space-between，右侧复制按钮始终贴右沿。 */
+.tiptap span.code-block-lang-input {
+  width: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 语言候选下拉

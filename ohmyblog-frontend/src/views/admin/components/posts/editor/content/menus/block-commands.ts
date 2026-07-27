@@ -8,6 +8,7 @@ import {
   Heading3,
   Code2,
   Minus,
+  ListCollapse,
 } from "lucide-vue-next";
 import {
   RiDoubleQuotesL,
@@ -61,7 +62,8 @@ export type BlockCommandId =
   | "taskList"
   | "codeBlock"
   | "quote"
-  | "horizontalRule";
+  | "horizontalRule"
+  | "details";
 
 /**
  * 切换光标所在列表项的列表类型。
@@ -171,6 +173,19 @@ export const BLOCK_COMMANDS: readonly BlockCommand[] = [
     group: "embed",
     isActive: () => false,
     run: (e) => e.chain().focus().setHorizontalRule().run(),
+  },
+  {
+    // 折叠块（details）：toggle 语义 —— 已在折叠块内则解包，否则包裹当前块
+    id: "details",
+    labelKey: "details",
+    icon: ListCollapse,
+    color: "text-sky-500 dark:text-sky-400",
+    group: "embed",
+    isActive: (e) => e.isActive("details"),
+    run: (e) => {
+      if (e.isActive("details")) e.chain().focus().unsetDetails().run();
+      else e.chain().focus().setDetails().run();
+    },
   },
 ];
 

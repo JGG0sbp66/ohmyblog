@@ -220,11 +220,30 @@ export const useEditorHoverBlock = (
           : cellLeft - HANDLE_OFFSET;
       }
 
+      // 折叠块内容：把手整体代表「这个折叠块」——
+      // posAtCoords 命中的是 summary / 内容段落，其左缘在容器内侧
+      // （toggle 按钮 + 内边距之后），按内层块锚位会把把手叠在 toggle 按钮上、
+      // 导致按钮点不到。改锚到最外层 details 容器的左外缘（仿表格），
+      // 拖拽锚点也指向整个折叠块（与表格「拖整表」同一语义）。
+      let detailsLeft: number | null = null;
+      for (let d = 1; d <= $pos.depth; d++) {
+        if ($pos.node(d).type.name !== "details") continue;
+        const p = $pos.before(d);
+        const detailsDom = view.nodeDOM(p);
+        if (detailsDom instanceof HTMLElement) {
+          detailsLeft = detailsDom.getBoundingClientRect().left;
+          resolvedDragPos = p;
+        }
+        break;
+      }
+
       top.value = firstLineCenter - HANDLE_HEIGHT / 2;
       left.value =
-        tableLeftAnchor !== null
-          ? tableLeftAnchor
-          : (listItemLeft ?? rect.left) - HANDLE_OFFSET;
+        detailsLeft !== null
+          ? detailsLeft - HANDLE_OFFSET
+          : tableLeftAnchor !== null
+            ? tableLeftAnchor
+            : (listItemLeft ?? rect.left) - HANDLE_OFFSET;
       // 空行判定：考虑 leaf inline node（image / hardBreak 等），
       // 一个段落只含图片时不应被当作空行
       isEmpty.value = blockNode.content.size === 0;

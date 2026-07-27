@@ -377,6 +377,7 @@
         },
         "settingsPanel": {
           "title": "文章设置",
+          "close": "关闭文章设置",
           "tags": {
             "label": "文章标签",
             "tooltip": "为文章添加标签，有助于分类和内容检索",
@@ -468,10 +469,15 @@
             "horizontalRule": {
               "label": "分割线",
               "tooltip": "分割线\nmarkdown:--- 换行"
+            },
+            "details": {
+              "label": "折叠块",
+              "tooltip": "折叠块"
             }
           },
           "codeBlock": {
-            "languageEmpty": "未匹配语言"
+            "languageEmpty": "未匹配语言",
+            "copy": "复制代码"
           },
           "slashMenu": {
             "empty": "没有匹配的命令",

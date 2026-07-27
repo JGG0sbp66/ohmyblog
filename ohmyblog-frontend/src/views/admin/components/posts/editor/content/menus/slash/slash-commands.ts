@@ -145,7 +145,18 @@ export const SLASH_GROUPS: readonly SlashGroup[] = [
   },
   {
     labelKey: "common",
-    commands: [TABLE_COMMAND, IMAGE_COMMAND],
+    commands: [
+      TABLE_COMMAND,
+      IMAGE_COMMAND,
+      fromBlockCommand(blockById("details"), [
+        "details",
+        "折叠",
+        "collapse",
+        "toggle",
+        "zhedie",
+        "faq",
+      ]),
+    ],
   },
   {
     labelKey: "list",

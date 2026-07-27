@@ -13,6 +13,7 @@ import {
   List,
   ListOrdered,
   ListChecks,
+  ListCollapse,
   Code2,
   Quote,
 } from "lucide-vue-next";
@@ -52,6 +53,7 @@ const ORDERED_LIST_COLOR = COLOR_BY_ID.get("orderedList") ?? "";
 const TASK_LIST_COLOR = COLOR_BY_ID.get("taskList") ?? "";
 const CODE_BLOCK_COLOR = COLOR_BY_ID.get("codeBlock") ?? "";
 const QUOTE_COLOR = COLOR_BY_ID.get("quote") ?? "";
+const DETAILS_COLOR = COLOR_BY_ID.get("details") ?? "";
 
 /** 节点类型 → 默认图标 + 颜色（不考虑列表父级 / 内容 leaf） */
 const baseIconOf = (node: Node): BlockIconInfo => {
@@ -123,6 +125,14 @@ export const decideBlockIcon = (
   $pos: ResolvedPos,
   blockDepth: number,
 ): BlockIconInfo => {
+  // 折叠块内（summary / content 内任意块）：手柄锚定且拖拽的是整个折叠块
+  // （见 use-editor-hover-block 的 details 锚点逻辑），图标同步显示折叠块
+  for (let d = 1; d <= blockDepth; d++) {
+    if ($pos.node(d).type.name === "details") {
+      return { icon: ListCollapse, color: DETAILS_COLOR };
+    }
+  }
+
   if (blockNode.type.name !== "paragraph") return baseIconOf(blockNode);
 
   const listType = enclosingListType($pos, blockDepth);

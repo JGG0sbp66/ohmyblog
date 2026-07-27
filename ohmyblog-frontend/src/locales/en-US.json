@@ -379,6 +379,7 @@
         },
         "settingsPanel": {
           "title": "Post Settings",
+          "close": "Close post settings",
           "tags": {
             "label": "Tags",
             "tooltip": "Add tags to your post to help with categorization and content discovery",
@@ -473,10 +474,15 @@
             "horizontalRule": {
               "label": "Divider",
               "tooltip": "Divider\nmarkdown:--- Enter"
+            },
+            "details": {
+              "label": "Toggle",
+              "tooltip": "Toggle block"
             }
           },
           "codeBlock": {
-            "languageEmpty": "No matching language"
+            "languageEmpty": "No matching language",
+            "copy": "Copy code"
           },
           "slashMenu": {
             "empty": "No matching commands",

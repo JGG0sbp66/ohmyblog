@@ -1,9 +1,12 @@
 <!-- src/views/admin/components/posts/editor/content/node-views/CodeBlock.vue -->
 <!--
   NodeView: 代码块节点的 Vue 定制渲染组件
-  - header：MacOS 风格三圆点装饰 + 右侧语言下拉（含搜索过滤）
+  - header：左侧语言图标 + 语言下拉（含搜索过滤），右侧常驻复制按钮
   - 行号列：根据文本内容实时计算行数，与代码行严格等高对齐
   - 内容区：NodeViewContent 渲染 ProseMirror 可编辑代码区
+
+  语法高亮、语言清单、语言图标、行数计算均取自 @/composables/code-block，
+  与前台阅读端（enhance-code-blocks.ts）同源 —— 两端 DOM 各写一份，但逻辑只有一份。
 -->
 <script setup lang="ts">
 import { nodeViewProps, NodeViewWrapper, NodeViewContent } from "@tiptap/vue-3";
@@ -11,7 +14,14 @@ import { computed, ref, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { Copy, Check } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
-import { listAvailableLanguages } from "@/composables/editor-extensions/code-block.extension";
+import {
+  listAvailableLanguages,
+  resolveLanguageIcon,
+  preloadLanguageIcons,
+  formatLanguageLabel,
+  countCodeLines,
+  COPY_FEEDBACK_MS,
+} from "@/composables/code-block";
 import { useAnchoredPosition } from "../composables/use-anchored-position";
 
 const props = defineProps(nodeViewProps);
@@ -21,17 +31,23 @@ const { t } = useLang();
 // 输入框作为搜索 trigger：focus / 键入时显示候选列表，typo 即时反馈
 // 而不是裸输入字符串（之前版本：错一个字母整个高亮失效）
 //
+// 展示名与语法名分离：输入框与候选列表显示 "TypeScript"，attrs 里存的始终是
+// 语法名 "typescript"（见 composables/code-block/labels.ts）。
+// 用户键入期间输入框保留原始文本（作为搜索词），选中或失焦后规范化为展示名。
+//
 // 弹层 Teleport 到 body：代码块容器有 overflow:hidden（为了 header 圆角），
 // 内部 absolute 定位的下拉会被裁掉；fixed 定位绕开父级 overflow
 const allLanguages = listAvailableLanguages();
-const langInput = ref<string>(props.node.attrs.language ?? "");
+const langInput = ref<string>(
+  formatLanguageLabel(props.node.attrs.language ?? ""),
+);
 const langPickerOpen = ref(false);
 const selectedIndex = ref(0);
 const langInputRef = ref<HTMLInputElement | null>(null);
 const langPopupRef = ref<HTMLElement | null>(null);
 
 /**
- * 语言下拉位置：贴 input 下方、右对齐 input 右沿，超出视口则 clamp。
+ * 语言下拉位置：贴 input 下方、左对齐 input 左沿，超出视口则 clamp。
  * 复用编辑器统一的浮层智能定位逻辑（见 useAnchoredPosition）；
  * 该下拉始终向下展开，故关闭翻转（flip:false）。
  */
@@ -40,7 +56,7 @@ const { position: popupPosition, update: updatePopupPosition } =
     getAnchorRect: () => langInputRef.value?.getBoundingClientRect() ?? null,
     getPanel: () => langPopupRef.value,
     gap: 4,
-    align: "end",
+    align: "start",
     flip: false,
   });
 
@@ -51,21 +67,24 @@ const popupStyle = computed(() => ({
   minWidth: "9rem",
 }));
 
-/** 过滤候选：前缀优先 → 包含匹配；空 query 时全量 */
+/** 过滤候选：前缀优先 → 包含匹配；空 query 时全量。
+ *  语法名与展示名都参与匹配，因此 "objectivec" 和 "Objective-C" 都能搜到。 */
 const filteredLanguages = computed<string[]>(() => {
   const q = langInput.value.trim().toLowerCase();
   if (!q) return allLanguages;
   const prefix: string[] = [];
   const include: string[] = [];
   for (const lang of allLanguages) {
-    if (lang.startsWith(q)) prefix.push(lang);
-    else if (lang.includes(q)) include.push(lang);
+    const label = formatLanguageLabel(lang).toLowerCase();
+    if (lang.startsWith(q) || label.startsWith(q)) prefix.push(lang);
+    else if (lang.includes(q) || label.includes(q)) include.push(lang);
   }
   return [...prefix, ...include];
 });
 
 const commitLanguage = (lang: string) => {
-  langInput.value = lang;
+  // 输入框显示展示名，attrs 存语法名
+  langInput.value = formatLanguageLabel(lang);
   props.updateAttributes({ language: lang });
   langPickerOpen.value = false;
 };
@@ -76,12 +95,18 @@ const onLangFocus = () => {
   nextTick(updatePopupPosition);
 };
 
+/** 失焦：把输入框内容规范化回当前语言的展示名，丢弃未成型的搜索词 */
+const onLangBlur = () => {
+  langInput.value = formatLanguageLabel(props.node.attrs.language ?? "");
+};
+
 const onLangInput = (event: Event) => {
   langInput.value = (event.target as HTMLInputElement).value;
   langPickerOpen.value = true;
   selectedIndex.value = 0;
-  // 输入即同步到 attrs，让用户即时看到（错的也写进去，反正下次选会覆盖）
-  props.updateAttributes({ language: langInput.value });
+  // 输入即同步到 attrs，让用户即时看到（错的也写进去，反正下次选会覆盖）。
+  // 存的是语法名，故统一小写去空格 —— 展示名的大小写只活在渲染层。
+  props.updateAttributes({ language: langInput.value.trim().toLowerCase() });
   nextTick(updatePopupPosition);
 };
 
@@ -147,56 +172,80 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", onScrollOrResize, true);
   window.removeEventListener("resize", onScrollOrResize);
+  if (copyTimer) clearTimeout(copyTimer);
+});
+
+// ─── 语言图标 ────────────────────────────────────────────────────────────────
+// 取代原先 header 左侧的 MacOS 三圆点装饰。未收录的语言会拿到兜底图标，
+// 因此图标位永远有内容，输入过程中不会因图标时有时无导致 header 抖动。
+//
+// 图标表按需加载（见 composables/code-block/icons.ts）：本组件挂载即意味着
+// 编辑器里存在代码块，此时拉表最合适；表就绪前先渲染兜底图标。
+const iconsReady = ref(false);
+onMounted(() => {
+  void preloadLanguageIcons().then(() => {
+    iconsReady.value = true;
+  });
+});
+
+const languageIcon = computed(() => {
+  void iconsReady.value; // 建立依赖：图标表加载完成后重算
+  return resolveLanguageIcon(props.node.attrs.language ?? "");
 });
 
 // ─── 复制按钮 ────────────────────────────────────────────────────────────────
 const copied = ref(false);
+let copyTimer: ReturnType<typeof setTimeout> | null = null;
+
 const copyCode = async () => {
   await navigator.clipboard.writeText(props.node.textContent);
   copied.value = true;
-  setTimeout(() => {
+  // 连点时重置计时，避免多个 timer 竞争导致对勾提前复原
+  if (copyTimer) clearTimeout(copyTimer);
+  copyTimer = setTimeout(() => {
     copied.value = false;
-  }, 1500);
+    copyTimer = null;
+  }, COPY_FEEDBACK_MS);
 };
 
 // ─── 行号 ────────────────────────────────────────────────────────────────────
-// ProseMirror 的 CodeBlock 内容末尾始终带有一个隐式 \n，
-// 不去除会导致行号比实际多一行，且在某些编辑操作后出现忽多忽少的 bug
-const lineCount = computed(() => {
-  const text = props.node.textContent;
-  const normalized = text.endsWith("\n") ? text.slice(0, -1) : text;
-  return normalized.split("\n").length;
-});
+const lineCount = computed(() => countCodeLines(props.node.textContent));
 </script>
 
 <template>
   <node-view-wrapper class="code-block-container">
-    <!-- 悬浮复制按钮：默认隐藏，鼠标移入容器时显示于右上角 -->
-    <button
-      class="code-block-copy-btn"
-      :class="{ copied }"
-      contenteditable="false"
-      @click="copyCode"
-    >
-      <Check v-if="copied" :size="13" />
-      <Copy v-else :size="13" />
-    </button>
-
-    <!-- header：三圆点 + 语言下拉 -->
+    <!-- header：左侧语言图标 + 语言下拉，右侧常驻复制按钮 -->
     <div class="code-block-header" contenteditable="false">
-      <input
-        ref="langInputRef"
-        type="text"
-        :value="langInput"
-        class="code-block-lang-input"
-        placeholder="TEXT"
-        spellcheck="false"
-        autocomplete="off"
-        @focus="onLangFocus"
-        @input="onLangInput"
-        @keydown="onLangKeydown"
-      />
+      <div class="code-block-lang">
+        <!-- 图标来自生成的静态表，非用户输入，无需净化 -->
+        <span class="code-block-lang-icon" v-html="languageIcon"></span>
+        <input
+          ref="langInputRef"
+          type="text"
+          :value="langInput"
+          class="code-block-lang-input"
+          placeholder="Text"
+          spellcheck="false"
+          autocomplete="off"
+          @focus="onLangFocus"
+          @blur="onLangBlur"
+          @input="onLangInput"
+          @keydown="onLangKeydown"
+        />
+      </div>
+
+      <button
+        class="code-block-copy-btn"
+        :class="{ copied }"
+        type="button"
+        :aria-label="t('views.admin.PostEditor.content.codeBlock.copy')"
+        @click="copyCode"
+      >
+        <Check v-if="copied" :size="13" />
+        <Copy v-else :size="13" />
+      </button>
     </div>
+
     <div class="code-block-content">
       <!-- 行号列 -->
       <div class="line-numbers" contenteditable="false">
@@ -228,7 +277,7 @@ const lineCount = computed(() => {
           @mousedown.prevent="commitLanguage(lang)"
           @mouseenter="selectedIndex = i"
         >
-          {{ lang }}
+          {{ formatLanguageLabel(lang) }}
         </button>
       </div>
     </Teleport>
