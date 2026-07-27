@@ -3,7 +3,7 @@
 // 阅读端代码块增强：把 contentHtml 里朴素的
 //   <pre><code class="language-xxx">…纯文本…</code></pre>
 // 就地重建成与后台编辑器 CodeBlock.vue 完全一致的 DOM——
-// 语法高亮（与编辑器 lowlight 同一套 highlight.js@11）+ MacOS 外壳 + 行号 + 复制按钮。
+// 语法高亮（与编辑器同一套语言集）+ MacOS 外壳 + 行号 + 复制按钮。
 //
 // 为什么放在读端、而不是烘焙进 contentHtml：
 //   contentHtml 同时是 RSS 源（见后端 feed.service），必须保持干净语义（就 <pre><code>）；
@@ -11,7 +11,11 @@
 //
 // 幂等：已包裹过的 <pre> 会被跳过，可在 contentHtml 变化后重复调用。
 
-import hljs from "highlight.js/lib/common";
+import {
+  highlightToHtml,
+  countCodeLines,
+  COPY_FEEDBACK_MS,
+} from "@/composables/code-block";
 
 // lucide-vue-next 的 <Copy :size="13" /> / <Check :size="13" /> 等价 SVG 串，
 // 保证与编辑器复制按钮的图标逐像素一致。
@@ -24,16 +28,7 @@ function extractLanguage(code: Element): string {
   return match?.[1] ?? "";
 }
 
-/**
- * 计算行数：ProseMirror 序列化的代码块正文末尾可能带一个隐式换行，
- * 去掉后再算，避免行号比实际多一行（与 CodeBlock.vue 的 lineCount 逻辑一致）。
- */
-function countLines(text: string): number {
-  const normalized = text.endsWith("\n") ? text.slice(0, -1) : text;
-  return Math.max(1, normalized.split("\n").length);
-}
-
-/** 复制按钮交互：复制正文 → 切到 Check + .copied 保持 1.5s → 复原（与编辑器一致） */
+/** 复制按钮交互：复制正文 → 切到 Check + .copied → 复原（时长与编辑器共用常量） */
 function bindCopy(btn: HTMLButtonElement, text: string): void {
   let timer: ReturnType<typeof setTimeout> | null = null;
   btn.addEventListener("click", () => {
@@ -45,7 +40,7 @@ function bindCopy(btn: HTMLButtonElement, text: string): void {
       btn.innerHTML = COPY_ICON;
       btn.classList.remove("copied");
       timer = null;
-    }, 1500);
+    }, COPY_FEEDBACK_MS);
   });
 }
 
@@ -63,14 +58,12 @@ function enhanceOne(pre: HTMLPreElement): void {
   const language = extractLanguage(code);
   const rawText = code.textContent ?? "";
 
-  // 语法高亮：与编辑器 lowlight(common) 同一套 highlight.js@11（lockfile 已去重为同一版本），
-  // 产出相同的 hljs-* token 类，由 syntax.css 上色 → 逐字节一致。
-  // 语言不在 common 集合内（含 "text"）时保持纯文本，与编辑器行为一致。
-  if (language && hljs.getLanguage(language)) {
-    code.innerHTML = hljs.highlight(rawText, {
-      language,
-      ignoreIllegals: true,
-    }).value;
+  // 语法高亮：语言集与编辑器同源（见 composables/code-block/highlight.ts），
+  // 产出相同的 hljs-* token 类，由 syntax.css 上色。
+  // 语言为空或不在语言集内（含 "text"）时返回 null，保持纯文本，与编辑器行为一致。
+  const highlighted = highlightToHtml(rawText, language);
+  if (highlighted !== null) {
+    code.innerHTML = highlighted;
     code.classList.add("hljs");
   }
 
@@ -105,7 +98,7 @@ function enhanceOne(pre: HTMLPreElement): void {
   content.className = "code-block-content";
   const lineNumbers = document.createElement("div");
   lineNumbers.className = "line-numbers";
-  const lines = countLines(rawText);
+  const lines = countCodeLines(rawText);
   for (let i = 1; i <= lines; i++) {
     const span = document.createElement("span");
     span.textContent = String(i);

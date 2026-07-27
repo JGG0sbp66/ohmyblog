@@ -11,7 +11,11 @@ import { computed, ref, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { Copy, Check } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
-import { listAvailableLanguages } from "@/composables/editor-extensions/code-block.extension";
+import {
+  listAvailableLanguages,
+  countCodeLines,
+  COPY_FEEDBACK_MS,
+} from "@/composables/code-block";
 import { useAnchoredPosition } from "../composables/use-anchored-position";
 
 const props = defineProps(nodeViewProps);
@@ -156,17 +160,11 @@ const copyCode = async () => {
   copied.value = true;
   setTimeout(() => {
     copied.value = false;
-  }, 1500);
+  }, COPY_FEEDBACK_MS);
 };
 
 // ─── 行号 ────────────────────────────────────────────────────────────────────
-// ProseMirror 的 CodeBlock 内容末尾始终带有一个隐式 \n，
-// 不去除会导致行号比实际多一行，且在某些编辑操作后出现忽多忽少的 bug
-const lineCount = computed(() => {
-  const text = props.node.textContent;
-  const normalized = text.endsWith("\n") ? text.slice(0, -1) : text;
-  return normalized.split("\n").length;
-});
+const lineCount = computed(() => countCodeLines(props.node.textContent));
 </script>
 
 <template>
