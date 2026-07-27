@@ -476,7 +476,8 @@
             }
           },
           "codeBlock": {
-            "languageEmpty": "未匹配语言"
+            "languageEmpty": "未匹配语言",
+            "copy": "复制代码"
           },
           "slashMenu": {
             "empty": "没有匹配的命令",

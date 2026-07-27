@@ -1,9 +1,12 @@
 <!-- src/views/admin/components/posts/editor/content/node-views/CodeBlock.vue -->
 <!--
   NodeView: 代码块节点的 Vue 定制渲染组件
-  - header：MacOS 风格三圆点装饰 + 右侧语言下拉（含搜索过滤）
+  - header：左侧语言图标 + 语言下拉（含搜索过滤），右侧常驻复制按钮
   - 行号列：根据文本内容实时计算行数，与代码行严格等高对齐
   - 内容区：NodeViewContent 渲染 ProseMirror 可编辑代码区
+
+  语法高亮、语言清单、语言图标、行数计算均取自 @/composables/code-block，
+  与前台阅读端（enhance-code-blocks.ts）同源 —— 两端 DOM 各写一份，但逻辑只有一份。
 -->
 <script setup lang="ts">
 import { nodeViewProps, NodeViewWrapper, NodeViewContent } from "@tiptap/vue-3";
@@ -13,6 +16,7 @@ import { Copy, Check } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import {
   listAvailableLanguages,
+  resolveLanguageIcon,
   countCodeLines,
   COPY_FEEDBACK_MS,
 } from "@/composables/code-block";
@@ -35,7 +39,7 @@ const langInputRef = ref<HTMLInputElement | null>(null);
 const langPopupRef = ref<HTMLElement | null>(null);
 
 /**
- * 语言下拉位置：贴 input 下方、右对齐 input 右沿，超出视口则 clamp。
+ * 语言下拉位置：贴 input 下方、左对齐 input 左沿，超出视口则 clamp。
  * 复用编辑器统一的浮层智能定位逻辑（见 useAnchoredPosition）；
  * 该下拉始终向下展开，故关闭翻转（flip:false）。
  */
@@ -44,7 +48,7 @@ const { position: popupPosition, update: updatePopupPosition } =
     getAnchorRect: () => langInputRef.value?.getBoundingClientRect() ?? null,
     getPanel: () => langPopupRef.value,
     gap: 4,
-    align: "end",
+    align: "start",
     flip: false,
   });
 
@@ -151,15 +155,28 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", onScrollOrResize, true);
   window.removeEventListener("resize", onScrollOrResize);
+  if (copyTimer) clearTimeout(copyTimer);
 });
+
+// ─── 语言图标 ────────────────────────────────────────────────────────────────
+// 取代原先 header 左侧的 MacOS 三圆点装饰。未收录的语言会拿到兜底图标，
+// 因此图标位永远有内容，输入过程中不会因图标时有时无导致 header 抖动。
+const languageIcon = computed(() =>
+  resolveLanguageIcon(props.node.attrs.language ?? ""),
+);
 
 // ─── 复制按钮 ────────────────────────────────────────────────────────────────
 const copied = ref(false);
+let copyTimer: ReturnType<typeof setTimeout> | null = null;
+
 const copyCode = async () => {
   await navigator.clipboard.writeText(props.node.textContent);
   copied.value = true;
-  setTimeout(() => {
+  // 连点时重置计时，避免多个 timer 竞争导致对勾提前复原
+  if (copyTimer) clearTimeout(copyTimer);
+  copyTimer = setTimeout(() => {
     copied.value = false;
+    copyTimer = null;
   }, COPY_FEEDBACK_MS);
 };
 
@@ -169,32 +186,37 @@ const lineCount = computed(() => countCodeLines(props.node.textContent));
 
 <template>
   <node-view-wrapper class="code-block-container">
-    <!-- 悬浮复制按钮：默认隐藏，鼠标移入容器时显示于右上角 -->
-    <button
-      class="code-block-copy-btn"
-      :class="{ copied }"
-      contenteditable="false"
-      @click="copyCode"
-    >
-      <Check v-if="copied" :size="13" />
-      <Copy v-else :size="13" />
-    </button>
-
-    <!-- header：三圆点 + 语言下拉 -->
+    <!-- header：左侧语言图标 + 语言下拉，右侧常驻复制按钮 -->
     <div class="code-block-header" contenteditable="false">
-      <input
-        ref="langInputRef"
-        type="text"
-        :value="langInput"
-        class="code-block-lang-input"
-        placeholder="TEXT"
-        spellcheck="false"
-        autocomplete="off"
-        @focus="onLangFocus"
-        @input="onLangInput"
-        @keydown="onLangKeydown"
-      />
+      <div class="code-block-lang">
+        <!-- 图标来自生成的静态表，非用户输入，无需净化 -->
+        <span class="code-block-lang-icon" v-html="languageIcon"></span>
+        <input
+          ref="langInputRef"
+          type="text"
+          :value="langInput"
+          class="code-block-lang-input"
+          placeholder="TEXT"
+          spellcheck="false"
+          autocomplete="off"
+          @focus="onLangFocus"
+          @input="onLangInput"
+          @keydown="onLangKeydown"
+        />
+      </div>
+
+      <button
+        class="code-block-copy-btn"
+        :class="{ copied }"
+        type="button"
+        :aria-label="t('views.admin.PostEditor.content.codeBlock.copy')"
+        @click="copyCode"
+      >
+        <Check v-if="copied" :size="13" />
+        <Copy v-else :size="13" />
+      </button>
     </div>
+
     <div class="code-block-content">
       <!-- 行号列 -->
       <div class="line-numbers" contenteditable="false">

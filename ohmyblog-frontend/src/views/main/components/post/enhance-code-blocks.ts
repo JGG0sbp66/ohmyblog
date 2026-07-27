@@ -2,8 +2,8 @@
 //
 // 阅读端代码块增强：把 contentHtml 里朴素的
 //   <pre><code class="language-xxx">…纯文本…</code></pre>
-// 就地重建成与后台编辑器 CodeBlock.vue 完全一致的 DOM——
-// 语法高亮（与编辑器同一套语言集）+ MacOS 外壳 + 行号 + 复制按钮。
+// 就地重建成与后台编辑器 CodeBlock.vue 一致的 DOM——
+// 语法高亮 + 语言图标 header + 行号 + 常驻复制按钮。
 //
 // 为什么放在读端、而不是烘焙进 contentHtml：
 //   contentHtml 同时是 RSS 源（见后端 feed.service），必须保持干净语义（就 <pre><code>）；
@@ -13,6 +13,7 @@
 
 import {
   highlightToHtml,
+  resolveLanguageIcon,
   countCodeLines,
   COPY_FEEDBACK_MS,
 } from "@/composables/code-block";
@@ -45,7 +46,7 @@ function bindCopy(btn: HTMLButtonElement, text: string): void {
 }
 
 /**
- * 就地增强单个 <pre>：语法高亮 + 包裹外壳（复制按钮 / header / 行号列）。
+ * 就地增强单个 <pre>：语法高亮 + 包裹外壳（header 含语言图标与复制按钮、行号列）。
  * 结构与顺序严格对齐 CodeBlock.vue 的模板，配合共用的 code-block.css / syntax.css 呈现一致。
  */
 function enhanceOne(pre: HTMLPreElement): void {
@@ -71,7 +72,26 @@ function enhanceOne(pre: HTMLPreElement): void {
   const container = document.createElement("div");
   container.className = "code-block-container";
 
-  // 复制按钮
+  // header：左侧语言图标 + 语言名，右侧复制按钮
+  const header = document.createElement("div");
+  header.className = "code-block-header";
+
+  const langBox = document.createElement("div");
+  langBox.className = "code-block-lang";
+
+  const icon = document.createElement("span");
+  icon.className = "code-block-lang-icon";
+  icon.innerHTML = resolveLanguageIcon(language);
+
+  // 阅读端语言名是纯展示，直接用 <span>；
+  // 后台那侧同位置是可编辑 input + 语言下拉，样式由 code-block.css 统一。
+  const langLabel = document.createElement("span");
+  langLabel.className = "code-block-lang-input";
+  langLabel.textContent = language || "text";
+
+  langBox.appendChild(icon);
+  langBox.appendChild(langLabel);
+
   const copyBtn = document.createElement("button");
   copyBtn.type = "button";
   copyBtn.className = "code-block-copy-btn";
@@ -79,19 +99,8 @@ function enhanceOne(pre: HTMLPreElement): void {
   copyBtn.innerHTML = COPY_ICON;
   bindCopy(copyBtn, rawText);
 
-  // header + 语言标签（只读、纯装饰：复用编辑器 input 的同一份样式，
-  // readonly + tabindex/-1 + pointer-events:none 使其在阅读端完全惰性）
-  const header = document.createElement("div");
-  header.className = "code-block-header";
-  const langLabel = document.createElement("input");
-  langLabel.className = "code-block-lang-input";
-  langLabel.readOnly = true;
-  langLabel.tabIndex = -1;
-  langLabel.setAttribute("aria-hidden", "true");
-  langLabel.placeholder = "TEXT";
-  langLabel.value = language;
-  langLabel.style.pointerEvents = "none";
-  header.appendChild(langLabel);
+  header.appendChild(langBox);
+  header.appendChild(copyBtn);
 
   // content：行号列 + 原 <pre>
   const content = document.createElement("div");
@@ -109,7 +118,6 @@ function enhanceOne(pre: HTMLPreElement): void {
   parent.replaceChild(container, pre);
   content.appendChild(lineNumbers);
   content.appendChild(pre);
-  container.appendChild(copyBtn);
   container.appendChild(header);
   container.appendChild(content);
 }

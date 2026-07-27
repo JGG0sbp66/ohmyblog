@@ -5,10 +5,11 @@
 // 背景：代码块在两端各有一份 DOM 实现且无法合并 ——
 //   后台必须是 Tiptap NodeView（要 NodeViewContent 承载可编辑区），
 //   前台明确不加载 ProseMirror（contentHtml 要保持干净供 RSS 用，且阅读端不该背编辑器体积）。
-// 因此合并的粒度是「逻辑层」而非「组件」：语法高亮、行数计算、交互常量
+// 因此合并的粒度是「逻辑层」而非「组件」：语法高亮、语言图标、行数计算、交互常量
 //   全部收敛到这里，两端只各自负责把它们摆进 DOM。
 
 export { listAvailableLanguages, highlightToHtml } from "./highlight";
+export { resolveLanguageIcon } from "./icons";
 // 刻意不导出 ./lowlight —— 它只服务后台编辑器，由 code-block.extension.ts 直接引入，
 // 以免阅读端 import 本 barrel 时被连带打包（详见 lowlight.ts 注释）。
 

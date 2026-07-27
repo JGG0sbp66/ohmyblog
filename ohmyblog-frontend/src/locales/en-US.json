@@ -481,7 +481,8 @@
             }
           },
           "codeBlock": {
-            "languageEmpty": "No matching language"
+            "languageEmpty": "No matching language",
+            "copy": "Copy code"
           },
           "slashMenu": {
             "empty": "No matching commands",
