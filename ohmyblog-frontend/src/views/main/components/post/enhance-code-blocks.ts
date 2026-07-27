@@ -9,11 +9,16 @@
 //   contentHtml 同时是 RSS 源（见后端 feed.service），必须保持干净语义（就 <pre><code>）；
 //   外壳与高亮纯属「展示层」，只在网页阅读时重建，避免污染订阅源。
 //
+// 与后台的一致性：高亮语言集、语言图标、行数计算、复制反馈时长全部取自
+//   @/composables/code-block —— DOM 各写一份（这边是原生节点、那边是 Vue 模板，
+//   无法合并），但逻辑只有一份，不再需要人工对齐。
+//
 // 幂等：已包裹过的 <pre> 会被跳过，可在 contentHtml 变化后重复调用。
 
 import {
   highlightToHtml,
   resolveLanguageIcon,
+  preloadLanguageIcons,
   formatLanguageLabel,
   countCodeLines,
   COPY_FEEDBACK_MS,
@@ -82,6 +87,8 @@ function enhanceOne(pre: HTMLPreElement): void {
 
   const icon = document.createElement("span");
   icon.className = "code-block-lang-icon";
+  // 记下语言：图标表异步就绪后要按它回填（见 enhanceCodeBlocks）
+  icon.dataset.lang = language;
   icon.innerHTML = resolveLanguageIcon(language);
 
   // 阅读端语言名是纯展示，直接用 <span>；
@@ -125,8 +132,24 @@ function enhanceOne(pre: HTMLPreElement): void {
 
 /**
  * 增强 root 内所有代码块。幂等，可重复调用。
+ *
+ * 图标表是按需加载的（约 23 KB，见 composables/code-block/icons.ts）：
+ * 页面没有代码块时一个字节都不拉；有代码块时也不等它 ——
+ * 先用兜底图标把外壳和高亮立刻渲染出来，表就绪后再回填真实图标，
+ * 避免为了几十 KB 的装饰性资源推迟正文呈现。
+ *
  * @param root 承载 v-html 内容的容器元素
  */
 export function enhanceCodeBlocks(root: HTMLElement): void {
-  root.querySelectorAll<HTMLPreElement>("pre").forEach(enhanceOne);
+  const blocks = root.querySelectorAll<HTMLPreElement>("pre");
+  if (blocks.length === 0) return;
+  blocks.forEach(enhanceOne);
+
+  void preloadLanguageIcons().then(() => {
+    root
+      .querySelectorAll<HTMLElement>(".code-block-lang-icon[data-lang]")
+      .forEach((el) => {
+        el.innerHTML = resolveLanguageIcon(el.dataset.lang ?? "");
+      });
+  });
 }

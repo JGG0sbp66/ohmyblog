@@ -17,6 +17,7 @@ import { useLang } from "@/composables/lang.hook";
 import {
   listAvailableLanguages,
   resolveLanguageIcon,
+  preloadLanguageIcons,
   formatLanguageLabel,
   countCodeLines,
   COPY_FEEDBACK_MS,
@@ -177,9 +178,20 @@ onBeforeUnmount(() => {
 // ─── 语言图标 ────────────────────────────────────────────────────────────────
 // 取代原先 header 左侧的 MacOS 三圆点装饰。未收录的语言会拿到兜底图标，
 // 因此图标位永远有内容，输入过程中不会因图标时有时无导致 header 抖动。
-const languageIcon = computed(() =>
-  resolveLanguageIcon(props.node.attrs.language ?? ""),
-);
+//
+// 图标表按需加载（见 composables/code-block/icons.ts）：本组件挂载即意味着
+// 编辑器里存在代码块，此时拉表最合适；表就绪前先渲染兜底图标。
+const iconsReady = ref(false);
+onMounted(() => {
+  void preloadLanguageIcons().then(() => {
+    iconsReady.value = true;
+  });
+});
+
+const languageIcon = computed(() => {
+  void iconsReady.value; // 建立依赖：图标表加载完成后重算
+  return resolveLanguageIcon(props.node.attrs.language ?? "");
+});
 
 // ─── 复制按钮 ────────────────────────────────────────────────────────────────
 const copied = ref(false);

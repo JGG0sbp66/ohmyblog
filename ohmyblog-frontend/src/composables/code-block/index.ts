@@ -9,7 +9,7 @@
 //   全部收敛到这里，两端只各自负责把它们摆进 DOM。
 
 export { listAvailableLanguages, highlightToHtml } from "./highlight";
-export { resolveLanguageIcon } from "./icons";
+export { resolveLanguageIcon, preloadLanguageIcons } from "./icons";
 export { formatLanguageLabel } from "./labels";
 // 刻意不导出 ./lowlight —— 它只服务后台编辑器，由 code-block.extension.ts 直接引入，
 // 以免阅读端 import 本 barrel 时被连带打包（详见 lowlight.ts 注释）。
