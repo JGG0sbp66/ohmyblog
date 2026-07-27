@@ -121,7 +121,11 @@
         "notFound": "文章不存在或已被删除",
         "untitled": "无标题",
         "words": "字",
-        "views": "阅读"
+        "views": "阅读",
+        "toc": {
+          "label": "文章目录",
+          "backToTop": "回到顶部"
+        }
       },
       "archive": {
         "empty": "暂无文章",

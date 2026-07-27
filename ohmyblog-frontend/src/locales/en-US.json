@@ -121,7 +121,11 @@
         "notFound": "Post not found or has been removed",
         "untitled": "Untitled",
         "words": "words",
-        "views": "reads"
+        "views": "reads",
+        "toc": {
+          "label": "Table of contents",
+          "backToTop": "Back to top"
+        }
       },
       "archive": {
         "empty": "No posts yet",
