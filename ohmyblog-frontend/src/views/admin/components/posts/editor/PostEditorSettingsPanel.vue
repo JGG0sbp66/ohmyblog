@@ -1,5 +1,7 @@
 <!-- src/views/admin/components/posts/editor/PostEditorSettingsPanel.vue -->
 <script setup lang="ts">
+import { X } from "lucide-vue-next";
+import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import PostEditorTagSetting from "@/views/admin/components/posts/editor/setting/PostEditorTagSetting.vue";
 import PostEditorSlugSetting from "@/views/admin/components/posts/editor/setting/PostEditorSlugSetting.vue";
 import PostEditorStatusSetting from "@/views/admin/components/posts/editor/setting/PostEditorStatusSetting.vue";
@@ -15,6 +17,10 @@ const props = defineProps<{
   uuid: string;
 }>();
 
+const emit = defineEmits<{
+  close: [];
+}>();
+
 const slug = defineModel<string>("slug", { default: "" });
 const tags = defineModel<string[]>("tags", { default: () => [] });
 const status = defineModel<TPostStatus>("status", { default: "draft" });
@@ -24,15 +30,24 @@ const pinned = defineModel<boolean>("pinned", { default: false });
 </script>
 
 <template>
-  <div class="w-72 h-full shrink-0 border-l border-border/40 flex flex-col">
+  <div
+    class="flex h-full w-full shrink-0 flex-col border-l border-border/40 bg-bg-card md:w-72"
+  >
     <!-- 面板标题 -->
     <h2
-      class="shrink-0 flex items-center px-5 pt-4 pb-3 border-b border-border/40"
+      class="flex shrink-0 items-center justify-between border-b border-border/40 px-5 pt-4 pb-3"
     >
       <!-- h-9 与工具栏按钮等高，确保在任意 DPR 下两侧行高精确对齐 -->
-      <span class="inline-flex items-center h-9 text-lg font-bold text-fg">
+      <span class="inline-flex h-9 items-center text-lg font-bold text-fg">
         {{ t("views.admin.PostEditor.settingsPanel.title") }}
       </span>
+      <ButtonSecondary
+        class="h-9 w-9 md:hidden"
+        :aria-label="t('views.admin.PostEditor.settingsPanel.close')"
+        @click="emit('close')"
+      >
+        <X class="h-5 w-5" />
+      </ButtonSecondary>
     </h2>
 
     <!-- 设置内容区域 -->

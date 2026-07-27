@@ -377,6 +377,7 @@
         },
         "settingsPanel": {
           "title": "文章设置",
+          "close": "关闭文章设置",
           "tags": {
             "label": "文章标签",
             "tooltip": "为文章添加标签，有助于分类和内容检索",

@@ -379,6 +379,7 @@
         },
         "settingsPanel": {
           "title": "Post Settings",
+          "close": "Close post settings",
           "tags": {
             "label": "Tags",
             "tooltip": "Add tags to your post to help with categorization and content discovery",
