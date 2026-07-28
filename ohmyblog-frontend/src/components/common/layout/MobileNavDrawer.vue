@@ -6,7 +6,7 @@
   - 桌面端不会渲染该组件（Header 内已用 md:hidden 控制入口）。
 -->
 <script lang="ts" setup>
-import { watch, useTemplateRef } from "vue";
+import { watch, useTemplateRef, type Component } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { onClickOutside, useScrollLock } from "@vueuse/core";
 import { X } from "lucide-vue-next";
@@ -15,7 +15,7 @@ import { useLang } from "@/composables/lang.hook";
 
 const props = defineProps<{
   modelValue: boolean;
-  navItems: { name: string; label: string }[];
+  navItems: { name: string; label: string; icon: Component }[];
 }>();
 
 const emit = defineEmits<{
@@ -105,7 +105,9 @@ const handleNavClick = (name: string) => {
               :aria-current="route.name === item.name ? 'page' : undefined"
               class="w-full h-full px-4 justify-start text-base font-medium"
               @click="handleNavClick(item.name)"
-            />
+            >
+              <component :is="item.icon" class="w-5 h-5" />
+            </ButtonSecondary>
           </div>
         </nav>
       </aside>
