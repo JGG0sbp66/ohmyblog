@@ -15,6 +15,7 @@ export const useSystemStore = defineStore("system", () => {
   const { t } = useLang();
 
   const version = ref("");
+  const commit = ref("");
   const initialized = ref<boolean | null>(null);
 
   // 站点全局配置
@@ -142,6 +143,7 @@ export const useSystemStore = defineStore("system", () => {
         throw new Error("后端返回的健康状态数据格式不正确");
       }
       version.value = data.version;
+      commit.value = data.commit;
       initialized.value = data.initialized;
 
       return initialized.value;
@@ -154,6 +156,7 @@ export const useSystemStore = defineStore("system", () => {
 
   return {
     version,
+    commit,
     initialized,
     siteInfo,
     siteCreatedAt,

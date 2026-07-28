@@ -369,6 +369,12 @@
           "contentLabel": "正文",
           "contentPlaceholder": "把你的灵感写下来...",
           "save": "保存草稿"
+        },
+        "systemInfo": {
+          "title": "系统信息",
+          "description": "当前运行的版本信息",
+          "version": "版本",
+          "commit": "Commit"
         }
       },
       "PostEditor": {

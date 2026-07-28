@@ -371,6 +371,12 @@
           "contentLabel": "Content",
           "contentPlaceholder": "Write your thoughts here...",
           "save": "Save Draft"
+        },
+        "systemInfo": {
+          "title": "System Info",
+          "description": "Current running version info",
+          "version": "Version",
+          "commit": "Commit"
         }
       },
       "PostEditor": {
