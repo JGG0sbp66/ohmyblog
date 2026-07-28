@@ -89,8 +89,9 @@ watch(slug, fetchPost, { immediate: true });
       → 左右对称贴边。圆角 / 阴影保持 BaseCard 默认，不再做 rounded-none 之类的破坏。
     内层 padding 由 p-6 收到 p-4（窄屏），桌面仍 md:p-8。
 
-    xl 起在右侧让出一列给目录（正文 1200 → 约 970px，长文行宽反而更舒服）；
-    小于 xl 时目录整列隐藏，正文照旧全宽，wrapper 只剩一个子项，
+    lg 起在右侧让出一列给目录（lg~xl 目录收窄到 w-48 给正文留宽，xl 起恢复 w-60，
+    正文 1200 → 约 970px，长文行宽反而更舒服）；
+    小于 lg 时目录整列隐藏，正文照旧全宽，wrapper 只剩一个子项，
     上面那段负 margin 的推演不受影响。
   -->
   <div v-else-if="post" class="-mx-4 flex flex-row items-start gap-7 md:mx-0">
@@ -130,7 +131,7 @@ watch(slug, fetchPost, { immediate: true });
          滚动后由 sticky top-24 接管（与 MainLayout 侧栏同一个吸顶位） -->
     <PostToc
       :headings="headings"
-      class="sticky top-24 mt-30 hidden w-60 shrink-0 xl:block"
+      class="sticky top-24 mt-30 hidden w-48 shrink-0 lg:block xl:w-60"
     />
   </div>
 </template>
