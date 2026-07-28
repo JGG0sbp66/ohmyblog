@@ -380,6 +380,8 @@
           "description": "当前运行的版本信息",
           "version": "版本",
           "commit": "Commit",
+          "uptime": "运行时长",
+          "uptimeValue": "{days} 天",
           "checkUpdate": "检查更新",
           "upToDate": "当前已是最新版本",
           "updateAvailable": "发现新版本 v{version}",

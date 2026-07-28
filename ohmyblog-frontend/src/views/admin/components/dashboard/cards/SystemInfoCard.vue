@@ -3,8 +3,9 @@
  * 系统信息卡片 — 展示 health 接口返回的版本号与 commit hash
  * 放置在灵感速记卡片下方
  */
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import {
+  CalendarClock,
   CircleCheck,
   CircleFadingArrowUp,
   ExternalLink,
@@ -19,6 +20,7 @@ import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 import { useSystemStore } from "@/stores/system.store";
 import SettingCard from "@/components/base/card/SettingCard.vue";
+import { getRunningDays } from "@/utils/date";
 
 const { t } = useLang();
 
@@ -27,7 +29,10 @@ const checkingUpdate = ref(false);
 const updateInfo = ref<Awaited<ReturnType<typeof checkUpdate>> | null>(null);
 
 const systemStore = useSystemStore();
-const { version, commit } = storeToRefs(systemStore);
+const { version, commit, siteCreatedAt } = storeToRefs(systemStore);
+
+// 站点运行天数：取自 site_info 配置的创建时间，前端实时计算
+const runningDays = computed(() => getRunningDays(siteCreatedAt.value));
 
 onMounted(async () => {
   loading.value = true;
@@ -83,6 +88,20 @@ function openRelease() {
         </div>
         <span class="font-mono font-semibold text-fg">
           {{ commit || "--" }}
+        </span>
+      </div>
+
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 text-fg-muted">
+          <CalendarClock class="w-4 h-4" />
+          <span>{{ t("views.admin.Dashboard.systemInfo.uptime") }}</span>
+        </div>
+        <span class="font-mono font-semibold text-fg">
+          {{
+            t("views.admin.Dashboard.systemInfo.uptimeValue", {
+              days: runningDays,
+            })
+          }}
         </span>
       </div>
 

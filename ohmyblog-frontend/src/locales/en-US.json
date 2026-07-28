@@ -382,6 +382,8 @@
           "description": "Current running version info",
           "version": "Version",
           "commit": "Commit",
+          "uptime": "Uptime",
+          "uptimeValue": "{days} days",
           "checkUpdate": "Check for updates",
           "upToDate": "You're running the latest version",
           "updateAvailable": "Version v{version} is available",
