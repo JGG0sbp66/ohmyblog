@@ -104,7 +104,7 @@ onUnmounted(() => {
       <!-- 遮罩层：模糊背景，居中布局 -->
       <div
         v-if="modelValue"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/20"
+        class="fixed inset-0 z-70 flex items-center justify-center p-4 backdrop-blur-sm bg-black/20"
       >
         <!-- 弹窗内容过渡动画 -->
         <Transition name="modal-content">
