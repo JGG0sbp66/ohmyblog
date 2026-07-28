@@ -43,7 +43,7 @@ RUN bun run scripts/build.ts linux-musl
 # --- 阶段 3: 运行阶段（Alpine 最小化） ---
 FROM alpine:3.23
 
-# 从构建阶段继承 GIT_COMMIT 和 APP_VERSION
+# 从构建阶段继承 GIT_COMMIT 和 APP_VERSION（CI 打 tag 时注入；未注入时运行时回退到 package.json 版本）
 ARG GIT_COMMIT=unknown
 ARG APP_VERSION=unknown
 ENV GIT_COMMIT=$GIT_COMMIT
