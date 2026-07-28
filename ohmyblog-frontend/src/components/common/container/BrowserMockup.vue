@@ -75,13 +75,13 @@ withDefaults(defineProps<Props>(), {
     <div
       class="flex-1 relative flex items-center justify-center min-h-0 bg-bg-muted/30"
     >
-      <!-- 视口容器：用于控制内容的宽度 -->
+      <!-- 视口容器：用于控制内容的宽度。mobile 模式按真实手机 9:19.5 比例，高度自适应、宽度随比例推算 -->
       <div
         class="h-full transition-all duration-500 ease-in-out origin-center relative overflow-hidden"
         :class="
           viewportMode === 'pc'
             ? 'w-full'
-            : 'w-85 border-x-8 border-bg-muted rounded-4xl shadow-2xl my-4 h-[90%]'
+            : 'h-[90%] aspect-[9/19.5] max-w-full border-x-8 border-bg-muted rounded-4xl shadow-2xl my-4'
         "
       >
         <slot />

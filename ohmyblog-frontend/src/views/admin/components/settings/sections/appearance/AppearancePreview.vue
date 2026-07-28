@@ -16,7 +16,7 @@ const systemStore = useSystemStore();
 const previewUrl = ref(window.location.origin + "/");
 const isLoading = ref(true);
 
-// 视口宽度：pc (100%) 或 mobile (400px)
+// 视口宽度：pc (100%) 或 mobile (9:19.5 手机比例，宽度随高度推算)
 defineProps<{
   viewportMode: "pc" | "mobile";
 }>();
