@@ -1,19 +1,26 @@
 <!-- src/views/main/components/post/toc/TocList.vue -->
 <script setup lang="ts">
 import { computed, onUnmounted, ref, watch } from "vue";
+import { CircleArrowUp } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
+import ButtonThird from "@/components/base/button/ButtonThird.vue";
 import type { TocHeading } from "./extract-headings";
 import type { VisibleRange } from "./use-reading-position";
 
 /**
- * TocList — 目录的展开态。
+ * TocList — 目录主体，收起/展开共用同一套行结构。
  *
- * 几个刻意的做法：
- * - 高亮条只有一个元素，靠 top / height 过渡在标题之间「滑 + 伸」过去，
- *   而不是每项各一条、切换时硬跳；
- * - 它的高度覆盖「当前标题 → 最后一个可见标题」，底部渐隐，
- *   读数是「视口里正在读的这一段」而不是「光标停在哪一行」；
- * - 连续的三级标题收进可折叠分组，只有相关的那组展开，长文目录才不会糊成一片。
+ * 每个标题 = 一枚刻度（tick）+ 一段文本：
+ * - 收起态：行被压扁，文本隐藏（只留当前小节的标题），刻度是一截
+ *   小横线 —— 整列像一把「章节刻度尺」：已读亮灰、当前主题色发光
+ *   加长、未读暗淡，文章结构与阅读进度一眼可读；
+ * - 展开态：行高松开，文本从刻度右侧淡入，刻度原地「立起」变成
+ *   行首的竖向指示条，当前行染主题色。
+ *
+ * 两态共享 DOM，过渡只是每行自己的 width / height / opacity，
+ * 不需要测量，也不需要 JS 动画。收起时所有文本同时淡出 —— 曾经按
+ * 与当前项的距离做涟漪延迟，视觉上变成按标题顺序乱着消失，反而廉价。
+ * 连续的三级标题依旧收成可折叠分组，只有相关的那组展开。
  */
 
 const props = defineProps<{
@@ -22,7 +29,7 @@ const props = defineProps<{
   visibleRange: VisibleRange;
   /** 阅读进度 0~1 */
   progress: number;
-  /** 列表态是否可见；收起时条目做涟漪退场、高亮条隐藏 */
+  /** 列表态是否可见；收起时文本涟漪退场、刻度回倒成横线 */
   expanded: boolean;
 }>();
 
@@ -33,10 +40,8 @@ const emit = defineEmits<{
 
 const { t } = useLang();
 
-/** 涟漪延迟步进：延迟 = |index − activeIndex| × 本值，从当前项向两端荡开 */
-const RIPPLE_STEP = 50;
-/** 高亮条跟量的帧数，要覆盖分组折叠的 400ms 过渡 */
-const MARKER_FRAMES = 40;
+/** 分组折叠动画的跟量帧数，覆盖 400ms 过渡 */
+const REVEAL_FRAMES = 30;
 
 const RING_R = 6;
 const RING_C = 2 * Math.PI * RING_R;
@@ -87,7 +92,8 @@ const isGroupOpen = (group: TocGroup) => {
   );
 };
 
-/** 三档：当前 → 主题色加粗；视口内可见 → 中间档；其余 → 最淡 */
+// ---------------------------------------------------------------- 行样式
+/** 文本三档：当前 → 主题色加粗；视口内可见 → 中间档；其余 → 最淡 */
 const entryClass = (index: number) => {
   if (index === props.activeIndex) return "text-accent font-medium opacity-100";
   const { from, to } = props.visibleRange;
@@ -95,16 +101,49 @@ const entryClass = (index: number) => {
   return near ? "opacity-70" : "opacity-35 hover:opacity-80";
 };
 
-/** 二级 1rem，每深一级 +0.6rem（与参考实现实测值一致） */
+/** 文本缩进：二级 1rem，每深一级 +0.75rem */
 const indentOf = (index: number) =>
-  `${1 + ((props.headings[index]?.depth ?? 2) - 2) * 0.6}rem`;
+  `${1 + ((props.headings[index]?.depth ?? 2) - 2) * 0.75}rem`;
 
-const rippleOf = (index: number) =>
-  `${Math.abs(index - props.activeIndex) * RIPPLE_STEP}ms`;
+/** 收起态当前行的标题要完整露出，padding 让开加长的当前刻度 */
+const labelPadding = (index: number) => {
+  if (!props.expanded && index === props.activeIndex) {
+    return (props.headings[index]?.depth ?? 2) >= 3 ? "1.5rem" : "2.25rem";
+  }
+  return indentOf(index);
+};
+
+/** 收起态只留当前小节的标题，其余隐藏；展开后恢复三档亮度 */
+const labelClass = (index: number) => {
+  if (props.expanded) return `translate-x-0 ${entryClass(index)}`;
+  if (index === props.activeIndex)
+    return "translate-x-0 text-accent font-medium opacity-90";
+  return "pointer-events-none -translate-x-2 opacity-0";
+};
 
 const percent = computed(() => Math.round(props.progress * 100));
 
-// ---------------------------------------------------------------- 高亮条
+// ---------------------------------------------------------------- 刻度
+/** 阅读状态：当前 / 已读 / 未读 —— 刻度尺的三种明暗 */
+const tickState = (index: number) => {
+  if (index === props.activeIndex) return "current";
+  if (index < props.activeIndex) return "read";
+  return "todo";
+};
+
+/** 刻度尺寸：展开态立起为竖条；收起态按层级分长短横线 */
+const tickSizeClass = (index: number) => {
+  if (props.expanded) return "h-3.5 w-[2px]";
+  return (props.headings[index]?.depth ?? 2) >= 3
+    ? "h-[2px] w-3"
+    : "h-[2px] w-5";
+};
+
+/** 当前刻度加长（仅收起态），让「读到哪」在刻度尺上更醒目 */
+const tickCurrentClass = (index: number) =>
+  props.expanded ? "" : (props.headings[index]?.depth ?? 2) >= 3 ? "w-4" : "w-7";
+
+// ---------------------------------------------------------------- 自动跟随
 const scrollRef = ref<HTMLElement | null>(null);
 const itemRefs = new Map<number, HTMLElement>();
 
@@ -113,30 +152,8 @@ const setItemRef = (index: number, el: unknown) => {
   else itemRefs.delete(index);
 };
 
-const markerVisible = ref(false);
-const markerTop = ref(0);
-const markerHeight = ref(0);
-
-let markerFrames = 0;
-let markerRaf = 0;
-
-/**
- * 分组折叠是动画的，落定之前量到的 offsetTop 都是中间值，
- * 所以布局变化后要连续跟量若干帧，而不是只在一个 nextTick 里量一次。
- */
-const scheduleMarkerSync = () => {
-  markerFrames = MARKER_FRAMES;
-  if (markerRaf) return;
-  const loop = () => {
-    syncMarker();
-    if (--markerFrames > 0) {
-      markerRaf = requestAnimationFrame(loop);
-    } else {
-      markerRaf = 0;
-    }
-  };
-  markerRaf = requestAnimationFrame(loop);
-};
+let revealFrames = 0;
+let revealRaf = 0;
 
 /** 逐层累加 offsetTop：分组展开/收起会改变 offsetParent 链，直接读 offsetTop 会跳 */
 const offsetTopIn = (el: HTMLElement, root: HTMLElement) => {
@@ -147,26 +164,6 @@ const offsetTopIn = (el: HTMLElement, root: HTMLElement) => {
     node = node.offsetParent as HTMLElement | null;
   }
   return y;
-};
-
-const syncMarker = () => {
-  const root = scrollRef.value;
-  const head = itemRefs.get(props.activeIndex);
-  if (!root || props.activeIndex < 0 || !head || !head.offsetHeight) {
-    markerVisible.value = false;
-    return;
-  }
-
-  // 盖到最后一个可见标题为止；它可能在折叠分组里，取不到就退回当前项
-  const tailIndex = Math.max(props.activeIndex, props.visibleRange.to);
-  const tail = itemRefs.get(tailIndex) ?? head;
-
-  const top = offsetTopIn(head, root);
-  const bottom = offsetTopIn(tail, root) + tail.offsetHeight;
-
-  markerVisible.value = true;
-  markerTop.value = top;
-  markerHeight.value = Math.max(head.offsetHeight, bottom - top);
 };
 
 /** 长目录时把当前项带回视野中央 */
@@ -182,17 +179,32 @@ const revealActive = () => {
   }
 };
 
+/**
+ * 分组折叠是动画的，落定之前量到的 offsetTop 都是中间值，
+ * 所以布局变化后要连续跟量若干帧，而不是只在一个 nextTick 里量一次。
+ */
+const scheduleReveal = () => {
+  revealFrames = REVEAL_FRAMES;
+  if (revealRaf) return;
+  const loop = () => {
+    revealActive();
+    if (--revealFrames > 0) {
+      revealRaf = requestAnimationFrame(loop);
+    } else {
+      revealRaf = 0;
+    }
+  };
+  revealRaf = requestAnimationFrame(loop);
+};
+
 watch(
   () => [props.activeIndex, props.visibleRange, props.expanded, props.headings],
-  () => {
-    scheduleMarkerSync();
-    revealActive();
-  },
+  scheduleReveal,
   { immediate: true, flush: "post" },
 );
 
 onUnmounted(() => {
-  if (markerRaf) cancelAnimationFrame(markerRaf);
+  if (revealRaf) cancelAnimationFrame(revealRaf);
 });
 </script>
 
@@ -201,108 +213,102 @@ onUnmounted(() => {
     class="absolute inset-0 flex flex-col justify-center"
     :class="expanded ? 'pointer-events-auto' : 'pointer-events-none'"
   >
+    <!-- 小标题：只在展开态出现 -->
     <div
-      ref="scrollRef"
-      class="toc-scroll relative min-h-0 overflow-y-auto pl-0.5"
+      class="shrink-0 pb-2.5 pl-0.5 text-[0.72rem] tracking-[0.18em] text-fg/35 uppercase transition-opacity duration-300"
+      :class="expanded ? 'opacity-100' : 'opacity-0'"
     >
-      <!-- 单条共享高亮条；底部渐隐 + 辉光见样式块 -->
-      <span
-        class="toc-marker absolute left-0 w-0.5 rounded-sm"
-        :class="expanded && markerVisible ? 'opacity-100' : 'opacity-0'"
-        :style="{ top: `${markerTop}px`, height: `${markerHeight}px` }"
-      />
+      {{ t("views.main.post.toc.label") }}
+    </div>
 
-      <template v-for="(node, i) in nodes" :key="i">
-        <!-- 顶层条目 -->
-        <div
-          v-if="node.kind === 'item'"
-          :ref="(el) => setItemRef(node.index, el)"
-          class="relative leading-none transition-[opacity,translate] duration-[350ms] ease-in-out"
-          :class="
-            expanded ? '' : 'opacity-0 -translate-x-2.5 delay-[var(--ripple)]'
-          "
-          :style="{ '--ripple': rippleOf(node.index) }"
-        >
-          <a
-            class="relative mb-[1.5px] inline-block max-w-full min-w-0 truncate py-[0.22rem] text-[0.8rem] leading-[1.45] text-fg no-underline transition-[opacity,color] duration-300 ease-in-out"
-            :class="entryClass(node.index)"
-            :style="{ paddingLeft: indentOf(node.index) }"
-            :href="`#${headings[node.index]?.id ?? ''}`"
-            :title="headings[node.index]?.text"
-            @click.prevent="emit('select', node.index)"
+    <div ref="scrollRef" class="toc-scroll relative min-h-0 overflow-y-auto">
+      <div class="flex flex-col">
+        <template v-for="(node, i) in nodes" :key="i">
+          <!-- 顶层条目 -->
+          <div
+            v-if="node.kind === 'item'"
+            :ref="(el) => setItemRef(node.index, el)"
+            class="group relative flex items-center transition-[height] duration-[350ms] ease-in-out"
+            :class="expanded ? 'h-[22px]' : 'h-3'"
           >
-            {{ headings[node.index]?.text }}
-          </a>
-        </div>
-
-        <!-- 三级标题分组：grid-template-rows 0fr↔1fr，无需测高的平滑折叠 -->
-        <div
-          v-else
-          class="grid transition-[grid-template-rows,opacity] duration-[400ms] ease-in-out"
-          :class="
-            isGroupOpen(node.group)
-              ? 'grid-rows-[1fr] opacity-100'
-              : 'grid-rows-[0fr] opacity-0'
-          "
-        >
-          <div class="min-h-0 overflow-hidden">
-            <div
-              v-for="index in node.group.items"
-              :key="headings[index]?.id ?? index"
-              :ref="(el) => setItemRef(index, el)"
-              class="relative leading-none transition-[opacity,translate] duration-[350ms] ease-in-out"
-              :class="
-                expanded
-                  ? ''
-                  : 'opacity-0 -translate-x-2.5 delay-[var(--ripple)]'
-              "
-              :style="{ '--ripple': rippleOf(index) }"
+            <span
+              class="toc-tick absolute top-1/2 left-0 block shrink-0 -translate-y-1/2 rounded-full"
+              :class="[
+                tickSizeClass(node.index),
+                tickState(node.index),
+                tickState(node.index) === 'current'
+                  ? tickCurrentClass(node.index)
+                  : expanded
+                    ? 'opacity-0 group-hover:opacity-50'
+                    : '',
+              ]"
+              aria-hidden="true"
+            />
+            <a
+              class="block min-w-0 flex-1 cursor-pointer truncate text-[0.8rem] leading-none text-fg no-underline transition-[opacity,translate,color,padding] duration-300 ease-in-out"
+              :class="labelClass(node.index)"
+              :style="{ paddingLeft: labelPadding(node.index) }"
+              :href="`#${headings[node.index]?.id ?? ''}`"
+              :title="headings[node.index]?.text"
+              @click.prevent="emit('select', node.index)"
             >
-              <a
-                class="relative mb-[1.5px] inline-block max-w-full min-w-0 truncate py-[0.22rem] text-[0.8rem] leading-[1.45] text-fg no-underline transition-[opacity,color] duration-300 ease-in-out"
-                :class="entryClass(index)"
-                :style="{ paddingLeft: indentOf(index) }"
-                :href="`#${headings[index]?.id ?? ''}`"
-                :title="headings[index]?.text"
-                @click.prevent="emit('select', index)"
+              {{ headings[node.index]?.text }}
+            </a>
+          </div>
+
+          <!-- 三级标题分组：grid-template-rows 0fr↔1fr，无需测高的平滑折叠 -->
+          <div
+            v-else
+            class="grid transition-[grid-template-rows,opacity] duration-[400ms] ease-in-out"
+            :class="
+              isGroupOpen(node.group)
+                ? 'grid-rows-[1fr] opacity-100'
+                : 'grid-rows-[0fr] opacity-0'
+            "
+          >
+            <div class="min-h-0 overflow-hidden">
+              <div
+                v-for="index in node.group.items"
+                :key="headings[index]?.id ?? index"
+                :ref="(el) => setItemRef(index, el)"
+                class="group relative flex items-center transition-[height] duration-[350ms] ease-in-out"
+                :class="expanded ? 'h-[22px]' : 'h-3'"
               >
-                {{ headings[index]?.text }}
-              </a>
+                <span
+                  class="toc-tick absolute top-1/2 left-0 block shrink-0 -translate-y-1/2 rounded-full"
+                  :class="[
+                    tickSizeClass(index),
+                    tickState(index),
+                    tickState(index) === 'current'
+                      ? tickCurrentClass(index)
+                      : expanded
+                        ? 'opacity-0 group-hover:opacity-50'
+                        : '',
+                  ]"
+                  aria-hidden="true"
+                />
+                <a
+                  class="block min-w-0 flex-1 cursor-pointer truncate text-[0.8rem] leading-none text-fg no-underline transition-[opacity,translate,color,padding] duration-300 ease-in-out"
+                  :class="labelClass(index)"
+                  :style="{ paddingLeft: labelPadding(index) }"
+                  :href="`#${headings[index]?.id ?? ''}`"
+                  :title="headings[index]?.text"
+                  @click.prevent="emit('select', index)"
+                >
+                  {{ headings[index]?.text }}
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </div>
 
-    <!-- 手绘波浪分隔线 -->
-    <div
-      class="relative h-8 shrink-0 text-fg/12 transition-opacity duration-300"
-      :class="expanded ? 'opacity-100' : 'opacity-0'"
-    >
-      <svg
-        class="absolute top-1/2 block h-2.5 w-[150px] max-w-full -translate-y-1/2"
-        viewBox="0 0 28 10"
-        fill="none"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M2 7 C4 2, 7 2, 9 5.5 C11 9, 14 9, 16 5 C18 1, 21 2, 24 6"
-          stroke="currentColor"
-          stroke-width="1.2"
-          stroke-linecap="round"
-          vector-effect="non-scaling-stroke"
-        />
-      </svg>
-    </div>
-
-    <div
-      class="w-fit shrink-0 pl-0.5 text-[0.8rem] text-fg transition-opacity duration-300"
-      :class="expanded ? 'opacity-100' : 'opacity-0'"
-    >
-      <div class="relative pl-4">
+    <!-- 底部：进度环与百分比常驻，回到顶部随展开淡入 -->
+    <div class="shrink-0 pt-3 pl-0.5">
+      <div class="flex items-center text-[0.8rem] text-fg/50">
         <svg
-          class="absolute top-1/2 left-0 block -translate-x-2 -translate-y-1/2"
+          class="mr-1.5 block"
           width="14"
           height="14"
           aria-hidden="true"
@@ -326,39 +332,29 @@ onUnmounted(() => {
             :stroke-dashoffset="RING_C * (1 - progress)"
           />
         </svg>
-        <span>{{ percent }}%</span>
+        <span class="tabular-nums">{{ percent }}%</span>
       </div>
 
-      <button
-        type="button"
-        class="relative mt-1 flex cursor-pointer items-center border-0 bg-transparent pl-4 whitespace-nowrap opacity-50 transition-opacity duration-500 hover:opacity-100"
+      <!-- -ml-1 抵消 ButtonThird 自带的 px-1，mr-0.5 把 gap 凑成 6px，
+           让图标与文字和上面进度环那行（svg + mr-1.5）左对齐 -->
+      <ButtonThird
+        :text="t('views.main.post.toc.backToTop')"
+        class="mt-1 -ml-1 text-[0.8rem] transition-opacity duration-300"
+        :class="
+          expanded
+            ? 'opacity-60 hover:opacity-100'
+            : 'pointer-events-none opacity-0'
+        "
         @click="emit('top')"
       >
-        <svg
-          class="absolute top-1/2 left-0 -translate-x-2 -translate-y-1/2"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="9" />
-          <path
-            d="M12 16.5V8M8.2 11.8 12 8l3.8 3.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        {{ t("views.main.post.toc.backToTop") }}
-      </button>
+        <CircleArrowUp class="mr-0.5 h-3.5 w-3.5" />
+      </ButtonThird>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* 以下两条都是 Tailwind 表达不了的：多段 mask 渐变、伪元素、双层 color-mix 阴影。
+/* 以下都是 Tailwind 表达不了的：多段 mask 渐变、color-mix 辉光。
    其余样式一律走 Tailwind class。 */
 
 .toc-scroll {
@@ -377,21 +373,26 @@ onUnmounted(() => {
   display: none;
 }
 
-/* 底部渐隐 + 双层辉光，是「虚化」的来源。
-   top / height 不在全局 * 过渡列表里（那里只有 width），必须显式声明。 */
-.toc-marker {
-  background: linear-gradient(
-    to bottom,
-    var(--theme-accent) 0%,
-    var(--theme-accent) 80%,
-    transparent 100%
-  );
-  box-shadow:
-    0 0 6px color-mix(in srgb, var(--theme-accent) 35%, transparent),
-    1px 0 12px color-mix(in srgb, var(--theme-accent) 12%, transparent);
+/* 刻度 morph：横线 ↔ 竖条全靠 width / height 过渡 */
+.toc-tick {
   transition:
-    top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toc-tick.read {
+  background-color: color-mix(in srgb, var(--theme-fg) 40%, transparent);
+}
+
+.toc-tick.todo {
+  background-color: color-mix(in srgb, var(--theme-fg) 15%, transparent);
+}
+
+.toc-tick.current {
+  background-color: var(--theme-accent);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--theme-accent) 45%, transparent);
 }
 </style>

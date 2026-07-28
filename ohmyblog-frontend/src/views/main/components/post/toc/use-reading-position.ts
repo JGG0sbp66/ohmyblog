@@ -6,9 +6,9 @@ import type { TocHeading } from "./extract-headings";
 /**
  * 阅读位置：把「页面滚到哪了」翻译成目录需要的三个读数。
  *
- * - progress     整篇文章的阅读进度，导轨的凸包就落在这个位置
- * - activeIndex  当前所在章节
- * - visibleRange 视口里能看见的标题区间 —— 列表态的高亮条要覆盖的正是这一段
+ * - progress     整篇文章的阅读进度，底部的百分比与进度环用它
+ * - activeIndex  当前所在章节，刻度尺上的发光刻度就是它
+ * - visibleRange 视口里能看见的标题区间 —— 列表态文本的中间档亮度
  */
 
 /** 阅读线：视口高度的 1/4 处。标题越过这条线才算「进入」该章节。 */
@@ -35,11 +35,6 @@ export function useReadingPosition(headings: Ref<TocHeading[]>) {
   const progress = ref(0);
   const activeIndex = ref(-1);
   const visibleRange = shallowRef<VisibleRange>({ from: -1, to: -1 });
-  /**
-   * 每个标题在导轨上的位置（0~1）。
-   * 按「标题出现在全文的什么进度」分布，所以圆点的疏密 = 章节的长短。
-   */
-  const anchors = shallowRef<number[]>([]);
 
   /**
    * 每个标题在文档中的绝对 y。
@@ -61,17 +56,6 @@ export function useReadingPosition(headings: Ref<TocHeading[]>) {
     const y = window.scrollY;
 
     progress.value = Math.min(1, Math.max(0, y / scrollable));
-
-    // 圆点锚点：标题需要滚到什么进度才会越过阅读线
-    anchors.value = headingTops.map((top) =>
-      Math.min(
-        1,
-        Math.max(
-          0,
-          (top - window.innerHeight * READING_LINE_RATIO) / scrollable,
-        ),
-      ),
-    );
 
     // 当前章节 = 阅读线上方最后一个标题
     const line = y + window.innerHeight * READING_LINE_RATIO;
@@ -123,7 +107,6 @@ export function useReadingPosition(headings: Ref<TocHeading[]>) {
     progress,
     activeIndex,
     visibleRange,
-    anchors,
     atBottom,
     scrollToHeading,
     /** 外部改变了布局时手动重量 */

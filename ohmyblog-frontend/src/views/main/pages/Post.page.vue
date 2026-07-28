@@ -130,7 +130,7 @@ watch(slug, fetchPost, { immediate: true });
          滚动后由 sticky top-24 接管（与 MainLayout 侧栏同一个吸顶位） -->
     <PostToc
       :headings="headings"
-      class="sticky top-24 mt-30 hidden w-50 shrink-0 xl:block"
+      class="sticky top-24 mt-30 hidden w-60 shrink-0 xl:block"
     />
   </div>
 </template>

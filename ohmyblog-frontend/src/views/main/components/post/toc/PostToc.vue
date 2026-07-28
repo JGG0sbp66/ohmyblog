@@ -3,7 +3,6 @@
 import { computed, ref, toRef, watch } from "vue";
 import { useEventListener } from "@vueuse/core";
 import { useLang } from "@/composables/lang.hook";
-import TocRail from "./TocRail.vue";
 import TocList from "./TocList.vue";
 import { useReadingPosition } from "./use-reading-position";
 import type { TocHeading } from "./extract-headings";
@@ -11,11 +10,9 @@ import type { TocHeading } from "./extract-headings";
 /**
  * PostToc — 前台文章侧边目录。
  *
- * 两种形态共存于同一个容器：
- *   收起态（默认）= 一条带凸包的导轨 + 当前标题 + 百分比；
- *   展开态        = 完整目录列表 + 阅读进度 + 回到顶部。
- *
- * 切换的两个触发源收敛到 expanded 一个 computed，避免各写各的、互相打架。
+ * 只有一种渲染形态（见 TocList）：收起时是「章节刻度尺」，
+ * 悬停后原地展开为完整列表。两个触发源收敛到 expanded 一个
+ * computed，避免各写各的、互相打架。
  */
 
 const props = defineProps<{
@@ -31,7 +28,6 @@ const {
   progress,
   activeIndex,
   visibleRange,
-  anchors,
   atBottom,
   scrollToHeading,
 } = useReadingPosition(headings);
@@ -84,24 +80,11 @@ const backToTop = () => {
     :aria-label="t('views.main.post.toc.label')"
     @pointerleave="hovering = false"
   >
-    <!-- 收起态只有导轨附近一条窄带接收 hover -->
+    <!-- 收起态只有刻度列附近一条窄带接收 hover -->
     <div
-      class="pointer-events-auto absolute inset-y-0 -left-6 w-36"
+      class="pointer-events-auto absolute inset-y-0 -left-6 w-20"
       @pointerenter="hovering = true"
     />
-
-    <!-- 导轨只在收起态出现 -->
-    <div
-      class="absolute inset-0 transition-opacity duration-[350ms] ease-in-out"
-      :class="expanded ? 'opacity-0' : 'opacity-100'"
-    >
-      <TocRail
-        :headings="headings"
-        :anchors="anchors"
-        :progress="progress"
-        :active-index="activeIndex"
-      />
-    </div>
 
     <TocList
       :headings="headings"
