@@ -1,6 +1,7 @@
 // src/services/feed.service.ts
-import { Feed } from "feed";
+
 import { desc, eq } from "drizzle-orm";
+import { Feed } from "feed";
 import { db } from "../../db/connection";
 import { post } from "../../db/schema";
 import { configDao } from "../daos/config.dao";

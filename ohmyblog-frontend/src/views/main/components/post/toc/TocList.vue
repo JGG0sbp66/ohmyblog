@@ -141,7 +141,11 @@ const tickSizeClass = (index: number) => {
 
 /** 当前刻度加长（仅收起态），让「读到哪」在刻度尺上更醒目 */
 const tickCurrentClass = (index: number) =>
-  props.expanded ? "" : (props.headings[index]?.depth ?? 2) >= 3 ? "w-4" : "w-7";
+  props.expanded
+    ? ""
+    : (props.headings[index]?.depth ?? 2) >= 3
+      ? "w-4"
+      : "w-7";
 
 // ---------------------------------------------------------------- 自动跟随
 const scrollRef = ref<HTMLElement | null>(null);
@@ -307,12 +311,7 @@ onUnmounted(() => {
     <!-- 底部：进度环与百分比常驻，回到顶部随展开淡入 -->
     <div class="shrink-0 pt-3 pl-0.5">
       <div class="flex items-center text-[0.8rem] text-fg/50">
-        <svg
-          class="mr-1.5 block"
-          width="14"
-          height="14"
-          aria-hidden="true"
-        >
+        <svg class="mr-1.5 block" width="14" height="14" aria-hidden="true">
           <circle
             class="fill-none stroke-border"
             cx="7"

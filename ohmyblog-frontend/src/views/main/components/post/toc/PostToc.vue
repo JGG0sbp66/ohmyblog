@@ -24,13 +24,8 @@ const BOTTOM_PULL = 160;
 
 const headings = toRef(props, "headings");
 const { t } = useLang();
-const {
-  progress,
-  activeIndex,
-  visibleRange,
-  atBottom,
-  scrollToHeading,
-} = useReadingPosition(headings);
+const { progress, activeIndex, visibleRange, atBottom, scrollToHeading } =
+  useReadingPosition(headings);
 
 const hovering = ref(false);
 /** 已经到底、且用户还在继续往下拨 —— 这时正好是要点「回到顶部」 */
