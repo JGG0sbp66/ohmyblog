@@ -11,6 +11,7 @@ import { useRouter, useRoute } from "vue-router";
 import { onClickOutside, useScrollLock } from "@vueuse/core";
 import { X } from "lucide-vue-next";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
+import SidebarButton from "@/components/base/button/SidebarButton.vue";
 import { useLang } from "@/composables/lang.hook";
 
 const props = defineProps<{
@@ -92,23 +93,19 @@ const handleNavClick = (name: string) => {
           </div>
         </div>
 
-        <!-- 导航项（大尺寸便于点按） -->
+        <!-- 导航项（复用 SidebarButton 保持与后台侧栏视觉一致） -->
         <nav class="flex flex-col gap-1 p-3 flex-1 overflow-y-auto">
-          <div
+          <SidebarButton
             v-for="item in navItems"
             :key="item.name"
-            class="w-full h-12 shrink-0"
-          >
-            <ButtonSecondary
-              :text="item.label"
-              :isActive="route.name === item.name"
-              :aria-current="route.name === item.name ? 'page' : undefined"
-              class="w-full h-full px-4 justify-start text-base font-medium"
-              @click="handleNavClick(item.name)"
-            >
-              <component :is="item.icon" class="w-5 h-5" />
-            </ButtonSecondary>
-          </div>
+            :icon="item.icon"
+            :text="item.label"
+            :isActive="route.name === item.name"
+            :isExpanded="true"
+            :aria-current="route.name === item.name ? 'page' : undefined"
+            class="shrink-0"
+            @click="handleNavClick(item.name)"
+          />
         </nav>
       </aside>
     </Transition>
