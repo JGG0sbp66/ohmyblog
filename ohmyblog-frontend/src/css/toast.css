@@ -1,93 +1,84 @@
-/* src/css/toastify.css */
+/* src/css/toast.css — vue-sonner 主题适配 */
 
-/* 1. 基础样式引入 */
-@import "vue3-toastify/dist/index.css";
+/* 基础样式引入（vue-sonner v2 不自动注入） */
+@import "vue-sonner/style.css";
 
-/* 2. 映射设计系统 */
-:root {
-  --toastify-font-family: var(--font-sans);
-  --toastify-toast-width: 320px;
-  --toastify-toast-bd-radius: 14px;
-
-  /* 让 Toast 背景直接跟你的卡片色同步 */
-  --toastify-color-light: var(--theme-bg-card);
-  --toastify-text-color-light: var(--theme-fg);
-
-  /* 状态颜色：基于--app-hue 动态生成，使用标准的 OKLCH 语义色 */
-  --toast-success: oklch(0.65 0.15 150);
-  --toast-error: oklch(0.6 0.18 25);
-  --toast-warning: oklch(0.75 0.15 85);
-  --toast-info: var(--theme-accent);
+/* 将项目 OKLCH 设计系统映射到 sonner 的 CSS 变量 */
+[data-sonner-toaster] {
+  --border-radius: 14px;
+  --width: 320px;
+  font-family: var(--font-sans);
 }
 
-/* 3. 整体容器精致化 */
-.Toastify__toast {
-  padding: 14px 18px;
-  border: 1px solid oklch(from var(--theme-fg) l c h / 0.08);
+/* Light 模式 */
+[data-sonner-toaster][data-sonner-theme="light"] {
+  --normal-bg: var(--theme-bg-card);
+  --normal-border: oklch(from var(--theme-fg) l c h / 0.08);
+  --normal-text: var(--theme-fg);
+
+  --success-bg: var(--theme-bg-card);
+  --success-border: oklch(0.65 0.15 150 / 0.3);
+  --success-text: var(--theme-fg);
+
+  --error-bg: var(--theme-bg-card);
+  --error-border: oklch(0.6 0.18 25 / 0.3);
+  --error-text: var(--theme-fg);
+
+  --warning-bg: var(--theme-bg-card);
+  --warning-border: oklch(0.75 0.15 85 / 0.3);
+  --warning-text: var(--theme-fg);
+
+  --info-bg: var(--theme-bg-card);
+  --info-border: oklch(from var(--theme-accent) l c h / 0.3);
+  --info-text: var(--theme-fg);
+}
+
+/* Dark 模式 */
+[data-sonner-toaster][data-sonner-theme="dark"] {
+  --normal-bg: var(--theme-bg-card);
+  --normal-border: oklch(from var(--theme-fg) l c h / 0.1);
+  --normal-text: var(--theme-fg);
+
+  --success-bg: var(--theme-bg-card);
+  --success-border: oklch(0.65 0.15 150 / 0.35);
+  --success-text: var(--theme-fg);
+
+  --error-bg: var(--theme-bg-card);
+  --error-border: oklch(0.6 0.18 25 / 0.35);
+  --error-text: var(--theme-fg);
+
+  --warning-bg: var(--theme-bg-card);
+  --warning-border: oklch(0.75 0.15 85 / 0.35);
+  --warning-text: var(--theme-fg);
+
+  --info-bg: var(--theme-bg-card);
+  --info-border: oklch(from var(--theme-accent) l c h / 0.35);
+  --info-text: var(--theme-fg);
+}
+
+/* 阴影与项目卡片风格统一 */
+[data-sonner-toast] {
   box-shadow:
     0 12px 30px -10px oklch(from var(--theme-fg) l c h / 0.1),
-    0 4px 10px -5px oklch(from var(--theme-fg) l c h / 0.05);
+    0 4px 10px -5px oklch(from var(--theme-fg) l c h / 0.05) !important;
+  font-size: 0.875rem;
 }
 
-/* 4. Lucide 图标高阶处理 */
-.Toastify__toast-icon {
-  width: 20px;
-  margin-inline-end: 14px;
-  display: flex;
-  align-items: center;
+/* 图标颜色：沿用原 toastify 版本的 OKLCH 状态色 */
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: oklch(0.65 0.15 150);
+}
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: oklch(0.6 0.18 25);
+}
+[data-sonner-toast][data-type="warning"] [data-icon] {
+  color: oklch(0.75 0.15 85);
+}
+[data-sonner-toast][data-type="info"] [data-icon] {
+  color: var(--theme-accent);
 }
 
-/* 强制 Lucide 图标的描边为 1.75px */
-.Toastify__toast-icon svg {
-  stroke-width: 1.75px !important;
-}
-
-/* 5. 状态颜色与进度条同步 */
-.Toastify__toast--success .Toastify__toast-icon {
-  color: var(--toast-success);
-}
-.Toastify__toast--error .Toastify__toast-icon {
-  color: var(--toast-error);
-}
-.Toastify__toast--warning .Toastify__toast-icon {
-  color: var(--toast-warning);
-}
-.Toastify__toast--info .Toastify__toast-icon {
-  color: var(--toast-info);
-}
-
-.Toastify__progress-bar--success {
-  background: var(--toast-success);
-}
-.Toastify__progress-bar--error {
-  background: var(--toast-error);
-}
-.Toastify__progress-bar--warning {
-  background: var(--toast-warning);
-}
-.Toastify__progress-bar--info {
-  background: var(--toast-info);
-}
-
-.Toastify__toast--info .Toastify__toast-icon svg {
-  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 6. 关闭按钮优化 */
-.Toastify__close-button--light {
-  color: var(--theme-fg);
-  opacity: 0.3;
-  transition: opacity 0.2s ease;
-}
-
-.Toastify__close-button--light:hover {
-  opacity: 0.8;
-}
-
-/* 7. 去掉默认图标的背景色 */
-.Toastify__toast-icon--success,
-.Toastify__toast-icon--error,
-.Toastify__toast-icon--info,
-.Toastify__toast-icon--warning {
-  background: none !important;
+/* Lucide 图标描边 */
+[data-sonner-toast] [data-icon] svg {
+  stroke-width: 1.75px;
 }
