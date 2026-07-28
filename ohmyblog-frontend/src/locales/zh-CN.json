@@ -118,7 +118,6 @@
       },
       "post": {
         "back": "返回",
-        "notFound": "文章不存在或已被删除",
         "untitled": "无标题",
         "words": "字",
         "views": "阅读",
@@ -126,6 +125,12 @@
           "label": "文章目录",
           "backToTop": "回到顶部"
         }
+      },
+      "notFound": {
+        "title": "页面不存在",
+        "description": "你访问的页面不存在或已被删除",
+        "backHome": "返回首页",
+        "backPrev": "返回上一页"
       },
       "archive": {
         "empty": "暂无文章",

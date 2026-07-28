@@ -21,7 +21,6 @@ const { t } = useLang();
 const slug = computed(() => route.params.slug as string);
 const post = ref<PublicPostDetail | null>(null);
 const loading = ref(false);
-const notFound = ref(false);
 /** 侧边目录的数据源；元素引用不需要被包成响应式代理，用 shallowRef */
 const headings = shallowRef<TocHeading[]>([]);
 
@@ -40,17 +39,26 @@ const wordCount = computed(() => post.value?.wordCount ?? 0);
 
 const fetchPost = async () => {
   loading.value = true;
-  notFound.value = false;
   // 先清空，避免切换文章时目录残留上一篇的标题
   headings.value = [];
   try {
     const result = await getPublicPostBySlug(slug.value);
     post.value = (result as any)?.post ?? null;
-    if (!post.value) notFound.value = true;
   } catch {
-    notFound.value = true;
+    post.value = null;
   } finally {
     loading.value = false;
+  }
+
+  // 文章不存在：跳转到统一 404 页。
+  // 用 replace + pathMatch 携带当前路径，地址栏 URL 保持不变，方便用户直接修正 slug。
+  if (!post.value) {
+    await router.replace({
+      name: "not-found",
+      params: { pathMatch: route.path.substring(1).split("/") },
+      query: route.query,
+      hash: route.hash,
+    });
   }
 };
 
@@ -61,20 +69,6 @@ watch(slug, fetchPost, { immediate: true });
   <!-- Loading state -->
   <div v-if="loading" class="flex items-center justify-center min-h-[50vh]">
     <Loading size-class="w-6 h-6" color-class="text-fg-subtle" />
-  </div>
-
-  <!-- Not found state -->
-  <div
-    v-else-if="notFound"
-    class="flex flex-col items-center justify-center min-h-[50vh] gap-4"
-  >
-    <p class="text-fg-muted">{{ t("views.main.post.notFound") }}</p>
-    <ButtonSecondary
-      :text="t('views.main.post.back')"
-      @click="router.push({ name: 'home' })"
-    >
-      <ArrowLeft class="w-4 h-4" />
-    </ButtonSecondary>
   </div>
 
   <!-- Post content -->

@@ -11,8 +11,10 @@ import { useSystemStore } from "@/stores/system.store";
 const systemStore = useSystemStore();
 const route = useRoute();
 
-// 文章详情页不展示侧边栏，让正文独占整行宽度
-const showSidebar = computed(() => route.name !== "post");
+// 文章详情页与 404 页不展示侧边栏，让内容独占整行宽度
+const showSidebar = computed(
+  () => route.name !== "post" && route.name !== "not-found",
+);
 </script>
 
 <template>

@@ -118,7 +118,6 @@
       },
       "post": {
         "back": "Back",
-        "notFound": "Post not found or has been removed",
         "untitled": "Untitled",
         "words": "words",
         "views": "reads",
@@ -126,6 +125,12 @@
           "label": "Table of contents",
           "backToTop": "Back to top"
         }
+      },
+      "notFound": {
+        "title": "Page not found",
+        "description": "The page you are looking for doesn't exist or has been removed",
+        "backHome": "Back to home",
+        "backPrev": "Go back"
       },
       "archive": {
         "empty": "No posts yet",
