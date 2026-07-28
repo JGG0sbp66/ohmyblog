@@ -6,6 +6,9 @@
   /* --- 全局字体设置 --- */
   --font-sans:
     "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "sans-serif";
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Courier New", monospace;
 
   /* 按钮颜色：强调、交互重点 */
   --color-accent: var(--theme-accent);

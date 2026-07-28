@@ -76,7 +76,7 @@ function openRelease() {
           <Tag class="w-4 h-4" />
           <span>{{ t("views.admin.Dashboard.systemInfo.version") }}</span>
         </div>
-        <span class="font-mono font-semibold text-fg">
+        <span class="font-semibold text-fg">
           {{ version || "--" }}
         </span>
       </div>
@@ -86,7 +86,7 @@ function openRelease() {
           <GitCommitHorizontal class="w-4 h-4" />
           <span>{{ t("views.admin.Dashboard.systemInfo.commit") }}</span>
         </div>
-        <span class="font-mono font-semibold text-fg">
+        <span class="font-semibold text-fg">
           {{ commit || "--" }}
         </span>
       </div>
@@ -96,7 +96,7 @@ function openRelease() {
           <CalendarClock class="w-4 h-4" />
           <span>{{ t("views.admin.Dashboard.systemInfo.uptime") }}</span>
         </div>
-        <span class="font-mono font-semibold text-fg">
+        <span class="font-semibold text-fg">
           {{
             t("views.admin.Dashboard.systemInfo.uptimeValue", {
               days: runningDays,
