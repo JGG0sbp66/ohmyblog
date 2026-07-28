@@ -59,6 +59,10 @@ export class HealthService {
 			initialized: hasAdmin,
 		};
 	}
+
+	getVersion() {
+		return this.appVersion;
+	}
 }
 
 // 导出单例，保持状态

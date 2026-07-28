@@ -376,7 +376,12 @@
           "title": "System Info",
           "description": "Current running version info",
           "version": "Version",
-          "commit": "Commit"
+          "commit": "Commit",
+          "checkUpdate": "Check for updates",
+          "upToDate": "You're running the latest version",
+          "updateAvailable": "Version v{version} is available",
+          "viewRelease": "View update",
+          "checkFailed": "Unable to check for updates. Try again later"
         }
       },
       "PostEditor": {
