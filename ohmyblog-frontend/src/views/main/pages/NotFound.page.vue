@@ -97,9 +97,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    class="flex items-center justify-center min-h-[60vh] px-4 onload-animation"
-  >
+  <!-- flex-1：吃满 MainLayout 让出的剩余高度，卡片在其中垂直居中。
+       不用 min-h-[Nvh]，那是叠加在 header/footer 之上的，会把整页顶出滚动条 -->
+  <div class="flex flex-1 items-center justify-center px-4 onload-animation">
     <BaseCard padding="none" class="max-w-xl relative overflow-hidden">
       <!-- ====== 上半区：档案信息 + 标题 + 印章 ====== -->
       <div class="p-8 pb-6">
