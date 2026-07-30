@@ -3,6 +3,12 @@
 
 /* 映射层 将主题映射给 Tailwind */
 @theme {
+  /* 全站过渡时长的唯一来源
+     Tailwind 的 transition-* 工具类编译为
+     transition-duration: var(--tw-duration, var(--default-transition-duration))
+     所以改这里能让所有没写 duration-* 的过渡一起对齐（Tailwind 默认 150ms） */
+  --default-transition-duration: 200ms;
+
   /* --- 全局字体设置 --- */
   --font-sans:
     "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "sans-serif";
@@ -128,12 +134,17 @@
   *,
   ::after,
   ::before {
-    /* 统一的全局过渡：200ms，包含常用属性 */
+    /* 统一的全局过渡：服务于 hover / focus 等交互态
+
+       注意不要把 width 放回来：它是这份列表里唯一会触发 layout 的属性，
+       任意宽度变化都会被拖成 200ms 的布局动画，还会唤醒 auto-animate
+       挂在 documentElement 上的 ResizeObserver。真正需要宽度动画的组件
+       自己写了 transition-[width] */
     transition-property:
       color, background-color, border-color, fill, stroke, stop-color, opacity,
-      stop-opacity, transform, scale, box-shadow, width;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+      stop-opacity, transform, scale, box-shadow;
+    transition-timing-function: var(--default-transition-timing-function);
+    transition-duration: var(--default-transition-duration);
   }
 }
 
