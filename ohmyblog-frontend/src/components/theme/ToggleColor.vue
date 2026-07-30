@@ -24,7 +24,7 @@ const { t } = useLang();
         <div class="flex items-center gap-1.5">
           <div
             class="w-1 h-3.5 rounded-sm"
-            :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }"
+            style="background-color: oklch(0.6 0.18 var(--app-hue))"
           />
           <span class="text-fg font-bold text-xs">{{
             t("components.theme.ToggleColor.paletteTitle")

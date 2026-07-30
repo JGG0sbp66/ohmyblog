@@ -14,7 +14,7 @@ const { currentHue } = useTheme();
       <div class="flex items-center gap-2 bg-bg-muted px-2 py-1 rounded-md">
         <div
           class="w-3 h-3 rounded-full"
-          :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }"
+          style="background-color: oklch(0.6 0.18 var(--app-hue))"
         ></div>
         <span class="text-xs text-fg">{{ currentHue }}</span>
       </div>
