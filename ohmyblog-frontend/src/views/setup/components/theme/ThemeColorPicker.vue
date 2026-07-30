@@ -3,7 +3,7 @@
 import ColorSlider from "@/components/base/slider/ColorSlider.vue";
 import { useTheme } from "@/composables/theme.hook";
 
-const { currentHue } = useTheme();
+const { currentHue, previewHue } = useTheme();
 </script>
 
 <template>
@@ -21,7 +21,8 @@ const { currentHue } = useTheme();
     </div>
 
     <div class="h-12 bg-bg-muted rounded-xl flex items-center px-4">
-      <ColorSlider v-model="currentHue" />
+      <!-- 拖拽走 previewHue：跟手写入，不做补间 -->
+      <ColorSlider :model-value="currentHue" @update:model-value="previewHue" />
     </div>
   </div>
 </template>

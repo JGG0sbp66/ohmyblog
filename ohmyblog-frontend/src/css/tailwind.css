@@ -41,13 +41,38 @@
 
 /* --- 主题定义层 --- */
 
+/*
+  把 --app-hue 注册成 <number>，浏览器才会对它做补间。
+
+  这是全站换色动画同步的关键：所有语义色都由这一个数推导，
+  只要这个数在动，派生出的每个颜色就天然同步 —— 组件本身
+  不需要写任何颜色过渡，也不会因为各自时长不同而错拍。
+
+  必须放在 @layer 之外（@property 不能嵌在层里）。
+*/
+@property --app-hue {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 250;
+}
+
 /* 1. 基础变量与默认值 */
 :root {
-  /* 
-       默认 Hue (兜底用，JS 加载后会覆盖它) 
+  /*
+       默认 Hue (兜底用，JS 加载后会覆盖它)
        250 = 蓝色
     */
   --app-hue: 250;
+
+  /*
+       换主题期间仍然允许过渡的属性
+       即下方全局列表里剔除掉所有承载颜色的那些，外加组件常用的布局属性，
+       避免压制期间把别人正在跑的展开/位移动画掐断
+    */
+  --theme-shift-keep:
+    opacity, stop-opacity, transform, scale, translate, rotate, width, height,
+    grid-template-rows, grid-template-columns, padding, margin,
+    stroke-dashoffset;
 
   /* 
        统一的主色调生成逻辑 (使用 OKLCH)
@@ -157,7 +182,44 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* --- 主题切换的动画驱动 --- */
+
+/*
+  只有离散改色（预设按钮、远端配置同步）才挂 .hue-animating
+  拖拽滑块时刻意不挂：拇指本身就是动画，补间只会让页面追不上手
+*/
+html.hue-animating {
+  transition: --app-hue var(--default-transition-duration)
+    var(--default-transition-timing-function);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.hue-animating {
+    transition: none;
+  }
+}
+
 @layer utilities {
+  /*
+    换主题期间压掉每个元素自己的颜色过渡。
+
+    不压的话，元素会各按自己的时长去「追」--app-hue 的插值：
+    既重新制造不同步，也让浏览器每帧重启整棵树的过渡 —— 这正是
+    拖拽卡顿的主因。
+
+    两点讲究：
+    - html 自身不被 `html.theme-shifting *` 命中，所以上面的
+      --app-hue 补间不会被这里连带清掉
+    - 必须 !important：本选择器只有 (0,1,1) 特异度，组件侧的
+      Tailwind 工具类和 Vue <style scoped>（编译成 .x[data-v-xxx]）
+      都比它高，只有 important 声明压得住
+  */
+  html.theme-shifting *,
+  html.theme-shifting ::before,
+  html.theme-shifting ::after {
+    transition-property: var(--theme-shift-keep) !important;
+  }
+
   /* 禁用文字颜色过渡的工具类（主题切换时使用，避免黑白闪烁） */
   .no-color-transition,
   .no-color-transition *,

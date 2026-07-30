@@ -6,7 +6,7 @@ import { useLang } from "@/composables/lang.hook";
 import FooterDrop from "@/components/common/button/FooterDrop.vue";
 import ColorSlider from "@/components/base/slider/ColorSlider.vue";
 
-const { currentHue } = useTheme();
+const { currentHue, previewHue } = useTheme();
 const { t } = useLang();
 </script>
 
@@ -36,7 +36,8 @@ const { t } = useLang();
         >
       </div>
 
-      <ColorSlider v-model="currentHue" />
+      <!-- 拖拽走 previewHue：跟手写入，不做补间 -->
+      <ColorSlider :model-value="currentHue" @update:model-value="previewHue" />
     </div>
   </FooterDrop>
 </template>
