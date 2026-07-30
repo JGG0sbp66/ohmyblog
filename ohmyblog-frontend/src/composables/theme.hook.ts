@@ -1,6 +1,6 @@
 // src/composables/theme.hook.ts
 import { debounceFilter, useColorMode, useStorage } from "@vueuse/core";
-import { computed, watch } from "vue";
+import { computed, nextTick, watch } from "vue";
 import { getConfig } from "@/api/config.api";
 import type { TThemeMode } from "@/api/shared";
 import { THEME_MODES } from "@/api/shared";
@@ -217,18 +217,37 @@ export function useTheme() {
 
   /**
    * 设置主题模式
-   * @param mode 主题模式 (light | dark | auto)
+   *
+   * 用 View Transitions 做整页一次交叉淡入：所有元素天然同步，
+   * 且只有一层合成开销，比让上千个元素各自跑 200ms 颜色过渡更省。
    */
   const setTheme = (mode: TThemeMode) => {
-    // 临时禁用文字颜色过渡，避免深浅模式切换时的黑白闪烁
-    // 但保留背景色、边框等的过渡效果
-    document.documentElement.classList.add("no-color-transition");
-    colorMode.value = mode;
+    /*
+      同样要压掉逐元素颜色过渡，两个原因：
+      1. View Transitions 抓「新快照」的时机就在回调之后，若各元素还在跑
+         自己的过渡，快照拍到的是过渡途中的旧色，淡入就等于没换色
+      2. 避免快照淡入之外再叠一层逐元素过渡
+    */
+    root.classList.add(CLASS_SHIFTING);
 
-    // 等待 DOM 更新后，移除禁用类
-    setTimeout(() => {
-      document.documentElement.classList.remove("no-color-transition");
-    }, 50);
+    const commit = () => {
+      colorMode.value = mode;
+      // 等 Vue 把 .dark 相关的 DOM 刷完，再让浏览器拍新快照
+      return nextTick();
+    };
+
+    const start = document.startViewTransition?.bind(document);
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // 浏览器不支持或用户偏好减少动效时，退回瞬时切换
+    if (!start || reduceMotion) {
+      void commit().then(() => endShift(0));
+      return;
+    }
+
+    start(commit).finished.finally(() => endShift(0));
   };
 
   /**

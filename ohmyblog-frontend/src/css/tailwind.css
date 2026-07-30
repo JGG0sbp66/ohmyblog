@@ -160,6 +160,7 @@
   ::after,
   ::before {
     /* 统一的全局过渡：服务于 hover / focus 等交互态
+       主题换色的同步不依赖这里，由 --app-hue 的补间负责（见文件末尾）
 
        注意不要把 width 放回来：它是这份列表里唯一会触发 layout 的属性，
        任意宽度变化都会被拖成 200ms 的布局动画，还会唤醒 auto-animate
@@ -193,12 +194,6 @@ html.hue-animating {
     var(--default-transition-timing-function);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html.hue-animating {
-    transition: none;
-  }
-}
-
 @layer utilities {
   /*
     换主题期间压掉每个元素自己的颜色过渡。
@@ -219,14 +214,22 @@ html.hue-animating {
   html.theme-shifting ::after {
     transition-property: var(--theme-shift-keep) !important;
   }
+}
 
-  /* 禁用文字颜色过渡的工具类（主题切换时使用，避免黑白闪烁） */
-  .no-color-transition,
-  .no-color-transition *,
-  .no-color-transition ::before,
-  .no-color-transition ::after {
-    transition-property:
-      background-color, border-color, fill, stroke, stop-color, opacity,
-      stop-opacity, transform, scale, box-shadow, width !important;
+/* 深浅色切换：整页一次交叉淡入，天然同步，且只有一层合成开销 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--default-transition-duration);
+  animation-timing-function: var(--default-transition-timing-function);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.hue-animating {
+    transition: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }
