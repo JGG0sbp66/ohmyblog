@@ -65,6 +65,12 @@
   --app-hue: 250;
 
   /*
+       拖拽滑块时的短补间时长
+       JS 侧的压制窗口按它推算，改这里就够
+    */
+  --theme-hue-live-duration: 100ms;
+
+  /*
        换主题期间仍然允许过渡的属性
        即下方全局列表里剔除掉所有承载颜色的那些，外加组件常用的布局属性，
        避免压制期间把别人正在跑的展开/位移动画掐断
@@ -186,12 +192,22 @@ body {
 /* --- 主题切换的动画驱动 --- */
 
 /*
-  只有离散改色（预设按钮、远端配置同步）才挂 .hue-animating
-  拖拽滑块时刻意不挂：拇指本身就是动画，补间只会让页面追不上手
+  离散改色（预设按钮、远端配置同步）挂 .hue-animating：完整 200ms 扫掠
 */
 html.hue-animating {
   transition: --app-hue var(--default-transition-duration)
     var(--default-transition-timing-function);
+}
+
+/*
+  拖拽滑块挂 .hue-animating-live：100ms 的轻微追随。
+  短到不会让人觉得页面在追手，又足以磨掉逐帧的台阶感。
+
+  刻意用 linear 而不是缓动：拖拽时每一帧都会重定目标，
+  ease-out 那种「先快后慢」叠在连续重定向上会显得发飘。
+*/
+html.hue-animating-live {
+  transition: --app-hue var(--theme-hue-live-duration) linear;
 }
 
 @layer utilities {
@@ -224,7 +240,8 @@ html.hue-animating {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.hue-animating {
+  html.hue-animating,
+  html.hue-animating-live {
     transition: none;
   }
 

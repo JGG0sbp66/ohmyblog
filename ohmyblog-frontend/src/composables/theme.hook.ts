@@ -19,43 +19,46 @@ const STORAGE_KEYS = {
 export const DEFAULT_HUE = 250; // 默认品牌色相 (蓝色)
 
 /**
- * 换主题期间挂在 <html> 上的两个状态类，定义见 css/tailwind.css
+ * 换主题期间挂在 <html> 上的状态类，定义见 css/tailwind.css
  *
  * - SHIFTING：压掉每个元素自己的颜色过渡，避免它们各按自己的时长去追
  *   --app-hue 的插值（既错拍，也是拖拽卡顿的主因）
- * - HUE_ANIM：给 --app-hue 本身挂补间。只有离散改色才挂，拖拽时不挂
+ * - HUE_ANIM：给 --app-hue 挂完整 200ms 补间，用于离散改色
+ * - HUE_LIVE：给 --app-hue 挂 100ms 短补间，用于拖拽跟手
  */
 const CLASS_SHIFTING = "theme-shifting";
 const CLASS_HUE_ANIM = "hue-animating";
+const CLASS_HUE_LIVE = "hue-animating-live";
 
 const root = document.documentElement;
 
-/**
- * 滑块松手后额外保持压制状态的时间 (ms)
- * 覆盖住浏览器把最后一帧刷完的间隙，避免尾帧被逐元素过渡接管
- */
-const LIVE_SETTLE_MS = 120;
-
-/** 换主题时长的缓存值，惰性读取一次即可 */
-let durationCache: number | null = null;
+/** 过渡时长的缓存，避免每次换色都强制读一次样式 */
+const durationCache = new Map<string, number>();
 
 /**
- * 读取 CSS 里的统一过渡时长，保证 JS 的收尾时机和 CSS 完全同源
- * 只在首次换主题时强制读一次样式，之后走缓存
+ * 读取 CSS 里的过渡时长 (ms)
+ * 让 JS 的收尾时机和 CSS 完全同源，改 CSS 变量即可，不用同步改两处
  */
-function themeDuration(): number {
-  if (durationCache !== null) return durationCache;
+function cssDuration(name: string, fallback: number): number {
+  const cached = durationCache.get(name);
+  if (cached !== undefined) return cached;
 
-  const raw = getComputedStyle(root)
-    .getPropertyValue("--default-transition-duration")
-    .trim();
+  const raw = getComputedStyle(root).getPropertyValue(name).trim();
   const parsed = raw.endsWith("ms")
     ? Number.parseFloat(raw)
     : Number.parseFloat(raw) * 1000;
+  const ms = Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 
-  durationCache = Number.isFinite(parsed) && parsed > 0 ? parsed : 200;
-  return durationCache;
+  // 读不到就不进缓存：模块初始化可能早于样式表就绪，别把兜底值钉死
+  if (raw) durationCache.set(name, ms);
+  return ms;
 }
+
+/** 离散改色的完整扫掠时长 */
+const shiftDuration = () => cssDuration("--default-transition-duration", 200);
+
+/** 拖拽跟手的短补间时长 */
+const liveDuration = () => cssDuration("--theme-hue-live-duration", 100);
 
 // --- 色相写入 ---
 
@@ -95,7 +98,7 @@ function cancelPendingHue() {
 function endShift(delay: number) {
   clearTimeout(shiftTimer);
   shiftTimer = setTimeout(() => {
-    root.classList.remove(CLASS_HUE_ANIM, CLASS_SHIFTING);
+    root.classList.remove(CLASS_HUE_ANIM, CLASS_HUE_LIVE, CLASS_SHIFTING);
   }, delay);
 }
 
@@ -111,27 +114,28 @@ function writeHue(angle: number) {
  */
 function applyHueNow(val: number) {
   cancelPendingHue();
-  root.classList.remove(CLASS_HUE_ANIM);
+  root.classList.remove(CLASS_HUE_ANIM, CLASS_HUE_LIVE);
   root.classList.add(CLASS_SHIFTING);
   writeHue(val);
-  endShift(LIVE_SETTLE_MS);
+  endShift(liveDuration());
 }
 
 /**
  * 写入色相
  * @param val 色相值 (0-360)
- * @param animate true = 走 200ms 补间（预设按钮、远端配置同步）；
- *                false = 跟手，一帧最多写一次（滑块拖拽）
+ * @param animate true = 走完整 200ms 扫掠（预设按钮、远端配置同步）；
+ *                false = 跟手，一帧最多写一次 + 100ms 轻微追随（滑块拖拽）
  */
 function applyHue(val: number, animate: boolean) {
   root.classList.add(CLASS_SHIFTING);
   root.classList.toggle(CLASS_HUE_ANIM, animate);
+  root.classList.toggle(CLASS_HUE_LIVE, !animate);
 
   if (animate) {
     cancelPendingHue();
     writeHue(nearestAngle(appliedAngle, val));
     // 多留一点余量，确保补间跑完才把逐元素过渡放回来
-    endShift(themeDuration() + 50);
+    endShift(shiftDuration() + 50);
     return;
   }
 
@@ -142,10 +146,12 @@ function applyHue(val: number, animate: boolean) {
   hueRaf = requestAnimationFrame(() => {
     hueRaf = 0;
     if (pendingHue === null) return;
-    writeHue(pendingHue);
+    // 这里同样要取最短弧：appliedAngle 可能因之前的离散改色落在 0-360 之外
+    // （比如 370），直接写 10 会让 100ms 补间横扫整条色环闪一下彩虹
+    writeHue(nearestAngle(appliedAngle, pendingHue));
     pendingHue = null;
-    // 每帧都会重排这个定时器，等价于「最后一次输入之后 120ms」
-    endShift(LIVE_SETTLE_MS);
+    // 每帧都会重排这个定时器，等价于「最后一次输入之后再跑完一个补间」
+    endShift(liveDuration() + 20);
   });
 }
 
@@ -262,8 +268,8 @@ export function useTheme() {
   };
 
   /**
-   * 实时预览色相：跟手写入，不做补间
-   * 供滑块拖拽使用 —— 拇指本身就是动画，补间只会让页面追不上手
+   * 实时预览色相：跟手写入，只带 100ms 的轻微追随
+   * 供滑块拖拽使用 —— 拇指本身就是动画，完整 200ms 补间会让页面追不上手
    * @param val 色相值 (0-360)
    */
   const previewHue = (val: number) => {

@@ -21,7 +21,7 @@ const { currentHue, previewHue } = useTheme();
     </div>
 
     <div class="h-12 bg-bg-muted rounded-xl flex items-center px-4">
-      <!-- 拖拽走 previewHue：跟手写入，不做补间 -->
+      <!-- 拖拽走 previewHue：跟手写入 + 100ms 轻微追随 -->
       <ColorSlider :model-value="currentHue" @update:model-value="previewHue" />
     </div>
   </div>
