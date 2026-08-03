@@ -6,6 +6,8 @@
  *   展开时 wrapper 挂 .is-open，content 子块由扩展切换 hidden 属性。
  * - 前台 / getHTML 序列化：原生 <details> > summary + div[data-type="detailsContent"]，
  *   展开由浏览器接管（details[open]）。
+ *
+ * TODO: 这里的折叠块还没把我库里的 auto 动画完整迁进来，编辑态展开/收起后面需要补一版和现有样式联动的自动过渡。
  */
 
 /* ---- 容器（两种 DOM 通用） ---- */

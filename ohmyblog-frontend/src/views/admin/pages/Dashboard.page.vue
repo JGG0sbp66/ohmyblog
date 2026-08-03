@@ -21,6 +21,7 @@ const recentPostsRef = ref<InstanceType<typeof RecentPostsCard> | null>(null);
     <div
       class="flex-1 flex flex-col md:flex-row gap-6 items-start onload-animation anim-delay-200 min-h-0"
     >
+      <!-- TODO: 这里左侧文章列表和右侧卡片的垂直对齐还不够精确，后面要补一版和仪表盘整体节奏一致的对齐策略。 -->
       <RecentPostsCard
         v-if="!isMobile"
         ref="recentPostsRef"
