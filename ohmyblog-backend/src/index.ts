@@ -4,6 +4,7 @@ import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
 import { PUBLIC_DIR, UPLOADS_DIR } from "./constants";
 import { config } from "./env";
+import { demoPlugin } from "./plugins/demo.plugin.js";
 import { logPlugin } from "./plugins/logger.plugin.js";
 import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
@@ -17,7 +18,7 @@ import { sitemapRoute } from "./routes/sitemap.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 import { viewerRoute } from "./routes/viewer.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
-import { isProduction } from "./utils/runtime";
+import { isDemo, isProduction } from "./utils/runtime";
 
 const app = new Elysia()
 	// SPA fallback：注册在 responsePlugin 之前，优先处理前端路由的 NOT_FOUND
@@ -35,6 +36,8 @@ const app = new Elysia()
 	// 挂载插件
 	.use(logPlugin)
 	.use(responsePlugin)
+	// 演示模式写入闸门：必须在业务路由之前，且早于任何写 handler
+	.use(demoPlugin)
 	.use(
 		// 静态文件服务：提供上传的图片、头像、图标等资源访问
 		staticPlugin({
@@ -119,5 +122,11 @@ console.log(`\n🚀 Server started in \x1b[33m${config.NODE_ENV}\x1b[0m mode`);
 console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`);
 if (!isProduction()) {
 	console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`);
+}
+if (isDemo()) {
+	console.log(
+		`\n⚠️  \x1b[33m演示模式已启用\x1b[0m：游客可只读浏览后台，写操作一律拒绝`,
+	);
+	console.log(`   （系统尚未初始化时该限制不生效，setup 向导照常可用）`);
 }
 console.log(`\nReady to accept requests...\n`);

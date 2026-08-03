@@ -212,6 +212,9 @@ class AuthService {
 			username: user.username,
 			email: user.email,
 			role: user.role,
+			// 与 /auth/me 的演示分支保持同一个返回结构，
+			// 否则 Eden 推给前端的类型会变成联合类型，前端读 isDemo 就要到处收窄
+			isDemo: false,
 		};
 	}
 

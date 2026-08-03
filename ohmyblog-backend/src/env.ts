@@ -20,6 +20,16 @@ const configSchema = {
 	PORT: z.coerce.number().default(3000),
 	JWT_SECRET: z.string(),
 	JWT_EXP: z.string().default("7d"),
+	// 与 NODE_ENV 正交的开关：演示站同样是 production 部署，只是额外禁写
+	// 用 string + transform 而非 z.coerce.boolean()，后者会把字符串 "false" 转成 true；
+	// 也不用 z.enum，避免值拼错时触发 fatal 让服务起不来
+	DEMO_MODE: z
+		.string()
+		.default("false")
+		.transform((v) => {
+			const normalized = v.trim().toLowerCase();
+			return normalized === "true" || normalized === "1";
+		}),
 } as const;
 
 // 配置描述（用于生成 .env 文件的注释）
@@ -29,6 +39,7 @@ const configDesc = {
 	JWT_SECRET: "JWT 签名密钥 (自动生成强密码)",
 	JWT_EXP:
 		"Token 过期时间 (支持格式: 7d=7天, 24h=24小时, 60m=60分钟, 3600s=3600秒)",
+	DEMO_MODE: "演示模式 (true | false)：游客可只读浏览后台，所有写操作被拒绝",
 } as const;
 
 // 默认值映射（用于生成 .env 文件）
@@ -37,6 +48,7 @@ const configDefaults = {
 	PORT: "3000",
 	JWT_SECRET: () => randomBytes(32).toString("hex"), // 函数表示自动生成
 	JWT_EXP: "7d",
+	DEMO_MODE: "false",
 } as const;
 
 // =================================================================

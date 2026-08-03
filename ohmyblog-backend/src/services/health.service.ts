@@ -1,6 +1,7 @@
 import pkg from "../../package.json";
 import { userDao } from "../daos/user.dao";
 import { logger } from "../plugins/logger.plugin";
+import { isDemo } from "../utils/runtime";
 
 export class HealthService {
 	private commitHash: string = "unknown";
@@ -54,7 +55,7 @@ export class HealthService {
 
 	/**
 	 * 获取健康状态数据
-	 * @returns 当前版本号、commit hash 及是否已初始化管理员
+	 * @returns 当前版本号、commit hash、是否已初始化管理员，以及演示模式是否生效
 	 */
 	async getSystemStatus() {
 		const hasAdmin = await userDao.hasAnyAdmin();
@@ -62,6 +63,9 @@ export class HealthService {
 			version: this.appVersion,
 			commit: this.commitHash,
 			initialized: hasAdmin,
+			// 返回的是「是否真正生效」而非开关本身：未初始化时演示限制不生效，
+			// 前端拿到就能直接决定要不要显示演示横幅
+			demo: isDemo() && hasAdmin,
 		};
 	}
 
