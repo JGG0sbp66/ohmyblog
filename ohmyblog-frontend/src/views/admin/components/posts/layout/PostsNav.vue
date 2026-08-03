@@ -4,6 +4,7 @@ import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import { useLang } from "@/composables/lang.hook";
+import { useToast } from "@/composables/toast.hook";
 import { DEMO_DRAFT_UUID } from "@/composables/post-editor.hook";
 import { useAuthStore } from "@/stores/auth.store";
 import { createPost } from "@/api/post.api";
@@ -39,9 +40,14 @@ const handleNewPost = async () => {
   creating.value = true;
   try {
     const result = await createPost();
-    if (result?.post?.uuid) {
-      router.push({ name: "post-edit", params: { uuid: result.post.uuid } });
-    }
+    // 没拿到 uuid 就没法跳转，当失败处理，否则按钮看上去毫无反应
+    if (!result?.post?.uuid) throw new Error("Error");
+    router.push({ name: "post-edit", params: { uuid: result.post.uuid } });
+  } catch (error: any) {
+    // 这里的 error 可能是 string (unwrap 抛出) 或 Error 对象
+    const errorMsg =
+      typeof error === "string" ? error : error?.message || "Error";
+    useToast.error(t(`api.errors.${errorMsg}`));
   } finally {
     creating.value = false;
   }
