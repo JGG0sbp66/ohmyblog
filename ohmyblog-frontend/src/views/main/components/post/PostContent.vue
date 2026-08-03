@@ -35,6 +35,7 @@ watch(
   () => props.contentHtml,
   async (raw) => {
     safeHtml.value = raw ? DOMPurify.sanitize(raw) : "";
+    // TODO: 这里直接消费 contentHtml 做 HTML 渲染；如果“标题 + 有序列表”这类混合结构在前台出现编号或语义偏差，优先回溯是否应恢复 JSON 渲染或补结构修复。
     // 等 v-html 落地后再增强代码块：v-html 变化会整体重置内部 DOM，需重新增强
     await nextTick();
     if (rootRef.value) {

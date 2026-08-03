@@ -100,6 +100,7 @@ const editor = useEditor({
     internalUpdate = true;
     json.value = editor.getJSON();
     text.value = editor.getText();
+      // TODO: 这里把编辑器内容同步导出为 contentHtml；如果前台在“标题 + 有序列表”组合上和后台编辑器表现不一致，优先核对 getHTML 的输出。
     html.value = editor.getHTML();
     syncCharCount(editor);
   },

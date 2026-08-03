@@ -110,6 +110,7 @@ export const usePostEditor = () => {
           pinned,
         ],
         () => {
+            // TODO: 这里的自动保存监听可能还不完整；例如 status 变更走的是独立发布接口，历史上也可能有其它渐进式新增字段没接进来，需要后面统一复查一次自动保存覆盖面。
           if (!isDirty.value) return;
           autoSave();
         },
@@ -122,6 +123,7 @@ export const usePostEditor = () => {
     slug: slug.value || undefined,
     tags: tags.value,
     title: title.value || undefined,
+      // TODO: 这里要补空标题 + 已发布的兜底校验；如果标题为空且状态改成已发布，slug 可能为空，前台文章就会因为找不到可访问地址而无法打开。
     content: content.value,
     contentText: contentText.value || undefined,
     contentHtml: contentHtml.value || undefined,
