@@ -17,6 +17,8 @@ export const useSystemStore = defineStore("system", () => {
   const version = ref("");
   const commit = ref("");
   const initialized = ref<boolean | null>(null);
+  // 演示模式是否生效（后端已把「开关打开 && 系统已初始化」合并成这一个值）
+  const demo = ref(false);
 
   // 站点全局配置
   const siteInfo = ref<TSiteInfoConfigUpsertDTO["configValue"]>({
@@ -145,6 +147,7 @@ export const useSystemStore = defineStore("system", () => {
       version.value = data.version;
       commit.value = data.commit;
       initialized.value = data.initialized;
+      demo.value = data.demo === true;
 
       return initialized.value;
     } catch (error) {
@@ -158,6 +161,7 @@ export const useSystemStore = defineStore("system", () => {
     version,
     commit,
     initialized,
+    demo,
     siteInfo,
     siteCreatedAt,
     personalInfo,

@@ -4,9 +4,12 @@ import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import { useLang } from "@/composables/lang.hook";
+import { DEMO_DRAFT_UUID } from "@/composables/post-editor.hook";
+import { useAuthStore } from "@/stores/auth.store";
 import { createPost } from "@/api/post.api";
 
 const { t } = useLang();
+const authStore = useAuthStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -25,6 +28,14 @@ const preloadEditor = () =>
 
 const handleNewPost = async () => {
   if (creating.value) return;
+
+  // 演示模式：创建接口会被 403 拦掉，改为跳到虚拟草稿，
+  // 让访客照样能看到并试用完整的编辑器（只是存不下来）
+  if (authStore.isDemoUser) {
+    router.push({ name: "post-edit", params: { uuid: DEMO_DRAFT_UUID } });
+    return;
+  }
+
   creating.value = true;
   try {
     const result = await createPost();

@@ -225,6 +225,13 @@
       }
     },
     "admin": {
+      "demoModal": {
+        "title": "Demo mode",
+        "description": "You are browsing a demo site. Every admin page is free to explore and try out.",
+        "hint": "Creating, editing and deleting are rejected, so feel free to click around — nothing you do here changes any data.",
+        "confirm": "Got it",
+        "mute": "Don't show again"
+      },
       "Posts": {
         "filter": {
           "all": "All",
@@ -977,6 +984,7 @@
       "获取个性化配置失败": "Failed to fetch personalization info",
       "用户名或邮箱已被注册": "Username or email is already registered",
       "未登录或会话已过期": "Not logged in or session expired",
+      "演示模式下不可修改数据": "This is a read-only demo — changes are not allowed",
       "\"body.icon\" has invalid file type": "Invalid icon file type",
       "\"body.avatar\" has invalid file type": "Invalid avatar file type",
       "\"body.hero\" has invalid file type": "Invalid hero image file type",

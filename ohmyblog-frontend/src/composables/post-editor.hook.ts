@@ -7,6 +7,16 @@ import type { TPostStatus } from "@server/db/constants/post.constants";
 import { getPostById, savePost, updatePostStatus } from "@/api/post.api";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
+import { useAuthStore } from "@/stores/auth.store";
+
+/**
+ * 演示模式下"新建文章"用的虚拟草稿 uuid。
+ *
+ * 后端不存在这条记录：演示访客点新建时不调创建接口（会被 403 拦掉），
+ * 直接带着这个 uuid 进编辑器，拿到一个可以随便试的空白编辑器。
+ * 含连字符，而真实 uuid 是 cuid2（纯小写字母数字），不会撞。
+ */
+export const DEMO_DRAFT_UUID = "demo-draft";
 
 /**
  * usePostEditor — 文章编辑器状态 & 保存逻辑
@@ -22,6 +32,7 @@ export const usePostEditor = () => {
   const route = useRoute();
   const uuid = route.params.uuid as string;
   const { t } = useLang();
+  const authStore = useAuthStore();
 
   // --- 表单状态 ---
   const slug = ref("");
@@ -46,6 +57,10 @@ export const usePostEditor = () => {
   const loadPost = async () => {
     isLoading.value = true;
     try {
+      // 演示模式的虚拟草稿：后端没有这条记录，跳过加载直接给空白编辑器。
+      // 这里 return 不影响 finally 里的 watcher 装配
+      if (uuid === DEMO_DRAFT_UUID) return;
+
       const result = await getPostById(uuid);
       const post = result?.post;
       if (!post) return;
@@ -116,6 +131,9 @@ export const usePostEditor = () => {
   });
 
   const autoSave = async () => {
+    // 演示模式：写操作必被后端拒绝，而防抖自动保存每 2 秒就会触发一次，
+    // 不在源头拦住的话游客一打字就会持续弹错。静默跳过，不打扰阅读
+    if (authStore.isDemoUser) return;
     if (isSaving.value) return;
     isSaving.value = true;
     try {
@@ -136,6 +154,12 @@ export const usePostEditor = () => {
    * 2. updatePostStatus() — 更新文章状态（独立接口）
    */
   const save = async () => {
+    // 演示模式：这是用户主动点的按钮，给一次明确反馈再返回。
+    // 用 error 等级与其他写操作被后端 403 拦下时的提示保持一致
+    if (authStore.isDemoUser) {
+      useToast.error(t("api.errors.演示模式下不可修改数据"));
+      return;
+    }
     if (isSaving.value) return;
     isSaving.value = true;
     try {

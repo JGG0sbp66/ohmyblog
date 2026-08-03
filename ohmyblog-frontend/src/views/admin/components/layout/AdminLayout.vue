@@ -11,6 +11,7 @@ import { useRoute } from "vue-router";
 import { useIsMobile } from "@/composables/breakpoint.hook";
 import AdminSidebar from "./AdminSidebar.vue";
 import AdminHeader from "./AdminHeader.vue";
+import DemoNoticeModal from "./DemoNoticeModal.vue";
 
 const route = useRoute();
 const isMobile = useIsMobile();
@@ -50,6 +51,9 @@ watch(isMobile, (mobile) => {
 
 <template>
   <div class="h-screen h-dvh flex flex-col bg-bg">
+    <!-- 演示模式提示：仅演示站的游客会看到，自身控制显示时机 -->
+    <DemoNoticeModal />
+
     <!-- 顶部栏容器：桌面编辑器模式下可通过 hover 展开，移动端始终完整显示。 -->
     <div
       :class="[
