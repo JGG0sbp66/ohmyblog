@@ -62,3 +62,16 @@ export function formatCopyrightYear(raw: RawDate): string {
     ? `${currentYear}`
     : `${startYear}-${currentYear}`;
 }
+
+/**
+ * 计算从指定时间至今经过的天数（向下取整）
+ * 用于展示站点运行时长等场景
+ * @returns 天数，raw 为空或非法时返回 0
+ */
+export function getRunningDays(raw: RawDate): number {
+  if (!raw) return 0;
+  const start = new Date(raw as string | number | Date).getTime();
+  if (Number.isNaN(start)) return 0;
+  const diff = Date.now() - start;
+  return Math.max(0, Math.floor(diff / 86_400_000));
+}

@@ -79,7 +79,10 @@ defineExpose({ close });
     <BasePop
       v-model="isOpen"
       :trigger-ref="triggerRef"
-      :class="['bottom-full mb-2 left-1/2 -translate-x-1/2', props.contentClass]"
+      :class="[
+        'bottom-full mb-2 left-1/2 -translate-x-1/2',
+        props.contentClass,
+      ]"
     >
       <slot />
     </BasePop>

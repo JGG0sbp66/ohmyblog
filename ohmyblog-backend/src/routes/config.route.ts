@@ -4,6 +4,7 @@ import { ConfigUpsertDTO } from "../dtos/config.dto";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 import { authPlugin } from "../plugins/auth.plugin";
 import { configService } from "../services/config.service";
+import { isDemoUser } from "../utils/demo";
 
 export const configRoute = new Elysia({ name: "configRoute" })
 	.use(authPlugin)
@@ -36,7 +37,9 @@ export const configRoute = new Elysia({ name: "configRoute" })
 			.get(
 				"/:configKey",
 				async ({ params: { configKey }, user }) => {
-					const isAdmin = user?.role === "admin";
+					// 演示模式的虚拟身份虽然是 admin，但不该越过 isPublic 限制读到
+					// smtp 这类含密码的私有配置，此处按未登录访客处理
+					const isAdmin = user?.role === "admin" && !isDemoUser(user);
 
 					const config = await configService.getByKey(configKey, isAdmin);
 					return {

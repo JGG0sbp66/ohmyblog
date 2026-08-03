@@ -103,6 +103,13 @@ export function useLang() {
       // 使用扩展运算符透传，确保不破坏原生的参数结构（如插值对象 {count} 等）
       return (instance.t as any)(key, ...args);
     },
+    /**
+     * 读取语言包里的数组/对象节点（t 只能返回字符串）
+     * 用于「一组文案随机轮换」这类结构化内容，取回的元素需再经 rt 解析
+     */
+    tm: (key: string) => instance.tm(key),
+    /** 把 tm 取回的原始消息节点解析成字符串 */
+    rt: (message: any) => instance.rt(message),
     locale: instance.locale as Ref<TLanguage>,
     setLocale,
     SUPPORTED_LOCALES,

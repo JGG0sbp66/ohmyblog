@@ -4,7 +4,7 @@ import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import HeaderSearch from "@/components/base/search/HeaderSearch.vue";
 import SettingsButton from "@/components/common/button/SettingsButton.vue";
 import MobileNavDrawer from "@/components/common/layout/MobileNavDrawer.vue";
-import { Menu } from "lucide-vue-next";
+import { Menu, Home, Archive, Heart } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import { useRouter, useRoute } from "vue-router";
 import { computed, ref, watch } from "vue";
@@ -15,9 +15,9 @@ const router = useRouter();
 const route = useRoute();
 
 const navItems = computed(() => [
-  { name: "home", label: t("components.common.layout.Header.nav.home") },
-  { name: "archive", label: t("components.common.layout.Header.nav.archive") },
-  { name: "friends", label: t("components.common.layout.Header.nav.friends") },
+  { name: "home", label: t("components.common.layout.Header.nav.home"), icon: Home },
+  { name: "archive", label: t("components.common.layout.Header.nav.archive"), icon: Archive },
+  { name: "friends", label: t("components.common.layout.Header.nav.friends"), icon: Heart },
 ]);
 
 const handleNavClick = (routeName: string) => {
@@ -63,6 +63,11 @@ watch(
           class="h-11 px-4 font-medium onload-animation"
           @click="handleNavClick(item.name)"
         >
+          <component
+            :is="item.icon"
+            v-if="route.name === item.name"
+            class="w-4 h-4"
+          />
         </ButtonSecondary>
       </nav>
 

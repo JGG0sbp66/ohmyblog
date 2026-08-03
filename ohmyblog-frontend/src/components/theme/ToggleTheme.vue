@@ -1,7 +1,12 @@
 <!-- src/components/theme/ToggleTheme.vue -->
 <script lang="ts" setup>
 import { computed } from "vue";
-import { RiContrastLine, RiSunLine, RiMoonLine, RiCheckLine } from "@remixicon/vue";
+import {
+  RiContrastLine,
+  RiSunLine,
+  RiMoonLine,
+  RiCheckLine,
+} from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import { useTheme } from "@/composables/theme.hook";
 import { type TThemeMode, THEME_MODES } from "@/api/shared";

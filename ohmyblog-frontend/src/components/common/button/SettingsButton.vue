@@ -1,7 +1,7 @@
 <!-- src/components/common/button/SettingsButton.vue -->
 <script lang="ts" setup>
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import { RiSettings3Line } from "@remixicon/vue";
+import { RiSettings3Line, RiUserSharedLine } from "@remixicon/vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useRouter } from "vue-router";
 
@@ -11,12 +11,19 @@ const authStore = useAuthStore();
 const goToDashboard = () => {
   router.push({ name: "dashboard" });
 };
+
+const goToLogin = () => {
+  router.push({ name: "login" });
+};
 </script>
 
 <template>
-  <div v-if="authStore.isAdmin" class="w-11 h-11">
-    <ButtonSecondary @click="goToDashboard" class="w-full h-full">
+  <div class="w-11 h-11">
+    <ButtonSecondary v-if="authStore.isAdmin" @click="goToDashboard" class="w-full h-full">
       <RiSettings3Line class="w-5 h-5" />
+    </ButtonSecondary>
+    <ButtonSecondary v-else @click="goToLogin" class="w-full h-full">
+      <RiUserSharedLine class="w-5 h-5" />
     </ButtonSecondary>
   </div>
 </template>

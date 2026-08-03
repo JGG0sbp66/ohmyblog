@@ -1,11 +1,14 @@
 <!-- src/App.vue -->
 <script setup lang="ts">
-import { onMounted, watch, ref } from "vue";
+import { computed, onMounted, watch, ref } from "vue";
+import { Toaster } from "vue-sonner";
+import { CircleCheck, CircleX, Info, TriangleAlert } from "lucide-vue-next";
 import { useTheme } from "@/composables/theme.hook";
 import { useAuthStore } from "@/stores/auth.store";
 import { useSystemStore } from "@/stores/system.store";
 
-const { initThemeConfig } = useTheme();
+const { initThemeConfig, isDark } = useTheme();
+const sonnerTheme = computed(() => (isDark.value ? "dark" : "light"));
 const authStore = useAuthStore();
 const systemStore = useSystemStore();
 
@@ -57,5 +60,18 @@ watch(
 </script>
 
 <template>
+  <Toaster
+    :theme="sonnerTheme"
+    position="bottom-right"
+    :duration="3000"
+    :expand="false"
+    :close-button="true"
+    :icons="{
+      success: CircleCheck,
+      error: CircleX,
+      info: Info,
+      warning: TriangleAlert,
+    }"
+  />
   <router-view />
 </template>

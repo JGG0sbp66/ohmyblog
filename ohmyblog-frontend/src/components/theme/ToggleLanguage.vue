@@ -36,10 +36,7 @@ const switchLanguage = (value: TLanguage) => {
         @click="switchLanguage(item.value)"
       >
         <span>{{ item.label }}</span>
-        <RiCheckLine
-          v-if="locale === item.value"
-          class="w-4 h-4 text-accent"
-        />
+        <RiCheckLine v-if="locale === item.value" class="w-4 h-4 text-accent" />
       </button>
     </div>
   </FooterDrop>

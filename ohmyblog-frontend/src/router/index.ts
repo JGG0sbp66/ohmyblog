@@ -36,6 +36,12 @@ const routes = [
         name: "post",
         component: () => import("@/views/main/pages/Post.page.vue"),
       },
+      // 兜底 404：所有未匹配的路径统一落到此页（保留前台布局）
+      {
+        path: ":pathMatch(.*)*",
+        name: "not-found",
+        component: () => import("@/views/main/pages/NotFound.page.vue"),
+      },
     ],
   },
   // Admin 登录路由

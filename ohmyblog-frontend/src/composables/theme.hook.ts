@@ -1,6 +1,6 @@
 // src/composables/theme.hook.ts
-import { useColorMode, useCssVar, useStorage } from "@vueuse/core";
-import { computed, watch } from "vue";
+import { debounceFilter, useColorMode, useStorage } from "@vueuse/core";
+import { computed, nextTick, watch } from "vue";
 import { getConfig } from "@/api/config.api";
 import type { TThemeMode } from "@/api/shared";
 import { THEME_MODES } from "@/api/shared";
@@ -17,6 +17,143 @@ const STORAGE_KEYS = {
  * 默认视觉配置
  */
 export const DEFAULT_HUE = 250; // 默认品牌色相 (蓝色)
+
+/**
+ * 换主题期间挂在 <html> 上的状态类，定义见 css/tailwind.css
+ *
+ * - SHIFTING：压掉每个元素自己的颜色过渡，避免它们各按自己的时长去追
+ *   --app-hue 的插值（既错拍，也是拖拽卡顿的主因）
+ * - HUE_ANIM：给 --app-hue 挂完整 200ms 补间，用于离散改色
+ * - HUE_LIVE：给 --app-hue 挂 100ms 短补间，用于拖拽跟手
+ */
+const CLASS_SHIFTING = "theme-shifting";
+const CLASS_HUE_ANIM = "hue-animating";
+const CLASS_HUE_LIVE = "hue-animating-live";
+
+const root = document.documentElement;
+
+/** 过渡时长的缓存，避免每次换色都强制读一次样式 */
+const durationCache = new Map<string, number>();
+
+/**
+ * 读取 CSS 里的过渡时长 (ms)
+ * 让 JS 的收尾时机和 CSS 完全同源，改 CSS 变量即可，不用同步改两处
+ */
+function cssDuration(name: string, fallback: number): number {
+  const cached = durationCache.get(name);
+  if (cached !== undefined) return cached;
+
+  const raw = getComputedStyle(root).getPropertyValue(name).trim();
+  const parsed = raw.endsWith("ms")
+    ? Number.parseFloat(raw)
+    : Number.parseFloat(raw) * 1000;
+  const ms = Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+
+  // 读不到就不进缓存：模块初始化可能早于样式表就绪，别把兜底值钉死
+  if (raw) durationCache.set(name, ms);
+  return ms;
+}
+
+/** 离散改色的完整扫掠时长 */
+const shiftDuration = () => cssDuration("--default-transition-duration", 200);
+
+/** 拖拽跟手的短补间时长 */
+const liveDuration = () => cssDuration("--theme-hue-live-duration", 100);
+
+// --- 色相写入 ---
+
+let hueRaf = 0;
+let pendingHue: number | null = null;
+let shiftTimer: ReturnType<typeof setTimeout> | undefined;
+
+/**
+ * 当前真正写进 CSS 的角度
+ * 可能超出 0-360：oklch 的 hue 本就是模 360 的，写 370 和写 10 等价，
+ * 借此让补间走最短弧（否则 350 → 10 会扫过整条色环）
+ */
+let appliedAngle = DEFAULT_HUE;
+
+/** 本次写入是否来自滑块跟手（由 previewHue 置位，watch 消费后复位） */
+let liveApply = false;
+
+/**
+ * 求与 to 等价、且离 from 最近的角度
+ * @example nearestAngle(350, 10) === 370  // 走 20° 短弧，而不是 -340°
+ */
+function nearestAngle(from: number, to: number): number {
+  const delta = ((((to - from) % 360) + 540) % 360) - 180;
+  return from + delta;
+}
+
+/** 丢弃挂起的跟手写入 */
+function cancelPendingHue() {
+  if (hueRaf) {
+    cancelAnimationFrame(hueRaf);
+    hueRaf = 0;
+  }
+  pendingHue = null;
+}
+
+/** 延时结束换主题状态，恢复各组件自己的 hover 过渡 */
+function endShift(delay: number) {
+  clearTimeout(shiftTimer);
+  shiftTimer = setTimeout(() => {
+    root.classList.remove(CLASS_HUE_ANIM, CLASS_HUE_LIVE, CLASS_SHIFTING);
+  }, delay);
+}
+
+/** 写入色相变量 */
+function writeHue(angle: number) {
+  appliedAngle = angle;
+  root.style.setProperty("--app-hue", String(angle));
+}
+
+/**
+ * 同步立即写入，不补间也不等下一帧
+ * 首帧初始化用：晚一帧会闪一下 CSS 里的默认蓝
+ */
+function applyHueNow(val: number) {
+  cancelPendingHue();
+  root.classList.remove(CLASS_HUE_ANIM, CLASS_HUE_LIVE);
+  root.classList.add(CLASS_SHIFTING);
+  writeHue(val);
+  endShift(liveDuration());
+}
+
+/**
+ * 写入色相
+ * @param val 色相值 (0-360)
+ * @param animate true = 走完整 200ms 扫掠（预设按钮、远端配置同步）；
+ *                false = 跟手，一帧最多写一次 + 100ms 轻微追随（滑块拖拽）
+ */
+function applyHue(val: number, animate: boolean) {
+  root.classList.add(CLASS_SHIFTING);
+  root.classList.toggle(CLASS_HUE_ANIM, animate);
+  root.classList.toggle(CLASS_HUE_LIVE, !animate);
+
+  if (animate) {
+    cancelPendingHue();
+    writeHue(nearestAngle(appliedAngle, val));
+    // 多留一点余量，确保补间跑完才把逐元素过渡放回来
+    endShift(shiftDuration() + 50);
+    return;
+  }
+
+  // 跟手模式：一帧最多写一次，避免一次拖拽触发上百次整树样式重算
+  pendingHue = val;
+  if (hueRaf) return;
+
+  hueRaf = requestAnimationFrame(() => {
+    hueRaf = 0;
+    if (pendingHue === null) return;
+    // 这里同样要取最短弧：appliedAngle 可能因之前的离散改色落在 0-360 之外
+    // （比如 370），直接写 10 会让 100ms 补间横扫整条色环闪一下彩虹
+    writeHue(nearestAngle(appliedAngle, pendingHue));
+    pendingHue = null;
+    // 每帧都会重排这个定时器，等价于「最后一次输入之后再跑完一个补间」
+    endShift(liveDuration() + 20);
+  });
+}
 
 // --- 状态管理 (单例模式，确保应用全局状态统一) ---
 
@@ -41,27 +178,32 @@ const colorMode = useColorMode<TThemeMode>({
  */
 const hueStore = useStorage<number>(STORAGE_KEYS.HUE, DEFAULT_HUE, undefined, {
   writeDefaults: false,
+  /*
+    拖拽时不要每一跳都同步写 localStorage：写入本身阻塞主线程，而且会通过
+    storage 事件让后台外观页里那个跑着整份前台的预览 iframe 也整页重绘，
+    等于每一跳重绘两个文档。
+
+    eventFilter 只作用于 useStorage 的「写」侧，进来的 storage 监听不受影响，
+    所以 iframe 的联动通道仍在，只是从每秒几十次收敛成每次停顿一次 ——
+    对 iframe 而言就成了一次离散跳变，正好吃到 200ms 扫掠。
+  */
+  eventFilter: debounceFilter(250),
 });
 
-/**
- * CSS 变量绑定
- * 使用 useCssVar 直接将响应式变量映射到 document.documentElement 的 --app-hue
- * 这样修改 hueStore 的值，页面上所有引用该变量的组件都会自动更新颜色
- */
-const cssHue = useCssVar("--app-hue", document.documentElement);
+/*
+  首帧直接落位，不做扫掠，也不能延到下一帧（否则会闪一下默认蓝）
+*/
+applyHueNow(hueStore.value);
 
 /**
- * 全局监听：实时同步 hueStore 的值到 CSS 变量
- * 确保无论是通过 setBrandHue 方法更新，还是通过 v-model 直接操作 hueStore，
- * 都能实时触发 CSS 变量的重绘。
+ * 全局监听：把 hueStore 的值同步到 CSS 变量
+ * 无论是通过 previewHue / setBrandHue 更新，还是别处直接操作 hueStore，
+ * 甚至是跨文档的 storage 事件（预览 iframe），都会走到这里
  */
-watch(
-  hueStore,
-  (val) => {
-    cssHue.value = String(val);
-  },
-  { immediate: true },
-);
+watch(hueStore, (val) => {
+  applyHue(val, !liveApply);
+  liveApply = false;
+});
 
 /**
  * 主题管理 Hook
@@ -81,18 +223,37 @@ export function useTheme() {
 
   /**
    * 设置主题模式
-   * @param mode 主题模式 (light | dark | auto)
+   *
+   * 用 View Transitions 做整页一次交叉淡入：所有元素天然同步，
+   * 且只有一层合成开销，比让上千个元素各自跑 200ms 颜色过渡更省。
    */
   const setTheme = (mode: TThemeMode) => {
-    // 临时禁用文字颜色过渡，避免深浅模式切换时的黑白闪烁
-    // 但保留背景色、边框等的过渡效果
-    document.documentElement.classList.add("no-color-transition");
-    colorMode.value = mode;
+    /*
+      同样要压掉逐元素颜色过渡，两个原因：
+      1. View Transitions 抓「新快照」的时机就在回调之后，若各元素还在跑
+         自己的过渡，快照拍到的是过渡途中的旧色，淡入就等于没换色
+      2. 避免快照淡入之外再叠一层逐元素过渡
+    */
+    root.classList.add(CLASS_SHIFTING);
 
-    // 等待 DOM 更新后，移除禁用类
-    setTimeout(() => {
-      document.documentElement.classList.remove("no-color-transition");
-    }, 50);
+    const commit = () => {
+      colorMode.value = mode;
+      // 等 Vue 把 .dark 相关的 DOM 刷完，再让浏览器拍新快照
+      return nextTick();
+    };
+
+    const start = document.startViewTransition?.bind(document);
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    // 浏览器不支持或用户偏好减少动效时，退回瞬时切换
+    if (!start || reduceMotion) {
+      void commit().then(() => endShift(0));
+      return;
+    }
+
+    start(commit).finished.finally(() => endShift(0));
   };
 
   /**
@@ -107,10 +268,25 @@ export function useTheme() {
   };
 
   /**
-   * 更新品牌主色相
+   * 实时预览色相：跟手写入，只带 100ms 的轻微追随
+   * 供滑块拖拽使用 —— 拇指本身就是动画，完整 200ms 补间会让页面追不上手
+   * @param val 色相值 (0-360)
+   */
+  const previewHue = (val: number) => {
+    // 值没变时 watch 不会触发，直接返回，避免 liveApply 卡在 true
+    // 让下一次离散改色错误地走成瞬切
+    if (val === hueStore.value) return;
+    liveApply = true;
+    hueStore.value = val;
+  };
+
+  /**
+   * 更新品牌主色相：带补间写入，全站颜色一起扫过去
+   * 供预设按钮、程序化切换使用
    * @param val 色相值 (0-360)
    */
   const setBrandHue = (val: number) => {
+    liveApply = false;
     hueStore.value = val;
   };
 
@@ -138,7 +314,8 @@ export function useTheme() {
         | undefined;
       const remoteHue = configValue?.hue;
       if (typeof remoteHue === "number") {
-        setBrandHue(remoteHue);
+        // 首屏用跟手路径直接落位：拉到配置就扫一遍色，看着像加载出错
+        previewHue(remoteHue);
       }
     } catch (error) {
       // 仅打印错误，不影响应用正常运行（将使用本地默认值）
@@ -155,6 +332,7 @@ export function useTheme() {
     // 方法
     setTheme,
     cycleTheme,
+    previewHue,
     setBrandHue,
     initThemeConfig,
 

@@ -1,0 +1,43 @@
+# ohmyblog
+#
+#   docker compose up -d     启动
+#   docker compose pull && docker compose up -d   升级
+#   docker compose logs -f   看日志
+#   docker compose down      停止（数据卷保留）
+
+services:
+  ohmyblog:
+    image: ghcr.io/jgg0sbp66/ohmyblog:latest
+    container_name: ohmyblog
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      NODE_ENV: production
+      # 只读演示模式：游客可进 /admin 浏览，但所有写操作返回 403
+      DEMO_MODE: "false"
+      # 不设置则首次启动自动生成随机密钥并写入 data/.env
+      # JWT_SECRET: ""
+
+    volumes:
+      # 数据库、上传的图片、日志、自动生成的 .env 都在这里，别丢
+      - ohmyblog-data:/app/data
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # 冷启动要跑数据库迁移
+      start_period: 20s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  ohmyblog-data:

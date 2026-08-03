@@ -10,6 +10,8 @@ export const useAuthStore = defineStore("auth", () => {
   const user = ref<TCurrentUser | null>(null);
   // 是否管理员
   const isAdmin = computed(() => user.value?.role === ("admin" as TUserRole));
+  // 是否演示模式下的虚拟游客身份（role 同样是 admin，但所有写操作会被后端拒绝）
+  const isDemoUser = computed(() => user.value?.isDemo === true);
 
   // 调用 /auth/me 同步当前会话；失败时回退为未登录
   async function fetchMe() {
@@ -37,6 +39,7 @@ export const useAuthStore = defineStore("auth", () => {
   return {
     user,
     isAdmin,
+    isDemoUser,
     fetchMe,
     logout,
   };

@@ -2,6 +2,7 @@ import { jwt } from "@elysiajs/jwt";
 import { Elysia, t } from "elysia";
 import type { Roles } from "../../db/constants/user.constants";
 import { config } from "../env";
+import { resolveAnonymousUser } from "../utils/demo";
 import { BusinessError } from "./errors";
 
 export type JwtUserPayload = {
@@ -50,16 +51,18 @@ export const authPlugin = new Elysia({ name: "authPlugin" })
 	.derive({ as: "global" }, async ({ jwt, cookie: { auth_token } }) => {
 		const token = auth_token.value;
 
-		// 如果没有 token，直接返回空 user，让后面的 Guard 去拦截
-		if (!token) return { user: null };
+		// 没有 / 无效 Token 时，正常部署返回空 user 交给后面的 Guard 拦截；
+		// 演示模式生效时改为注入虚拟管理员，让游客能只读浏览后台
+		// （写操作由 demoPlugin 统一拒绝）
+		if (!token) return { user: await resolveAnonymousUser() };
 
 		if (!token || typeof token !== "string") {
-			return { user: null };
+			return { user: await resolveAnonymousUser() };
 		}
 
 		// 验证 JWT
 		const payload = await jwt.verify(token);
-		if (!payload) return { user: null };
+		if (!payload) return { user: await resolveAnonymousUser() };
 
 		// 返回 user 对象，后续所有路由都能通过 ctx.user 拿到
 		return {

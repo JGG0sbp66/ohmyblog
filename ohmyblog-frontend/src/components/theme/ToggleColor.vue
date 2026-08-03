@@ -6,12 +6,15 @@ import { useLang } from "@/composables/lang.hook";
 import FooterDrop from "@/components/common/button/FooterDrop.vue";
 import ColorSlider from "@/components/base/slider/ColorSlider.vue";
 
-const { currentHue } = useTheme();
+const { currentHue, previewHue } = useTheme();
 const { t } = useLang();
 </script>
 
 <template>
-  <FooterDrop :text="t('components.theme.ToggleColor.paletteTitle')" contentClass="min-w-52 p-3">
+  <FooterDrop
+    :text="t('components.theme.ToggleColor.paletteTitle')"
+    contentClass="min-w-52 p-3"
+  >
     <template #icon>
       <Palette class="w-3.5 h-3.5" />
     </template>
@@ -21,7 +24,7 @@ const { t } = useLang();
         <div class="flex items-center gap-1.5">
           <div
             class="w-1 h-3.5 rounded-sm"
-            :style="{ backgroundColor: `oklch(0.60 0.18 ${currentHue})` }"
+            style="background-color: oklch(0.6 0.18 var(--app-hue))"
           />
           <span class="text-fg font-bold text-xs">{{
             t("components.theme.ToggleColor.paletteTitle")
@@ -29,10 +32,12 @@ const { t } = useLang();
         </div>
         <span
           class="px-1.5 py-0.5 bg-bg-muted flex items-center justify-center text-fg-subtle rounded text-xs font-bold"
-        >{{ currentHue }}</span>
+          >{{ currentHue }}</span
+        >
       </div>
 
-      <ColorSlider v-model="currentHue" />
+      <!-- 拖拽走 previewHue：跟手写入 + 100ms 轻微追随 -->
+      <ColorSlider :model-value="currentHue" @update:model-value="previewHue" />
     </div>
   </FooterDrop>
 </template>

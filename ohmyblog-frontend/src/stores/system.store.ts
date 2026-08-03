@@ -15,7 +15,10 @@ export const useSystemStore = defineStore("system", () => {
   const { t } = useLang();
 
   const version = ref("");
+  const commit = ref("");
   const initialized = ref<boolean | null>(null);
+  // 演示模式是否生效（后端已把「开关打开 && 系统已初始化」合并成这一个值）
+  const demo = ref(false);
 
   // 站点全局配置
   const siteInfo = ref<TSiteInfoConfigUpsertDTO["configValue"]>({
@@ -75,7 +78,11 @@ export const useSystemStore = defineStore("system", () => {
    * 获取站点基本信息
    */
   async function fetchSiteInfo() {
-    const res = await fetchConfig("site_info", siteInfo, "api.errors.获取站点基本信息失败");
+    const res = await fetchConfig(
+      "site_info",
+      siteInfo,
+      "api.errors.获取站点基本信息失败",
+    );
     if (res?.config) {
       siteCreatedAt.value = res.config.createdAt;
     }
@@ -138,7 +145,9 @@ export const useSystemStore = defineStore("system", () => {
         throw new Error("后端返回的健康状态数据格式不正确");
       }
       version.value = data.version;
+      commit.value = data.commit;
       initialized.value = data.initialized;
+      demo.value = data.demo === true;
 
       return initialized.value;
     } catch (error) {
@@ -150,7 +159,9 @@ export const useSystemStore = defineStore("system", () => {
 
   return {
     version,
+    commit,
     initialized,
+    demo,
     siteInfo,
     siteCreatedAt,
     personalInfo,

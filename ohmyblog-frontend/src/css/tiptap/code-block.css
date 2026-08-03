@@ -129,8 +129,7 @@
   text-align: left;
   padding: 0.3rem 0.625rem;
   font-size: 0.75rem;
-  font-family:
-    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+  font-family: var(--font-mono);
   color: oklch(0.75 0.04 var(--app-hue));
   background: transparent;
   border: none;
@@ -165,9 +164,7 @@
   background: oklch(0.17 0.015 var(--app-hue));
   border-right: 1px solid rgba(255, 255, 255, 0.05);
   color: oklch(0.45 0.01 var(--app-hue));
-  font-family:
-    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular,
-    Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: var(--font-mono);
   font-size: 0.875rem;
   user-select: none;
   flex-shrink: 0;
@@ -195,9 +192,7 @@
 }
 
 .tiptap code {
-  font-family:
-    "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular,
-    Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: var(--font-mono);
 }
 
 .tiptap pre code {

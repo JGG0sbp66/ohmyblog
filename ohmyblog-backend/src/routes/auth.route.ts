@@ -9,6 +9,7 @@ import {
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
 import { authService } from "../services/auth.service";
+import { DEMO_USER_UUID, isDemoUser } from "../utils/demo";
 import { getClientIp } from "../utils/getClientIp";
 import { isProduction } from "../utils/runtime";
 
@@ -88,6 +89,18 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				async ({ user }) => {
 					if (!user) {
 						throw new BusinessError("未登录或会话已过期", { status: 401 });
+					}
+
+					// 演示模式的虚拟身份在库里查不到，直接返回固定资料，
+					// 否则 getMe 抛 404 会让前端守卫把游客弹回登录页
+					if (isDemoUser(user)) {
+						return {
+							uuid: DEMO_USER_UUID,
+							username: "demo",
+							email: "demo@example.com",
+							role: "admin",
+							isDemo: true,
+						};
 					}
 
 					return await authService.getMe(user.uuid);

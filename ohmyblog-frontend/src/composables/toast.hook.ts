@@ -1,31 +1,10 @@
 // src/composables/toast.hook.ts
-import { h } from "vue";
-import { toast, type ToastContainerOptions } from "vue3-toastify";
-import { CircleCheck, CircleX, Info, TriangleAlert } from "lucide-vue-next";
+import { toast } from "vue-sonner";
 
 /**
- * Toastify 全局配置
+ * 统一 Toast 调用入口
+ * API 形状与原 vue3-toastify 版本保持一致，业务侧无需改动。
  */
-export const toastConfig: ToastContainerOptions = {
-  autoClose: 3000,
-  position: "top-right",
-  theme: "light",
-  icon: ({ type }) => {
-    switch (type) {
-      case "success":
-        return h(CircleCheck);
-      case "error":
-        return h(CircleX);
-      case "info":
-        return h(Info);
-      case "warning":
-        return h(TriangleAlert);
-      default:
-        return null;
-    }
-  },
-};
-
 export const useToast = {
   success: (msg: string) => toast.success(msg),
   error: (msg: string) => toast.error(msg),

@@ -1,6 +1,6 @@
 <!-- src/components/base/button/ButtonSecondary.vue -->
 <script lang="ts" setup>
-import { computed, useSlots } from "vue";
+import { Comment, computed, useSlots } from "vue";
 
 const slots = useSlots();
 
@@ -26,8 +26,14 @@ const props = withDefaults(
   { isActive: false, text: "", disabled: false, gap: "2" },
 );
 
-// 检测是否有插槽内容
-const hasSlot = computed(() => !!slots.default);
+// 检测插槽是否渲染出实际内容：
+// 仅凭 slots.default 存在与否不可靠（父组件 v-if 未命中时插槽仍被声明，
+// 只会渲染出注释占位节点），需过滤 Comment 节点后判断，
+// 否则空插槽容器 + flex gap 会在按钮文字左侧留下空隙。
+const hasSlot = computed(() => {
+  const vnodes = slots.default?.() ?? [];
+  return vnodes.some((vnode) => vnode != null && vnode.type !== Comment);
+});
 
 // 静态基础样式
 const baseClass = `

@@ -118,10 +118,68 @@
       },
       "post": {
         "back": "Back",
-        "notFound": "Post not found or has been removed",
         "untitled": "Untitled",
         "words": "words",
-        "views": "reads"
+        "views": "reads",
+        "toc": {
+          "label": "Table of contents",
+          "backToTop": "Back to top"
+        }
+      },
+      "notFound": {
+        "archiveNo": "Archive #{code}",
+        "stampSubtext": "VOID",
+        "backHome": "Back to home",
+        "backPrev": "Go back",
+        "sources": [
+          "Source unverified · Last edited “never”",
+          "Author account deleted · Revision history empty",
+          "Created 00:00 · Deleted 00:00",
+          "Word count failed · Reading time approx. “forever”",
+          "No tags · Filed under “misc. of misc.”",
+          "Proofreader: none · Review note “think it over”",
+          "A backup exists · but the backup is an empty file",
+          "Once filed under “to be sorted” · still unsorted",
+          "Last visit: not yet · Next visit: expired"
+        ],
+        "ghosts": [
+          {
+            "title": "The Region Marked Blank on the Map",
+            "body": "This piece once tried to argue that blank space and omission carry more than language itself — until the author concluded that the finest proof would be for the piece to vanish on its own."
+          },
+          {
+            "title": "A Table of Contents Never Sent",
+            "body": "This piece was meant to lay out a list, but the first entry was never finished, and without it the rest lost any reason to exist."
+          },
+          {
+            "title": "A Note Revised One Time Too Many",
+            "body": "Every revision made the previous version look less accurate, until the latest one decided it would be better to say nothing at all."
+          },
+          {
+            "title": "Written Tomorrow, Published Yesterday",
+            "body": "This piece set out to examine temporal dislocation, and in the process mislaid the very moment it was supposed to appear."
+          },
+          {
+            "title": "Draft Seven",
+            "body": "The first six were all judged “not yet the right time.” This one decided to stop waiting, and skipped publication instead."
+          },
+          {
+            "title": "For Whoever Just Opened This Link",
+            "body": "This piece exists entirely because you clicked it — and by the time you did, it had already decided to leave."
+          },
+          {
+            "title": "A Passage That Could Have Been Shorter",
+            "body": "The author only ever meant to say one sentence, and somewhere along the way decided that even that one was unnecessary."
+          },
+          {
+            "title": "Latitude Blank, Longitude Blank",
+            "body": "This is a piece about “here.” Unfortunately “here,” upon verification, does not exist."
+          },
+          {
+            "title": "Memory, Still Loading",
+            "body": "This piece has been stuck at “generating” for so long that it no longer remembers what it meant to say."
+          }
+        ]
       },
       "archive": {
         "empty": "No posts yet",
@@ -167,6 +225,13 @@
       }
     },
     "admin": {
+      "demoModal": {
+        "title": "Demo mode",
+        "description": "You are browsing a demo site. Every admin page is free to explore and try out.",
+        "hint": "Creating, editing and deleting are rejected, so feel free to click around — nothing you do here changes any data.",
+        "confirm": "Got it",
+        "mute": "Don't show again"
+      },
       "Posts": {
         "filter": {
           "all": "All",
@@ -367,6 +432,19 @@
           "contentLabel": "Content",
           "contentPlaceholder": "Write your thoughts here...",
           "save": "Save Draft"
+        },
+        "systemInfo": {
+          "title": "System Info",
+          "description": "Current running version info",
+          "version": "Version",
+          "commit": "Commit",
+          "uptime": "Uptime",
+          "uptimeValue": "{days} days",
+          "checkUpdate": "Check for updates",
+          "upToDate": "You're running the latest version",
+          "updateAvailable": "Version v{version} is available",
+          "viewRelease": "View update",
+          "checkFailed": "Unable to check for updates. Try again later"
         }
       },
       "PostEditor": {
@@ -906,6 +984,7 @@
       "获取个性化配置失败": "Failed to fetch personalization info",
       "用户名或邮箱已被注册": "Username or email is already registered",
       "未登录或会话已过期": "Not logged in or session expired",
+      "演示模式下不可修改数据": "This is a read-only demo — changes are not allowed",
       "\"body.icon\" has invalid file type": "Invalid icon file type",
       "\"body.avatar\" has invalid file type": "Invalid avatar file type",
       "\"body.hero\" has invalid file type": "Invalid hero image file type",

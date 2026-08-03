@@ -3,9 +3,18 @@
 
 /* 映射层 将主题映射给 Tailwind */
 @theme {
+  /* 全站过渡时长的唯一来源
+     Tailwind 的 transition-* 工具类编译为
+     transition-duration: var(--tw-duration, var(--default-transition-duration))
+     所以改这里能让所有没写 duration-* 的过渡一起对齐（Tailwind 默认 150ms） */
+  --default-transition-duration: 200ms;
+
   /* --- 全局字体设置 --- */
   --font-sans:
     "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "sans-serif";
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Courier New", monospace;
 
   /* 按钮颜色：强调、交互重点 */
   --color-accent: var(--theme-accent);
@@ -32,13 +41,44 @@
 
 /* --- 主题定义层 --- */
 
+/*
+  把 --app-hue 注册成 <number>，浏览器才会对它做补间。
+
+  这是全站换色动画同步的关键：所有语义色都由这一个数推导，
+  只要这个数在动，派生出的每个颜色就天然同步 —— 组件本身
+  不需要写任何颜色过渡，也不会因为各自时长不同而错拍。
+
+  必须放在 @layer 之外（@property 不能嵌在层里）。
+*/
+@property --app-hue {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 250;
+}
+
 /* 1. 基础变量与默认值 */
 :root {
-  /* 
-       默认 Hue (兜底用，JS 加载后会覆盖它) 
+  /*
+       默认 Hue (兜底用，JS 加载后会覆盖它)
        250 = 蓝色
     */
   --app-hue: 250;
+
+  /*
+       拖拽滑块时的短补间时长
+       JS 侧的压制窗口按它推算，改这里就够
+    */
+  --theme-hue-live-duration: 100ms;
+
+  /*
+       换主题期间仍然允许过渡的属性
+       即下方全局列表里剔除掉所有承载颜色的那些，外加组件常用的布局属性，
+       避免压制期间把别人正在跑的展开/位移动画掐断
+    */
+  --theme-shift-keep:
+    opacity, stop-opacity, transform, scale, translate, rotate, width, height,
+    grid-template-rows, grid-template-columns, padding, margin,
+    stroke-dashoffset;
 
   /* 
        统一的主色调生成逻辑 (使用 OKLCH)
@@ -125,12 +165,18 @@
   *,
   ::after,
   ::before {
-    /* 统一的全局过渡：200ms，包含常用属性 */
+    /* 统一的全局过渡：服务于 hover / focus 等交互态
+       主题换色的同步不依赖这里，由 --app-hue 的补间负责（见文件末尾）
+
+       注意不要把 width 放回来：它是这份列表里唯一会触发 layout 的属性，
+       任意宽度变化都会被拖成 200ms 的布局动画，还会唤醒 auto-animate
+       挂在 documentElement 上的 ResizeObserver。真正需要宽度动画的组件
+       自己写了 transition-[width] */
     transition-property:
       color, background-color, border-color, fill, stroke, stop-color, opacity,
-      stop-opacity, transform, scale, box-shadow, width;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+      stop-opacity, transform, scale, box-shadow;
+    transition-timing-function: var(--default-transition-timing-function);
+    transition-duration: var(--default-transition-duration);
   }
 }
 
@@ -143,14 +189,64 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* --- 主题切换的动画驱动 --- */
+
+/*
+  离散改色（预设按钮、远端配置同步）挂 .hue-animating：完整 200ms 扫掠
+*/
+html.hue-animating {
+  transition: --app-hue var(--default-transition-duration)
+    var(--default-transition-timing-function);
+}
+
+/*
+  拖拽滑块挂 .hue-animating-live：100ms 的轻微追随。
+  短到不会让人觉得页面在追手，又足以磨掉逐帧的台阶感。
+
+  刻意用 linear 而不是缓动：拖拽时每一帧都会重定目标，
+  ease-out 那种「先快后慢」叠在连续重定向上会显得发飘。
+*/
+html.hue-animating-live {
+  transition: --app-hue var(--theme-hue-live-duration) linear;
+}
+
 @layer utilities {
-  /* 禁用文字颜色过渡的工具类（主题切换时使用，避免黑白闪烁） */
-  .no-color-transition,
-  .no-color-transition *,
-  .no-color-transition ::before,
-  .no-color-transition ::after {
-    transition-property:
-      background-color, border-color, fill, stroke, stop-color, opacity,
-      stop-opacity, transform, scale, box-shadow, width !important;
+  /*
+    换主题期间压掉每个元素自己的颜色过渡。
+
+    不压的话，元素会各按自己的时长去「追」--app-hue 的插值：
+    既重新制造不同步，也让浏览器每帧重启整棵树的过渡 —— 这正是
+    拖拽卡顿的主因。
+
+    两点讲究：
+    - html 自身不被 `html.theme-shifting *` 命中，所以上面的
+      --app-hue 补间不会被这里连带清掉
+    - 必须 !important：本选择器只有 (0,1,1) 特异度，组件侧的
+      Tailwind 工具类和 Vue <style scoped>（编译成 .x[data-v-xxx]）
+      都比它高，只有 important 声明压得住
+  */
+  html.theme-shifting *,
+  html.theme-shifting ::before,
+  html.theme-shifting ::after {
+    transition-property: var(--theme-shift-keep) !important;
+  }
+}
+
+/* 深浅色切换：整页一次交叉淡入，天然同步，且只有一层合成开销 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--default-transition-duration);
+  animation-timing-function: var(--default-transition-timing-function);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.hue-animating,
+  html.hue-animating-live {
+    transition: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }
