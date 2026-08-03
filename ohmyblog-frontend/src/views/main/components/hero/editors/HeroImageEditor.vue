@@ -6,6 +6,7 @@ import { RiImageAddFill } from "@remixicon/vue";
 import Loading from "@/components/common/item/Loading.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useImageUpload } from "@/composables/upload.hook";
+import { UPLOAD_LIMITS } from "@/api/shared";
 import { uploadHero } from "@/api/upload.api";
 import { upsertConfig } from "@/api/config.api";
 import { useSystemStore } from "@/stores/system.store";
@@ -52,6 +53,7 @@ const handleFileChange = (file: File) => {
         useToast.error(t("api.errors.获取个性化配置失败"));
       }
     },
+    UPLOAD_LIMITS.hero,
   );
 };
 </script>

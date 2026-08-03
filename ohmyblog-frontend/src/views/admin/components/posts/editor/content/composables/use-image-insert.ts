@@ -2,8 +2,10 @@
 import type { Editor } from "@tiptap/core";
 import router from "@/router";
 import { uploadPostImage } from "@/api/upload.api";
+import { UPLOAD_LIMITS } from "@/api/shared";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
+import { checkImageSize } from "@/composables/upload.hook";
 
 /**
  * useImageInsert — 文章插图「上传 + 插入」单一真源
@@ -22,6 +24,10 @@ export function useImageInsert() {
 
   /** 上传单个图片文件，成功后插入到当前光标位置 */
   const uploadAndInsert = (editor: Editor, file: File) => {
+    // 粘贴/拖拽进来的往往是未压缩的原图，先本地拦一道，
+    // 避免把几十 MB 传完才被后端拒绝
+    if (!checkImageSize(file, UPLOAD_LIMITS.postImage)) return;
+
     const uuid = router.currentRoute.value.params.uuid as string;
     uploadPostImage(uuid, { image: file })
       .then((result) => {

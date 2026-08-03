@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useLang } from "@/composables/lang.hook";
 import { useImageUpload } from "@/composables/upload.hook";
+import { UPLOAD_LIMITS } from "@/api/shared";
 import { uploadSocialIcon } from "@/api/upload.api";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
@@ -55,6 +56,7 @@ const handleFileChange = async (file: File, mode: "light" | "dark") => {
           : { iconDark: urlWithTimestamp };
       emit("update", props.id, updateData);
     },
+    UPLOAD_LIMITS.socialIcon,
   );
 };
 </script>

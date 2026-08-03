@@ -2,7 +2,27 @@
 import { ref } from "vue";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
+import { uploadLimitMessage } from "@/api/shared";
 import type ImageUpload from "@/components/base/upload/ImageUpload.vue";
+
+/**
+ * 上传前的大小预校验
+ *
+ * 后端 DTO 同样会拦（那才是硬边界），这里只是省掉把超限文件整个传完
+ * 才被拒绝的等待。文案由 uploadLimitMessage 派生，与后端返回的完全一致，
+ * 所以两条路径命中的是同一个 i18n 词条。
+ *
+ * @param file 待上传文件
+ * @param maxSize 大小上限（字节），取自 UPLOAD_LIMITS
+ * @returns 通过校验返回 true；超限则弹出提示并返回 false
+ */
+export function checkImageSize(file: File, maxSize: number): boolean {
+  if (file.size <= maxSize) return true;
+
+  const { t } = useLang();
+  useToast.error(t(`api.errors.${uploadLimitMessage(maxSize)}`));
+  return false;
+}
 
 /**
  * 通用图片上传逻辑 Hook
@@ -39,12 +59,16 @@ export function useImageUpload() {
    * @param file 待上传的文件
    * @param apiFn 对应的 API 调用函数 (如 uploadAvatar)
    * @param onSuccess 上传成功后的回调，接收带时间戳的 URL (用于更新 Store)
+   * @param maxSize 大小上限（字节），取自 UPLOAD_LIMITS，超限直接本地拦下不发请求
    */
   const handleUpload = async (
     file: File,
     apiFn: (file: File) => Promise<{ url: string; message?: string } | null>,
     onSuccess: (urlWithTimestamp: string) => void,
+    maxSize: number,
   ) => {
+    if (!checkImageSize(file, maxSize)) return;
+
     try {
       loading.value = true;
       // 执行 API 请求，获取后端返回的数据

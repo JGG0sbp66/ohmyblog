@@ -45,3 +45,12 @@ export type {
 } from "@server/db/constants/config.constants";
 
 export type { TResetPasswordDTO as ForgotPasswordForm } from "@server/dtos/auth.dto";
+
+// 4. 上传相关
+export {
+  uploadLimits as UPLOAD_LIMITS,
+  formatUploadLimit,
+  uploadLimitMessage,
+} from "@server/db/constants/upload.constants";
+
+export type { TUploadKind } from "@server/db/constants/upload.constants";

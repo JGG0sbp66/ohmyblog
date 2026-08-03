@@ -4,6 +4,7 @@ import { useSystemStore } from "@/stores/system.store";
 import { useAuthStore } from "@/stores/auth.store";
 import { useTheme } from "@/composables/theme.hook";
 import { useImageUpload } from "@/composables/upload.hook";
+import { UPLOAD_LIMITS } from "@/api/shared";
 import { uploadAvatar } from "@/api/upload.api";
 import { upsertConfig } from "@/api/config.api";
 import { useLang } from "@/composables/lang.hook";
@@ -54,6 +55,7 @@ const handleFileChange = (file: File) => {
         useToast.error(t("api.errors.获取个性化配置失败"));
       }
     },
+    UPLOAD_LIMITS.avatar,
   );
 };
 </script>
