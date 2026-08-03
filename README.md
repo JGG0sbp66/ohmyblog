@@ -140,34 +140,60 @@ bun run dev
 
 > 镜像会同时打包前后端，后端通过 Elysia 挂载前端静态文件。
 
-**方式一：从 GitHub Container Registry 拉取（推荐）**
+**方式一：Docker Compose（推荐）**
+
+仓库根目录已提供 `docker-compose.yml`，环境变量和数据卷都有详细注释：
 
 ```bash
-docker run --rm -p 3000:3000 ghcr.io/jgg0sbp66/ohmyblog:latest
+docker compose up -d
 ```
 
-**方式二：本地构建镜像**
+访问 <http://localhost:3000> 即可打开前台页面，首次访问会自动进入 `/setup` 初始化向导。
+
+**方式二：从 GitHub Container Registry 拉取**
 
 ```bash
-# 进入后端目录
+docker run -d -p 3000:3000 -v ohmyblog-data:/app/data \
+  ghcr.io/jgg0sbp66/ohmyblog:latest
+```
+
+> `-v` 不能省。所有数据（SQLite、上传的图片、自动生成的 `JWT_SECRET`）都在 `/app/data` 下，不挂卷的话容器一删就全没了。
+
+**方式三：本地构建镜像**
+
+```bash
 cd ohmyblog-backend
-
-# 构建镜像（使用 scripts/Dockerfile）
-bun run docker
+bun run docker   # 使用 scripts/Dockerfile，build context 是仓库根目录
+docker run -d -p 3000:3000 -v ohmyblog-data:/app/data ohmyblog
 ```
+
+### 🎭 演示模式
+
+设置 `DEMO_MODE=true` 可以把实例变成**只读演示站**：游客不用登录就能进 `/admin` 浏览完整后台（文章列表、编辑器、友链、邮件、设置），但所有写操作一律被拒绝。
 
 ```bash
-# 运行镜像
-docker run --rm -p 3000:3000 ohmyblog
+docker run -d -p 3001:3000 -v ohmyblog-demo-data:/app/data \
+  -e DEMO_MODE=true ghcr.io/jgg0sbp66/ohmyblog:latest
 ```
 
-访问 <http://localhost:3000> 即可打开前台页面。
+或用 compose 部署时，把 `docker-compose.yml` 里的 `DEMO_MODE` 改成 `"true"`。
+
+跑独立二进制的话，改 `data/.env` 里的 `DEMO_MODE` 即可（只有字面量 `true` / `1` 会打开，其他值一律视为关闭）。
+
+几点说明：
+
+- **不影响初始化。** 系统还没有管理员时演示限制完全不生效，可以照常走完 `/setup` 向导；建出第一个管理员后自动切换为只读。
+- **站长不受限。** 用真实账号登录后写操作全部恢复正常，演示横幅也会消失。
+- **没有可窃取的凭证。** 游客拿到的虚拟管理员身份不会签发 JWT、不下发 cookie，只是每次请求在内存里算出来的，无法被伪造或重放；`DEMO_MODE` 关闭时这条分支根本不会执行。
+- **仍会放行的写操作**：登录、登出，以及前台的友链申请（属于要演示的功能）。
+- **SMTP 配置（含密码）对游客不可见**，但邮件日志里的收件人地址和正文可见——演示库请用假数据，不要拿正式库的副本。
 
 ## 🧱 项目结构
 
 ```text
 ohmyblog/
 ├── img/                 # README 预览图
+├── docker-compose.yml   # 部署编排
 ├── ohmyblog-backend/    # 后端 API 服务
 └── ohmyblog-frontend/   # 前端 Web 应用
 ```

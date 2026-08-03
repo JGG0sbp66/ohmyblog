@@ -86,6 +86,18 @@ bun run type-check 2>&1 | grep '^src/'
 
 `biome.json` 里 `noNonNullAssertion` 被刻意关掉：`beforeHandle` 保证了 handler 里 `user!` 是安全的，Biome 静态分析看不出来（详见后端 README）。
 
+### 演示模式（DEMO_MODE）
+
+`DEMO_MODE` 是与 `NODE_ENV` **正交**的布尔开关（演示站本身也是 `production` 部署，只是额外禁写），不要把它做成第三个 `NODE_ENV` 值——`isProduction()` 控制着 cookie 的 `secure`/`sameSite`、SQL 日志、OpenAPI 挂载，改动 `NODE_ENV` 的取值域会连带影响这些。
+
+- `utils/demo.ts`：`isDemoActive()` = 开关打开 **且** 已有 admin（语义对齐 `ensureAdminIfExists`，系统未初始化时演示限制整个不生效，setup 向导照常可用）。`auth.plugin.ts` 的 derive 在无有效 token 时据此注入虚拟管理员 `__demo__`，于是所有 `ensureAdminIfExists` 路由对游客可读，**route 文件一行都不用改**
+- `plugins/demo.plugin.ts`：全局 `onBeforeHandle` 按 **HTTP 方法** 拦截写操作，不是维护写接口清单。**新增写路由不需要来这里登记，默认就被挡住**；反过来说，要放行必须显式加进 `DEMO_ALLOWED_PATHS`
+- 虚拟身份只存在于单次请求的 context，不签 JWT、不下发 cookie，没有可窃取或伪造的凭证
+- `config.route.ts` 里 `isAdmin` 额外排除了演示身份，避免游客读到 `isPublic: false` 的 smtp 配置（含密码）
+- `/api/health` 返回的 `demo` 是**生效值**（开关 && 已初始化），前端直接拿它决定要不要显示演示横幅
+
+藏在 GET 后面的写操作（`GET /api/email/logs/:uuid/preview` 的标记已读、公开文章的访问量累加）不受这道闸门约束——这是有意的，但新增此类接口时要意识到演示模式挡不住它。
+
 ### 文章内容管线
 
 编辑器在**前端**导出三份数据（`PostEditorBody.vue`），后端原样存储、不做转换：
