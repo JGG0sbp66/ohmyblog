@@ -122,6 +122,11 @@ watch(
       return;
     }
     const ed = editor.value;
+    // TODO [风险7 - 清空外部正文同步边界]: newVal 为 falsy（undefined / null / 空对象）时直接 return，
+    //   不会调用 setContent。若父组件有意将正文清空（比如"清空内容"操作），
+    //   编辑器内部仍保留上一次的内容，形成前后端状态不一致。
+    //   修复方向：区分"外部尚未加载"（undefined）和"外部主动清空"（空对象 {}）两种情况，
+    //   后者应调用 ed.commands.clearContent()。
     if (!ed || !newVal) return;
     ed.commands.setContent(newVal, { emitUpdate: false });
     // 外部 setContent 不会触发 onUpdate，需要主动同步一次字数统计

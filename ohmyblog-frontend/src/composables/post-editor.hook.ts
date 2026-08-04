@@ -89,6 +89,11 @@ export const usePostEditor = () => {
       // 标题变化时自动同步 slug：
       // - slug 为空，或 slug 仍等于上次自动生成的值 → 继续同步（用户一直在打标题）
       // - slug 与上次生成值不同 → 说明用户手动修改过，停止同步
+      // TODO [风险4 - Slug 覆盖]: 加载文章时把后端返回的 slug 直接当作 lastAutoSlug 初始值。
+      //   若该 slug 是用户之前手动定制的，修改标题时 `slug === lastAutoSlug` 条件成立，
+      //   会把手动 slug 覆盖成新的自动生成值。
+      //   修复方向：加载时用一个单独标志 `isSlugCustomized` 记录 slug 是否已被人工编辑过，
+      //   若是则跳过标题联动逻辑。
       let lastAutoSlug = slug.value; // 记录上次自动生成的 slug
       watch(title, (newTitle) => {
         if (slug.value === "" || slug.value === lastAutoSlug) {
@@ -96,6 +101,12 @@ export const usePostEditor = () => {
           slug.value = lastAutoSlug;
         }
       });
+      // TODO [风险3 - 封面不触发自动保存]: coverImage 已经出现在下方的 watchDebounced 监听数组里，
+      //   但它不在上面设置 isDirty = true 的 watch 数组 [slug, tags, status, title, content, excerpt, pinned] 中。
+      //   若用户只修改封面而不改其他字段，isDirty 保持 false，autoSave 开头的 `if (!isDirty.value) return`
+      //   会直接跳过，封面变更不会被自动保存。
+      //   修复方向：把 coverImage 加入 isDirty 监听数组，或在 coverImage watch 回调里单独设 isDirty = true。
+
       // title/content 防抖自动保存
       watchDebounced(
         [
@@ -110,7 +121,7 @@ export const usePostEditor = () => {
           pinned,
         ],
         () => {
-            // TODO: 这里的自动保存监听可能还不完整；例如 status 变更走的是独立发布接口，历史上也可能有其它渐进式新增字段没接进来，需要后面统一复查一次自动保存覆盖面。
+          // TODO [已有注释]: 这里的自动保存监听可能还不完整；例如 status 变更走的是独立发布接口，历史上也可能有其它渐进式新增字段没接进来，需要后面统一复查一次自动保存覆盖面。
           if (!isDirty.value) return;
           autoSave();
         },
@@ -123,7 +134,7 @@ export const usePostEditor = () => {
     slug: slug.value || undefined,
     tags: tags.value,
     title: title.value || undefined,
-      // TODO: 这里要补空标题 + 已发布的兜底校验；如果标题为空且状态改成已发布，slug 可能为空，前台文章就会因为找不到可访问地址而无法打开。
+    // TODO [已有注释]: 这里要补空标题 + 已发布的兜底校验；如果标题为空且状态改成已发布，slug 可能为空，前台文章就会因为找不到可访问地址而无法打开。
     content: content.value,
     contentText: contentText.value || undefined,
     contentHtml: contentHtml.value || undefined,
@@ -136,6 +147,10 @@ export const usePostEditor = () => {
     // 演示模式：写操作必被后端拒绝，而防抖自动保存每 2 秒就会触发一次，
     // 不在源头拦住的话游客一打字就会持续弹错。静默跳过，不打扰阅读
     if (authStore.isDemoUser) return;
+    // TODO [风险1 - 自动保存竞态]: isSaving 为 true 时直接跳过本轮触发，但旧请求成功返回后会无条件
+    //   设置 isDirty = false，而用户在这段时间里做的新修改并未被保存。
+    //   修复方向：引入"保存中产生了新脏数据"标志，请求完成后若为 true 则立刻再触发一次保存，
+    //   或改用队列/版本号机制确保最后一次修改一定能落盘。
     if (isSaving.value) return;
     isSaving.value = true;
     try {
@@ -165,6 +180,11 @@ export const usePostEditor = () => {
     if (isSaving.value) return;
     isSaving.value = true;
     try {
+      // TODO [风险2 - 手动保存部分成功]: 两个请求通过 Promise.all 并行执行。
+      //   若 savePost 成功而 updatePostStatus 失败（或反之），catch 只能捕获整体失败并弹出提示，
+      //   但服务端已经产生了部分修改——内容或状态只有一个被更新。
+      //   修复方向：改用顺序执行（先内容后状态），或分别 try/catch 并在 UI 上明确提示哪一步失败，
+      //   让用户知道需要重试的是哪部分。
       await Promise.all([
         savePost(uuid, buildSavePayload()),
         updatePostStatus(uuid, status.value),

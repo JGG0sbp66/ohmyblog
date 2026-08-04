@@ -8,6 +8,11 @@ import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostE
 import { usePostEditor } from "@/composables/post-editor.hook";
 import { useIsMobile } from "@/composables/breakpoint.hook";
 
+// TODO [风险5 - 无离开页面保护]: 未发现 onBeforeRouteLeave 或 window.beforeunload 守卫。
+//   若 isDirty 为 true（有未保存内容）或 isSaving 为 true（保存进行中）时用户关闭页面或切换路由，
+//   当前编辑内容将无声丢失。
+//   修复方向：在此处或 usePostEditor 内添加 onBeforeRouteLeave，当 isDirty 为 true 时
+//   弹出确认对话框；同时注册 window.addEventListener('beforeunload', ...) 防止浏览器关闭。
 const isMobile = useIsMobile();
 const showSettings = ref(!isMobile.value);
 const totalCharCount = ref(0);
@@ -39,6 +44,10 @@ const settingsPanelStyle = computed(() => ({
 }));
 
 // 手机端默认收起设置，切换回桌面端时恢复常驻面板。
+// TODO [风险8 - 移动端布局]: settingsPanelStyle 在桌面端固定 18rem，手机端已有覆盖式抽屉，
+//   但编辑区域本身（PostEditorContent / PostEditorBody）目前没有针对小屏的专项调整，
+//   气泡菜单、块拖拽手柄和表格控件在窄屏下的点击区域和浮层定位可能存在遮挡或溢出问题。
+//   修复方向：在各菜单子组件里加入宽度断点判断，或为 < 768px 场景做专属精简工具栏。
 watch(isMobile, (mobile) => {
   showSettings.value = !mobile;
 });

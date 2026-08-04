@@ -29,6 +29,11 @@ export function useImageInsert() {
     if (!checkImageSize(file, UPLOAD_LIMITS.postImage)) return;
 
     const uuid = router.currentRoute.value.params.uuid as string;
+    // TODO [风险6 - 图片插入位置]: uploadPostImage 是异步的，但这里没有在上传开始时记录光标位置
+    //   （editor.state.selection 的快照）。上传期间用户移动光标或继续编辑后，
+    //   图片会通过 editor.chain().focus().setImage() 插入到新的光标位置，而非粘贴/拖拽时所在的位置。
+    //   修复方向：在调用 uploadPostImage 之前，通过 insertContentAt 配合提前捕获的位置（pos）插入，
+    //   或先在光标处插入一个占位节点，上传完成后替换。
     uploadPostImage(uuid, { image: file })
       .then((result) => {
         if (!result?.url) return;
