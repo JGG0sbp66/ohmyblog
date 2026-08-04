@@ -56,6 +56,8 @@ export const usePostEditor = () => {
   /** 加载已有文章数据并填充表单 */
   const loadPost = async () => {
     isLoading.value = true;
+    // 这篇文章是否公开过。决定标题还能不能联动 slug，见下方 watch(title)
+    let hasBeenPublished = false;
     try {
       // 演示模式的虚拟草稿：后端没有这条记录，跳过加载直接给空白编辑器。
       // 这里 return 不影响 finally 里的 watcher 装配
@@ -73,6 +75,9 @@ export const usePostEditor = () => {
       excerpt.value = post.excerpt ?? "";
       // 时间戳 → 布尔：非空即置顶。转换边界只此一处，表单层只跟布尔打交道
       pinned.value = post.pinnedAt != null;
+      // 「首次发布才记录 publishedAt，重新发布不覆盖」（post.service.ts updateStatus），
+      // 所以发布后又转回草稿的文章这里仍为 true —— 它的 URL 早已被索引过
+      hasBeenPublished = post.publishedAt != null;
     } catch {
       useToast.error("加载文章失败");
     } finally {
@@ -87,25 +92,26 @@ export const usePostEditor = () => {
         { deep: true },
       );
       // 标题变化时自动同步 slug：
-      // - slug 为空，或 slug 仍等于上次自动生成的值 → 继续同步（用户一直在打标题）
-      // - slug 与上次生成值不同 → 说明用户手动修改过，停止同步
-      // TODO [风险4 - Slug 覆盖]: 加载文章时把后端返回的 slug 直接当作 lastAutoSlug 初始值。
-      //   若该 slug 是用户之前手动定制的，修改标题时 `slug === lastAutoSlug` 条件成立，
-      //   会把手动 slug 覆盖成新的自动生成值。
-      //   修复方向：加载时用一个单独标志 `isSlugCustomized` 记录 slug 是否已被人工编辑过，
-      //   若是则跳过标题联动逻辑。
+      // - 从未公开过 → 继续联动（草稿的地址没人见过，随便改）
+      // - 已公开过（publishedAt 非空）→ 锁定，标题再改也不动 slug
+      // - 联动途中 slug 被手动改动（不再等于上次自动生成值）→ 停止联动
+      //
+      // 只锁公开过的，是因为换 slug 等于换前台 URL，代价很实在：RSS 条目的 GUID
+      // 就是 slug 拼出来的 URL（feed.service.ts），改一次订阅者就被重复推送一次；
+      // 老链接没有任何 301 兜底，sitemap 交给搜索引擎的地址也会一并失效。
+      // 草稿没有这些顾虑，不该被连坐。
       let lastAutoSlug = slug.value; // 记录上次自动生成的 slug
       watch(title, (newTitle) => {
+        if (hasBeenPublished) return;
         if (slug.value === "" || slug.value === lastAutoSlug) {
           lastAutoSlug = limax(newTitle);
           slug.value = lastAutoSlug;
         }
       });
-      // TODO [风险3 - 封面不触发自动保存]: coverImage 已经出现在下方的 watchDebounced 监听数组里，
-      //   但它不在上面设置 isDirty = true 的 watch 数组 [slug, tags, status, title, content, excerpt, pinned] 中。
-      //   若用户只修改封面而不改其他字段，isDirty 保持 false，autoSave 开头的 `if (!isDirty.value) return`
-      //   会直接跳过，封面变更不会被自动保存。
-      //   修复方向：把 coverImage 加入 isDirty 监听数组，或在 coverImage watch 回调里单独设 isDirty = true。
+      // coverImage 刻意不在上面的 isDirty 数组里：它的唯一变更路径是
+      // PostEditorCoverSetting 上传成功后直接调 savePost 落库（ImageUpload 只
+      // emit change(file)，没有清空入口），封面当场就存下了。再让它触发 isDirty
+      // 只会换来一次多余的全量自动保存，外加状态栏闪一下「未保存」。
 
       // title/content 防抖自动保存
       watchDebounced(
@@ -134,7 +140,6 @@ export const usePostEditor = () => {
     slug: slug.value || undefined,
     tags: tags.value,
     title: title.value || undefined,
-    // TODO [已有注释]: 这里要补空标题 + 已发布的兜底校验；如果标题为空且状态改成已发布，slug 可能为空，前台文章就会因为找不到可访问地址而无法打开。
     content: content.value,
     contentText: contentText.value || undefined,
     contentHtml: contentHtml.value || undefined,
