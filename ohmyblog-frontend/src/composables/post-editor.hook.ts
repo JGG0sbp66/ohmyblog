@@ -182,6 +182,14 @@ export const usePostEditor = () => {
       useToast.error(t("api.errors.演示模式下不可修改数据"));
       return;
     }
+    // 发布前兜底：前台详情页按 slug 查文章（post.service.ts 的 getBySlug），
+    // slug 为空就永远查不到，等于发上去一篇打不开的文章。slug 由标题派生，
+    // 标题为空时通常也拿不到 slug；标题只含符号 / emoji 时 limax 同样会返回空串。
+    // 后端 updateStatus 只维护状态与时间戳、不做这项校验，所以拦在这里。
+    if (status.value === "published" && !slug.value.trim()) {
+      useToast.error(t("views.admin.PostEditor.validation.slugRequired"));
+      return;
+    }
     if (isSaving.value) return;
     isSaving.value = true;
     try {

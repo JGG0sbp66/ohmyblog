@@ -455,6 +455,9 @@
           "save": "Save",
           "stats": "Selected {selected} / Total {total}"
         },
+        "validation": {
+          "slugRequired": "Please set a title or permalink before publishing"
+        },
         "settingsPanel": {
           "title": "Post Settings",
           "close": "Close post settings",

@@ -453,6 +453,9 @@
           "save": "保存",
           "stats": "选中 {selected} / 全文 {total} 字"
         },
+        "validation": {
+          "slugRequired": "发布前请先填写标题或永久链接"
+        },
         "settingsPanel": {
           "title": "文章设置",
           "close": "关闭文章设置",
