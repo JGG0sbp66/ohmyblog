@@ -458,6 +458,12 @@
         "validation": {
           "slugRequired": "Please set a title or permalink before publishing"
         },
+        "leaveConfirm": {
+          "title": "Leave Post Editor",
+          "question": "This post has unsaved changes. Leave anyway?",
+          "warning": "Unsaved changes will be lost and cannot be recovered",
+          "confirm": "Discard and Leave"
+        },
         "settingsPanel": {
           "title": "Post Settings",
           "close": "Close post settings",

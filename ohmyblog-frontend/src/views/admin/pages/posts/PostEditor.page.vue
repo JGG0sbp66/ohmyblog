@@ -7,12 +7,10 @@ import PostEditorContent from "@/views/admin/components/posts/editor/PostEditorC
 import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostEditorSettingsPanel.vue";
 import { usePostEditor } from "@/composables/post-editor.hook";
 import { useIsMobile } from "@/composables/breakpoint.hook";
+import ConfirmModal from "@/components/base/pop/ConfirmModal.vue";
+import { useLang } from "@/composables/lang.hook";
 
-// TODO [风险5 - 无离开页面保护]: 未发现 onBeforeRouteLeave 或 window.beforeunload 守卫。
-//   若 isDirty 为 true（有未保存内容）或 isSaving 为 true（保存进行中）时用户关闭页面或切换路由，
-//   当前编辑内容将无声丢失。
-//   修复方向：在此处或 usePostEditor 内添加 onBeforeRouteLeave，当 isDirty 为 true 时
-//   弹出确认对话框；同时注册 window.addEventListener('beforeunload', ...) 防止浏览器关闭。
+const { t } = useLang();
 const isMobile = useIsMobile();
 const showSettings = ref(!isMobile.value);
 const totalCharCount = ref(0);
@@ -32,6 +30,9 @@ const {
   isSaving,
   isDirty,
   save,
+  showLeaveConfirm,
+  confirmLeave,
+  cancelLeave,
 } = usePostEditor();
 
 const settingsPanelStyle = computed(() => ({
@@ -108,5 +109,18 @@ watch(isMobile, (mobile) => {
         @close="showSettings = false"
       />
     </div>
+
+    <!-- 有未保存内容时离开本页的确认弹窗，由 usePostEditor 的路由守卫驱动。
+         关闭弹窗（遮罩 / ESC）等同于取消，守卫必须拿到结果才会放行 -->
+    <ConfirmModal
+      :model-value="showLeaveConfirm"
+      :title="t('views.admin.PostEditor.leaveConfirm.title')"
+      :question="t('views.admin.PostEditor.leaveConfirm.question')"
+      :warning="t('views.admin.PostEditor.leaveConfirm.warning')"
+      :confirm-text="t('views.admin.PostEditor.leaveConfirm.confirm')"
+      confirm-class="bg-red-500 hover:bg-red-600"
+      @update:model-value="cancelLeave"
+      @confirm="confirmLeave"
+    />
   </BaseCard>
 </template>

@@ -456,6 +456,12 @@
         "validation": {
           "slugRequired": "发布前请先填写标题或永久链接"
         },
+        "leaveConfirm": {
+          "title": "离开文章编辑器",
+          "question": "这篇文章还有内容没有保存，确定要离开吗？",
+          "warning": "未保存的修改将会丢失，且无法恢复",
+          "confirm": "放弃修改并离开"
+        },
         "settingsPanel": {
           "title": "文章设置",
           "close": "关闭文章设置",

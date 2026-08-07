@@ -1,6 +1,6 @@
 // src/composables/post-editor.hook.ts
-import { onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { watchDebounced } from "@vueuse/core";
 import limax from "limax";
 import type { TPostStatus } from "@server/db/constants/post.constants";
@@ -211,9 +211,61 @@ export const usePostEditor = () => {
     }
   };
 
+  // --- 离开保护 ---
+  //
+  // 自动保存是 2 秒防抖 + 8 秒 maxWait，「刚打完字就切走」这段窗口里内容还在内存里；
+  // isSaving 期间请求也可能还没落库。这两种情况下离开页面，内容就没了。
+  //
+  // 演示模式不拦：写操作必被后端拒绝，autoSave 在源头就 return 了，isDirty 一旦
+  // 变 true 再也回不去——不排除的话游客点一下就被弹窗糊脸。
+  /** 是否有内容还没落库 */
+  const hasUnsaved = () =>
+    !authStore.isDemoUser && (isDirty.value || isSaving.value);
+
+  /** 离开确认弹窗的显示状态，由页面组件渲染 ConfirmModal */
+  const showLeaveConfirm = ref(false);
+  /** 暂存路由守卫的 resolve，等用户在弹窗里做出选择后再放行/拦截 */
+  let resolveLeave: ((leave: boolean) => void) | null = null;
+
+  const settleLeave = (leave: boolean) => {
+    showLeaveConfirm.value = false;
+    resolveLeave?.(leave);
+    resolveLeave = null;
+  };
+  /** 弹窗「确认」：放弃未保存内容，继续跳转 */
+  const confirmLeave = () => settleLeave(true);
+  /** 弹窗「取消」／关闭：留在当前页 */
+  const cancelLeave = () => settleLeave(false);
+
+  // 站内路由跳转：卡住守卫，等弹窗结果
+  onBeforeRouteLeave(() => {
+    if (!hasUnsaved()) return true;
+    showLeaveConfirm.value = true;
+    return new Promise<boolean>((resolve) => {
+      resolveLeave = resolve;
+    });
+  });
+
+  // 关闭标签页 / 刷新 / 前进后退出站：只能用浏览器原生确认，
+  // 文案由浏览器决定，preventDefault 是现代浏览器唯一还认的触发方式
+  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    if (!hasUnsaved()) return;
+    event.preventDefault();
+  };
+  onMounted(() => window.addEventListener("beforeunload", handleBeforeUnload));
+  onBeforeUnmount(() => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+    // 组件已经销毁还挂着未 resolve 的守卫会让路由永远卡住
+    resolveLeave?.(true);
+    resolveLeave = null;
+  });
+
   onMounted(loadPost);
 
   return {
+    showLeaveConfirm,
+    confirmLeave,
+    cancelLeave,
     uuid,
     slug,
     tags,
