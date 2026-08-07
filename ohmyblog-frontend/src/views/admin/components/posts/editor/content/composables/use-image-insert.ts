@@ -1,5 +1,6 @@
 // src/views/admin/components/posts/editor/content/composables/use-image-insert.ts
 import type { Editor } from "@tiptap/core";
+import type { Transaction } from "@tiptap/pm/state";
 import router from "@/router";
 import { uploadPostImage } from "@/api/upload.api";
 import { UPLOAD_LIMITS } from "@/api/shared";
@@ -29,17 +30,40 @@ export function useImageInsert() {
     if (!checkImageSize(file, UPLOAD_LIMITS.postImage)) return;
 
     const uuid = router.currentRoute.value.params.uuid as string;
-    // TODO [风险6 - 图片插入位置]: uploadPostImage 是异步的，但这里没有在上传开始时记录光标位置
-    //   （editor.state.selection 的快照）。上传期间用户移动光标或继续编辑后，
-    //   图片会通过 editor.chain().focus().setImage() 插入到新的光标位置，而非粘贴/拖拽时所在的位置。
-    //   修复方向：在调用 uploadPostImage 之前，通过 insertContentAt 配合提前捕获的位置（pos）插入，
-    //   或先在光标处插入一个占位节点，上传完成后替换。
+
+    // 上传是异步的，等 URL 回来时光标多半已经不在原处了（用户继续打字、点了别处）。
+    // 所以在这里就把「粘贴/拖拽发生的位置」定下来，并让它跟着后续每一笔编辑一起
+    // 位移——Tiptap 的 MappablePosition 就是干这个的，transaction 里 map 一次即可。
+    let target = editor.utils.createMappablePosition(
+      editor.state.selection.from,
+    );
+    /** 目标位置是否已被后续编辑删掉（比如用户选中这段全删了） */
+    let dropped = false;
+    const track = ({ transaction }: { transaction: Transaction }) => {
+      const { position, mapResult } = editor.utils.getUpdatedPosition(
+        target,
+        transaction,
+      );
+      target = position;
+      if (mapResult?.deleted) dropped = true;
+    };
+    editor.on("transaction", track);
+    const stopTracking = () => editor.off("transaction", track);
+
     uploadPostImage(uuid, { image: file })
       .then((result) => {
+        stopTracking();
         if (!result?.url) return;
-        editor.chain().focus().setImage({ src: result.url }).run();
+        // 原位置被删了就退回当前光标，总比把图片插进一个不存在的位置强
+        const pos = dropped ? editor.state.selection.from : target.position;
+        // 不带 focus()：上传期间用户可能已经在别处输入，把焦点抢回插入点会打断他
+        editor
+          .chain()
+          .insertContentAt(pos, { type: "image", attrs: { src: result.url } })
+          .run();
       })
       .catch((e: unknown) => {
+        stopTracking();
         const msg = typeof e === "string" ? e : (e as any)?.message || "Error";
         useToast.error(t(`api.errors.${msg}`));
       });
