@@ -45,10 +45,13 @@ const settingsPanelStyle = computed(() => ({
 }));
 
 // 手机端默认收起设置，切换回桌面端时恢复常驻面板。
-// TODO [风险8 - 移动端布局]: settingsPanelStyle 在桌面端固定 18rem，手机端已有覆盖式抽屉，
-//   但编辑区域本身（PostEditorContent / PostEditorBody）目前没有针对小屏的专项调整，
-//   气泡菜单、块拖拽手柄和表格控件在窄屏下的点击区域和浮层定位可能存在遮挡或溢出问题。
-//   修复方向：在各菜单子组件里加入宽度断点判断，或为 < 768px 场景做专属精简工具栏。
+//
+// 编辑区的窄屏适配现状：
+// - 气泡菜单（文本 / 图片）已在 use-bubble-anchor 里做视口 clamp + 上下翻转，
+//   配合 max-width + flex-wrap 换行，窄屏不再溢出或被顶出容器；
+// - / 命令面板、有序列表编号菜单、代码块语言下拉走 use-anchored-position，本来就有边界收敛；
+// - 块拖拽手柄与表格行列控件是纯 hover 驱动的，触屏上根本不出现（并非布局问题），
+//   要在触屏可用需要另设长按 / 点选的交互入口，属独立需求，不在布局适配范围内。
 watch(isMobile, (mobile) => {
   showSettings.value = !mobile;
 });

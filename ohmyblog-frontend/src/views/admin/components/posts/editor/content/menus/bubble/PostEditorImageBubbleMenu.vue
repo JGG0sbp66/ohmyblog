@@ -22,20 +22,23 @@ const props = defineProps<{
 
 const { t } = useLang();
 
-const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
-  containerRef: toRef(props, "containerRef"),
-  computeAnchorRect: (editor) => {
-    const { selection } = editor.state;
-    if (
-      !(selection instanceof NodeSelection) ||
-      selection.node.type.name !== "image"
-    ) {
-      return null;
-    }
-    const domNode = editor.view.nodeDOM(selection.from) as HTMLElement | null;
-    return domNode?.getBoundingClientRect() ?? null;
+const { menuRef, isVisible, menuStyle, placement } = useBubbleAnchor(
+  props.editor,
+  {
+    containerRef: toRef(props, "containerRef"),
+    computeAnchorRect: (editor) => {
+      const { selection } = editor.state;
+      if (
+        !(selection instanceof NodeSelection) ||
+        selection.node.type.name !== "image"
+      ) {
+        return null;
+      }
+      const domNode = editor.view.nodeDOM(selection.from) as HTMLElement | null;
+      return domNode?.getBoundingClientRect() ?? null;
+    },
   },
-});
+);
 </script>
 
 <template>
@@ -46,7 +49,8 @@ const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
     <div
       v-if="isVisible"
       ref="menuRef"
-      class="absolute z-50 pointer-events-auto flex items-center gap-0.5 px-2 py-1.5 bg-bg-card border border-border/40 rounded-xl shadow-lg origin-bottom"
+      class="absolute z-50 pointer-events-auto flex flex-wrap items-center gap-0.5 px-2 py-1.5 bg-bg-card border border-border/40 rounded-xl shadow-lg max-w-[calc(100vw-1rem)]"
+      :class="placement === 'top' ? 'origin-bottom' : 'origin-top'"
       :style="menuStyle"
     >
       <IconTipButton
