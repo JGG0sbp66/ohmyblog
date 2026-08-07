@@ -262,12 +262,36 @@ export const SMTPConfigUpsertDTO = t.Object({
 	...ConfigMetaDTO,
 });
 
+// announcement 配置 DTO（前台侧边栏公告卡片，非 setup 向导步骤）
+export const AnnouncementConfigUpsertDTO = t.Object({
+	configKey: t.Literal("announcement"),
+	configValue: t.Object({
+		enabled: t.Boolean({
+			description: "是否展示公告",
+		}),
+		title: t.Optional(
+			t.String({
+				maxLength: 50,
+				description: "公告标题，留空则前台使用默认文案",
+				error: "announcement.title_range",
+			}),
+		),
+		content: t.String({
+			maxLength: 500,
+			description: "公告正文（纯文本，支持换行）",
+			error: "announcement.content_range",
+		}),
+	}),
+	...ConfigMetaDTO,
+});
+
 // 创建或更新配置 DTO
 export const ConfigUpsertDTO = t.Union([
 	AppearanceConfigUpsertDTO,
 	SiteInfoConfigUpsertDTO,
 	PersonalInfoConfigUpsertDTO,
 	SMTPConfigUpsertDTO,
+	AnnouncementConfigUpsertDTO,
 ]);
 
 export type TAppearanceConfigUpsertDTO = Static<
@@ -278,4 +302,7 @@ export type TPersonalInfoConfigUpsertDTO = Static<
 	typeof PersonalInfoConfigUpsertDTO
 >;
 export type TSMTPConfigUpsertDTO = Static<typeof SMTPConfigUpsertDTO>;
+export type TAnnouncementConfigUpsertDTO = Static<
+	typeof AnnouncementConfigUpsertDTO
+>;
 export type TConfigUpsertDTO = Static<typeof ConfigUpsertDTO>;

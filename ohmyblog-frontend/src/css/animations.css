@@ -20,6 +20,17 @@
   }
 }
 
+/* 打字机光标闪烁 - step-end 是硬切，比渐隐更像编辑器插入符 */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 /* ==================== 动画类 ==================== */
 
 /* 页面加载时的动画效果 */
@@ -27,6 +38,48 @@
   opacity: 0;
   animation: 300ms fade-in-up;
   animation-fill-mode: forwards;
+}
+
+/*
+  打字机光标。站内有三处打字机（Hero 副标题、404 档案、Brand 插画），
+  播放逻辑各不相同（循环退格 / 两段接力 / 三行接力，HTML 与 SVG 都有），
+  但光标的闪法应当一致 —— 所以只把这一条收在这里，不强行合并三份实现。
+  形状与配色仍由各自决定，这里只管闪。
+*/
+.typing-caret {
+  animation: blink 1s step-end infinite;
+}
+
+/* 尊重系统的「减少动态效果」：原本只有 404 做了，另外两处照闪，同一个站三种行为 */
+@media (prefers-reduced-motion: reduce) {
+  .typing-caret {
+    animation: none;
+  }
+}
+
+/*
+  公告跑马灯。轨道里放两份相同内容，向左位移「一份的宽度 + 间距」后回到起点，
+  视觉上首尾无缝。位移量随文本长度变化，由 AnnouncementBanner 实测后写进
+  --marquee-shift，时长同理，所以这里只留运动本身。
+*/
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--marquee-shift, 0px)));
+  }
+}
+
+.marquee-track {
+  animation: marquee-x var(--marquee-duration, 20s) linear infinite;
+}
+
+/* 尊重系统的「减少动态效果」：组件侧已经不挂这个类了，这里再兜一层 */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
 
 /* ==================== 分层延迟 ==================== */

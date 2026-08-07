@@ -5,6 +5,7 @@ import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useImageUpload } from "@/composables/upload.hook";
+import { UPLOAD_LIMITS } from "@/api/shared";
 import { uploadFavicon } from "@/api/upload.api";
 
 const { t } = useLang();
@@ -21,6 +22,7 @@ const handleFileChange = (file: File) => {
     (url) => {
       modelValue.value = url;
     },
+    UPLOAD_LIMITS.favicon,
   );
 };
 </script>

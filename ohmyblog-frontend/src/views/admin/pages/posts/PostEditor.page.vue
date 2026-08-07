@@ -7,7 +7,10 @@ import PostEditorContent from "@/views/admin/components/posts/editor/PostEditorC
 import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostEditorSettingsPanel.vue";
 import { usePostEditor } from "@/composables/post-editor.hook";
 import { useIsMobile } from "@/composables/breakpoint.hook";
+import ConfirmModal from "@/components/base/pop/ConfirmModal.vue";
+import { useLang } from "@/composables/lang.hook";
 
+const { t } = useLang();
 const isMobile = useIsMobile();
 const showSettings = ref(!isMobile.value);
 const totalCharCount = ref(0);
@@ -27,6 +30,9 @@ const {
   isSaving,
   isDirty,
   save,
+  showLeaveConfirm,
+  confirmLeave,
+  cancelLeave,
 } = usePostEditor();
 
 const settingsPanelStyle = computed(() => ({
@@ -39,6 +45,13 @@ const settingsPanelStyle = computed(() => ({
 }));
 
 // 手机端默认收起设置，切换回桌面端时恢复常驻面板。
+//
+// 编辑区的窄屏适配现状：
+// - 气泡菜单（文本 / 图片）已在 use-bubble-anchor 里做视口 clamp + 上下翻转，
+//   配合 max-width + flex-wrap 换行，窄屏不再溢出或被顶出容器；
+// - / 命令面板、有序列表编号菜单、代码块语言下拉走 use-anchored-position，本来就有边界收敛；
+// - 块拖拽手柄与表格行列控件是纯 hover 驱动的，触屏上根本不出现（并非布局问题），
+//   要在触屏可用需要另设长按 / 点选的交互入口，属独立需求，不在布局适配范围内。
 watch(isMobile, (mobile) => {
   showSettings.value = !mobile;
 });
@@ -99,5 +112,18 @@ watch(isMobile, (mobile) => {
         @close="showSettings = false"
       />
     </div>
+
+    <!-- 有未保存内容时离开本页的确认弹窗，由 usePostEditor 的路由守卫驱动。
+         关闭弹窗（遮罩 / ESC）等同于取消，守卫必须拿到结果才会放行 -->
+    <ConfirmModal
+      :model-value="showLeaveConfirm"
+      :title="t('views.admin.PostEditor.leaveConfirm.title')"
+      :question="t('views.admin.PostEditor.leaveConfirm.question')"
+      :warning="t('views.admin.PostEditor.leaveConfirm.warning')"
+      :confirm-text="t('views.admin.PostEditor.leaveConfirm.confirm')"
+      confirm-class="bg-red-500 hover:bg-red-600"
+      @update:model-value="cancelLeave"
+      @confirm="confirmLeave"
+    />
   </BaseCard>
 </template>

@@ -18,5 +18,6 @@ export const configKeys = [
 	"site_info",
 	"personal_info",
 	"smtp",
+	"announcement",
 ] as const;
 export type TConfigKey = (typeof configKeys)[number];

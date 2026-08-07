@@ -117,7 +117,7 @@ onUnmounted(() => {
           {{ titleTyping.displayText
           }}<span
             v-if="showTitleCaret"
-            class="typing-cursor inline-block w-[3px] h-[1.1em] ml-[3px] rounded-[1px] bg-fg align-[-0.12em]"
+            class="typing-caret inline-block w-[3px] h-[1.1em] ml-[3px] rounded-[1px] bg-fg align-[-0.12em]"
           />
         </h1>
 
@@ -137,7 +137,7 @@ onUnmounted(() => {
           {{ bodyTyping.displayText
           }}<span
             v-if="showBodyCaret"
-            class="typing-cursor inline-block w-[3px] h-[1.1em] ml-[3px] rounded-[1px] bg-fg align-[-0.12em]"
+            class="typing-caret inline-block w-[3px] h-[1.1em] ml-[3px] rounded-[1px] bg-fg align-[-0.12em]"
           />
         </p>
 
@@ -160,29 +160,5 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style scoped>
-/* 光标的几何与配色都走 Tailwind，这里只留 Tailwind 表达不了的 keyframes
- * （自定义动画得注册进全局 @theme，而这是 404 页专用；且 Vue 会给 scoped 内的
- * keyframes 加作用域后缀，animation 必须与它同处一个块）
- * step-end 是硬切闪烁，比 animate-pulse 的渐隐更像编辑器插入符，也与
- * HeroTitleDisplay / Brand 里既有的打字机光标保持一致 */
-.typing-cursor {
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .typing-cursor {
-    animation: none;
-  }
-}
-</style>
+<!-- 光标的几何与配色走 Tailwind，闪烁走全局的 .typing-caret（见 css/animations.css），
+     本页不再需要 scoped 样式 -->

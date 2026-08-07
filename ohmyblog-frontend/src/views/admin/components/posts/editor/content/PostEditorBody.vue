@@ -100,6 +100,8 @@ const editor = useEditor({
     internalUpdate = true;
     json.value = editor.getJSON();
     text.value = editor.getText();
+    // getHTML 只输出文档结构，列表标记符 / 代码块外壳这类运行时产物不在其中，
+    // 由阅读端的 enhance-lists.ts / enhance-code-blocks.ts 重建
     html.value = editor.getHTML();
     syncCharCount(editor);
   },
@@ -121,7 +123,22 @@ watch(
       return;
     }
     const ed = editor.value;
-    if (!ed || !newVal) return;
+    if (!ed) return;
+    // 「外部尚未加载」和「外部主动清空」必须区分，否则后者会被当成前者忽略掉，
+    // 编辑器里留着上一篇的正文，而父组件以为已经空了：
+    // - undefined / null → 文章还没加载回来（loadPost 前的初始值），保持现状
+    // - 空对象 {}        → 调用方明确要求清空，走 clearContent
+    if (newVal == null) return;
+    if (Object.keys(newVal).length === 0) {
+      // emitUpdate = false：与下面的 setContent 一致，避免回写 json 触发自回声。
+      // 代价是 onUpdate 不跑，text / html 需要在这里手动跟上——否则正文清空了，
+      // 存进库的 contentText / contentHtml 还是上一篇的内容
+      ed.commands.clearContent(false);
+      text.value = ed.getText();
+      html.value = ed.getHTML();
+      syncCharCount(ed);
+      return;
+    }
     ed.commands.setContent(newVal, { emitUpdate: false });
     // 外部 setContent 不会触发 onUpdate，需要主动同步一次字数统计
     syncCharCount(ed);

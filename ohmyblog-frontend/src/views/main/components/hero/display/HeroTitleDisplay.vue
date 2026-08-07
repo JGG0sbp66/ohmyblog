@@ -112,23 +112,7 @@ const shouldDisplay = computed(() => {
       style="text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6)"
     >
       <span>{{ displayText }}</span>
-      <span class="typing-cursor ml-1">|</span>
+      <span class="typing-caret ml-1">|</span>
     </div>
   </div>
 </template>
-
-<style scoped>
-.typing-cursor {
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-}
-</style>

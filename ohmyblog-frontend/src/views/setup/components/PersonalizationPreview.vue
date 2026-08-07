@@ -3,6 +3,7 @@
 import { useLang } from "@/composables/lang.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useImageUpload } from "@/composables/upload.hook";
+import { UPLOAD_LIMITS } from "@/api/shared";
 import { uploadAvatar } from "@/api/upload.api";
 
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
@@ -27,6 +28,7 @@ const onAvatarChange = (file: File) => {
     (url) => {
       systemStore.personalInfo.avatar = url;
     },
+    UPLOAD_LIMITS.avatar,
   );
 };
 </script>

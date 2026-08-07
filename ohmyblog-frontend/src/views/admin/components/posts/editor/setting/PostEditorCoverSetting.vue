@@ -5,6 +5,7 @@ import PostEditorSettingItem from "./PostEditorSettingItem.vue";
 import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useImageUpload } from "@/composables/upload.hook";
+import { UPLOAD_LIMITS } from "@/api/shared";
 import { useToast } from "@/composables/toast.hook";
 import { uploadPostCover } from "@/api/upload.api";
 import { savePost } from "@/api/post.api";
@@ -42,6 +43,7 @@ const onFileChange = (file: File) => {
         useToast.error(t(`api.errors.${msg}`));
       });
     },
+    UPLOAD_LIMITS.postCover,
   );
 };
 </script>

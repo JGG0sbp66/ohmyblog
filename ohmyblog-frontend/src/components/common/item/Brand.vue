@@ -125,7 +125,7 @@ onMounted(() => {
       >
         {{ line1Text }}
         <tspan
-          class="cursor"
+          class="typing-caret"
           :style="{ visibility: isTyping1 ? 'visible' : 'hidden' }"
           fill="var(--theme-accent)"
         >
@@ -144,7 +144,7 @@ onMounted(() => {
       >
         {{ line2Text }}
         <tspan
-          class="cursor"
+          class="typing-caret"
           :style="{ visibility: isTyping2 ? 'visible' : 'hidden' }"
           fill="var(--theme-accent)"
         >
@@ -163,7 +163,7 @@ onMounted(() => {
       >
         {{ line3Text }}
         <tspan
-          class="cursor"
+          class="typing-caret"
           :style="{ visibility: isTyping3 ? 'visible' : 'hidden' }"
           fill="var(--theme-accent)"
         >
@@ -190,19 +190,5 @@ onMounted(() => {
   width: 100%;
   height: 100%;
 }
-
-.cursor {
-  animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0;
-  }
-}
+/* 光标闪烁走全局的 .typing-caret，见 css/animations.css */
 </style>

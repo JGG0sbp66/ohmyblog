@@ -67,10 +67,20 @@ const backToTop = () => {
 </script>
 
 <template>
-  <!-- 收起态整块不接管事件，避免挡住正文的点击；展开后才需要它接 pointerleave -->
+  <!--
+    收起态整块不接管事件，避免挡住正文的点击；展开后才需要它接 pointerleave。
+
+    高度策略（TocList 把内容在本元素内垂直居中，所以这里的高度就决定了目录停在哪）：
+    - self-stretch：作为行 flex 的一项拉伸到文章那一列的高度。TocList 是 absolute，
+      本元素的自动高度为 0，不参与行高计算，所以「拉伸到文章高」不会循环依赖。
+    - max-h：封顶在视口尺度。长文时高度被截到这个值，配合外部的 sticky top-24
+      就回到视口居中；短文时够不着上限，高度等于文章高 → 居中即文章正中。
+    - min-h：文章极短时的可用性兜底（标题 + 进度 + 回到顶部约占 75px，
+      再加上下各 24px 的遮罩淡出），此时允许略微超出文章底边。
+  -->
   <nav
     v-if="headings.length > 0"
-    class="relative h-[calc(100vh-16rem)] min-h-80"
+    class="relative self-stretch max-h-[calc(100vh-16rem)] min-h-60"
     :class="expanded ? 'pointer-events-auto' : 'pointer-events-none'"
     :aria-label="t('views.main.post.toc.label')"
     @pointerleave="hovering = false"

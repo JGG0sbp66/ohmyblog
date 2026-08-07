@@ -107,6 +107,12 @@
   },
   "views": {
     "main": {
+      "announcement": {
+        "defaultTitle": "Announcement",
+        "expand": "View full announcement",
+        "close": "Dismiss announcement",
+        "gotIt": "Got it"
+      },
       "home": {
         "PostCard": {
           "untitled": "New Post",
@@ -312,6 +318,26 @@
           "admin": "Admin Info",
           "smtp": "SMTP Settings"
         },
+        "announcement": {
+          "section": {
+            "title": "Sidebar Announcement",
+            "description": "Show a notice below the profile card in the public sidebar — handy for release notes or maintenance heads-ups."
+          },
+          "enabled": {
+            "label": "Show announcement",
+            "description": "When off, the card is not rendered on the public site. Your text is kept."
+          },
+          "title": {
+            "label": "Title",
+            "placeholder": "e.g., Recent updates",
+            "hint": "Leave empty to use the default title \"Announcement\""
+          },
+          "content": {
+            "label": "Body",
+            "placeholder": "Anything you want visitors to see…",
+            "hint": "Plain text, line breaks supported; long text is clamped on the public site"
+          }
+        },
         "appearance": {
           "settings": {
             "languageHint": "As the preview operates in an isolated environment, a quick reload is required for language changes. Theme and Hue settings sync in real-time."
@@ -454,6 +480,19 @@
           "saving": "Saving",
           "save": "Save",
           "stats": "Selected {selected} / Total {total}"
+        },
+        "validation": {
+          "slugRequired": "Please set a title or permalink before publishing"
+        },
+        "saveError": {
+          "content": "Failed to save content; post status was left unchanged: {reason}",
+          "status": "Content saved, but the status update failed. Please retry: {reason}"
+        },
+        "leaveConfirm": {
+          "title": "Leave Post Editor",
+          "question": "This post has unsaved changes. Leave anyway?",
+          "warning": "Unsaved changes will be lost and cannot be recovered",
+          "confirm": "Discard and Leave"
         },
         "settingsPanel": {
           "title": "Post Settings",
@@ -947,6 +986,10 @@
         "sender_email_invalid": "Please enter a valid sender email",
         "sender_name_range": "Sender name must be under 100 characters"
       },
+      "announcement": {
+        "title_range": "Announcement title must be under 50 characters",
+        "content_range": "Announcement body must be under 500 characters"
+      },
       "config": {
         "description_range": "Description must be under 255 characters"
       },
@@ -982,6 +1025,7 @@
       "系统健康检查失败": "System health check failed",
       "获取站点基本信息失败": "Failed to fetch site info",
       "获取个性化配置失败": "Failed to fetch personalization info",
+      "获取公告失败": "Failed to fetch announcement",
       "用户名或邮箱已被注册": "Username or email is already registered",
       "未登录或会话已过期": "Not logged in or session expired",
       "演示模式下不可修改数据": "This is a read-only demo — changes are not allowed",
@@ -991,7 +1035,8 @@
       "请上传 1MB 以内的有效图片": "Please upload a valid image under 1MB.",
       "请上传 5MB 以内的有效图片": "Please upload a valid image under 5MB.",
       "请上传 2MB 以内的有效图片": "Please upload a valid image under 2MB.",
-      "请上传 100MB 以内的有效图片": "Please upload a valid image under 100MB.",
+      "请上传 512KB 以内的有效图片": "Please upload a valid image under 512KB.",
+      "请上传 10MB 以内的有效图片": "Please upload a valid image under 10MB.",
       "\"body.image\" has invalid file type": "Invalid file type. Please upload an image file.",
       "文章行内图处理失败，请重试": "Failed to process the image. Please try again.",
       "图片处理失败，请重试": "Failed to process the image. Please try again.",

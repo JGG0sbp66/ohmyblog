@@ -5,6 +5,7 @@ import { useIsMobile } from "@/composables/breakpoint.hook";
 import SettingsPageLayout from "../../layout/SettingsPageLayout.vue";
 import AppearancePreview from "./AppearancePreview.vue";
 import AppearanceForm from "./AppearanceForm.vue";
+import AnnouncementForm from "./AnnouncementForm.vue";
 import ViewportSelector from "./ViewportSelector.vue";
 
 // 移动端屏幕本身即移动尺寸，实时预览恒为移动端样式、无参考意义，直接隐藏。
@@ -27,5 +28,7 @@ const viewportMode = ref<"pc" | "mobile">("pc");
     />
 
     <AppearanceForm class="onload-animation anim-delay-150" />
+
+    <AnnouncementForm class="onload-animation anim-delay-200" />
   </SettingsPageLayout>
 </template>

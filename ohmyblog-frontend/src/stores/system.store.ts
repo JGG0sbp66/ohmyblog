@@ -5,10 +5,12 @@ import { getHealth } from "@/api/health.api";
 import { getConfig } from "@/api/config.api";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
+import { onPreviewDraft } from "@/composables/preview-bridge.hook";
 import type { TConfigKey } from "@/api/shared";
 import type {
   TSiteInfoConfigUpsertDTO,
   TPersonalInfoConfigUpsertDTO,
+  TAnnouncementConfigUpsertDTO,
 } from "@server/dtos/config.dto";
 
 export const useSystemStore = defineStore("system", () => {
@@ -43,6 +45,13 @@ export const useSystemStore = defineStore("system", () => {
     hero: "",
     heroTitle: "",
     heroSubtitles: [],
+  });
+
+  // 侧边栏公告（未配置过时后端返回 404，保持 enabled=false 即可）
+  const announcement = ref<TAnnouncementConfigUpsertDTO["configValue"]>({
+    enabled: false,
+    title: "",
+    content: "",
   });
 
   /**
@@ -97,6 +106,27 @@ export const useSystemStore = defineStore("system", () => {
       personalInfo,
       "api.errors.获取个性化配置失败",
     );
+  }
+
+  /**
+   * 身处后台预览 iframe 且已收到草稿
+   * 此后服务端的已保存值不该再覆盖草稿（拉取是异步的，可能晚于草稿到达）
+   */
+  let announcementDraftLocked = false;
+
+  // 后台外观页正在编辑公告时，实时把草稿同步进预览 iframe（非 iframe 环境下是空操作）
+  onPreviewDraft((draft) => {
+    if (!draft.announcement) return;
+    announcementDraftLocked = true;
+    announcement.value = { ...announcement.value, ...draft.announcement };
+  });
+
+  /**
+   * 获取侧边栏公告配置
+   */
+  async function fetchAnnouncement() {
+    if (announcementDraftLocked) return;
+    await fetchConfig("announcement", announcement, "api.errors.获取公告失败");
   }
 
   // 监听标题变化，全局同步 document.title
@@ -165,8 +195,10 @@ export const useSystemStore = defineStore("system", () => {
     siteInfo,
     siteCreatedAt,
     personalInfo,
+    announcement,
     fetchSiteInfo,
     fetchPersonalInfo,
+    fetchAnnouncement,
     checkStatus,
   };
 });

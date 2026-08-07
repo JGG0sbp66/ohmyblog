@@ -106,6 +106,30 @@ docker run --rm -p 3000:3000 ohmyblog
 
 访问 <http://localhost:3000> 即可打开前台页面。
 
+### 🔁 反向代理（Nginx）
+
+放在 Nginx 后面时需要调大请求体上限。Nginx 的 `client_max_body_size` 默认只有 **1 MB**，
+而本项目最大的上传（文章行内图）允许 **10 MB**，不改的话超过 1 MB 的图片会在反向代理层
+就被 413 拦掉——请求根本到不了应用，前端只会看到一个和大小限制无关的失败提示。
+
+```nginx
+server {
+    # 取项目最大上传限制（文章行内图 10MB），留一点余量
+    client_max_body_size 12m;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+各类资源的具体大小上限见 `db/constants/upload.constants.ts`（前后端共享的单一真源）。
+调整那里的限制后，记得同步 `client_max_body_size`。
+
 ## ⚡ 可用命令
 
 | 命令 | 说明 |

@@ -13,12 +13,13 @@ const props = withDefaults(
 </script>
 
 <template>
-  <!-- 
-      1. animate-spin: 让整体保持匀速旋转 
-      2. duration-200: 稍微放慢整体旋转速度，让伸缩效果更明显
+  <!--
+      animate-spin: 整体匀速旋转（1s/圈），与前景圆环 1.5s 的弧长伸缩叠加成「呼吸」感。
+      想调旋转快慢只能用 [animation-duration:*]：duration-* 是 transition 的时长工具类，
+      对 animation 不生效。
     -->
   <svg
-    :class="['animate-spin duration-200', props.sizeClass, props.colorClass]"
+    :class="['animate-spin', props.sizeClass, props.colorClass]"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"

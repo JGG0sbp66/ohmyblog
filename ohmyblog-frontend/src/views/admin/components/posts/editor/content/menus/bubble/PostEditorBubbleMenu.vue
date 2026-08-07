@@ -23,43 +23,46 @@ const props = defineProps<{
   containerRef?: HTMLElement | null;
 }>();
 
-const { menuRef, isVisible, menuStyle } = useBubbleAnchor(props.editor, {
-  containerRef: toRef(props, "containerRef"),
-  computeAnchorRect: (editor) => {
-    const { selection } = editor.state;
+const { menuRef, isVisible, menuStyle, placement } = useBubbleAnchor(
+  props.editor,
+  {
+    containerRef: toRef(props, "containerRef"),
+    computeAnchorRect: (editor) => {
+      const { selection } = editor.state;
 
-    // 跨格 / 合并格选区（CellSelection）：window.getSelection() 在 CellSelection
-    // 下取不到稳定矩形，合并/拆分后会让菜单乱跳。改用所选单元格 DOM 的并集矩形，
-    // 菜单稳定锚定在选区上方。
-    if (selection instanceof CellSelection) {
-      let rect: DOMRect | null = null;
-      selection.forEachCell((_node, pos) => {
-        const dom = editor.view.nodeDOM(pos);
-        if (!(dom instanceof HTMLElement)) return;
-        const r = dom.getBoundingClientRect();
-        if (!rect) {
-          rect = r;
-          return;
-        }
-        const left = Math.min(rect.left, r.left);
-        const top = Math.min(rect.top, r.top);
-        const right = Math.max(rect.right, r.right);
-        const bottom = Math.max(rect.bottom, r.bottom);
-        rect = new DOMRect(left, top, right - left, bottom - top);
-      });
+      // 跨格 / 合并格选区（CellSelection）：window.getSelection() 在 CellSelection
+      // 下取不到稳定矩形，合并/拆分后会让菜单乱跳。改用所选单元格 DOM 的并集矩形，
+      // 菜单稳定锚定在选区上方。
+      if (selection instanceof CellSelection) {
+        let rect: DOMRect | null = null;
+        selection.forEachCell((_node, pos) => {
+          const dom = editor.view.nodeDOM(pos);
+          if (!(dom instanceof HTMLElement)) return;
+          const r = dom.getBoundingClientRect();
+          if (!rect) {
+            rect = r;
+            return;
+          }
+          const left = Math.min(rect.left, r.left);
+          const top = Math.min(rect.top, r.top);
+          const right = Math.max(rect.right, r.right);
+          const bottom = Math.max(rect.bottom, r.bottom);
+          rect = new DOMRect(left, top, right - left, bottom - top);
+        });
+        return rect;
+      }
+
+      if (selection.empty || selection instanceof NodeSelection) return null;
+
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0) return null;
+      const rect = sel.getRangeAt(0).getBoundingClientRect();
+      if (!rect.width) return null;
+
       return rect;
-    }
-
-    if (selection.empty || selection instanceof NodeSelection) return null;
-
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return null;
-    const rect = sel.getRangeAt(0).getBoundingClientRect();
-    if (!rect.width) return null;
-
-    return rect;
+    },
   },
-});
+);
 
 const { showTableSection } = useTableCommands();
 </script>
@@ -72,7 +75,8 @@ const { showTableSection } = useTableCommands();
     <div
       v-if="isVisible"
       ref="menuRef"
-      class="absolute z-50 pointer-events-auto flex items-center gap-1 px-2 py-1.5 bg-bg-card border border-border/40 rounded-xl shadow-lg origin-bottom"
+      class="absolute z-50 pointer-events-auto flex flex-wrap items-center gap-1 px-2 py-1.5 bg-bg-card border border-border/40 rounded-xl shadow-lg max-w-[calc(100vw-1rem)]"
+      :class="placement === 'top' ? 'origin-bottom' : 'origin-top'"
       :style="menuStyle"
     >
       <!-- 区域零：表格操作（最左，仿飞书）：合并/拆分、设为表头、删除行列 -->

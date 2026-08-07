@@ -70,7 +70,10 @@
 
 /* ── 有序列表序号：可交互元素（仅编辑态，OrderedListNumber 扩展注入 widget） ── */
 /* 编辑器根带 .ol-interactive → 隐藏 ol 的 ::before 计数器，改用真实可交互的 .ol-number。
-   只读前台（PostContent）不加载该扩展、无此类，仍用 CSS 计数器，前后台互不影响。 */
+   只读前台（PostContent）不加载该扩展、无此类，仍用 CSS 计数器，前后台互不影响。
+   注意：上面那组 data-ul-mod / data-ol-mod 选择器依赖的属性，在编辑器里是
+   list-item.extension.ts 的 decoration，getHTML 不会序列化；前台由
+   enhance-lists.ts 在渲染后补上，start 也在那里换算成 counter-reset。 */
 .tiptap.ol-interactive ol > li > :first-child::before {
   content: none;
 }
