@@ -20,6 +20,17 @@
   }
 }
 
+/* 打字机光标闪烁 - step-end 是硬切，比渐隐更像编辑器插入符 */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 /* ==================== 动画类 ==================== */
 
 /* 页面加载时的动画效果 */
@@ -27,6 +38,23 @@
   opacity: 0;
   animation: 300ms fade-in-up;
   animation-fill-mode: forwards;
+}
+
+/*
+  打字机光标。站内有三处打字机（Hero 副标题、404 档案、Brand 插画），
+  播放逻辑各不相同（循环退格 / 两段接力 / 三行接力，HTML 与 SVG 都有），
+  但光标的闪法应当一致 —— 所以只把这一条收在这里，不强行合并三份实现。
+  形状与配色仍由各自决定，这里只管闪。
+*/
+.typing-caret {
+  animation: blink 1s step-end infinite;
+}
+
+/* 尊重系统的「减少动态效果」：原本只有 404 做了，另外两处照闪，同一个站三种行为 */
+@media (prefers-reduced-motion: reduce) {
+  .typing-caret {
+    animation: none;
+  }
 }
 
 /* ==================== 分层延迟 ==================== */
