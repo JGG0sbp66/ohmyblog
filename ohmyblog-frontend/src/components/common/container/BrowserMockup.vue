@@ -1,5 +1,7 @@
 <!-- src/components/common/BrowserMockup.vue -->
 <script setup lang="ts">
+import { computed, ref } from "vue";
+import { useResizeObserver } from "@vueuse/core";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -18,10 +20,41 @@ interface Props {
   viewportMode?: "pc" | "mobile";
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   title: "ohmyblog",
   icon: null,
   viewportMode: "pc",
+});
+
+/*
+  视口尺寸
+
+  两种模式的宽高都算成 px 后写在行内，是为了让 transition 真能插值：
+  mobile 若只写 aspect-ratio、宽度交给浏览器推算，计算值是 auto，
+  而 auto 与 100% 之间无法补间，切换就会变成硬跳。
+*/
+const MOBILE_RATIO = 9 / 19.5; // 真实手机比例
+const MOBILE_HEIGHT_SCALE = 0.9; // 上下各留一点余量
+
+const stageRef = ref<HTMLElement | null>(null);
+const stageWidth = ref(0);
+const stageHeight = ref(0);
+
+useResizeObserver(stageRef, ([entry]) => {
+  if (!entry) return;
+  stageWidth.value = entry.contentRect.width;
+  stageHeight.value = entry.contentRect.height;
+});
+
+const viewportStyle = computed(() => {
+  if (props.viewportMode === "pc") {
+    return { width: `${stageWidth.value}px`, height: `${stageHeight.value}px` };
+  }
+  const height = stageHeight.value * MOBILE_HEIGHT_SCALE;
+  return {
+    width: `${Math.min(height * MOBILE_RATIO, stageWidth.value)}px`,
+    height: `${height}px`,
+  };
 });
 </script>
 
@@ -73,16 +106,18 @@ withDefaults(defineProps<Props>(), {
 
     <!-- 2. 主要内容区域 -->
     <div
+      ref="stageRef"
       class="flex-1 relative flex items-center justify-center min-h-0 bg-bg-muted/30"
     >
-      <!-- 视口容器：用于控制内容的宽度。mobile 模式按真实手机 9:19.5 比例，高度自适应、宽度随比例推算 -->
+      <!-- 视口容器：宽高由 viewportStyle 给出 px（见 script 中的说明），这里只管装饰与过渡 -->
       <div
-        class="h-full transition-all duration-500 ease-in-out origin-center relative overflow-hidden"
+        class="transition-all duration-500 ease-in-out origin-center relative overflow-hidden shrink-0"
         :class="
           viewportMode === 'pc'
-            ? 'w-full'
-            : 'h-[90%] aspect-[9/19.5] max-w-full border-x-8 border-bg-muted rounded-4xl shadow-2xl my-4'
+            ? ''
+            : 'border-x-8 border-bg-muted rounded-4xl shadow-2xl'
         "
+        :style="viewportStyle"
       >
         <slot />
       </div>
