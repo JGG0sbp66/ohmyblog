@@ -7,7 +7,7 @@
  * - 前台 / getHTML 序列化：原生 <details> > summary + div[data-type="detailsContent"]，
  *   展开由浏览器接管（details[open]）。
  *
- * TODO: 这里的折叠块还没把我库里的 auto 动画完整迁进来，编辑态展开/收起后面需要补一版和现有样式联动的自动过渡。
+ * 展开/收起的高度过渡见文件末尾「自动高度过渡」一节。
  */
 
 /* ---- 容器（两种 DOM 通用） ---- */
@@ -114,4 +114,51 @@
 }
 .tiptap [data-type="detailsContent"] > :last-child {
   margin-bottom: 0;
+}
+
+/* ---- 自动高度过渡 ---- */
+/* 内容高度未知，纯 CSS 过渡到内容高度依赖 interpolate-size: allow-keywords
+   （让 height: auto 可插值）。整段用 @supports 守住：不支持的浏览器直接跳过，
+   退回原来的瞬时展开/收起，不会出现半截高度或 max-height 猜值导致的错速。
+   两套 DOM 的收起机制不同，各写一份：
+   - 编辑态：扩展给内容块加 hidden 属性 → 覆盖 UA 的 display:none，
+     否则 display 一断，任何过渡都不会发生；
+     visibility 同步过渡以保证收起后内容不可聚焦、不被读屏拾取
+     （visible→hidden 离散地在过渡末尾生效，展开时则立即生效）。
+   - 前台原生 <details>：内容被浏览器托管，只能通过 ::details-content 伪元素
+     着手，content-visibility 需要 allow-discrete 才能等到高度动画跑完。 */
+@supports (interpolate-size: allow-keywords) {
+  .tiptap {
+    interpolate-size: allow-keywords;
+  }
+
+  .tiptap div[data-type="details"] [data-type="detailsContent"] {
+    height: auto;
+    overflow: hidden;
+    transition:
+      height 0.22s ease,
+      opacity 0.22s ease,
+      margin-top 0.22s ease,
+      visibility 0.22s;
+  }
+  .tiptap div[data-type="details"] [data-type="detailsContent"][hidden] {
+    display: block;
+    height: 0;
+    margin-top: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@supports (interpolate-size: allow-keywords) and (selector(::details-content)) {
+  .tiptap details::details-content {
+    height: 0;
+    overflow: hidden;
+    transition:
+      height 0.22s ease,
+      content-visibility 0.22s allow-discrete;
+  }
+  .tiptap details[open]::details-content {
+    height: auto;
+  }
 }
