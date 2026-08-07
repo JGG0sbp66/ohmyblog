@@ -121,11 +121,12 @@ watch(slug, fetchPost, { immediate: true });
       </BaseCard>
     </div>
 
-    <!-- mt-30：让目录从标题区下方起步，避免和返回按钮／标题齐平；
-         滚动后由 sticky top-24 接管（与 MainLayout 侧栏同一个吸顶位） -->
+    <!-- sticky top-24：与 MainLayout 侧栏同一个吸顶位。
+         这里不能再加 mt-*：目录靠 self-stretch 对齐文章列的高度、再由内部垂直居中定位，
+         任何上外边距都会让短文章下的「居中于文章」偏掉半个 margin。 -->
     <PostToc
       :headings="headings"
-      class="sticky top-24 mt-30 hidden w-48 shrink-0 lg:block xl:w-60"
+      class="sticky top-24 hidden w-48 shrink-0 lg:block xl:w-60"
     />
   </div>
 </template>
