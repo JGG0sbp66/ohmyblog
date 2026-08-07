@@ -1,5 +1,5 @@
 // src/composables/post-editor.hook.ts
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { watchDebounced } from "@vueuse/core";
 import limax from "limax";
@@ -24,7 +24,7 @@ export const DEMO_DRAFT_UUID = "demo-draft";
  * 职责：
  * - 从路由参数 uuid 加载已有文章数据，初始化表单
  * - 持有编辑器各字段的响应式状态（slug、title、tags、status、content、coverImage、excerpt 等）
- * - 提供 save() 方法：并行调用 savePost + updatePostStatus
+ * - 提供 save() 方法：顺序调用 savePost + updatePostStatus
  *
  * 用法：在 PostEditor.page.vue 中调用，通过 v-model 传递给子组件
  */
@@ -50,16 +50,26 @@ export const usePostEditor = () => {
   // --- UI 状态 ---
   const isSaving = ref(false);
   const isLoading = ref(false);
-  /** 是否有未保存的更改 */
-  const isDirty = ref(false);
   /**
-   * 表单版本号：任何字段变更都 +1。
+   * 「脏」被拆成两半，因为它们由两个互不相干的接口负责落库：
+   * - 正文与元数据 → savePost，防抖自动保存会管
+   * - status       → updatePostStatus，只有手动点保存才走
+   *
+   * 合成一个标记的话，改完状态再打个字，autoSave 存完正文就把标记清了，
+   * 状态变更从没落库、UI 却显示「已保存」。
+   */
+  const isContentDirty = ref(false);
+  const isStatusDirty = ref(false);
+  /** 是否有未保存的更改（两半任意一半脏都算） */
+  const isDirty = computed(() => isContentDirty.value || isStatusDirty.value);
+  /**
+   * 正文版本号：payload 里的字段每变一次 +1。
    *
    * 保存请求发出时记下当时的版本，请求回来后再比一次：版本没动，说明这一轮
-   * 请求确实覆盖了当前全部内容，可以安心清 isDirty；版本变了，说明用户在
-   * 请求飞行途中又改了东西，那些改动并不在这次 payload 里，isDirty 必须留着。
+   * 请求确实覆盖了当前全部内容，可以安心清 isContentDirty；版本变了，说明用户
+   * 在请求飞行途中又改了东西，那些改动并不在这次 payload 里，脏标记必须留着。
    */
-  let formVersion = 0;
+  let contentVersion = 0;
   /** 有一次自动保存因为「上一轮还在飞」被跳过了，等这轮落地后要补上 */
   let autoSavePending = false;
 
@@ -92,16 +102,26 @@ export const usePostEditor = () => {
       useToast.error("加载文章失败");
     } finally {
       isLoading.value = false;
-      // 加载完成后才开始监听变化，防止初始赋值触发 isDirty
+      // 加载完成后才开始监听变化，防止初始赋值触发脏标记
       // deep: true — 捕获 tags 数组的 push/splice 就地变更（浅监听感知不到引用未变的数组修改）
+      //
+      // 这里只列 buildSavePayload 真正会发出去的字段。contentText / contentHtml
+      // 不在其中：它们由 content 派生，永远同进同出，跟着 content 判断就够了。
+      // 新增会进 payload 的字段时，这个数组和下面的防抖数组都要同步补上。
       watch(
-        [slug, tags, status, title, content, excerpt, pinned],
+        [slug, tags, title, content, excerpt, pinned],
         () => {
-          isDirty.value = true;
-          formVersion += 1;
+          isContentDirty.value = true;
+          contentVersion += 1;
         },
         { deep: true },
       );
+      // status 单独看：它不进 payload，得靠手动保存调 updatePostStatus 落库。
+      // 也刻意不进下面的防抖数组——自动保存把「草稿改已发布」直接发出去，
+      // 等于绕过 save() 里的 slug 校验偷偷发文，发布必须是用户明确点下的动作
+      watch(status, () => {
+        isStatusDirty.value = true;
+      });
       // 标题变化时自动同步 slug：
       // - 从未公开过 → 继续联动（草稿的地址没人见过，随便改）
       // - 已公开过（publishedAt 非空）→ 锁定，标题再改也不动 slug
@@ -124,22 +144,13 @@ export const usePostEditor = () => {
       // emit change(file)，没有清空入口），封面当场就存下了。再让它触发 isDirty
       // 只会换来一次多余的全量自动保存，外加状态栏闪一下「未保存」。
 
-      // title/content 防抖自动保存
+      // 正文防抖自动保存。字段与上面的 isContentDirty 数组保持一致，外加
+      // contentText / contentHtml —— 它们由 content 派生但更新未必在同一 tick，
+      // 列进来是为了「最后一次导出也算一次触发」，不至于漏掉收尾的那版 HTML
       watchDebounced(
-        [
-          title,
-          content,
-          contentText,
-          contentHtml,
-          coverImage,
-          excerpt,
-          tags,
-          slug,
-          pinned,
-        ],
+        [title, content, contentText, contentHtml, excerpt, tags, slug, pinned],
         () => {
-          // TODO [已有注释]: 这里的自动保存监听可能还不完整；例如 status 变更走的是独立发布接口，历史上也可能有其它渐进式新增字段没接进来，需要后面统一复查一次自动保存覆盖面。
-          if (!isDirty.value) return;
+          if (!isContentDirty.value) return;
           autoSave();
         },
         { debounce: 2000, maxWait: 8000, deep: true },
@@ -172,12 +183,12 @@ export const usePostEditor = () => {
     isSaving.value = true;
     // 先取版本号快照，再构造 payload，顺序不能反：反了的话两者之间发生的变更
     // 会被算进这次 payload，却又让版本号显得没动过
-    const version = formVersion;
+    const version = contentVersion;
     try {
       await savePost(uuid, buildSavePayload());
       // 版本变了说明请求途中用户又改了，这些改动不在刚才的 payload 里，
-      // 不能清 isDirty —— 这正是「保存中的修改被静默丢弃」的根因
-      if (formVersion === version) isDirty.value = false;
+      // 不能清脏标记 —— 这正是「保存中的修改被静默丢弃」的根因
+      if (contentVersion === version) isContentDirty.value = false;
       else autoSavePending = true;
     } catch (error: any) {
       useToast.error(t(`api.errors.${error}`));
@@ -219,7 +230,8 @@ export const usePostEditor = () => {
     }
     if (isSaving.value) return;
     isSaving.value = true;
-    const version = formVersion;
+    const version = contentVersion;
+    const savedStatus = status.value;
     try {
       // 第一步：正文与元数据。失败就直接退出，状态一个字都不动 ——
       // 并行发的话这里失败、状态却改成功了，等于把上一版正文发布出去
@@ -237,7 +249,7 @@ export const usePostEditor = () => {
       // 第二步：状态。此刻内容已经落库了，所以这里失败要说清楚「哪一半成了」，
       // 否则用户看到一句笼统的失败，只能整个重来一遍
       try {
-        await updatePostStatus(uuid, status.value);
+        await updatePostStatus(uuid, savedStatus);
       } catch (error: any) {
         useToast.error(
           t("views.admin.PostEditor.saveError.status", {
@@ -248,8 +260,9 @@ export const usePostEditor = () => {
       }
 
       // 与 autoSave 同理：请求往返途中用户可能又改了东西，那些改动不在这次
-      // payload 里，版本号没动过才能算真正干净
-      if (formVersion === version) isDirty.value = false;
+      // payload 里，版本号没动过才能算真正干净。两半各按各的快照判断
+      if (contentVersion === version) isContentDirty.value = false;
+      if (status.value === savedStatus) isStatusDirty.value = false;
       useToast.success(t("api.success.保存成功"));
     } finally {
       isSaving.value = false;
