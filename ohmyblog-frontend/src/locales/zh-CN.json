@@ -456,6 +456,10 @@
         "validation": {
           "slugRequired": "发布前请先填写标题或永久链接"
         },
+        "saveError": {
+          "content": "正文保存失败，文章状态未改动：{reason}",
+          "status": "正文已保存，但状态更新失败，请重试：{reason}"
+        },
         "leaveConfirm": {
           "title": "离开文章编辑器",
           "question": "这篇文章还有内容没有保存，确定要离开吗？",

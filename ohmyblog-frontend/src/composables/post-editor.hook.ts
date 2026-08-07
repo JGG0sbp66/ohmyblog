@@ -196,9 +196,11 @@ export const usePostEditor = () => {
   /**
    * 保存文章
    *
-   * 分两步并行执行：
+   * 分两步「顺序」执行，中间任何一步失败都立刻停下：
    * 1. savePost() — 保存内容字段（slug、title、tags、content、coverImage、excerpt 等）
    * 2. updatePostStatus() — 更新文章状态（独立接口）
+   *
+   * 顺序不能颠倒：状态先于内容成功，就等于把上一版正文发布出去了。
    */
   const save = async () => {
     // 演示模式：这是用户主动点的按钮，给一次明确反馈再返回。
@@ -217,20 +219,38 @@ export const usePostEditor = () => {
     }
     if (isSaving.value) return;
     isSaving.value = true;
+    const version = formVersion;
     try {
-      // TODO [风险2 - 手动保存部分成功]: 两个请求通过 Promise.all 并行执行。
-      //   若 savePost 成功而 updatePostStatus 失败（或反之），catch 只能捕获整体失败并弹出提示，
-      //   但服务端已经产生了部分修改——内容或状态只有一个被更新。
-      //   修复方向：改用顺序执行（先内容后状态），或分别 try/catch 并在 UI 上明确提示哪一步失败，
-      //   让用户知道需要重试的是哪部分。
-      await Promise.all([
-        savePost(uuid, buildSavePayload()),
-        updatePostStatus(uuid, status.value),
-      ]);
-      isDirty.value = false;
+      // 第一步：正文与元数据。失败就直接退出，状态一个字都不动 ——
+      // 并行发的话这里失败、状态却改成功了，等于把上一版正文发布出去
+      try {
+        await savePost(uuid, buildSavePayload());
+      } catch (error: any) {
+        useToast.error(
+          t("views.admin.PostEditor.saveError.content", {
+            reason: t(`common.validation.${error}`),
+          }),
+        );
+        return;
+      }
+
+      // 第二步：状态。此刻内容已经落库了，所以这里失败要说清楚「哪一半成了」，
+      // 否则用户看到一句笼统的失败，只能整个重来一遍
+      try {
+        await updatePostStatus(uuid, status.value);
+      } catch (error: any) {
+        useToast.error(
+          t("views.admin.PostEditor.saveError.status", {
+            reason: t(`common.validation.${error}`),
+          }),
+        );
+        return;
+      }
+
+      // 与 autoSave 同理：请求往返途中用户可能又改了东西，那些改动不在这次
+      // payload 里，版本号没动过才能算真正干净
+      if (formVersion === version) isDirty.value = false;
       useToast.success(t("api.success.保存成功"));
-    } catch (error: any) {
-      useToast.error(t(`common.validation.${error}`));
     } finally {
       isSaving.value = false;
     }

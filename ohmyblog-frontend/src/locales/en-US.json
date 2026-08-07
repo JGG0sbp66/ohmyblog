@@ -458,6 +458,10 @@
         "validation": {
           "slugRequired": "Please set a title or permalink before publishing"
         },
+        "saveError": {
+          "content": "Failed to save content; post status was left unchanged: {reason}",
+          "status": "Content saved, but the status update failed. Please retry: {reason}"
+        },
         "leaveConfirm": {
           "title": "Leave Post Editor",
           "question": "This post has unsaved changes. Leave anyway?",
