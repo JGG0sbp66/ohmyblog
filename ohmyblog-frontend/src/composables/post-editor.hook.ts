@@ -180,7 +180,7 @@ export const usePostEditor = () => {
       if (formVersion === version) isDirty.value = false;
       else autoSavePending = true;
     } catch (error: any) {
-      useToast.error(t(`common.validation.${error}`));
+      useToast.error(t(`api.errors.${error}`));
       // 失败了就不补跑：内容仍是脏的，下一次输入的防抖会再来一轮。
       // 在这里重试只会把同一个错误连着弹好几遍
       autoSavePending = false;
@@ -228,7 +228,7 @@ export const usePostEditor = () => {
       } catch (error: any) {
         useToast.error(
           t("views.admin.PostEditor.saveError.content", {
-            reason: t(`common.validation.${error}`),
+            reason: t(`api.errors.${error}`),
           }),
         );
         return;
@@ -241,7 +241,7 @@ export const usePostEditor = () => {
       } catch (error: any) {
         useToast.error(
           t("views.admin.PostEditor.saveError.status", {
-            reason: t(`common.validation.${error}`),
+            reason: t(`api.errors.${error}`),
           }),
         );
         return;
