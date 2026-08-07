@@ -1,6 +1,6 @@
 <!-- src/components/base/pop/ConfirmModal.vue -->
 <script setup lang="ts">
-import type { Component } from "vue";
+import { computed, type Component } from "vue";
 import { TriangleAlert, Info } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import BaseModal from "./BaseModal.vue";
@@ -31,7 +31,6 @@ const props = withDefaults(
     loading?: boolean;
   }>(),
   {
-    icon: TriangleAlert,
     iconClass: "text-red-500",
     confirmClass: "",
     loading: false,
@@ -46,6 +45,16 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useLang();
+
+/**
+ * 图标默认值只能在这里兜，不能写进 withDefaults。
+ *
+ * lucide 的图标是函数式组件（`(props, { slots }) => h(...)`），而 Vue 解析 prop
+ * 默认值时，只要声明类型不是 Function 而默认值是个函数，就会把它当成「工厂函数」
+ * 调用一次取返回值——于是 TriangleAlert(props) 少了第二个 ctx 参数，
+ * 内部解构 { slots } 直接抛 TypeError，整棵组件树渲染失败。
+ */
+const iconComponent = computed<Component>(() => props.icon ?? TriangleAlert);
 </script>
 
 <template>
@@ -56,7 +65,7 @@ const { t } = useLang();
   >
     <template #header>
       <div class="flex items-center gap-2">
-        <component :is="icon" class="w-5 h-5" :class="iconClass" />
+        <component :is="iconComponent" class="w-5 h-5" :class="iconClass" />
         <h2 class="text-xl font-bold text-fg">{{ title }}</h2>
       </div>
     </template>
