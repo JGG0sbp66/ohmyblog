@@ -52,6 +52,16 @@ export const usePostEditor = () => {
   const isLoading = ref(false);
   /** 是否有未保存的更改 */
   const isDirty = ref(false);
+  /**
+   * 表单版本号：任何字段变更都 +1。
+   *
+   * 保存请求发出时记下当时的版本，请求回来后再比一次：版本没动，说明这一轮
+   * 请求确实覆盖了当前全部内容，可以安心清 isDirty；版本变了，说明用户在
+   * 请求飞行途中又改了东西，那些改动并不在这次 payload 里，isDirty 必须留着。
+   */
+  let formVersion = 0;
+  /** 有一次自动保存因为「上一轮还在飞」被跳过了，等这轮落地后要补上 */
+  let autoSavePending = false;
 
   /** 加载已有文章数据并填充表单 */
   const loadPost = async () => {
@@ -88,6 +98,7 @@ export const usePostEditor = () => {
         [slug, tags, status, title, content, excerpt, pinned],
         () => {
           isDirty.value = true;
+          formVersion += 1;
         },
         { deep: true },
       );
@@ -152,19 +163,33 @@ export const usePostEditor = () => {
     // 演示模式：写操作必被后端拒绝，而防抖自动保存每 2 秒就会触发一次，
     // 不在源头拦住的话游客一打字就会持续弹错。静默跳过，不打扰阅读
     if (authStore.isDemoUser) return;
-    // TODO [风险1 - 自动保存竞态]: isSaving 为 true 时直接跳过本轮触发，但旧请求成功返回后会无条件
-    //   设置 isDirty = false，而用户在这段时间里做的新修改并未被保存。
-    //   修复方向：引入"保存中产生了新脏数据"标志，请求完成后若为 true 则立刻再触发一次保存，
-    //   或改用队列/版本号机制确保最后一次修改一定能落盘。
-    if (isSaving.value) return;
+    // 上一轮还在飞：直接丢掉这次触发的话，「改动发生在保存途中 + 之后不再输入」
+    // 就没有任何东西会再触发保存了。记个标记，等那轮落地后补一次
+    if (isSaving.value) {
+      autoSavePending = true;
+      return;
+    }
     isSaving.value = true;
+    // 先取版本号快照，再构造 payload，顺序不能反：反了的话两者之间发生的变更
+    // 会被算进这次 payload，却又让版本号显得没动过
+    const version = formVersion;
     try {
       await savePost(uuid, buildSavePayload());
-      isDirty.value = false;
+      // 版本变了说明请求途中用户又改了，这些改动不在刚才的 payload 里，
+      // 不能清 isDirty —— 这正是「保存中的修改被静默丢弃」的根因
+      if (formVersion === version) isDirty.value = false;
+      else autoSavePending = true;
     } catch (error: any) {
       useToast.error(t(`common.validation.${error}`));
+      // 失败了就不补跑：内容仍是脏的，下一次输入的防抖会再来一轮。
+      // 在这里重试只会把同一个错误连着弹好几遍
+      autoSavePending = false;
     } finally {
       isSaving.value = false;
+    }
+    if (autoSavePending) {
+      autoSavePending = false;
+      await autoSave();
     }
   };
 
