@@ -6,6 +6,7 @@ import Header from "@/components/common/layout/Header.vue";
 import Footer from "@/components/common/layout/Footer.vue";
 import HeroSection from "@/views/main/components/hero/HeroSection.vue";
 import ProfileCard from "@/components/common/item/ProfileCard.vue";
+import AnnouncementCard from "@/views/main/components/announcement/AnnouncementCard.vue";
 import { useSystemStore } from "@/stores/system.store";
 
 const systemStore = useSystemStore();
@@ -49,6 +50,9 @@ const fillHeight = computed(() => route.name === "not-found");
         >
           <div class="onload-animation">
             <ProfileCard />
+          </div>
+          <div class="onload-animation">
+            <AnnouncementCard />
           </div>
           <!-- 未来可以在此处添加更多侧边栏组件 -->
         </aside>

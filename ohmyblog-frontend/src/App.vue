@@ -31,6 +31,7 @@ const initAppData = async () => {
     initThemeConfig(), // 同步服务器预设外观设置
     systemStore.fetchSiteInfo(), // 拉取站点元数据 (Title, Favicon等)
     systemStore.fetchPersonalInfo(), // 拉取博主基本信息 (Avatar, Hero等)
+    systemStore.fetchAnnouncement(), // 拉取侧边栏公告
   ]);
 
   isAppDataLoaded.value = true;
