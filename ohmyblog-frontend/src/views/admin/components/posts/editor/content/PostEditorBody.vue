@@ -100,7 +100,7 @@ const editor = useEditor({
     internalUpdate = true;
     json.value = editor.getJSON();
     text.value = editor.getText();
-      // TODO: 这里把编辑器内容同步导出为 contentHtml；如果前台在“标题 + 有序列表”组合上和后台编辑器表现不一致，优先核对 getHTML 的输出。
+    // TODO: 这里把编辑器内容同步导出为 contentHtml；如果前台在“标题 + 有序列表”组合上和后台编辑器表现不一致，优先核对 getHTML 的输出。
     html.value = editor.getHTML();
     syncCharCount(editor);
   },
@@ -122,12 +122,22 @@ watch(
       return;
     }
     const ed = editor.value;
-    // TODO [风险7 - 清空外部正文同步边界]: newVal 为 falsy（undefined / null / 空对象）时直接 return，
-    //   不会调用 setContent。若父组件有意将正文清空（比如"清空内容"操作），
-    //   编辑器内部仍保留上一次的内容，形成前后端状态不一致。
-    //   修复方向：区分"外部尚未加载"（undefined）和"外部主动清空"（空对象 {}）两种情况，
-    //   后者应调用 ed.commands.clearContent()。
-    if (!ed || !newVal) return;
+    if (!ed) return;
+    // 「外部尚未加载」和「外部主动清空」必须区分，否则后者会被当成前者忽略掉，
+    // 编辑器里留着上一篇的正文，而父组件以为已经空了：
+    // - undefined / null → 文章还没加载回来（loadPost 前的初始值），保持现状
+    // - 空对象 {}        → 调用方明确要求清空，走 clearContent
+    if (newVal == null) return;
+    if (Object.keys(newVal).length === 0) {
+      // emitUpdate = false：与下面的 setContent 一致，避免回写 json 触发自回声。
+      // 代价是 onUpdate 不跑，text / html 需要在这里手动跟上——否则正文清空了，
+      // 存进库的 contentText / contentHtml 还是上一篇的内容
+      ed.commands.clearContent(false);
+      text.value = ed.getText();
+      html.value = ed.getHTML();
+      syncCharCount(ed);
+      return;
+    }
     ed.commands.setContent(newVal, { emitUpdate: false });
     // 外部 setContent 不会触发 onUpdate，需要主动同步一次字数统计
     syncCharCount(ed);
