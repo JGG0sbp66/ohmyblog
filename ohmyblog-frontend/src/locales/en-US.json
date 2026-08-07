@@ -108,7 +108,10 @@
   "views": {
     "main": {
       "announcement": {
-        "defaultTitle": "Announcement"
+        "defaultTitle": "Announcement",
+        "expand": "View full announcement",
+        "close": "Dismiss announcement",
+        "gotIt": "Got it"
       },
       "home": {
         "PostCard": {

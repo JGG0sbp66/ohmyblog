@@ -7,6 +7,7 @@ import Footer from "@/components/common/layout/Footer.vue";
 import HeroSection from "@/views/main/components/hero/HeroSection.vue";
 import ProfileCard from "@/components/common/item/ProfileCard.vue";
 import AnnouncementCard from "@/views/main/components/announcement/AnnouncementCard.vue";
+import AnnouncementBanner from "@/views/main/components/announcement/AnnouncementBanner.vue";
 import { useSystemStore } from "@/stores/system.store";
 
 const systemStore = useSystemStore();
@@ -38,9 +39,16 @@ const fillHeight = computed(() => route.name === "not-found");
         fillHeight ? 'flex flex-col' : '',
       ]"
     >
+      <!--
+        移动端公告横幅：侧边栏在 md 以下是隐藏的，公告卡片跟着看不见，
+        这里换成一条从下方内容板背后探出的横幅。展示范围与侧边栏保持一致。
+        断点由组件内部声明（它是多根组件，接不住外部传入的 class）。
+      -->
+      <AnnouncementBanner v-if="showSidebar" />
+
       <!-- 两栏布局：左侧侧边栏 + 右侧内容区（侧边栏仅桌面端显示） -->
       <div
-        class="flex flex-col md:flex-row gap-7"
+        class="flex flex-col md:flex-row gap-7 relative z-10"
         :class="fillHeight ? 'flex-1 items-stretch' : 'items-start'"
       >
         <!-- 侧边栏 (Widgets) - 移动端隐藏；文章详情页不显示 -->

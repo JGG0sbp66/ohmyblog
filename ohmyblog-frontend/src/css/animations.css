@@ -57,6 +57,31 @@
   }
 }
 
+/*
+  公告跑马灯。轨道里放两份相同内容，向左位移「一份的宽度 + 间距」后回到起点，
+  视觉上首尾无缝。位移量随文本长度变化，由 AnnouncementBanner 实测后写进
+  --marquee-shift，时长同理，所以这里只留运动本身。
+*/
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-1 * var(--marquee-shift, 0px)));
+  }
+}
+
+.marquee-track {
+  animation: marquee-x var(--marquee-duration, 20s) linear infinite;
+}
+
+/* 尊重系统的「减少动态效果」：组件侧已经不挂这个类了，这里再兜一层 */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
 /* ==================== 分层延迟 ==================== */
 
 /* 导航栏 - 最先出现 */

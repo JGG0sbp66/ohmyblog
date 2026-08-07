@@ -108,7 +108,10 @@
   "views": {
     "main": {
       "announcement": {
-        "defaultTitle": "公告"
+        "defaultTitle": "公告",
+        "expand": "查看完整公告",
+        "close": "关闭公告",
+        "gotIt": "我知道了"
       },
       "home": {
         "PostCard": {

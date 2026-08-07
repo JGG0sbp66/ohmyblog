@@ -1,32 +1,21 @@
 <!-- src/views/main/components/announcement/AnnouncementCard.vue -->
 <script setup lang="ts">
-import { computed } from "vue";
 import { RiMegaphoneLine } from "@remixicon/vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
-import { useLang } from "@/composables/lang.hook";
-import { useSystemStore } from "@/stores/system.store";
+import { useAnnouncement } from "./use-announcement";
 
-const { t } = useLang();
-const systemStore = useSystemStore();
-
-// 开关关闭或正文为空时整张卡不渲染，避免侧边栏留下一个空壳
-const visible = computed(
-  () =>
-    systemStore.announcement.enabled &&
-    !!systemStore.announcement.content?.trim(),
-);
-
-// 标题留空时回落到默认文案
-const title = computed(
-  () =>
-    systemStore.announcement.title?.trim() ||
-    t("views.main.announcement.defaultTitle"),
-);
+/**
+ * AnnouncementCard — 桌面侧边栏公告卡片
+ *
+ * 不参与「关闭」：侧边栏空间是常驻的，关掉反而留一块空白；
+ * 关闭只在移动端横幅上提供（见 AnnouncementBanner.vue）。
+ */
+const { available, title, content } = useAnnouncement();
 </script>
 
 <template>
   <BaseCard
-    v-if="visible"
+    v-if="available"
     padding="none"
     class="w-70 p-5 rounded-2xl! flex flex-col gap-3"
   >
@@ -44,7 +33,7 @@ const title = computed(
     <p
       class="text-sm text-fg-muted font-medium leading-relaxed whitespace-pre-line line-clamp-8 break-words"
     >
-      {{ systemStore.announcement.content }}
+      {{ content }}
     </p>
   </BaseCard>
 </template>
