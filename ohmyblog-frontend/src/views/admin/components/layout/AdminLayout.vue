@@ -116,10 +116,15 @@ watch(isMobile, (mobile) => {
         于是让它同时承担两件事：显示正文滚动进度（被牺牲的高度换来一个新信息），
         以及点一下把顶部栏拉回来。
         仅在收起时才接收点击，展开状态下不能挡住 header 自己的按钮。
+
+        z-20 是必需的：AdminHeader 的根元素是 relative z-10，不显式抬高层级的话
+        进度条会被卡片背景盖住，只在底部两个圆角（rounded-b-2xl）背景弯走的地方
+        露出两小段。
+        px-3 让线的两端避开那 16px 圆角，不至于压在弯角上。
       -->
       <div
         v-if="showHeaderSliver"
-        class="absolute inset-x-0 bottom-0 flex h-3 items-end"
+        class="absolute inset-x-0 bottom-0 z-20 flex h-3 items-center px-3"
         :class="
           shouldCollapseHeader ? 'pointer-events-auto' : 'pointer-events-none'
         "
@@ -128,7 +133,7 @@ watch(isMobile, (mobile) => {
         @click="expandHeader"
       >
         <div
-          class="h-0.5 rounded-r-full bg-accent transition-[width,opacity] duration-150 ease-out"
+          class="h-0.5 rounded-full bg-accent transition-[width,opacity] duration-150 ease-out"
           :class="shouldCollapseHeader ? 'opacity-100' : 'opacity-0'"
           :style="{ width: `${Math.round(editorProgress * 100)}%` }"
         ></div>
