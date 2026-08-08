@@ -30,6 +30,12 @@ export function useEmailLogList(
   const currentPage = ref(1);
   const isLoading = ref(false);
   const isFinished = ref(false);
+  /**
+   * 是否已经完成过一次请求（成功或失败都算）。
+   * 用于区分「还没拉过」和「拉完了确实是空的」——只靠 list.length === 0
+   * 两者无法分辨，会在首次加载前先闪一下空态。
+   */
+  const hasLoaded = ref(false);
 
   const fetchList = async (reset = false) => {
     if (isLoading.value || (isFinished.value && !reset)) return;
@@ -70,6 +76,8 @@ export function useEmailLogList(
       useToast.error(t(`api.errors.${error}`));
     } finally {
       isLoading.value = false;
+      // 失败也置真：否则「未加载」态会永久停在骨架屏上，错误本身已由 toast 表达
+      hasLoaded.value = true;
     }
   };
 
@@ -85,5 +93,5 @@ export function useEmailLogList(
   // 监听过滤条件变化，自动重置并重新加载
   watch(getFilters, () => fetchList(true), { deep: true });
 
-  return { list, isLoading, isFinished, fetchList };
+  return { list, isLoading, isFinished, hasLoaded, fetchList };
 }
