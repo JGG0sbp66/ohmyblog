@@ -60,7 +60,11 @@ export class HealthService {
 		try {
 			const proc = Bun.spawn(["git", "rev-parse", "HEAD"]);
 			const hash = (await new Response(proc.stdout).text()).trim();
-			return { hash, source: "本地 Git 命令" };
+			// 非 Git 仓库时 spawn 不抛错，只是 stdout 为空，这里要显式兜住
+			if (hash) {
+				return { hash, source: "本地 Git 命令" };
+			}
+			this.logger.warn("Git 命令未返回提交哈希，将使用默认值 'unknown'");
 		} catch (e) {
 			this.logger.warn(
 				{ err: e },
