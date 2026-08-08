@@ -27,6 +27,11 @@ const SCROLL_THRESHOLD_PX = 24;
 const TOP_ALWAYS_SHOW_PX = 16;
 /** 失焦后延迟展开，避开标题↔正文之间切换焦点时的瞬时 focusout */
 const BLUR_EXPAND_DELAY_MS = 200;
+/**
+ * 两次切换之间的最小间隔，略大于 AdminLayout 的 300ms 过渡。
+ * 过渡期间容器高度在渐变，本来就不该在这段时间内反向切换。
+ */
+const TOGGLE_COOLDOWN_MS = 350;
 
 const collapsed = ref(false);
 /** 文档滚动进度 0~1，收起后由那条细线呈现 */
@@ -69,19 +74,58 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
    * 把顶部栏又推回来——而文档开头正是开始写作的地方。
    */
   let focusHeld = false;
+  /**
+   * 上一次采样时滚动容器的可视高度。
+   *
+   * 这是防自激振荡的关键。收起顶部栏会让内容区变高（AdminLayout 给内容区加负
+   * marginTop），滚动容器的 clientHeight 随之增大，maxScroll = scrollHeight -
+   * clientHeight 因此缩小；**在文档最底部** scrollTop 正好等于 maxScroll，浏览器
+   * 必须把它夹回新上限，于是冒出一个方向朝上的滚动事件。那不是用户滑的，是我们
+   * 自己的布局变化，喂给方向判定就成了闭环：
+   *   下滑 → 收起 → 容器变高 → scrollTop 被夹 → 判为上滑 → 展开 → 下滑 → …
+   * 顶部栏于是在最底部反复弹动（且因为 marginTop 有 300ms 过渡，这段位移是几十
+   * 个小事件累加出来的，看起来就是持续抖）。
+   *
+   * 所以：容器高度一变，本次采样只重设基线、不参与方向判定。
+   */
+  let lastHeight = 0;
+  /** 上次切换的时刻，用于冷却（见下方 TOGGLE_COOLDOWN_MS） */
+  let toggledAt = 0;
+
+  /**
+   * @param force 跳过冷却。焦点变化是明确的用户意图、且不参与上面那个闭环，
+   *   不能被冷却吞掉——focusin 只会来一次，丢了就再也不会补。
+   */
+  const setCollapsed = (value: boolean, force = false) => {
+    if (collapsed.value === value) return;
+    // 二道保险：即使某帧的高度变化恰好被四舍五入抹平、漏进了方向判定，
+    // 冷却也能把振荡频率压到肉眼无感，不至于回到"持续弹动"。
+    if (!force && performance.now() - toggledAt < TOGGLE_COOLDOWN_MS) return;
+    toggledAt = performance.now();
+    collapsed.value = value;
+  };
 
   const measure = (el: HTMLElement) => {
     // iOS 橡皮筋会给出负的 scrollTop，钳掉避免进度条反向
     const y = Math.max(0, el.scrollTop);
-    const max = el.scrollHeight - el.clientHeight;
+    const height = el.clientHeight;
+    const max = el.scrollHeight - height;
     progress.value = max > 0 ? Math.min(1, y / max) : 0;
+
+    // 容器高度变了 → 这次位移是收起/展开自己造成的，不是用户输入
+    if (height !== lastHeight) {
+      lastHeight = height;
+      lastY = y;
+      accum = 0;
+      return;
+    }
 
     const delta = y - lastY;
     lastY = y;
 
     // 被动规则：滚到头了就该看见顶部栏。但正在打字时不适用（见 focusHeld）
     if (y <= TOP_ALWAYS_SHOW_PX && !focusHeld) {
-      collapsed.value = false;
+      setCollapsed(false);
       accum = 0;
       return;
     }
@@ -91,10 +135,10 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
     accum += delta;
 
     if (accum > SCROLL_THRESHOLD_PX) {
-      collapsed.value = true;
+      setCollapsed(true);
       accum = 0;
     } else if (accum < -SCROLL_THRESHOLD_PX) {
-      collapsed.value = false;
+      setCollapsed(false);
       accum = 0;
     }
   };
@@ -111,13 +155,13 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
   const onFocusIn = () => {
     clearTimeout(blurTimer);
     focusHeld = true;
-    collapsed.value = true;
+    setCollapsed(true, true);
   };
 
   const onFocusOut = () => {
     blurTimer = setTimeout(() => {
       focusHeld = false;
-      collapsed.value = false;
+      setCollapsed(false, true);
     }, BLUR_EXPAND_DELAY_MS);
   };
 
@@ -126,6 +170,8 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
     progress.value = 0;
     lastY = 0;
     accum = 0;
+    lastHeight = 0;
+    toggledAt = 0;
     focusHeld = false;
     clearTimeout(blurTimer);
     if (frame) {
@@ -148,6 +194,7 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
       el.addEventListener("focusin", onFocusIn);
       el.addEventListener("focusout", onFocusOut);
       lastY = Math.max(0, el.scrollTop);
+      lastHeight = el.clientHeight;
 
       detach = () => {
         el.removeEventListener("scroll", onScroll);
