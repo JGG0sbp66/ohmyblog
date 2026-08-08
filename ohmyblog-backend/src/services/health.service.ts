@@ -3,6 +3,9 @@ import { userDao } from "../daos/user.dao";
 import { logger } from "../plugins/logger.plugin";
 import { isDemo } from "../utils/runtime";
 
+/** 对外暴露的 commit hash 长度，与 `git rev-parse --short` 的默认位数保持一致 */
+const COMMIT_HASH_LENGTH = 7;
+
 export class HealthService {
 	private commitHash: string = "unknown";
 	// 默认取 package.json 版本（编译时内联进产物），本地开发/本地 Docker 构建无需额外注入
@@ -26,31 +29,45 @@ export class HealthService {
 			this.appVersion = envVersion;
 		}
 
-		// 读取 commit hash
-		if (process.env.GIT_COMMIT) {
-			this.commitHash = process.env.GIT_COMMIT;
+		// commit hash 各来源给的位数不一致（CI 注入的 github.sha 是完整 40 位，
+		// 本地 git 是短哈希），因此各来源只负责给出原始值，在这里单点截断，
+		// 对外始终是同一种形态；解析失败时保留默认值 "unknown"
+		const resolved = await this.resolveCommitHash();
+		if (resolved) {
+			this.commitHash = resolved.hash.slice(0, COMMIT_HASH_LENGTH);
 			this.logger.info(
 				{ version: this.appVersion, commit: this.commitHash },
-				"已从环境变量加载版本信息",
+				`已从${resolved.source}加载版本信息`,
 			);
-			return;
+		}
+	}
+
+	/**
+	 * 解析 commit hash 的原始值，不做长度处理
+	 * @returns 原始哈希与来源描述；无法确定时返回 null
+	 */
+	private async resolveCommitHash(): Promise<{
+		hash: string;
+		source: string;
+	} | null> {
+		// 部署环境：CI 通过 --build-arg 注入，无需依赖镜像里存在 git
+		const envCommit = process.env.GIT_COMMIT?.trim();
+		if (envCommit) {
+			return { hash: envCommit, source: "环境变量" };
 		}
 
-		// 本地开发环境：尝试 Git 命令获取 commit hash
+		// 本地开发环境：回退到 Git 命令
 		try {
-			const proc = Bun.spawn(["git", "rev-parse", "--short", "HEAD"]);
-			const text = await new Response(proc.stdout).text();
-			this.commitHash = text.trim();
-			this.logger.info(
-				{ version: this.appVersion, commit: this.commitHash },
-				"已通过本地 Git 命令加载版本信息",
-			);
+			const proc = Bun.spawn(["git", "rev-parse", "HEAD"]);
+			const hash = (await new Response(proc.stdout).text()).trim();
+			return { hash, source: "本地 Git 命令" };
 		} catch (e) {
 			this.logger.warn(
 				{ err: e },
 				"无法获取 Git 提交哈希，将使用默认值 'unknown'",
 			);
 		}
+		return null;
 	}
 
 	/**
