@@ -1,5 +1,7 @@
 <!-- src/views/admin/components/posts/editor/PostEditorContent.vue -->
 <script setup lang="ts">
+import { ref } from "vue";
+import { useEditorHeaderCollapse } from "@/composables/editor-header.hook";
 import PostEditorTitle from "./content/PostEditorTitle.vue";
 import PostEditorBody from "./content/PostEditorBody.vue";
 
@@ -22,10 +24,18 @@ const totalCharCount = defineModel<number>("totalCharCount", { default: 0 });
 const selectedCharCount = defineModel<number>("selectedCharCount", {
   default: 0,
 });
+
+/**
+ * 编辑页真正滚动的是本组件这层容器（PostEditor.page 的 BaseCard 是
+ * flex-1 overflow-hidden，滚动被吃在内部），AdminLayout 的 <main> 在这个路由下
+ * 并不滚动。移动端顶部栏的收起信号因此只能从这里发出。
+ */
+const scrollRef = ref<HTMLElement | null>(null);
+useEditorHeaderCollapse(scrollRef);
 </script>
 
 <template>
-  <div class="flex-1 overflow-y-auto bg-bg-muted/10">
+  <div ref="scrollRef" class="flex-1 overflow-y-auto bg-bg-muted/10">
     <!-- 内容宽度限制：适宜阅读的最大宽，居中对齐 -->
     <div
       class="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6 sm:px-8 sm:py-10"
