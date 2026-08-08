@@ -94,12 +94,15 @@ class FeedService {
 	}
 
 	/**
-	 * 将 HTML 中 src/href 的相对路径转为绝对 URL
-	 * 匹配 src="/..." 和 href="/..." 格式
+	 * 将 HTML 中 src/href/poster 的相对路径转为绝对 URL
+	 * 匹配 src="/..."、href="/..."、poster="/..." 格式
+	 *
+	 * poster 是视频封面图，同样落在 /api/uploads 下，RSS 阅读器脱离站点上下文，
+	 * 不绝对化就是一张裂图。
 	 */
 	private resolveRelativeUrls(html: string, siteUrl: string): string {
 		return html.replace(
-			/(src|href)="(\/[^"]*?)"/g,
+			/(src|href|poster)="(\/[^"]*?)"/g,
 			(_, attr, path) => `${attr}="${siteUrl}${path}"`,
 		);
 	}
