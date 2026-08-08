@@ -1,6 +1,6 @@
 <!-- src/components/common/button/NotificationButton.vue -->
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
@@ -26,6 +26,7 @@ const {
   list: unreadList,
   isLoading,
   isFinished,
+  hasLoaded,
   fetchList: fetchUnreadList,
 } = useEmailLogList(() => ({ isRead: false }), scrollContainer);
 
@@ -33,13 +34,39 @@ const {
 let lastFetchTime = 0;
 const STALE_MS = 30_000; // 30秒缓存
 
-/** 鼠标移入通知图标时：如果数据为空或已过期，刷新列表 */
+/**
+ * 鼠标移入通知图标时刷新列表。
+ *
+ * 原来这里有一条 `|| list.length === 0`：真的没有未读时列表恒为空，于是每次移入
+ * 都重新请求，30s 缓存等于没有，面板每次都要闪一个 RTT 的骨架屏（高延迟机器上
+ * 极其明显）。改成只在「没拉过 / 已过期 / badge 说有未读但列表却是空」时才请求，
+ * 最后一条保留了原意——预加载失败后仍能靠下一次移入重试。
+ */
 const onPopupEnter = () => {
-  if (Date.now() - lastFetchTime > STALE_MS || unreadList.value.length === 0) {
+  const stale = Date.now() - lastFetchTime > STALE_MS;
+  const missing = emailStore.unreadCount > 0 && unreadList.value.length === 0;
+  if (!hasLoaded.value || stale || missing) {
     lastFetchTime = Date.now();
     fetchUnreadList(true);
   }
 };
+
+/**
+ * 骨架屏只在「确实要等一个未知结果」时出现：
+ * - 已有条目 → 保持旧列表，后台静默刷新（stale-while-revalidate），不闪回骨架
+ * - badge 未读数为 0 → 结果已经知道了，直接给空态，不为一次注定为空的请求铺骨架
+ */
+const showSkeleton = computed(
+  () =>
+    (isLoading.value || !hasLoaded.value) &&
+    unreadList.value.length === 0 &&
+    emailStore.unreadCount > 0,
+);
+
+/** 空态：没有条目、且不处于等待中（含 badge 为 0 的乐观空态） */
+const showEmpty = computed(
+  () => unreadList.value.length === 0 && !showSkeleton.value,
+);
 
 /** 组件挂载时：如果有未读消息，静默预加载第一页数据，提升弹窗打开速度 */
 onMounted(() => {
@@ -114,7 +141,7 @@ const handleViewAll = () => {
         class="overflow-y-auto max-h-80 border-t border-fg-muted/10 notification-list"
       >
         <!-- Loading skeleton -->
-        <div v-if="isLoading" class="flex flex-col">
+        <div v-if="showSkeleton" class="flex flex-col">
           <div
             v-for="i in 3"
             :key="i"
@@ -124,7 +151,7 @@ const handleViewAll = () => {
 
         <!-- Empty state -->
         <div
-          v-else-if="unreadList.length === 0"
+          v-else-if="showEmpty"
           class="flex items-center justify-center py-8 text-fg-subtle text-sm"
         >
           {{ t("components.common.button.NotificationButton.empty") }}

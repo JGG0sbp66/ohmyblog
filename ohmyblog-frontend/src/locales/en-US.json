@@ -49,7 +49,8 @@
             "default": "Admin"
           },
           "actions": {
-            "goHome": "Go to Home"
+            "goHome": "Go to Home",
+            "expand": "Expand header"
           }
         }
       },

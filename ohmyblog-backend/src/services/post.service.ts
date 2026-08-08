@@ -1,5 +1,8 @@
 // src/services/post.service.ts
+import { rm } from "node:fs/promises";
+import { join } from "node:path";
 import type { TPostStatus } from "../../db/constants/post.constants";
+import { POST_UPLOADS_DIR } from "../constants";
 import { postDao } from "../daos/post.dao";
 import type {
 	TPostListQueryDTO,
@@ -214,6 +217,31 @@ class PostService {
 
 		await postDao.permanentDelete(uuid);
 		this.logger.info({ postId: uuid }, "文章已永久删除");
+
+		// 数据库行删掉后再清理磁盘：目录里是这篇文章独占的封面图与行内图
+		// （posts/{uuid}/），文章没了就没有任何东西再引用它们。
+		// 用 post.uuid 而非入参，路径只由库里的真实记录拼出。
+		await this.removeUploadDir(post.uuid);
+	}
+
+	/**
+	 * 删除文章的上传目录（posts/{uuid}/），尽力而为
+	 *
+	 * 删不掉不抛错：数据库那一步已经提交，此时再失败也回滚不了，
+	 * 让整个删除操作报错只会让用户以为文章还在。残留文件是可接受的降级，
+	 * 记一条 warn 便于排查。
+	 */
+	private async removeUploadDir(uuid: string) {
+		const dir = join(POST_UPLOADS_DIR, uuid);
+		try {
+			await rm(dir, { recursive: true, force: true });
+		} catch (error: unknown) {
+			const message = error instanceof Error ? error.message : String(error);
+			this.logger.warn(
+				{ postId: uuid, dir, error: message },
+				"文章上传目录清理失败，文件已残留",
+			);
+		}
 	}
 }
 

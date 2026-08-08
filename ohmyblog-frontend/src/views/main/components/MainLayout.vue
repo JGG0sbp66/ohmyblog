@@ -54,7 +54,7 @@ const fillHeight = computed(() => route.name === "not-found");
         <!-- 侧边栏 (Widgets) - 移动端隐藏；文章详情页不显示 -->
         <aside
           v-if="showSidebar"
-          class="hidden md:flex md:w-70 flex-col gap-7 sticky top-24 order-1 sidebar"
+          class="hidden md:flex md:w-70 flex-col gap-4 sticky top-24 order-1 sidebar"
         >
           <div class="onload-animation">
             <ProfileCard />
