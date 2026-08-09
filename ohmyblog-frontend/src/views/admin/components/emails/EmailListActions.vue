@@ -1,22 +1,16 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import {
-  BadgeCheck,
-  FlaskConical,
-  KeyRound,
-  Link2,
-  Link2Off,
-  Mail,
-  MailCheck,
-  MailOpen,
-  ShieldAlert,
-} from "lucide-vue-next";
+import { Mail, MailOpen } from "lucide-vue-next";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ResponsiveGroupedSelect, {
   type GroupedSelectGroup,
 } from "@/components/common/input/ResponsiveGroupedSelect.vue";
 import { useLang } from "@/composables/lang.hook";
-import type { TEmailLogType } from "@/api/shared";
+import { emailLogTypes, type TEmailLogType } from "@/api/shared";
+import {
+  emailTypeMeta,
+  type EmailTypeGroup,
+} from "@/views/admin/components/emails/email-type-meta";
 
 const props = defineProps<{
   isRead?: boolean;
@@ -36,62 +30,22 @@ const typeModel = computed({
     emit("update:type", value as TEmailLogType | undefined),
 });
 
-const typeGroups = computed<GroupedSelectGroup[]>(() => [
-  {
-    key: "system",
-    label: t("views.emails.filterGroups.system"),
-    items: [
-      {
-        value: "smtp_test",
-        label: t("views.emails.types.smtp_test"),
-        icon: FlaskConical,
-        iconClass: "text-blue-500 dark:text-blue-400",
-      },
-      {
-        value: "login_alert",
-        label: t("views.emails.types.login_alert"),
-        icon: ShieldAlert,
-        iconClass: "text-amber-500 dark:text-amber-400",
-      },
-      {
-        value: "reset_password",
-        label: t("views.emails.types.reset_password"),
-        icon: KeyRound,
-        iconClass: "text-violet-500 dark:text-violet-400",
-      },
-    ],
-  },
-  {
-    key: "friendLinks",
-    label: t("views.emails.filterGroups.friendLinks"),
-    items: [
-      {
-        value: "friend_link_apply",
-        label: t("views.emails.types.friend_link_apply"),
-        icon: Link2,
-        iconClass: "text-cyan-500 dark:text-cyan-400",
-      },
-      {
-        value: "friend_link_apply_confirmed",
-        label: t("views.emails.types.friend_link_apply_confirmed"),
-        icon: MailCheck,
-        iconClass: "text-sky-500 dark:text-sky-400",
-      },
-      {
-        value: "friend_link_approved",
-        label: t("views.emails.types.friend_link_approved"),
-        icon: BadgeCheck,
-        iconClass: "text-emerald-500 dark:text-emerald-400",
-      },
-      {
-        value: "friend_link_rejected",
-        label: t("views.emails.types.friend_link_rejected"),
-        icon: Link2Off,
-        iconClass: "text-rose-500 dark:text-rose-400",
-      },
-    ],
-  },
-]);
+const typeGroupKeys: EmailTypeGroup[] = ["system", "friendLinks"];
+
+const typeGroups = computed<GroupedSelectGroup[]>(() =>
+  typeGroupKeys.map((group) => ({
+    key: group,
+    label: t(`views.emails.filterGroups.${group}`),
+    items: emailLogTypes
+      .filter((type) => emailTypeMeta[type].group === group)
+      .map((type) => ({
+        value: type,
+        label: t(`views.emails.types.${type}`),
+        icon: emailTypeMeta[type].icon,
+        iconClass: emailTypeMeta[type].iconClass,
+      })),
+  })),
+);
 </script>
 
 <template>
