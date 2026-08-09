@@ -1,6 +1,7 @@
 <!-- src/components/base/pop/BaseTooltip.vue -->
 <script setup lang="ts">
 import { ref } from "vue";
+import { useMediaQuery } from "@vueuse/core";
 import { CircleHelp } from "lucide-vue-next";
 
 /**
@@ -9,14 +10,21 @@ import { CircleHelp } from "lucide-vue-next";
  * 使用 Teleport to="body" 将 tooltip 渲染到根层，彻底避免被父级 overflow 容器裁切。
  * 坐标在每次 mouseenter 时即时读取 getBoundingClientRect()，
  * 避免路由动画期间 mount 导致 useElementBounding 缓存错误坐标的问题。
+ *
+ * 触屏一律不弹（同 DropButton / FooterDrop 的判定）：点一下会合成 mouseenter
+ * 把提示弹出来，但手指抬起不会有 mouseleave，于是它**永久挂在屏幕上**，
+ * 还会盖住紧接着打开的弹层。触屏本来也没有「悬停」这个交互。
  */
 defineProps<{ content: string }>();
+
+const canHover = useMediaQuery("(hover: hover) and (pointer: fine)");
 
 const triggerRef = ref<HTMLElement>();
 const isHovered = ref(false);
 const tooltipStyle = ref<Record<string, string>>({});
 
 const handleMouseEnter = () => {
+  if (!canHover.value) return;
   if (triggerRef.value) {
     const { top, left, width } = triggerRef.value.getBoundingClientRect();
     tooltipStyle.value = {
