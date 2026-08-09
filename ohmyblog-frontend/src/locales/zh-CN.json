@@ -658,6 +658,13 @@
           },
           "handleMenu": {
             "groups": { "basic": "基础", "common": "常用", "list": "列表" }
+          },
+          "mobileToolbar": {
+            "insert": "插入",
+            "undo": "撤销",
+            "redo": "重做",
+            "addRowAfter": "在下方插入行",
+            "addColumnAfter": "在右侧插入列"
           }
         }
       }

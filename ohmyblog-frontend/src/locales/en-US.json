@@ -663,6 +663,13 @@
           },
           "handleMenu": {
             "groups": { "basic": "Basic", "common": "Common", "list": "List" }
+          },
+          "mobileToolbar": {
+            "insert": "Insert",
+            "undo": "Undo",
+            "redo": "Redo",
+            "addRowAfter": "Insert row below",
+            "addColumnAfter": "Insert column right"
           }
         }
       }

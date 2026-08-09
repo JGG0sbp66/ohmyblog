@@ -47,11 +47,12 @@ const settingsPanelStyle = computed(() => ({
 // 手机端默认收起设置，切换回桌面端时恢复常驻面板。
 //
 // 编辑区的窄屏适配现状：
-// - 气泡菜单（文本 / 图片）已在 use-bubble-anchor 里做视口 clamp + 上下翻转，
-//   配合 max-width + flex-wrap 换行，窄屏不再溢出或被顶出容器；
-// - / 命令面板、有序列表编号菜单、代码块语言下拉走 use-anchored-position，本来就有边界收敛；
-// - 块拖拽手柄与表格行列控件是纯 hover 驱动的，触屏上根本不出现（并非布局问题），
-//   要在触屏可用需要另设长按 / 点选的交互入口，属独立需求，不在布局适配范围内。
+// - 移动端不再复用桌面端那套浮层。文本气泡菜单 / 块拖拽手柄 / 表格行列控件都是
+//   hover 或 mousemove 驱动的，触屏上要么根本不出现，要么和系统选择气泡抢位置，
+//   因此在 PostEditorBody 里整组不挂载，能力平移到 MobileEditorToolbar
+//   （吸附键盘上沿的常驻工具条 + 「+」插入面板，见该组件的注释）；
+// - 图片气泡菜单是 NodeSelection 驱动的（点一下图片就选中），两端共用；
+// - / 命令面板、有序列表编号菜单、代码块语言下拉走 use-anchored-position，本来就有边界收敛。
 watch(isMobile, (mobile) => {
   showSettings.value = !mobile;
 });

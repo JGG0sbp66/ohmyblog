@@ -5,11 +5,13 @@ import { useEditor, EditorContent } from "@tiptap/vue-3";
 import type { Editor } from "@tiptap/core";
 import { useRoute } from "vue-router";
 import { useEditorExtensions } from "@/composables/editor-extensions";
+import { useIsMobile } from "@/composables/breakpoint.hook";
 import PostEditorBubbleMenu from "./menus/bubble/PostEditorBubbleMenu.vue";
 import PostEditorImageBubbleMenu from "./menus/bubble/PostEditorImageBubbleMenu.vue";
 import PostEditorFloatingHandle from "./menus/handle/PostEditorFloatingHandle.vue";
 import PostEditorTableControls from "./menus/table/PostEditorTableControls.vue";
 import PostEditorOrderedListMenu from "./menus/ordered-list/PostEditorOrderedListMenu.vue";
+import MobileEditorToolbar from "./menus/mobile/MobileEditorToolbar.vue";
 import { useImageInsert } from "./composables/use-image-insert";
 
 /**
@@ -29,6 +31,7 @@ const selectedCharCount = defineModel<number>("selectedCharCount", {
   default: 0,
 });
 const containerRef = ref<HTMLElement | null>(null);
+const isMobile = useIsMobile();
 
 const { uploadAndInsert: uploadAndInsertImage } = useImageInsert();
 
@@ -150,26 +153,34 @@ onBeforeUnmount(() => editor.value?.destroy());
 
 <template>
   <div class="relative" ref="containerRef">
-    <PostEditorBubbleMenu
-      v-if="editor"
-      :editor="editor"
-      :container-ref="containerRef"
-    />
+    <!--
+      桌面端浮层：三者在触屏上都是死的，移动端整组不挂载（连同它们的
+      mousemove / resize 监听和表格几何计算一起省掉），能力平移到
+      MobileEditorToolbar。
+      - BubbleMenu    : 能弹，但会和系统自带的选择气泡（拷贝/查询）叠在一起抢位置
+      - FloatingHandle: 纯 mousemove 驱动，触屏永不触发
+      - TableControls : hover 显形 + 8px 宽的把手条，指头够不着
+    -->
+    <template v-if="editor && !isMobile">
+      <PostEditorBubbleMenu :editor="editor" :container-ref="containerRef" />
+      <PostEditorFloatingHandle :editor="editor" />
+      <PostEditorTableControls :editor="editor" :container-ref="containerRef" />
+    </template>
+
+    <!-- 图片气泡菜单是 NodeSelection 驱动的：点一下图片就选中了，触屏同样成立，
+         因此两端共用，不做移动端分支 -->
     <PostEditorImageBubbleMenu
       v-if="editor"
       :editor="editor"
       :container-ref="containerRef"
     />
-    <PostEditorFloatingHandle v-if="editor" :editor="editor" />
     <PostEditorOrderedListMenu v-if="editor" :editor="editor" />
-    <PostEditorTableControls
-      v-if="editor"
-      :editor="editor"
-      :container-ref="containerRef"
-    />
+
+    <MobileEditorToolbar v-if="editor && isMobile" :editor="editor" />
+
     <EditorContent
       :editor="editor"
-      class="w-full min-h-[60vh] focus-within:outline-none"
+      class="w-full min-h-[60dvh] focus-within:outline-none"
     />
   </div>
 </template>
