@@ -776,7 +776,15 @@
       "filters": {
         "all": "All",
         "unread": "Unread",
-        "type": "Type"
+        "type": "Email type",
+        "allTypes": "All types",
+        "clear": "Clear type filter",
+        "close": "Close type filter",
+        "typeHint": "Choose which email types to display"
+      },
+      "filterGroups": {
+        "system": "System",
+        "friendLinks": "Friend links"
       },
       "types": {
         "smtp_test": "SMTP Test",

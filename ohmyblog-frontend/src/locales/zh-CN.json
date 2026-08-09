@@ -771,7 +771,15 @@
       "filters": {
         "all": "全部",
         "unread": "未读",
-        "type": "类型"
+        "type": "邮件类型",
+        "allTypes": "全部类型",
+        "clear": "清除类型筛选",
+        "close": "关闭类型筛选",
+        "typeHint": "选择要显示的邮件类型"
+      },
+      "filterGroups": {
+        "system": "系统通知",
+        "friendLinks": "友链通知"
       },
       "types": {
         "smtp_test": "SMTP 测试",
