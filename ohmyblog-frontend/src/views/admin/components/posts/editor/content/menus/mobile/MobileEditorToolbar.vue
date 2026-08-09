@@ -354,6 +354,19 @@ const isDisabled = (item: ToolbarItem) => {
   return item.isDisabled?.(props.editor) ?? false;
 };
 
+/** 图标与文案可能随状态变化（见 ToolbarItem.iconOf / labelKeyOf） */
+const iconOf = (item: ToolbarItem) => {
+  void revision.value;
+  return item.iconOf?.(props.editor) ?? item.icon;
+};
+
+const labelOf = (item: ToolbarItem) => {
+  void revision.value;
+  const key = item.labelKeyOf?.(props.editor) ?? item.labelKey;
+  // blockCommands 的 tooltip 是多行的（第二行是 markdown 提示），aria-label 只取首行
+  return t(key).split("\n")[0];
+};
+
 const run = (item: ToolbarItem) => {
   if (isDisabled(item)) return;
   // 同 onSheetSelect：先钉住阅读位置再动文档。这些命令内部都是 chain().focus()，
@@ -433,10 +446,10 @@ const run = (item: ToolbarItem) => {
                   "
                   :is-active="isActive(item)"
                   :disabled="isDisabled(item)"
-                  :aria-label="t(item.labelKey).split('\n')[0]"
+                  :aria-label="labelOf(item)"
                   @click="run(item)"
                 >
-                  <component :is="item.icon" class="h-5 w-5" />
+                  <component :is="iconOf(item)" class="h-5 w-5" />
                 </ButtonSecondary>
               </div>
             </template>

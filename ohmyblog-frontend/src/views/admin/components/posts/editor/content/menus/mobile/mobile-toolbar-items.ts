@@ -26,6 +26,7 @@ import {
   RiSplitCellsHorizontal,
 } from "@remixicon/vue";
 import { BLOCK_COMMANDS, type BlockCommandId } from "../block-commands";
+import { isInTable } from "../table-predicates";
 
 /**
  * 移动端键盘工具条的条目注册表（单一真源）
@@ -47,6 +48,19 @@ export interface ToolbarItem {
   icon: Component;
   /** i18n 完整 key（不同段落的文案分散在 bubbleMenu / blockCommands / tableMenu 下） */
   labelKey: string;
+  /**
+   * 图标 / 文案随编辑器状态变化时用这两个覆盖上面的静态值。
+   *
+   * 目前只有「合并 / 拆分单元格」需要：两者互斥、命令本来就是同一个 mergeOrSplit，
+   * 共用一个按钮位比摆两个（永远有一个是灰的、白占横向滚动距离）合理。
+   * 同 use-table-commands 的 mergeIconOf / mergeLabelOf。
+   *
+   * 刻意不做成 `icon: Component | ((e) => Component)` 那种联合类型：Vue 的
+   * Component 本身可以是函数式组件，和 resolver 在类型上无法区分，真传了一个
+   * 函数式组件当图标就会被误当成 resolver 调用。
+   */
+  iconOf?: (e: Editor) => Component;
+  labelKeyOf?: (e: Editor) => string;
   /** 高亮态；缺省表示该操作没有「已应用」的概念（如撤销、插入行） */
   isActive?: (e: Editor) => boolean;
   /** 置灰；缺省视为始终可用 */
@@ -81,22 +95,26 @@ const fromBlockCommand = (id: BlockCommandId): ToolbarItem => {
     id: cmd.id,
     icon: cmd.icon,
     labelKey: `views.admin.PostEditor.content.blockCommands.${cmd.labelKey}.tooltip`,
-    isActive: (e) => cmd.isActive(e),
-    run: (e) => cmd.run(e),
+    isActive: cmd.isActive,
+    run: cmd.run,
   };
 };
 
-/** 行内格式条目工厂：这一段的五个按钮结构完全一致，只差 mark 名与图标 */
+/**
+ * 行内格式条目工厂。
+ *
+ * run 不用传：mark 名同时也是 isActive 的参数和通用 toggleMark 的参数，
+ * toggleBold() 之类的专用命令内部就是 toggleMark("bold")，没必要各写一遍。
+ */
 const markItem = (
   name: "bold" | "italic" | "underline" | "strike" | "code",
   icon: Component,
-  run: (e: Editor) => void,
 ): ToolbarItem => ({
   id: name,
   icon,
   labelKey: `views.admin.PostEditor.content.bubbleMenu.${name}`,
   isActive: (e) => e.isActive(name),
-  run,
+  run: (e) => e.chain().focus().toggleMark(name).run(),
 });
 
 /** 对齐条目工厂 */
@@ -111,16 +129,6 @@ const alignItem = (
   isActive: (e) => e.isActive({ textAlign: align }),
   run: (e) => e.chain().focus().setTextAlign(align).run(),
 });
-
-/** 光标是否落在表格单元格内（含跨格选区，后者 $anchor 同样在 cell 里） */
-const isInTable = (e: Editor): boolean => {
-  const { $anchor } = e.state.selection;
-  for (let d = $anchor.depth; d > 0; d--) {
-    const name = $anchor.node(d).type.name;
-    if (name === "tableCell" || name === "tableHeader") return true;
-  }
-  return false;
-};
 
 export const TOOLBAR_SEGMENTS: readonly ToolbarSegment[] = [
   {
@@ -147,15 +155,11 @@ export const TOOLBAR_SEGMENTS: readonly ToolbarSegment[] = [
   {
     id: "format",
     items: [
-      markItem("bold", Bold, (e) => e.chain().focus().toggleBold().run()),
-      markItem("italic", Italic, (e) => e.chain().focus().toggleItalic().run()),
-      markItem("underline", Underline, (e) =>
-        e.chain().focus().toggleUnderline().run(),
-      ),
-      markItem("strike", Strikethrough, (e) =>
-        e.chain().focus().toggleStrike().run(),
-      ),
-      markItem("code", Code, (e) => e.chain().focus().toggleCode().run()),
+      markItem("bold", Bold),
+      markItem("italic", Italic),
+      markItem("underline", Underline),
+      markItem("strike", Strikethrough),
+      markItem("code", Code),
     ],
   },
   {
@@ -230,19 +234,21 @@ export const TOOLBAR_SEGMENTS: readonly ToolbarSegment[] = [
         run: (e) => e.chain().focus().addColumnAfter().run(),
       },
       {
-        // 合并 / 拆分共用一个位置：两者互斥，同时摆出来只会有一个可点
-        id: "table-merge",
+        // 合并 / 拆分共用一个按钮位：命令本来就是同一个 mergeOrSplit，
+        // 只有图标与文案随当前状态切换（跨格选区 → 合并；合并格 → 拆分）
+        id: "table-merge-split",
         icon: RiMergeCellsHorizontal,
         labelKey: "views.admin.PostEditor.content.tableMenu.mergeCells",
+        iconOf: (e) =>
+          e.can().mergeCells()
+            ? RiMergeCellsHorizontal
+            : RiSplitCellsHorizontal,
+        labelKeyOf: (e) =>
+          e.can().mergeCells()
+            ? "views.admin.PostEditor.content.tableMenu.mergeCells"
+            : "views.admin.PostEditor.content.tableMenu.splitCell",
         isDisabled: (e) => !e.can().mergeOrSplit(),
         run: (e) => e.chain().focus().mergeOrSplit().run(),
-      },
-      {
-        id: "table-split",
-        icon: RiSplitCellsHorizontal,
-        labelKey: "views.admin.PostEditor.content.tableMenu.splitCell",
-        isDisabled: (e) => !e.can().splitCell(),
-        run: (e) => e.chain().focus().splitCell().run(),
       },
       {
         id: "table-header-row",
