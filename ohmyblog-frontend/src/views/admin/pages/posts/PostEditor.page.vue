@@ -1,13 +1,15 @@
 <!-- src/views/admin/pages/posts/PostEditor.page.vue -->
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import PostEditorStatusBar from "@/views/admin/components/posts/editor/PostEditorStatusBar.vue";
 import PostEditorContent from "@/views/admin/components/posts/editor/PostEditorContent.vue";
 import PostEditorSettingsPanel from "@/views/admin/components/posts/editor/PostEditorSettingsPanel.vue";
+import PostEditorSettingsForm from "@/views/admin/components/posts/editor/setting/PostEditorSettingsForm.vue";
 import { usePostEditor } from "@/composables/post-editor.hook";
 import { useIsMobile } from "@/composables/breakpoint.hook";
 import ConfirmModal from "@/components/base/pop/ConfirmModal.vue";
+import BaseSheet from "@/components/base/pop/BaseSheet.vue";
 import { useLang } from "@/composables/lang.hook";
 
 const { t } = useLang();
@@ -34,15 +36,6 @@ const {
   confirmLeave,
   cancelLeave,
 } = usePostEditor();
-
-const settingsPanelStyle = computed(() => ({
-  width: showSettings.value
-    ? isMobile.value
-      ? "min(18rem, 100%)"
-      : "18rem"
-    : "0",
-  transition: "width 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
-}));
 
 // 手机端默认收起设置，切换回桌面端时恢复常驻面板。
 //
@@ -87,21 +80,14 @@ watch(isMobile, (mobile) => {
       />
     </div>
 
-    <!-- 手机端使用覆盖式抽屉，避免设置面板挤压正文编辑区域。 -->
+    <!-- 桌面端保留并排侧栏及宽度动画。 -->
     <div
-      v-if="isMobile && showSettings"
-      class="absolute inset-0 z-20 bg-black/40"
-      aria-hidden="true"
-      @click="showSettings = false"
-    />
-
-    <!-- 桌面端为并排侧栏；手机端定位到右侧作为抽屉。 -->
-    <div
+      v-if="!isMobile"
       class="shrink-0 overflow-hidden onload-animation anim-delay-200"
-      :class="{
-        'absolute inset-y-0 right-0 z-30 shadow-2xl': isMobile,
+      :style="{
+        width: showSettings ? '18rem' : '0',
+        transition: 'width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
       }"
-      :style="settingsPanelStyle"
     >
       <PostEditorSettingsPanel
         :uuid="uuid"
@@ -111,9 +97,27 @@ watch(isMobile, (mobile) => {
         v-model:excerpt="excerpt"
         v-model:coverImage="coverImage"
         v-model:pinned="pinned"
-        @close="showSettings = false"
       />
     </div>
+
+    <!-- 手机端使用 Bottom Sheet，不再复用桌面侧栏的定位、宽度和遮罩逻辑。 -->
+    <BaseSheet
+      v-if="isMobile"
+      v-model="showSettings"
+      :title="t('views.admin.PostEditor.settingsPanel.title')"
+      :close-label="t('views.admin.PostEditor.settingsPanel.close')"
+    >
+      <PostEditorSettingsForm
+        :uuid="uuid"
+        v-model:slug="slug"
+        v-model:tags="tags"
+        v-model:status="status"
+        v-model:excerpt="excerpt"
+        v-model:cover-image="coverImage"
+        v-model:pinned="pinned"
+        class="pb-4"
+      />
+    </BaseSheet>
 
     <!-- 有未保存内容时离开本页的确认弹窗，由 usePostEditor 的路由守卫驱动。
          关闭弹窗（遮罩 / ESC）等同于取消，守卫必须拿到结果才会放行 -->
