@@ -33,11 +33,11 @@ const BLUR_EXPAND_DELAY_MS = 200;
  */
 const TOGGLE_COOLDOWN_MS = 350;
 /**
- * 手指离开后仍认可滚动事件的宽限期。
+ * 用户输入之后仍认可滚动事件的宽限期。
  * 惯性滚动（fling）在 touchend 之后还会持续派发 scroll，这段要算作用户意图；
- * 而键盘出入场等布局副作用通常发生在没有任何 touch 的时刻，落在窗口之外。
+ * 而键盘出入场等布局副作用通常发生在没有任何输入的时刻，落在窗口之外。
  */
-const TOUCH_GRACE_MS = 900;
+const USER_INPUT_GRACE_MS = 900;
 
 const collapsed = ref(false);
 /** 文档滚动进度 0~1，收起后由那条细线呈现 */
@@ -119,20 +119,25 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
    * 但仅有这一条还不够：容器高度变化之后的**下一帧**高度已经稳定，可这中间
    * scrollTop 常被浏览器夹过（maxScroll 变了），那个假位移会照常进入方向判定。
    * 实测就栽在这里：键盘回场 → 容器变矮 → 夹取 → 攒够 -24px → 误判成「用户上滑」
-   * → 顶部栏自己展开、正文再被带着跳一段。所以还需要下面的 lastTouchAt。
+   * → 顶部栏自己展开、正文再被带着跳一段。所以还需要下面的 lastUserInputAt。
    */
   let lastHeight = 0;
   /**
-   * 最近一次手指接触屏幕的时刻。
+   * 最近一次用户主动输入（触摸 / 滚轮）的时刻。
    *
-   * 方向判定只信「来自手指的滚动」——这是区分真实意图与布局副作用最干净的判别器：
+   * 方向判定只信「用户亲手滚的」——这是区分真实意图与布局副作用最干净的判别器：
    * 键盘出入场、地址栏收放、scrollTop 被夹、我们自己 scrollTop = x 的写入，
-   * 全都不伴随 touch 事件。之前试过按高度变化、按冷却时间去猜，都是在同一条噪声
-   * 里区分不出信号；改看有没有手指，一刀切干净。
+   * 全都不伴随输入事件。之前试过按高度变化、按冷却时间去猜，都是在同一条噪声
+   * 里区分不出信号；改看有没有输入，一刀切干净。
    *
-   * 桌面端不受影响：那边压根不走这个 hook（非移动端不挂监听）。
+   * 为什么必须同时听 wheel 而不只听 touch：本 hook 由宽度断点挂载（< md），
+   * 窄窗口的桌面浏览器同样会走到这里，而那边是滚轮滚的、不产生 touch 事件 ——
+   * 只认 touch 会让那种情形彻底失去滚动收起能力。
+   *
+   * 但**不听 keydown**：打字本身就在不停派发它，会把闸门一直顶开；而打字触发的
+   * ProseMirror scrollIntoView 恰恰是要过滤掉的那类假位移。
    */
-  let lastTouchAt = 0;
+  let lastUserInputAt = 0;
   /** 上次切换的时刻，用于冷却（见下方 TOGGLE_COOLDOWN_MS） */
   let toggledAt = 0;
 
@@ -177,10 +182,10 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
       return;
     }
 
-    // 只有手指正在（或刚刚）操作时才做方向判定。惯性滚动结束后事件还会拖一会儿，
-    // 所以留一段宽限期；而键盘出入场、地址栏收放、scrollTop 被夹这些都不带 touch，
-    // 一律不参与（见 lastTouchAt 注释）
-    if (performance.now() - lastTouchAt > TOUCH_GRACE_MS) return;
+    // 只有用户正在（或刚刚）操作时才做方向判定。惯性滚动结束后事件还会拖一会儿，
+    // 所以留一段宽限期；而键盘出入场、地址栏收放、scrollTop 被夹这些都不带输入事件，
+    // 一律不参与（见 lastUserInputAt 注释）
+    if (performance.now() - lastUserInputAt > USER_INPUT_GRACE_MS) return;
 
     // 换向即清零，否则要先抵消掉反方向攒下的量才能触发
     if (delta > 0 !== accum > 0) accum = 0;
@@ -195,9 +200,16 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
     }
   };
 
-  const onTouch = () => {
-    lastTouchAt = performance.now();
+  const onUserInput = () => {
+    lastUserInputAt = performance.now();
   };
+  /** 方向判定的准入信号：触摸与滚轮（不含键盘，见 lastUserInputAt 注释） */
+  const USER_INPUT_EVENTS = [
+    "touchstart",
+    "touchmove",
+    "touchend",
+    "wheel",
+  ] as const;
 
   const onScroll = (event: Event) => {
     const el = event.currentTarget as HTMLElement;
@@ -247,7 +259,7 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
     accum = 0;
     lastHeight = 0;
     toggledAt = 0;
-    lastTouchAt = 0;
+    lastUserInputAt = 0;
     focusHeld = false;
     clearTimeout(blurTimer);
     if (frame) {
@@ -266,10 +278,9 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
       if (!el || !mobile) return;
 
       el.addEventListener("scroll", onScroll, { passive: true });
-      // 方向判定的准入信号：只有手指操作产生的滚动才算用户意图
-      el.addEventListener("touchstart", onTouch, { passive: true });
-      el.addEventListener("touchmove", onTouch, { passive: true });
-      el.addEventListener("touchend", onTouch, { passive: true });
+      for (const type of USER_INPUT_EVENTS) {
+        el.addEventListener(type, onUserInput, { passive: true });
+      }
       // focusin / focusout 会从后代冒泡上来，绑在滚动容器上即可覆盖标题与正文
       el.addEventListener("focusin", onFocusIn);
       el.addEventListener("focusout", onFocusOut);
@@ -278,9 +289,9 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
 
       detach = () => {
         el.removeEventListener("scroll", onScroll);
-        el.removeEventListener("touchstart", onTouch);
-        el.removeEventListener("touchmove", onTouch);
-        el.removeEventListener("touchend", onTouch);
+        for (const type of USER_INPUT_EVENTS) {
+          el.removeEventListener(type, onUserInput);
+        }
         el.removeEventListener("focusin", onFocusIn);
         el.removeEventListener("focusout", onFocusOut);
       };
