@@ -37,6 +37,21 @@ const collapsed = ref(false);
 /** 文档滚动进度 0~1，收起后由那条细线呈现 */
 const progress = ref(0);
 
+/**
+ * 「仍在编辑」保持位：置真期间 focusout 不再展开顶部栏。
+ *
+ * 目前唯一的使用者是移动端的插入面板（MobileEditorToolbar）：打开它必须主动 blur
+ * 编辑器才能收起键盘，但那只是把键盘换成了面板，用户依然在编辑 —— 顶部栏没有
+ * 理由弹回来。不加这道闸门的话，点一下「+」，「文章管理 / 写文章」那排就会跟着
+ * 冒出来半截，把本来腾出来的垂直空间又占回去。
+ */
+const collapseHold = ref(false);
+
+/** 由「虽然编辑器失焦、但用户仍在编辑」的场景调用（成对置真 / 置假） */
+export function setEditorHeaderHold(on: boolean) {
+  collapseHold.value = on;
+}
+
 /** 读取侧：AdminLayout 用 */
 export function useEditorHeaderState() {
   return {
@@ -160,14 +175,33 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
 
   const onFocusOut = () => {
     blurTimer = setTimeout(() => {
+      // 保持位置真：这次失焦是「换成插入面板」而不是「停止编辑」，维持收起
+      if (collapseHold.value) return;
       focusHeld = false;
       setCollapsed(false, true);
     }, BLUR_EXPAND_DELAY_MS);
   };
 
+  /**
+   * 保持位翻转时补一次判定。
+   * 置真：撤掉已经排上队的展开。
+   * 置假：如果焦点没回到编辑区（例如用户是点了别处关掉面板的），按正常失焦流程展开。
+   */
+  watch(collapseHold, (held) => {
+    if (held) {
+      clearTimeout(blurTimer);
+      return;
+    }
+    const el = scrollRef.value;
+    if (el && el.contains(document.activeElement)) return;
+    onFocusOut();
+  });
+
   const reset = () => {
     collapsed.value = false;
     progress.value = 0;
+    // 保持位是模块级的，离开编辑页必须一并清掉，否则会漏到别的页面
+    collapseHold.value = false;
     lastY = 0;
     accum = 0;
     lastHeight = 0;
