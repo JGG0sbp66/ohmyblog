@@ -5,7 +5,7 @@ import { useEditor, EditorContent } from "@tiptap/vue-3";
 import type { Editor } from "@tiptap/core";
 import { useRoute } from "vue-router";
 import { useEditorExtensions } from "@/composables/editor-extensions";
-import { useIsMobile } from "@/composables/breakpoint.hook";
+import { useIsTouchOnly } from "@/composables/pointer.hook";
 import PostEditorBubbleMenu from "./menus/bubble/PostEditorBubbleMenu.vue";
 import PostEditorImageBubbleMenu from "./menus/bubble/PostEditorImageBubbleMenu.vue";
 import PostEditorFloatingHandle from "./menus/handle/PostEditorFloatingHandle.vue";
@@ -31,7 +31,11 @@ const selectedCharCount = defineModel<number>("selectedCharCount", {
   default: 0,
 });
 const containerRef = ref<HTMLElement | null>(null);
-const isMobile = useIsMobile();
+/**
+ * 用「有没有悬停能力」而不是「屏幕多宽」来切换两套菜单：这里要换掉的正是 hover
+ * 驱动的浮层，宽度和它没有因果关系（详见 pointer.hook 的注释）。
+ */
+const isTouchOnly = useIsTouchOnly();
 
 const { uploadAndInsert: uploadAndInsertImage } = useImageInsert();
 
@@ -154,14 +158,14 @@ onBeforeUnmount(() => editor.value?.destroy());
 <template>
   <div class="relative" ref="containerRef">
     <!--
-      桌面端浮层：三者在触屏上都是死的，移动端整组不挂载（连同它们的
+      悬停驱动的浮层：三者在纯触屏设备上都是死的，那边整组不挂载（连同它们的
       mousemove / resize 监听和表格几何计算一起省掉），能力平移到
       MobileEditorToolbar。
       - BubbleMenu    : 能弹，但会和系统自带的选择气泡（拷贝/查询）叠在一起抢位置
       - FloatingHandle: 纯 mousemove 驱动，触屏永不触发
       - TableControls : hover 显形 + 8px 宽的把手条，指头够不着
     -->
-    <template v-if="editor && !isMobile">
+    <template v-if="editor && !isTouchOnly">
       <PostEditorBubbleMenu :editor="editor" :container-ref="containerRef" />
       <PostEditorFloatingHandle :editor="editor" />
       <PostEditorTableControls :editor="editor" :container-ref="containerRef" />
@@ -176,7 +180,7 @@ onBeforeUnmount(() => editor.value?.destroy());
     />
     <PostEditorOrderedListMenu v-if="editor" :editor="editor" />
 
-    <MobileEditorToolbar v-if="editor && isMobile" :editor="editor" />
+    <MobileEditorToolbar v-if="editor && isTouchOnly" :editor="editor" />
 
     <EditorContent
       :editor="editor"
