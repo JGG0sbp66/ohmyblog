@@ -11,6 +11,7 @@ import { setEditorHeaderHold } from "@/composables/editor-header.hook";
 import { useEditorDock } from "@/composables/editor-dock.hook";
 import { useImageInsert } from "../../composables/use-image-insert";
 import type { SlashCommand } from "../slash/slash-commands";
+import { findActiveBlockCommand } from "../block-commands";
 import MobileInsertSheet from "./MobileInsertSheet.vue";
 import MobileLinkButton from "./MobileLinkButton.vue";
 import { TOOLBAR_SEGMENTS, type ToolbarItem } from "./mobile-toolbar-items";
@@ -59,6 +60,8 @@ let blurTimer: ReturnType<typeof setTimeout> | undefined;
  * 分开读过一次，结果出现「图标已变 X、点击却走打开分支」的自相矛盾状态。
  */
 const sheetOpen = ref(false);
+/** 打开前记录当前块类型；blur 后部分输入法会改写 selection，不能临时再算。 */
+const activeSheetCommandId = ref<string | null>(null);
 
 /**
  * 工具条显隐。
@@ -171,6 +174,9 @@ const openSheet = () => {
   clearTimeout(pinCheckTimer);
   const { from, to } = props.editor.state.selection;
   savedSelection = { from, to };
+  // 面板项与块命令同 id（SlashCommand 由 fromBlockCommand 包装而来），所以直接问
+  // 注册表「当前是什么块」再按 id 匹配，不用在 SlashCommand 上再挂一份 isActive
+  activeSheetCommandId.value = findActiveBlockCommand(props.editor)?.id ?? null;
   // 必须在 blur 之前量：blur 一发出去，键盘就开始退场、视口开始变化
   pinnedTop.value = rootRef.value?.getBoundingClientRect().top ?? null;
   sheetOpen.value = true;
@@ -506,6 +512,7 @@ const run = (item: ToolbarItem) => {
              - 未钉住时取自然高度并封顶，容器从 bottom 往上长。 -->
         <MobileInsertSheet
           v-if="sheetOpen"
+          :active-command-id="activeSheetCommandId"
           :class="
             pinnedTop !== null
               ? 'min-h-0 flex-1'

@@ -24,6 +24,10 @@ import {
  */
 const emit = defineEmits<{ select: [cmd: SlashCommand] }>();
 
+defineProps<{
+  activeCommandId?: string | null;
+}>();
+
 const { t } = useLang();
 const { labelOf } = useSlashI18n();
 
@@ -72,8 +76,14 @@ const groups = computed<SheetGroup[]>(() =>
           v-for="cmd in group.commands"
           :key="cmd.id"
           type="button"
-          class="flex flex-col items-center justify-start gap-1 rounded-xl px-1 py-2 active:bg-bg-muted"
-          :class="group.danger ? 'text-red-500' : 'text-fg-muted'"
+          class="flex flex-col items-center justify-start gap-1 rounded-xl px-1 py-2 transition-colors active:bg-bg-muted"
+          :class="[
+            group.danger ? 'text-red-500' : 'text-fg-muted',
+            cmd.id === activeCommandId
+              ? 'bg-bg-muted text-fg-subtle ring-1 ring-border/60'
+              : undefined,
+          ]"
+          :aria-pressed="cmd.id === activeCommandId"
           @click="emit('select', cmd)"
         >
           <component
