@@ -3,23 +3,27 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import { RiNotification3Line } from "@remixicon/vue";
 import DropButton from "@/components/common/button/DropButton.vue";
 import UnreadBadge from "@/components/base/tag/UnreadBadge.vue";
-import EmailListCard from "@/views/admin/components/emails/EmailListCard.vue";
+import BaseSheet from "@/components/base/pop/BaseSheet.vue";
+import NotificationPanel from "@/components/common/notification/NotificationPanel.vue";
 import { useEmailStore } from "@/stores/email.store";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 import { useEmailLogList } from "@/composables/email-log-list.hook";
+import { useIsMobile } from "@/composables/breakpoint.hook";
 import type { EmailLogItem } from "@/views/admin/components/emails/types";
 
 const { t } = useLang();
 const router = useRouter();
 const emailStore = useEmailStore();
+const isMobile = useIsMobile();
 
 const scrollContainer = ref<HTMLElement | null>(null);
 const isMarkingRead = ref(false);
+const mobileOpen = ref(false);
+const dropRef = ref<InstanceType<typeof DropButton> | null>(null);
 
 // 列表数据加载与状态管理
 const {
@@ -93,97 +97,92 @@ const handleMarkAllRead = async () => {
 
 /** 点击邮件卡片：存入 store 供跳转后的页面消费，并执行跳转 */
 const handleCardClick = (item: EmailLogItem) => {
+  mobileOpen.value = false;
+  dropRef.value?.close();
   emailStore.pendingOpenItem = item;
   router.push({ name: "emails" }).catch(() => {});
 };
 
 /** 查看全部 */
 const handleViewAll = () => {
+  mobileOpen.value = false;
+  dropRef.value?.close();
   router.push({ name: "emails" }).catch(() => {});
+};
+
+const openMobile = () => {
+  onPopupEnter();
+  mobileOpen.value = true;
+};
+
+const handleScrollContainer = (element: HTMLElement | null) => {
+  scrollContainer.value = element;
 };
 </script>
 
 <template>
-  <DropButton
-    trigger-class="w-11 h-11 relative"
-    content-class="w-80 flex flex-col overflow-hidden"
-    placement="-left-60"
-    @mouseenter="onPopupEnter"
-  >
-    <template #trigger="{ active }">
-      <ButtonSecondary :isActive="active" class="w-full h-full">
-        <RiNotification3Line class="w-5 h-5" />
-      </ButtonSecondary>
-      <UnreadBadge :count="emailStore.unreadCount" :isExpanded="false" />
-    </template>
-
-    <template #content>
-      <!-- Section 1: Header + Mark All Read -->
-      <div class="flex items-center justify-between px-4 pt-4 pb-3 shrink-0">
-        <div class="flex items-center gap-1.5">
-          <span class="text-fg font-bold text-base">
-            {{ t("views.emails.filters.unread") }}
-          </span>
-          <UnreadBadge :count="emailStore.unreadCount" :isExpanded="true" />
-        </div>
-        <ButtonPrimary
-          class="text-xs"
-          :text="t('components.common.button.NotificationButton.markAllRead')"
-          :loading="isMarkingRead"
-          :disabled="emailStore.unreadCount === 0"
-          @click="handleMarkAllRead"
-        />
-      </div>
-
-      <!-- Section 2: Unread email list -->
-      <div
-        ref="scrollContainer"
-        class="overflow-y-auto max-h-80 border-t border-fg-muted/10 notification-list"
-      >
-        <!-- Loading skeleton -->
-        <div v-if="showSkeleton" class="flex flex-col">
-          <div
-            v-for="i in 3"
-            :key="i"
-            class="h-24 bg-bg-muted-soft animate-pulse shrink-0 border-b border-fg-muted/10"
-          ></div>
-        </div>
-
-        <!-- Empty state -->
-        <div
-          v-else-if="showEmpty"
-          class="flex items-center justify-center py-8 text-fg-subtle text-sm"
-        >
-          {{ t("components.common.button.NotificationButton.empty") }}
-        </div>
-
-        <!-- Email cards -->
-        <EmailListCard
-          v-else
-          v-for="item in unreadList"
-          :key="item.uuid"
-          :item="item"
-          @click="handleCardClick(item)"
-        />
-      </div>
-
-      <!-- Section 3: View All -->
-      <div class="px-4 py-3 shrink-0 border-t border-fg-muted/10">
+  <div class="relative h-11 w-11">
+    <DropButton
+      v-if="!isMobile"
+      ref="dropRef"
+      trigger-class="w-11 h-11 relative"
+      content-class="w-80 flex flex-col overflow-hidden"
+      placement="-left-60"
+      @mouseenter="onPopupEnter"
+    >
+      <template #trigger="{ active }">
         <ButtonSecondary
-          class="w-full justify-center text-sm py-2"
-          :text="t('components.common.button.NotificationButton.viewAll')"
-          @click="handleViewAll"
-        />
-      </div>
-    </template>
-  </DropButton>
-</template>
+          :is-active="active"
+          class="h-full! w-full!"
+          :aria-label="t('components.common.button.NotificationButton.title')"
+        >
+          <RiNotification3Line class="h-5 w-5" />
+        </ButtonSecondary>
+        <UnreadBadge :count="emailStore.unreadCount" :is-expanded="false" />
+      </template>
 
-<style scoped>
-.notification-list {
-  scrollbar-width: none; /* Firefox */
-}
-.notification-list::-webkit-scrollbar {
-  width: 0; /* Chrome / Safari / Edge */
-}
-</style>
+      <template #content>
+        <NotificationPanel
+          :items="unreadList"
+          :unread-count="emailStore.unreadCount"
+          :show-skeleton="showSkeleton"
+          :show-empty="showEmpty"
+          :is-marking-read="isMarkingRead"
+          @mark-all-read="handleMarkAllRead"
+          @card-click="handleCardClick"
+          @view-all="handleViewAll"
+          @scroll-container="handleScrollContainer"
+        />
+      </template>
+    </DropButton>
+
+    <template v-else>
+      <ButtonSecondary
+        class="h-full! w-full!"
+        :is-active="mobileOpen"
+        :aria-label="t('components.common.button.NotificationButton.title')"
+        @click="openMobile"
+      >
+        <RiNotification3Line class="h-5 w-5" />
+      </ButtonSecondary>
+      <UnreadBadge :count="emailStore.unreadCount" :is-expanded="false" />
+
+      <BaseSheet v-model="mobileOpen" v-slot="{ expanded }">
+        <NotificationPanel
+          mobile
+          :expanded="expanded"
+          :items="unreadList"
+          :unread-count="emailStore.unreadCount"
+          :show-skeleton="showSkeleton"
+          :show-empty="showEmpty"
+          :is-marking-read="isMarkingRead"
+          @mark-all-read="handleMarkAllRead"
+          @card-click="handleCardClick"
+          @view-all="handleViewAll"
+          @close="mobileOpen = false"
+          @scroll-container="handleScrollContainer"
+        />
+      </BaseSheet>
+    </template>
+  </div>
+</template>

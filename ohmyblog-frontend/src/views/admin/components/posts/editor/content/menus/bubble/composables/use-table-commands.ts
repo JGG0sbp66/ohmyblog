@@ -1,7 +1,8 @@
 // src/views/admin/components/posts/editor/content/menus/bubble/composables/use-table-commands.ts
 import type { Editor } from "@tiptap/core";
 import type { Component } from "vue";
-import { CellSelection } from "@tiptap/pm/tables";
+import type { CellSelection } from "@tiptap/pm/tables";
+import { asCellSelection, isInTable } from "../../table-predicates";
 import {
   RiMergeCellsHorizontal,
   RiSplitCellsHorizontal,
@@ -25,21 +26,7 @@ import { useLang } from "@/composables/lang.hook";
 export const useTableCommands = () => {
   const { t } = useLang();
 
-  const cellSelection = (e: Editor): CellSelection | null => {
-    const sel = e.state.selection;
-    return sel instanceof CellSelection ? sel : null;
-  };
-
-  /** 选区是否落在表格单元格内（含光标在单格、跨格 CellSelection） */
-  const isInTable = (e: Editor): boolean => {
-    if (e.state.selection instanceof CellSelection) return true;
-    const { $anchor } = e.state.selection;
-    for (let d = $anchor.depth; d > 0; d--) {
-      const name = $anchor.node(d).type.name;
-      if (name === "tableCell" || name === "tableHeader") return true;
-    }
-    return false;
-  };
+  const cellSelection = (e: Editor): CellSelection | null => asCellSelection(e);
 
   // ── 合并 / 拆分 ──
   const canMergeOrSplit = (e: Editor): boolean => e.can().mergeOrSplit();

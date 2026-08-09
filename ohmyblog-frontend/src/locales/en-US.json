@@ -64,6 +64,8 @@
       },
       "button": {
         "NotificationButton": {
+          "title": "Notifications",
+          "close": "Close notifications",
           "empty": "No notifications",
           "markAllRead": "Mark All Read",
           "viewAll": "View All Messages"
@@ -663,6 +665,13 @@
           },
           "handleMenu": {
             "groups": { "basic": "Basic", "common": "Common", "list": "List" }
+          },
+          "mobileToolbar": {
+            "insert": "Insert",
+            "undo": "Undo",
+            "redo": "Redo",
+            "addRowAfter": "Insert row below",
+            "addColumnAfter": "Insert column right"
           }
         }
       }
@@ -769,7 +778,15 @@
       "filters": {
         "all": "All",
         "unread": "Unread",
-        "type": "Type"
+        "type": "Email type",
+        "allTypes": "All types",
+        "clear": "Clear type filter",
+        "close": "Close type filter",
+        "typeHint": "Choose which email types to display"
+      },
+      "filterGroups": {
+        "system": "System",
+        "friendLinks": "Friend links"
       },
       "types": {
         "smtp_test": "SMTP Test",

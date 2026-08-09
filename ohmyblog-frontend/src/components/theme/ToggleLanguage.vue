@@ -5,6 +5,7 @@ import { RiTranslate, RiCheckLine } from "@remixicon/vue";
 import type { TLanguage } from "@/api/shared";
 import { useLang } from "@/composables/lang.hook";
 import FooterDrop from "@/components/common/button/FooterDrop.vue";
+import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 
 const { locale, setLocale, SUPPORTED_LOCALES } = useLang();
 
@@ -27,17 +28,21 @@ const switchLanguage = (value: TLanguage) => {
     </template>
 
     <div class="flex flex-col gap-0.5">
-      <button
+      <ButtonSecondary
         v-for="item in SUPPORTED_LOCALES"
         :key="item.value"
-        type="button"
-        class="flex items-center justify-between w-full px-3 py-2 rounded-md text-xs cursor-pointer hover:text-fg hover:bg-bg-muted transition-colors duration-150"
-        :class="locale === item.value ? 'text-fg' : 'text-fg-muted'"
+        class="w-full! justify-start! px-3! py-2! text-xs!"
+        :is-active="locale === item.value"
+        :text="item.label"
         @click="switchLanguage(item.value)"
       >
-        <span>{{ item.label }}</span>
-        <RiCheckLine v-if="locale === item.value" class="w-4 h-4 text-accent" />
-      </button>
+        <template #suffix>
+          <RiCheckLine
+            v-if="locale === item.value"
+            class="h-4 w-4 text-accent"
+          />
+        </template>
+      </ButtonSecondary>
     </div>
   </FooterDrop>
 </template>

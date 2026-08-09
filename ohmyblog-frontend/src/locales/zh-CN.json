@@ -64,6 +64,8 @@
       },
       "button": {
         "NotificationButton": {
+          "title": "通知",
+          "close": "关闭通知",
           "empty": "暂无通知",
           "markAllRead": "一键已读",
           "viewAll": "查看全部消息"
@@ -658,6 +660,13 @@
           },
           "handleMenu": {
             "groups": { "basic": "基础", "common": "常用", "list": "列表" }
+          },
+          "mobileToolbar": {
+            "insert": "插入",
+            "undo": "撤销",
+            "redo": "重做",
+            "addRowAfter": "在下方插入行",
+            "addColumnAfter": "在右侧插入列"
           }
         }
       }
@@ -764,7 +773,15 @@
       "filters": {
         "all": "全部",
         "unread": "未读",
-        "type": "类型"
+        "type": "邮件类型",
+        "allTypes": "全部类型",
+        "clear": "清除类型筛选",
+        "close": "关闭类型筛选",
+        "typeHint": "选择要显示的邮件类型"
+      },
+      "filterGroups": {
+        "system": "系统通知",
+        "friendLinks": "友链通知"
       },
       "types": {
         "smtp_test": "SMTP 测试",

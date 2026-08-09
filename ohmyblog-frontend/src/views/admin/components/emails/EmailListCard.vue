@@ -11,6 +11,7 @@ import { getEmailBodyPreview } from "@/utils/email";
 import { formatShortTime } from "@/utils/date";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
 import { useLang } from "@/composables/lang.hook";
+import { emailTypeMeta } from "@/views/admin/components/emails/email-type-meta";
 
 const props = defineProps<{
   item: EmailLogItem;
@@ -35,12 +36,25 @@ const { t } = useLang();
       v-if="active"
       class="absolute left-0 top-0 bottom-0 w-1 bg-accent"
     ></div>
-    <div class="flex justify-between items-start mb-1">
-      <span
-        class="text-[10px] font-bold uppercase tracking-wider text-fg-subtle truncate max-w-37.5"
-      >
-        {{ t(`views.emails.types.${item.type}`) }}
-      </span>
+    <div class="mb-1.5 flex items-center justify-between gap-2">
+      <div class="flex min-w-0 items-center gap-2">
+        <span
+          class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ring-1"
+          :class="emailTypeMeta[item.type].badgeClass"
+          aria-hidden="true"
+        >
+          <component
+            :is="emailTypeMeta[item.type].icon"
+            class="h-3.5 w-3.5"
+            :class="emailTypeMeta[item.type].iconClass"
+          />
+        </span>
+        <span
+          class="max-w-37.5 truncate text-[10px] font-bold tracking-wider text-fg-subtle uppercase"
+        >
+          {{ t(`views.emails.types.${item.type}`) }}
+        </span>
+      </div>
       <span class="text-[10px] font-medium text-fg-subtle shrink-0">
         {{ formatShortTime(item.createdAt) }}
       </span>

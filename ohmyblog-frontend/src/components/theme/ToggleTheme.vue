@@ -11,6 +11,7 @@ import { useLang } from "@/composables/lang.hook";
 import { useTheme } from "@/composables/theme.hook";
 import { type TThemeMode, THEME_MODES } from "@/api/shared";
 import FooterDrop from "@/components/common/button/FooterDrop.vue";
+import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 
 const { t } = useLang();
 const { colorMode, setTheme } = useTheme();
@@ -39,25 +40,25 @@ const currentLabel = computed(() => {
     </template>
 
     <div class="flex flex-col gap-0.5">
-      <button
+      <ButtonSecondary
         v-for="option in themeOptions"
         :key="option.value"
-        type="button"
-        class="flex items-center justify-between w-full px-3 py-2 rounded-md text-xs cursor-pointer hover:text-fg hover:bg-bg-muted transition-colors duration-150"
-        :class="colorMode === option.value ? 'text-fg' : 'text-fg-muted'"
+        class="w-full! justify-start! gap-1.5! px-3! py-2! text-xs!"
+        :is-active="colorMode === option.value"
+        :text="option.label"
         @click="setTheme(option.value)"
       >
-        <span class="flex items-center gap-1.5">
-          <RiContrastLine v-if="option.value === 'auto'" class="w-3.5 h-3.5" />
-          <RiSunLine v-if="option.value === 'light'" class="w-3.5 h-3.5" />
-          <RiMoonLine v-if="option.value === 'dark'" class="w-3.5 h-3.5" />
-          {{ option.label }}
-        </span>
-        <RiCheckLine
-          v-if="colorMode === option.value"
-          class="w-4 h-4 text-accent"
-        />
-      </button>
+        <RiContrastLine v-if="option.value === 'auto'" class="h-3.5 w-3.5" />
+        <RiSunLine v-if="option.value === 'light'" class="h-3.5 w-3.5" />
+        <RiMoonLine v-if="option.value === 'dark'" class="h-3.5 w-3.5" />
+
+        <template #suffix>
+          <RiCheckLine
+            v-if="colorMode === option.value"
+            class="h-4 w-4 text-accent"
+          />
+        </template>
+      </ButtonSecondary>
     </div>
   </FooterDrop>
 </template>
