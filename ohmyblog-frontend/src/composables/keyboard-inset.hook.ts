@@ -31,54 +31,85 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
  */
 const NOISE_THRESHOLD_PX = 40;
 
+/*
+ * ── 以下状态与监听是**模块级单例** ──────────────────────────────
+ *
+ * 视口是全局的，同一个页面里没有第二份可测。做成 per-instance 的话，每个调用方
+ * 都会注册一套 visualViewport + window 监听，并各自维护一份 baseHeight 基线 ——
+ * 两份基线可能在不同时刻 latch（例如某个组件恰好在键盘已经弹起时才挂载），
+ * 于是同一时刻两个调用方对「键盘在不在」给出不同答案。
+ *
+ * 单例形式沿用项目已有的写法（editor-header.hook / editor-dock.hook 都是模块级
+ * ref），而不是 VueUse 的 createSharedComposable：那个函数只在 @vueuse/shared
+ * 导出，@vueuse/core 并未重导出，而 package.json 只声明了 core，从传递依赖里
+ * import 会随版本变化而断。
+ */
+
+/** 模型 B 下键盘遮住的高度；模型 A 下恒为 0 */
+const inset = ref(0);
+/** 键盘当前是否弹出 */
+const keyboardOpen = ref(false);
+
+/** 键盘收起时的 layout viewport 高度基线，仅用于模型 A 判断「键盘在不在」 */
+let baseHeight = 0;
+/** 基线所属的视口宽度；转屏后高度基线失效，靠宽度变化识别 */
+let baseWidth = 0;
+/** 当前有多少个调用方在用，降到 0 才真正卸掉监听 */
+let refCount = 0;
+
+const measure = () => {
+  const vv = window.visualViewport;
+  if (!vv) return;
+
+  if (window.innerWidth !== baseWidth) {
+    baseWidth = window.innerWidth;
+    baseHeight = 0;
+  }
+
+  // 模型 B：visual viewport 被键盘压小，layout viewport 不变
+  const overlay = window.innerHeight - vv.height - vv.offsetTop;
+  inset.value = overlay > NOISE_THRESHOLD_PX ? Math.round(overlay) : 0;
+
+  // 模型 A：layout viewport 自己变矮。这里只用它得出布尔值，不参与定位计算，
+  // 所以基线被地址栏污染最多影响判定时机，不会让元件抖动。
+  baseHeight = Math.max(baseHeight, window.innerHeight);
+  const shrink = baseHeight - window.innerHeight;
+
+  keyboardOpen.value = Math.max(inset.value, shrink) > NOISE_THRESHOLD_PX;
+};
+
+const attach = () => {
+  if (!window.visualViewport) return;
+  measure();
+  // resize：键盘弹出 / 收起。
+  // scroll：iOS 上页面被键盘顶起时只有 offsetTop 变化、height 不变，
+  //         不听这个事件的话工具条会在滚动过程中脱离键盘上沿。
+  window.visualViewport.addEventListener("resize", measure);
+  window.visualViewport.addEventListener("scroll", measure);
+  // 模型 A 下变的是 layout viewport，那是 window 的 resize 而非 vv 的
+  window.addEventListener("resize", measure);
+};
+
+const detach = () => {
+  window.visualViewport?.removeEventListener("resize", measure);
+  window.visualViewport?.removeEventListener("scroll", measure);
+  window.removeEventListener("resize", measure);
+};
+
 export function useKeyboardInset() {
-  /** 模型 B 下键盘遮住的高度；模型 A 下恒为 0 */
-  const inset = ref(0);
-  /** 键盘当前是否弹出 */
-  const keyboardOpen = ref(false);
-
-  /** 键盘收起时的 layout viewport 高度基线，仅用于模型 A 判断「键盘在不在」 */
-  let baseHeight = 0;
-  /** 基线所属的视口宽度；转屏后高度基线失效，靠宽度变化识别 */
-  let baseWidth = 0;
-
-  const measure = () => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-
-    if (window.innerWidth !== baseWidth) {
-      baseWidth = window.innerWidth;
-      baseHeight = 0;
-    }
-
-    // 模型 B：visual viewport 被键盘压小，layout viewport 不变
-    const overlay = window.innerHeight - vv.height - vv.offsetTop;
-    inset.value = overlay > NOISE_THRESHOLD_PX ? Math.round(overlay) : 0;
-
-    // 模型 A：layout viewport 自己变矮。这里只用它得出布尔值，不参与定位计算，
-    // 所以基线被地址栏污染最多影响判定时机，不会让元件抖动。
-    baseHeight = Math.max(baseHeight, window.innerHeight);
-    const shrink = baseHeight - window.innerHeight;
-
-    keyboardOpen.value = Math.max(inset.value, shrink) > NOISE_THRESHOLD_PX;
-  };
-
   onMounted(() => {
-    if (!window.visualViewport) return;
-    measure();
-    // resize：键盘弹出 / 收起。
-    // scroll：iOS 上页面被键盘顶起时只有 offsetTop 变化、height 不变，
-    //         不听这个事件的话工具条会在滚动过程中脱离键盘上沿。
-    window.visualViewport.addEventListener("resize", measure);
-    window.visualViewport.addEventListener("scroll", measure);
-    // 模型 A 下变的是 layout viewport，那是 window 的 resize 而非 vv 的
-    window.addEventListener("resize", measure);
+    if (refCount++ === 0) attach();
   });
 
   onBeforeUnmount(() => {
-    window.visualViewport?.removeEventListener("resize", measure);
-    window.visualViewport?.removeEventListener("scroll", measure);
-    window.removeEventListener("resize", measure);
+    if (--refCount === 0) {
+      detach();
+      // 基线一并作废：下次挂载时页面状态未必还是现在这样
+      baseHeight = 0;
+      baseWidth = 0;
+      inset.value = 0;
+      keyboardOpen.value = false;
+    }
   });
 
   return { inset, keyboardOpen };
