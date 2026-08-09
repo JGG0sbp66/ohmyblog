@@ -49,6 +49,8 @@ const { setDockHeight } = useEditorDock();
 const { pickAndInsert } = useImageInsert();
 
 const rootRef = ref<HTMLElement | null>(null);
+/** 工具条那一行；用来推算面板实际拿到了多少高度（见 openSheet 的验收逻辑） */
+const rowRef = ref<HTMLElement | null>(null);
 const focused = ref(false);
 let blurTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -68,6 +70,8 @@ const visible = computed(() => focused.value || sheetOpen.value);
 /**
  * 展开面板时把工具条钉住的 top 坐标（layout viewport 坐标系，同 fixed 的 top）。
  * 在「按下 + 之后、blur 之前」量一次 —— 那时键盘还没开始退场、视口还没变。
+ *
+ * 为 null 表示不钉，此时面板取自然高度、容器从 bottom 往上长（见 openSheet）。
  */
 const pinnedTop = ref<number | null>(null);
 /** 关闭后延迟解钉的计时器；键盘回场动画大约这么长 */
@@ -139,9 +143,32 @@ const holdScroll = () => {
   holdRaf = requestAnimationFrame(tick);
 };
 
-/** 打开面板 = 用面板换掉键盘 */
+/**
+ * 面板有两种布局模式：
+ *
+ * A. 钉住 top（主路径）—— 面板 flex-1 去吃 blur 收起键盘后腾出的空间。工具条屏幕
+ *    位置全程不变，面板高度自然等于键盘高度，不需要预测。
+ * B. 不钉 —— 面板取自然高度（封顶），容器从 bottom 往上长、工具条相应上移。
+ *
+ * B 是给「点 + 的时候键盘本来就没开着」准备的：那时没有空间可腾，钉住会让 top 到
+ * 视口底之间只剩工具条自己，flex-1 分到 0，面板渲染了却完全看不见。
+ *
+ * 关键是**怎么选分支**。第一版按 keyboardOpen 判，翻车了：那个信号来自
+ * innerHeight 的收缩量，而地址栏收放同样会改它（实测差 52px），于是键盘收着也被
+ * 判成开着，照样选到 A、照样 0 高度。
+ *
+ * 所以改成**先按 A 走，再看结果**：延迟一帧量面板实际拿到多少高度，几乎为 0 就
+ * 说明这次没有空间可腾，撤掉钉子退到 B。不预测任何东西，只看已经发生的事实 ——
+ * 和 holdScroll、dockHeight 一样的思路。
+ */
+const PIN_FALLBACK_CHECK_MS = 380;
+/** 面板高度低于此值就认为「钉住没换来空间」 */
+const MIN_USEFUL_SHEET_PX = 40;
+let pinCheckTimer: ReturnType<typeof setTimeout> | undefined;
+
 const openSheet = () => {
   clearTimeout(unpinTimer);
+  clearTimeout(pinCheckTimer);
   const { from, to } = props.editor.state.selection;
   savedSelection = { from, to };
   // 必须在 blur 之前量：blur 一发出去，键盘就开始退场、视口开始变化
@@ -149,6 +176,14 @@ const openSheet = () => {
   sheetOpen.value = true;
   holdScroll();
   props.editor.commands.blur();
+
+  // 等键盘退场动画走完再验收：面板没拿到高度就撤钉子，退到自然高度模式
+  pinCheckTimer = setTimeout(() => {
+    if (!sheetOpen.value || pinnedTop.value === null) return;
+    const total = rootRef.value?.offsetHeight ?? 0;
+    const row = rowRef.value?.offsetHeight ?? 0;
+    if (total - row < MIN_USEFUL_SHEET_PX) pinnedTop.value = null;
+  }, PIN_FALLBACK_CHECK_MS);
 };
 
 /**
@@ -199,6 +234,7 @@ const onSheetSelect = (cmd: SlashCommand) => {
 };
 
 const schedulePinRelease = () => {
+  clearTimeout(pinCheckTimer);
   clearTimeout(unpinTimer);
   unpinTimer = setTimeout(() => {
     pinnedTop.value = null;
@@ -328,6 +364,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   clearTimeout(blurTimer);
   clearTimeout(unpinTimer);
+  clearTimeout(pinCheckTimer);
   cancelAnimationFrame(holdRaf);
   // editor-header / editor-dock 里的状态是模块级的，卸载时必须归还，否则会漏到别的页面
   setEditorHeaderHold(false);
@@ -400,7 +437,7 @@ const run = (item: ToolbarItem) => {
       >
         <!-- shrink-0：展开态容器被 top/bottom 同时钉住、高度是定的，
              工具条这一行不能被面板挤扁 -->
-        <div class="flex shrink-0 items-stretch">
+        <div ref="rowRef" class="flex shrink-0 items-stretch">
           <!-- 固定区：不参与横向滚动。
                - 「+」是 `/` 命令的替身、最高频入口，不能要求用户先滑动才够得着；
                - 链接必须留在这里还有个硬原因：它的 URL 输入弹层有 min-w-72，
@@ -464,11 +501,16 @@ const run = (item: ToolbarItem) => {
         </div>
 
         <!-- 插入面板在工具条「下方」——它顶替的是键盘的位置，不是正文的位置。
-             高度不写死，靠 flex-1 吃掉「钉住的 top」到「视口底」之间的剩余空间：
-             键盘退多少它就长多少，也就不必预测键盘高度。 -->
+             高度两种模式，对应 openSheet 的 A / B（见那里的注释）：
+             - 钉住时 flex-1，吃掉「钉住的 top」到「视口底」之间腾出的空间；
+             - 未钉住时取自然高度并封顶，容器从 bottom 往上长。 -->
         <MobileInsertSheet
           v-if="sheetOpen"
-          class="min-h-0 flex-1"
+          :class="
+            pinnedTop !== null
+              ? 'min-h-0 flex-1'
+              : 'max-h-[min(20rem,45dvh)] shrink-0'
+          "
           @select="onSheetSelect"
         />
       </div>
