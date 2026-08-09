@@ -146,6 +146,26 @@
     scrollbar-gutter: stable;
   }
 
+  /*
+   * 让 100% 高度链一路通到 #app。
+   *
+   * 这条是 index.html 里 `interactive-widget=resizes-content` 的配套要求：
+   * 该声明的定义就是「虚拟键盘压缩 layout viewport / ICB」，而**视口百分比单位
+   * （vh / dvh / svh）不跟着缩**。所以后台外壳若用 h-dvh 撑满，键盘一弹出根节点
+   * 就比视口高，body 随之产生滚动 —— 表现为「手势滚的是整个窗口，不是编辑器」。
+   * 改用 height:100%（相对 ICB）才会跟着键盘一起变矮。
+   *
+   * 对普通页面无影响：内容比 100% 高时照常溢出、文档照常滚动。
+   */
+  html,
+  body {
+    height: 100%;
+  }
+
+  #app {
+    height: 100%;
+  }
+
   @media (min-width: 48rem) {
     html {
       font-size: 16px;

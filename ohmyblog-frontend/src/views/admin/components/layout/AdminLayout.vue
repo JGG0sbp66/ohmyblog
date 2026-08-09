@@ -92,7 +92,10 @@ watch(isMobile, (mobile) => {
 </script>
 
 <template>
-  <div class="h-screen h-dvh flex flex-col bg-bg">
+  <!-- h-full（= 100% of ICB）而不是 h-dvh：见 tailwind.css 里 html/body/#app 那段。
+       dvh 不随虚拟键盘收缩，配 interactive-widget=resizes-content 会让根节点比视口高，
+       于是 body 产生滚动、手势滚的变成整个窗口而不是编辑器。 -->
+  <div class="h-full flex flex-col bg-bg">
     <!-- 演示模式提示：仅演示站的游客会看到，自身控制显示时机 -->
     <DemoNoticeModal />
 

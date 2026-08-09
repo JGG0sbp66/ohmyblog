@@ -7,7 +7,15 @@
       rel="icon"
       href="/api/uploads/system/favicon.png"
     />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- interactive-widget=resizes-content：让虚拟键盘压缩 layout viewport，
+         而不是默认的「盖在页面上」。文章编辑器的键盘吸附工具条靠它才能真正贴住
+         键盘上沿（否则要靠 visualViewport 反推遮挡量，各家浏览器/输入法的口径
+         并不一致，会留下一条缝）。Chromium 108+ 支持；iOS Safari 尚不支持，
+         那边仍走 keyboard-inset.hook 的 visualViewport 分支。 -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+    />
     <title>ohmyblog</title>
     <!-- 引入 Inter、Noto Sans SC、JetBrains Mono 字体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
