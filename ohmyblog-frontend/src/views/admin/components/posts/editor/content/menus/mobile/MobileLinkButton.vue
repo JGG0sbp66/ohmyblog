@@ -1,6 +1,6 @@
 <!-- src/views/admin/components/posts/editor/content/menus/mobile/MobileLinkButton.vue -->
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import type { Editor } from "@tiptap/core";
 import { Link } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
@@ -8,62 +8,29 @@ import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import BasePop from "@/components/base/pop/BasePop.vue";
+import { useLinkEditing } from "../../composables/use-link-editing";
 
 /**
- * MobileLinkButton — 工具条上的链接按钮（插入 / 编辑 / 移除）
+ * MobileLinkButton — 工具条上的链接按钮
  *
- * 行为逻辑和桌面端的 BubbleLinkButton 一模一样，但**没有复用它**，原因有两条，
- * 都是结构性的、加几个样式 prop 解决不了：
- *
- * 1. 那个组件把按钮包在 IconTipButton → BaseTooltip 里。BaseTooltip 的触发器是
- *    一层 auto 高度的 div，`h-full` 沿这条链路解析不到确定高度，按钮会被压成
- *    扁长方形；而工具条里其他按钮走的是「定尺寸容器 + h-full/w-full」，
- *    两种写法在同一条工具条里没法统一。触屏本来也不该有 hover 提示。
- * 2. 它的弹层朝下开（top-full），工具条贴在屏幕底部时会整个落到视口外。
- *
- * 弹层朝上开、并且左对齐：min-w-72 的输入框如果右对齐，在窄屏会溢出到视口左侧外。
+ * 状态机与桌面端 BubbleLinkButton 共用 useLinkEditing，这里只负责移动端特有的外观，
+ * 而那些差异恰恰是没法共用模板的原因：
+ * - 不经过 IconTipButton / BaseTooltip：触屏点一下会把 hover 提示永久挂在屏幕上，
+ *   而且那层 auto 高度的包裹会让 h-full 解析不到确定高度、按钮被压成扁长方形
+ * - 尺寸由 relative 容器给，按钮 h-full/w-full 撑满，与工具条其它按钮一致
+ * - 弹层朝上开且左对齐：贴底工具条上朝下开会落到视口外，min-w-72 右对齐则会在
+ *   窄屏溢出到视口左侧外
  */
 const props = defineProps<{ editor: Editor }>();
 
 const { t } = useLang();
-
-const isOpen = ref(false);
-const linkUrl = ref("");
-/** 弹窗打开时记录的原始 URL，用于判断用户是否修改过 */
-const originalUrl = ref("");
-/** 弹窗打开时链接是否已存在 */
-const isLinkActive = ref(false);
 const btnRef = ref<HTMLElement | null>(null);
-
-/**
- * 移除模式：链接已存在 且 URL 未被手动修改
- * - true  → 按钮显示「移除链接」（红色）
- * - false → 按钮显示「插入」（主题色）
- */
-const isRemoveMode = computed(
-  () => isLinkActive.value && linkUrl.value === originalUrl.value,
+const { isOpen, linkUrl, isRemoveMode, toggle, apply } = useLinkEditing(
+  () => props.editor,
 );
-
-const handleTrigger = () => {
-  isLinkActive.value = props.editor.isActive("link");
-  originalUrl.value = props.editor.getAttributes("link").href ?? "";
-  linkUrl.value = originalUrl.value;
-  isOpen.value = !isOpen.value;
-};
-
-const handleAction = () => {
-  if (isRemoveMode.value) {
-    props.editor.chain().focus().unsetLink().run();
-  } else if (linkUrl.value) {
-    props.editor.chain().focus().setLink({ href: linkUrl.value }).run();
-  }
-  isOpen.value = false;
-};
 </script>
 
 <template>
-  <!-- relative 是弹层的定位锚点；尺寸由这层给，按钮再 h-full/w-full 撑满，
-       与工具条其它按钮完全一致 -->
   <div ref="btnRef" class="relative h-10 w-10">
     <ButtonSecondary
       class="h-full! w-full! p-0!"
@@ -73,7 +40,7 @@ const handleAction = () => {
           ? t('views.admin.PostEditor.content.bubbleMenu.linkEdit')
           : t('views.admin.PostEditor.content.bubbleMenu.link')
       "
-      @click="handleTrigger"
+      @click="toggle"
     >
       <Link class="h-5 w-5" />
     </ButtonSecondary>
@@ -83,10 +50,7 @@ const handleAction = () => {
       :trigger-ref="btnRef"
       class="bottom-full left-0 mb-3 min-w-72 border border-border/40 p-2"
     >
-      <div
-        class="flex items-center gap-2"
-        @keydown.enter.prevent="handleAction"
-      >
+      <div class="flex items-center gap-2" @keydown.enter.prevent="apply">
         <TipInput
           v-model="linkUrl"
           type="url"
@@ -101,7 +65,7 @@ const handleAction = () => {
               ? t('views.admin.PostEditor.content.bubbleMenu.linkRemove')
               : t('views.admin.PostEditor.content.bubbleMenu.linkConfirm')
           "
-          @click="handleAction"
+          @click="apply"
         />
       </div>
     </BasePop>
