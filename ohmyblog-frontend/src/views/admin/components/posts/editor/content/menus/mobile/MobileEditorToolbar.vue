@@ -177,19 +177,28 @@ const openSheet = () => {
   // 面板项与块命令同 id（SlashCommand 由 fromBlockCommand 包装而来），所以直接问
   // 注册表「当前是什么块」再按 id 匹配，不用在 SlashCommand 上再挂一份 isActive
   activeSheetCommandId.value = findActiveBlockCommand(props.editor)?.id ?? null;
-  // 必须在 blur 之前量：blur 一发出去，键盘就开始退场、视口开始变化
-  pinnedTop.value = rootRef.value?.getBoundingClientRect().top ?? null;
+  // 键盘本来就已收起时没有「退场后腾出的空间」，直接采用自然高度。
+  // 旧逻辑一律先钉住 top，等 380ms 检测到面板为 0 高后才解钉 —— 那正是手动关掉
+  // 键盘后再点「+」要卡一下的原因。
+  // 钉住的那一支必须在 blur 之前量：blur 一发出去，键盘就开始退场、视口开始变化。
+  pinnedTop.value = keyboardOpen.value
+    ? (rootRef.value?.getBoundingClientRect().top ?? null)
+    : null;
   sheetOpen.value = true;
   holdScroll();
   props.editor.commands.blur();
 
-  // 等键盘退场动画走完再验收：面板没拿到高度就撤钉子，退到自然高度模式
-  pinCheckTimer = setTimeout(() => {
-    if (!sheetOpen.value || pinnedTop.value === null) return;
-    const total = rootRef.value?.offsetHeight ?? 0;
-    const row = rowRef.value?.offsetHeight ?? 0;
-    if (total - row < MIN_USEFUL_SHEET_PX) pinnedTop.value = null;
-  }, PIN_FALLBACK_CHECK_MS);
+  // 等键盘退场动画走完再验收：面板没拿到高度就撤钉子，退到自然高度模式。
+  // keyboardOpen 会被地址栏收放骗到（实测差 52px vs 键盘 252px），所以这道
+  // 事后验收留着兜底，只是不再是常态路径。
+  if (pinnedTop.value !== null) {
+    pinCheckTimer = setTimeout(() => {
+      if (!sheetOpen.value || pinnedTop.value === null) return;
+      const total = rootRef.value?.offsetHeight ?? 0;
+      const row = rowRef.value?.offsetHeight ?? 0;
+      if (total - row < MIN_USEFUL_SHEET_PX) pinnedTop.value = null;
+    }, PIN_FALLBACK_CHECK_MS);
+  }
 };
 
 /**
