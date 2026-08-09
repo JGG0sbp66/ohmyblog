@@ -167,9 +167,10 @@ const handleScrollContainer = (element: HTMLElement | null) => {
       </ButtonSecondary>
       <UnreadBadge :count="emailStore.unreadCount" :is-expanded="false" />
 
-      <BaseSheet v-model="mobileOpen">
+      <BaseSheet v-model="mobileOpen" v-slot="{ expanded }">
         <NotificationPanel
           mobile
+          :expanded="expanded"
           :items="unreadList"
           :unread-count="emailStore.unreadCount"
           :show-skeleton="showSkeleton"

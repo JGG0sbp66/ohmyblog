@@ -16,8 +16,9 @@ withDefaults(
     showEmpty: boolean;
     isMarkingRead: boolean;
     mobile?: boolean;
+    expanded?: boolean;
   }>(),
-  { mobile: false },
+  { mobile: false, expanded: false },
 );
 
 const emit = defineEmits<{
@@ -39,7 +40,10 @@ onBeforeUnmount(() => emit("scroll-container", null));
 </script>
 
 <template>
-  <div class="flex min-h-0 flex-col overflow-hidden">
+  <div
+    class="flex min-h-0 flex-col overflow-hidden"
+    :class="mobile && expanded ? 'h-full' : ''"
+  >
     <div
       class="flex shrink-0 items-center justify-between gap-2 pb-3"
       :class="mobile ? '' : 'px-4 pt-4'"
@@ -74,7 +78,11 @@ onBeforeUnmount(() => emit("scroll-container", null));
     <div
       ref="scrollContainer"
       class="notification-list overflow-y-auto border-t border-fg-muted/10"
-      :class="mobile ? '-mx-4 max-h-[52dvh]' : 'max-h-80'"
+      :class="
+        mobile
+          ? ['-mx-4', expanded ? 'min-h-0 flex-1' : 'max-h-[52dvh]']
+          : 'max-h-80'
+      "
     >
       <div v-if="showSkeleton" class="flex flex-col">
         <div
