@@ -64,6 +64,8 @@
       },
       "button": {
         "NotificationButton": {
+          "title": "Notifications",
+          "close": "Close notifications",
           "empty": "No notifications",
           "markAllRead": "Mark All Read",
           "viewAll": "View All Messages"
