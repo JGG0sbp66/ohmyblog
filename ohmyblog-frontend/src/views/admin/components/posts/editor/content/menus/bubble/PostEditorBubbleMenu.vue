@@ -10,6 +10,10 @@ import BubbleFormatSection from "./sections/BubbleFormatSection.vue";
 import BubbleTableSection from "./sections/BubbleTableSection.vue";
 import { useBubbleAnchor } from "./composables/use-bubble-anchor";
 import { useTableCommands } from "./composables/use-table-commands";
+import {
+  canUseAlignment,
+  canUseInlineFormatting,
+} from "../editor-capabilities";
 /**
  * PostEditorBubbleMenu — 文本气泡菜单
  *
@@ -89,16 +93,25 @@ const { showTableSection } = useTableCommands();
       <BubbleBlockSection :editor="editor" />
 
       <!-- 段间分隔线 -->
-      <div class="w-px h-5 bg-border/50 mx-0.5" />
+      <div
+        v-if="canUseAlignment(editor) || canUseInlineFormatting(editor)"
+        class="w-px h-5 bg-border/50 mx-0.5"
+      />
 
       <!-- 区域二：对齐与缩进 -->
-      <BubbleAlignSection :editor="editor" />
+      <BubbleAlignSection v-if="canUseAlignment(editor)" :editor="editor" />
 
       <!-- 段间分隔线 -->
-      <div class="w-px h-5 bg-border/50 mx-0.5" />
+      <div
+        v-if="canUseAlignment(editor) && canUseInlineFormatting(editor)"
+        class="w-px h-5 bg-border/50 mx-0.5"
+      />
 
       <!-- 区域三：行内格式 -->
-      <BubbleFormatSection :editor="editor" />
+      <BubbleFormatSection
+        v-if="canUseInlineFormatting(editor)"
+        :editor="editor"
+      />
     </div>
   </Transition>
 </template>

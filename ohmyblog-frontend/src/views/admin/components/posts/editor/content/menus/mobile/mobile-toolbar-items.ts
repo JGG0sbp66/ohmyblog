@@ -26,6 +26,11 @@ import {
   RiSplitCellsHorizontal,
 } from "@remixicon/vue";
 import { BLOCK_COMMANDS, type BlockCommandId } from "../block-commands";
+import {
+  canUseAlignment,
+  canUseTextFormatting,
+  selectionAllowsMark,
+} from "../editor-capabilities";
 import { isInTable } from "../table-predicates";
 
 /**
@@ -114,6 +119,7 @@ const markItem = (
   icon,
   labelKey: `views.admin.PostEditor.content.bubbleMenu.${name}`,
   isActive: (e) => e.isActive(name),
+  isDisabled: (e) => !selectionAllowsMark(e, name),
   run: (e) => e.chain().focus().toggleMark(name).run(),
 });
 
@@ -127,6 +133,7 @@ const alignItem = (
   icon,
   labelKey,
   isActive: (e) => e.isActive({ textAlign: align }),
+  isDisabled: (e) => !e.can().setTextAlign(align),
   run: (e) => e.chain().focus().setTextAlign(align).run(),
 });
 
@@ -154,6 +161,7 @@ export const TOOLBAR_SEGMENTS: readonly ToolbarSegment[] = [
   },
   {
     id: "format",
+    show: canUseTextFormatting,
     items: [
       markItem("bold", Bold),
       markItem("italic", Italic),
@@ -177,6 +185,7 @@ export const TOOLBAR_SEGMENTS: readonly ToolbarSegment[] = [
   },
   {
     id: "align",
+    show: canUseAlignment,
     items: [
       {
         id: "outdent",

@@ -14,6 +14,7 @@ import type { SlashCommand } from "../slash/slash-commands";
 import MobileInsertSheet from "./MobileInsertSheet.vue";
 import MobileLinkButton from "./MobileLinkButton.vue";
 import { TOOLBAR_SEGMENTS, type ToolbarItem } from "./mobile-toolbar-items";
+import { selectionAllowsMark } from "../editor-capabilities";
 
 /**
  * MobileEditorToolbar — 移动端键盘吸附工具条
@@ -344,6 +345,12 @@ const segments = computed(() => {
   return TOOLBAR_SEGMENTS.filter((s) => !s.show || s.show(props.editor));
 });
 
+/** 链接是 mark；代码块等禁止 mark 的节点不显示这个固定入口。 */
+const showLinkButton = computed(() => {
+  void revision.value;
+  return selectionAllowsMark(props.editor, "link");
+});
+
 const isActive = (item: ToolbarItem) => {
   void revision.value;
   return item.isActive?.(props.editor) ?? false;
@@ -419,7 +426,7 @@ const run = (item: ToolbarItem) => {
               </ButtonSecondary>
             </div>
 
-            <MobileLinkButton :editor="editor" />
+            <MobileLinkButton v-if="showLinkButton" :editor="editor" />
           </div>
 
           <!-- 其余分段横向滚动（Notion / 飞书 / Bear 都是这个形态）：
