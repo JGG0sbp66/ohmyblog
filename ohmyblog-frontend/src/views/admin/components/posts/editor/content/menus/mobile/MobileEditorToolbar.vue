@@ -52,16 +52,8 @@ const focused = ref(false);
 let blurTimer: ReturnType<typeof setTimeout> | undefined;
 
 /**
- * 面板开关。**一个布尔，图标、高亮、点击处理全读它**。
- *
- * 上一版做成了 closed / open / restoring 三态，想用「等键盘真的回来再收尾」来
- * 消掉切换动画期间的位移。失败得很彻底：退出 restoring 依赖 keyboardOpen 翻转，
- * 而那个信号本身不可靠（键盘已经在弹了它却没有「翻转」可言），于是状态卡在
- * restoring 靠 600ms 兜底才退出 —— 表现就是键盘都回来了，按钮还是高亮的 X，
- * 完全不跟手。而且图标读 sheetMounted、点击读 sheetOpen，两者在 restoring 期间
- * 还互相矛盾。
- *
- * 结论：**宁可要可预测的小位移，也不要靠不住的「聪明」同步。**
+ * 面板开关。一个布尔，图标、高亮、点击处理全读它 —— 三者读同一个值是硬要求，
+ * 分开读过一次，结果出现「图标已变 X、点击却走打开分支」的自相矛盾状态。
  */
 const sheetOpen = ref(false);
 
@@ -108,25 +100,21 @@ const rootStyle = computed<Record<string, string>>(() => {
 });
 
 /**
- * 打开面板前存下的光标位置。
+ * 打开面板前存下的光标位置（不参与渲染，普通变量即可）。
  *
  * 为什么必须存：`commands.blur()` 会让 contenteditable 失焦，部分安卓输入法在
  * 这一刻把 DOM selection 重置到文档开头，而 ProseMirror 的 DOM 观察器会把它当成
- * 用户操作写回 state.selection —— 于是「在最下面那行点一下、再按加号，光标跑到
- * 最上面去了」。存下来之后：关面板时用它恢复光标，插入命令也用它当锚点
- * （见 MobileInsertSheet 的 anchor prop），两条路都不依赖 blur 之后的 state。
+ * 用户操作写回 state.selection。关面板和执行插入命令都以这份快照为准，
+ * 不依赖 blur 之后的 state。
  */
-const savedSelection = ref<{ from: number; to: number } | null>(null);
+let savedSelection: { from: number; to: number } | null = null;
 
 /**
- * 在开合面板的整段过渡里按住正文的滚动位置。
+ * 在开合面板 / 执行命令的整段过渡里按住正文的滚动位置。
  *
- * 立的是一条约束：**开合插入面板不许改变阅读位置。** 不去追是哪一环滚的 ——
- * 实测发现点开面板时 scrollTop 会从 169 掉到 41，41 差不多正是正文第一行的位置，
- * 也就是「光标被滚进了视野，而光标此刻在文档开头」：commands.blur() 让
- * contenteditable 失焦，安卓输入法把 DOM selection 重置到文档起点，ProseMirror 的
- * 观察器又把它当用户操作接了下来。除此之外键盘收起还会让容器高度变化、触发浏览器
- * 的滚动锚定与夹取。参与方太多，逐个堵不如直接把结果钉死。
+ * 这里立的是一条**结果约束**：这些操作不许改变阅读位置。之所以不去逐个堵源头，
+ * 是因为参与方太多且互相叠加 —— blur 让输入法重置 DOM selection、ProseMirror 把它
+ * 当用户操作接下来并滚过去、键盘退场改变容器高度、浏览器再做滚动锚定与夹取。
  *
  * 连续按住 ~20 帧（约 330ms，覆盖键盘出入场动画）而不是只设一次：这段时间里布局
  * 会变好几轮，只改一次会被后面的调整覆盖掉。
@@ -154,7 +142,7 @@ const holdScroll = () => {
 const openSheet = () => {
   clearTimeout(unpinTimer);
   const { from, to } = props.editor.state.selection;
-  savedSelection.value = { from, to };
+  savedSelection = { from, to };
   // 必须在 blur 之前量：blur 一发出去，键盘就开始退场、视口开始变化
   pinnedTop.value = rootRef.value?.getBoundingClientRect().top ?? null;
   sheetOpen.value = true;
@@ -170,7 +158,7 @@ const closeSheet = () => {
   if (!sheetOpen.value) return;
   sheetOpen.value = false;
   holdScroll();
-  const sel = savedSelection.value;
+  const sel = savedSelection;
   const chain = props.editor.chain();
   // 注意 focus() 的第一个参数只接受 'start' | 'end' | number 这类 FocusPosition，
   // 给不了区间，所以恢复选区要靠 setTextSelection。
@@ -178,26 +166,26 @@ const closeSheet = () => {
   // 的努力抵消掉；真正需要滚动的场景不该由「关面板」这个动作来负责。
   if (sel) chain.setTextSelection(sel);
   chain.focus(undefined, { scrollIntoView: false }).run();
-  savedSelection.value = null;
+  savedSelection = null;
   schedulePinRelease();
 };
 
 /**
- * 在面板里选了某个命令 —— 执行权在这里，不在面板里，顺序是关键：
+ * 在面板里选了某个命令 —— 执行权在这里而不在面板里，因为顺序是关键：
  *
- * 1. **先** holdScroll()：必须在文档被改动之前捕获当前滚动位置。
- *    之前是在面板里执行完命令再回调过来钉，结果命令内部的 chain().focus() 早就
- *    把视图滚走了，捕获到的是滚动之后的值 —— 表现就是「选个 H1，正文往上蹿一段」。
- * 2. 恢复光标到打开面板前的位置。命令内部作用于 state.selection，光靠给 run()
- *    传 range 救不了 toggleHeading 这类命令（那个参数只被 deleteRange 用到）。
+ * 1. **先** holdScroll()：必须在文档被改动之前捕获滚动位置。命令内部都是
+ *    chain().focus()，而 focus 默认会把选区滚进视野 —— 在它之后再捕获，钉住的就是
+ *    已经滚走的位置。
+ * 2. 恢复光标到打开面板前的位置。命令作用于 state.selection，光给 run() 传 range
+ *    不够（那个参数只被 deleteRange 用到，救不了 toggleHeading 这类）。
  * 3. 跑命令。
  */
 const onSheetSelect = (cmd: SlashCommand) => {
   holdScroll();
   sheetOpen.value = false;
 
-  const anchor = savedSelection.value;
-  savedSelection.value = null;
+  const anchor = savedSelection;
+  savedSelection = null;
   if (anchor) props.editor.commands.setTextSelection(anchor);
   const pos = anchor?.from ?? props.editor.state.selection.from;
 
@@ -321,14 +309,11 @@ const onPointerDownOutside = (event: PointerEvent) => {
   ) {
     return;
   }
-  // 立刻收，不等任何信号 —— 「点了正文键盘都上来了，加号还是高亮的 X」就是
-  // 上一版等信号等出来的。这里不调 restoreFocus()：用户点的是正文，那一下本身
-  // 就会把焦点和光标交给编辑器，我们再插一手只会跟他抢。
+  // 立刻收、不等任何信号。也刻意不恢复焦点、不按住滚动 —— 用户点的是别处，
+  // 那一下本身就在表达「把光标放到那儿」，我们再插手只会跟他抢。
   sheetOpen.value = false;
-  savedSelection.value = null;
+  savedSelection = null;
   schedulePinRelease();
-  // 这里刻意不 holdScroll()：用户点的是正文，那一下本身就是要把光标放到别处，
-  // 按住滚动会跟他的意图对着干
 };
 
 onMounted(() => {
@@ -343,7 +328,7 @@ onBeforeUnmount(() => {
   clearTimeout(blurTimer);
   clearTimeout(unpinTimer);
   cancelAnimationFrame(holdRaf);
-  // 这两个都是 editor-header / editor-dock 里的模块级状态，卸载时必须归还
+  // editor-header / editor-dock 里的状态是模块级的，卸载时必须归还，否则会漏到别的页面
   setEditorHeaderHold(false);
   setDockHeight(0);
   if (bumpFrame) cancelAnimationFrame(bumpFrame);
@@ -463,7 +448,6 @@ const run = (item: ToolbarItem) => {
              键盘退多少它就长多少，也就不必预测键盘高度。 -->
         <MobileInsertSheet
           v-if="sheetOpen"
-          :editor="editor"
           class="min-h-0 flex-1"
           @select="onSheetSelect"
         />
