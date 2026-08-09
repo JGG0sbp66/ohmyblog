@@ -15,6 +15,7 @@ const slots = useSlots();
  *
  * 插槽:
  * - default: 图标或其他内容，通常放在文本左侧
+ * - suffix: 尾部内容，通常用于选中对号等右侧状态
  */
 const props = withDefaults(
   defineProps<{
@@ -32,6 +33,11 @@ const props = withDefaults(
 // 否则空插槽容器 + flex gap 会在按钮文字左侧留下空隙。
 const hasSlot = computed(() => {
   const vnodes = slots.default?.() ?? [];
+  return vnodes.some((vnode) => vnode != null && vnode.type !== Comment);
+});
+
+const hasSuffix = computed(() => {
+  const vnodes = slots.suffix?.() ?? [];
   return vnodes.some((vnode) => vnode != null && vnode.type !== Comment);
 });
 
@@ -107,6 +113,9 @@ const gapClass = computed(() => {
     </span>
     <span v-if="props.text" :class="contentClass">
       {{ props.text }}
+    </span>
+    <span v-if="hasSuffix" :class="[contentClass, 'ml-auto shrink-0']">
+      <slot name="suffix"></slot>
     </span>
   </button>
 </template>
