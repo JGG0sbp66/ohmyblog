@@ -209,6 +209,22 @@ export const IMAGE_ICON_COLOR = "text-pink-500 dark:text-pink-400";
 const COMMAND_BY_ID = new Map(BLOCK_COMMANDS.map((c) => [c.id, c]));
 
 /**
+ * 当前光标所在的块类型（用于回答「现在是什么」：气泡菜单的块图标、移动端插入面板的高亮）。
+ *
+ * 不能直接取 isActive 的第一个命中：列表项 / 引用 / 折叠块 / 表格单元格都以 paragraph
+ * 作内容节点，`isActive("paragraph")` 在它们内部同样为 true，而 paragraph 在
+ * BLOCK_COMMANDS 里排第一 —— 于是光标在无序列表里也会答「正文」。所以 paragraph 只作兜底。
+ *
+ * 其余重叠（列表嵌在引用里）是真嵌套，一个高亮位表达不了，按注册表顺序取外层即可。
+ */
+export const findActiveBlockCommand = (
+  e: Editor,
+  commands: readonly BlockCommand[] = BLOCK_COMMANDS,
+): BlockCommand | undefined =>
+  commands.find((c) => c.id !== "paragraph" && c.isActive(e)) ??
+  commands.find((c) => c.id === "paragraph" && c.isActive(e));
+
+/**
  * useBlockCommands — 在组件中消费块命令注册表
  *
  * @param ids 可选；指定则只返回这些 id 的命令（按指定顺序），不传返回全部
@@ -235,7 +251,7 @@ export const useBlockCommands = (ids?: readonly BlockCommandId[]) => {
     t(`views.admin.PostEditor.content.blockCommands.${cmd.labelKey}.tooltip`);
 
   const findActive = (e: Editor): BlockCommand | undefined =>
-    commands.find((c) => c.isActive(e));
+    findActiveBlockCommand(e, commands);
 
   return { commands, labelOf, tooltipOf, findActive };
 };
