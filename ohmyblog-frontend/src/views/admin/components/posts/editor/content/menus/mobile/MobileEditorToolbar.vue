@@ -516,19 +516,42 @@ const run = (item: ToolbarItem) => {
         </div>
 
         <!-- 插入面板在工具条「下方」——它顶替的是键盘的位置，不是正文的位置。
-             高度两种模式，对应 openSheet 的 A / B（见那里的注释）：
+
+             外面这层 grid 只为动画存在：过渡 grid-template-rows 的 0fr → 1fr，
+             不需要预先知道面板自然多高（height: auto 不可过渡，max-height 猜一个
+             上限则会在内容偏矮时提前跑完、后半段空转）。子元素自带 overflow-y-auto，
+             行高为 0 时天然裁掉，不用额外的 overflow 容器。
+
+             两种高度模式对应 openSheet 的 A / B（见那里的注释）：
              - 钉住时 flex-1，吃掉「钉住的 top」到「视口底」之间腾出的空间；
-             - 未钉住时取自然高度并封顶，容器从 bottom 往上长。 -->
-        <MobileInsertSheet
-          v-if="sheetOpen"
-          :active-command-id="activeSheetCommandId"
-          :class="
-            pinnedTop !== null
-              ? 'min-h-0 flex-1'
-              : 'max-h-[min(20rem,45dvh)] shrink-0'
-          "
-          @select="onSheetSelect"
-        />
+             - 未钉住时取自然高度并封顶，容器从 bottom 往上长。
+             动画两种模式共用：A 是面板在固定高度的容器里向下抹开，B 是容器带着
+             工具条一起往上长。 -->
+        <!-- 0fr 必须带 `!`：它和常驻类上的 grid-rows-[1fr] 同优先级，class 属性里的
+             书写顺序不作数，胜负由生成 CSS 的源码顺序决定（实测 1fr 在后，于是
+             from 状态从没生效过、一帧就跳到终值）。 -->
+        <Transition
+          enter-active-class="transition-[grid-template-rows] duration-200 ease-out"
+          leave-active-class="transition-[grid-template-rows] duration-150 ease-in"
+          enter-from-class="grid-rows-[0fr]!"
+          leave-to-class="grid-rows-[0fr]!"
+        >
+          <div
+            v-if="sheetOpen"
+            class="grid min-h-0 grid-rows-[1fr]"
+            :class="
+              pinnedTop !== null
+                ? 'flex-1'
+                : 'max-h-[min(20rem,45dvh)] shrink-0'
+            "
+          >
+            <MobileInsertSheet
+              :active-command-id="activeSheetCommandId"
+              class="min-h-0"
+              @select="onSheetSelect"
+            />
+          </div>
+        </Transition>
       </div>
     </Transition>
   </Teleport>
