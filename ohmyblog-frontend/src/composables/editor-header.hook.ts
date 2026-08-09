@@ -32,6 +32,12 @@ const BLUR_EXPAND_DELAY_MS = 200;
  * 过渡期间容器高度在渐变，本来就不该在这段时间内反向切换。
  */
 const TOGGLE_COOLDOWN_MS = 350;
+/**
+ * 手指离开后仍认可滚动事件的宽限期。
+ * 惯性滚动（fling）在 touchend 之后还会持续派发 scroll，这段要算作用户意图；
+ * 而键盘出入场等布局副作用通常发生在没有任何 touch 的时刻，落在窗口之外。
+ */
+const TOUCH_GRACE_MS = 900;
 
 const collapsed = ref(false);
 /** 文档滚动进度 0~1，收起后由那条细线呈现 */
@@ -102,8 +108,31 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
    * 个小事件累加出来的，看起来就是持续抖）。
    *
    * 所以：容器高度一变，本次采样只重设基线、不参与方向判定。
+   *
+   * ⚠️ 但「不参与判定」不等于「把累积量清零」，两者必须分开对待：
+   * - 我们自己的收起/展开 → 是上述闭环的一环，累积量必须清零打断它
+   * - 外部事件（虚拟键盘、地址栏）→ 只重设基线，保留用户已攒下的滑动意图，
+   *   否则地址栏滑入的那几十帧会把上滑手势整段吃掉，累积量永远攒不到阈值，
+   *   表现就是「往上滚动再也唤不出顶部栏」。
+   * 靠 toggledAt 区分两者。
+   *
+   * 但仅有这一条还不够：容器高度变化之后的**下一帧**高度已经稳定，可这中间
+   * scrollTop 常被浏览器夹过（maxScroll 变了），那个假位移会照常进入方向判定。
+   * 实测就栽在这里：键盘回场 → 容器变矮 → 夹取 → 攒够 -24px → 误判成「用户上滑」
+   * → 顶部栏自己展开、正文再被带着跳一段。所以还需要下面的 lastTouchAt。
    */
   let lastHeight = 0;
+  /**
+   * 最近一次手指接触屏幕的时刻。
+   *
+   * 方向判定只信「来自手指的滚动」——这是区分真实意图与布局副作用最干净的判别器：
+   * 键盘出入场、地址栏收放、scrollTop 被夹、我们自己 scrollTop = x 的写入，
+   * 全都不伴随 touch 事件。之前试过按高度变化、按冷却时间去猜，都是在同一条噪声
+   * 里区分不出信号；改看有没有手指，一刀切干净。
+   *
+   * 桌面端不受影响：那边压根不走这个 hook（非移动端不挂监听）。
+   */
+  let lastTouchAt = 0;
   /** 上次切换的时刻，用于冷却（见下方 TOGGLE_COOLDOWN_MS） */
   let toggledAt = 0;
 
@@ -127,11 +156,14 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
     const max = el.scrollHeight - height;
     progress.value = max > 0 ? Math.min(1, y / max) : 0;
 
-    // 容器高度变了 → 这次位移是收起/展开自己造成的，不是用户输入
+    // 容器高度变了 → 这一帧的位移不是用户滑的，不能喂给方向判定。
+    // 但只有「刚刚自己切换过」才是自激闭环、需要连累积量一起清掉；
+    // 键盘 / 地址栏这类外部来源只重设基线，保留用户已经攒下的滑动意图（见 lastHeight 注释）
     if (height !== lastHeight) {
+      const selfInduced = performance.now() - toggledAt < TOGGLE_COOLDOWN_MS;
       lastHeight = height;
       lastY = y;
-      accum = 0;
+      if (selfInduced) accum = 0;
       return;
     }
 
@@ -145,6 +177,11 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
       return;
     }
 
+    // 只有手指正在（或刚刚）操作时才做方向判定。惯性滚动结束后事件还会拖一会儿，
+    // 所以留一段宽限期；而键盘出入场、地址栏收放、scrollTop 被夹这些都不带 touch，
+    // 一律不参与（见 lastTouchAt 注释）
+    if (performance.now() - lastTouchAt > TOUCH_GRACE_MS) return;
+
     // 换向即清零，否则要先抵消掉反方向攒下的量才能触发
     if (delta > 0 !== accum > 0) accum = 0;
     accum += delta;
@@ -156,6 +193,10 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
       setCollapsed(false);
       accum = 0;
     }
+  };
+
+  const onTouch = () => {
+    lastTouchAt = performance.now();
   };
 
   const onScroll = (event: Event) => {
@@ -206,6 +247,7 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
     accum = 0;
     lastHeight = 0;
     toggledAt = 0;
+    lastTouchAt = 0;
     focusHeld = false;
     clearTimeout(blurTimer);
     if (frame) {
@@ -224,6 +266,10 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
       if (!el || !mobile) return;
 
       el.addEventListener("scroll", onScroll, { passive: true });
+      // 方向判定的准入信号：只有手指操作产生的滚动才算用户意图
+      el.addEventListener("touchstart", onTouch, { passive: true });
+      el.addEventListener("touchmove", onTouch, { passive: true });
+      el.addEventListener("touchend", onTouch, { passive: true });
       // focusin / focusout 会从后代冒泡上来，绑在滚动容器上即可覆盖标题与正文
       el.addEventListener("focusin", onFocusIn);
       el.addEventListener("focusout", onFocusOut);
@@ -232,6 +278,9 @@ export function useEditorHeaderCollapse(scrollRef: Ref<HTMLElement | null>) {
 
       detach = () => {
         el.removeEventListener("scroll", onScroll);
+        el.removeEventListener("touchstart", onTouch);
+        el.removeEventListener("touchmove", onTouch);
+        el.removeEventListener("touchend", onTouch);
         el.removeEventListener("focusin", onFocusIn);
         el.removeEventListener("focusout", onFocusOut);
       };
