@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { X } from "lucide-vue-next";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
+import { useSheetDrag } from "@/components/base/pop/composables/sheet-drag.hook";
 
+/**
+ * 移动端底部弹层：负责遮罩、标题区、内容插槽与进出场动画。
+ * 展开、收起和关闭的拖拽状态机由 useSheetDrag 单独维护。
+ */
 const props = defineProps<{
   modelValue: boolean;
   title?: string;
@@ -14,221 +18,18 @@ const emit = defineEmits<{
   "update:modelValue": [value: boolean];
 }>();
 
-const sheetRef = ref<HTMLElement | null>(null);
-const dragOffset = ref(0);
-const dragHeight = ref<number | null>(null);
-const dragDelta = ref(0);
-const isDragging = ref(false);
-const gestureActive = ref(false);
-const isClosingFromDrag = ref(false);
-const isExpanded = ref(false);
-
-let startY = 0;
-let startHeight = 0;
-let collapsedHeight = 0;
-let lastMoveTime = 0;
-let dragVelocity = 0;
-let previousDelta = 0;
-let startedExpanded = false;
-let activePointerId: number | null = null;
-let settleTimer: number | undefined;
-
-const EXPANDED_HEIGHT_RATIO = 0.92;
-
-const sheetStyle = computed(() => {
-  const style: Record<string, string> = {
-    paddingBottom: "env(safe-area-inset-bottom, 1rem)",
-    maxHeight:
-      isExpanded.value || dragHeight.value !== null ? "92dvh" : "72dvh",
-  };
-
-  if (isExpanded.value) style.height = "92dvh";
-  if (dragHeight.value !== null) style.height = `${dragHeight.value}px`;
-
-  if (gestureActive.value) {
-    style.transform = `translate3d(0, ${dragOffset.value}px, 0)`;
-    style.transition = isDragging.value
-      ? "none"
-      : "height 180ms cubic-bezier(0.22, 1, 0.36, 1), transform 180ms cubic-bezier(0.22, 1, 0.36, 1)";
-    style.willChange = "height, transform";
-  }
-
-  return style;
+const {
+  sheetRef,
+  sheetStyle,
+  isDragging,
+  isExpanded,
+  onPointerDown,
+  onPointerMove,
+  onPointerEnd,
+} = useSheetDrag({
+  isOpen: () => props.modelValue,
+  close: () => emit("update:modelValue", false),
 });
-
-const clearSettleTimer = () => {
-  if (settleTimer !== undefined) {
-    window.clearTimeout(settleTimer);
-    settleTimer = undefined;
-  }
-};
-
-const resetGesture = () => {
-  clearSettleTimer();
-  dragOffset.value = 0;
-  dragHeight.value = null;
-  dragDelta.value = 0;
-  isDragging.value = false;
-  gestureActive.value = false;
-  isClosingFromDrag.value = false;
-  isExpanded.value = false;
-  collapsedHeight = 0;
-  activePointerId = null;
-};
-
-const finishSettle = (callback?: () => void) => {
-  clearSettleTimer();
-  settleTimer = window.setTimeout(() => {
-    callback?.();
-    gestureActive.value = false;
-    settleTimer = undefined;
-  }, 180);
-};
-
-const settleCollapsed = () => {
-  isDragging.value = false;
-  dragOffset.value = 0;
-  dragHeight.value = collapsedHeight || null;
-  finishSettle(() => {
-    dragHeight.value = null;
-  });
-};
-
-const settleExpanded = () => {
-  isDragging.value = false;
-  dragOffset.value = 0;
-  dragHeight.value = null;
-  isExpanded.value = true;
-  finishSettle();
-};
-
-const collapseSheet = () => {
-  isDragging.value = false;
-  dragOffset.value = 0;
-  isExpanded.value = false;
-  dragHeight.value = collapsedHeight || null;
-  finishSettle(() => {
-    dragHeight.value = null;
-  });
-};
-
-const closeFromDrag = () => {
-  isDragging.value = false;
-  isClosingFromDrag.value = true;
-  dragOffset.value = sheetRef.value?.offsetHeight ?? window.innerHeight;
-  clearSettleTimer();
-  settleTimer = window.setTimeout(() => {
-    settleTimer = undefined;
-    emit("update:modelValue", false);
-    settleTimer = window.setTimeout(resetGesture, 180);
-  }, 180);
-};
-
-const onPointerDown = (event: PointerEvent) => {
-  if (
-    !event.isPrimary ||
-    (event.pointerType === "mouse" && event.button !== 0)
-  ) {
-    return;
-  }
-
-  clearSettleTimer();
-  activePointerId = event.pointerId;
-  startY = event.clientY;
-  startHeight = sheetRef.value?.offsetHeight ?? 0;
-  startedExpanded = isExpanded.value;
-  if (!startedExpanded) collapsedHeight = startHeight;
-  lastMoveTime = performance.now();
-  dragVelocity = 0;
-  previousDelta = 0;
-  dragOffset.value = 0;
-  dragHeight.value = null;
-  dragDelta.value = 0;
-  gestureActive.value = true;
-  isDragging.value = true;
-  (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-};
-
-const onPointerMove = (event: PointerEvent) => {
-  if (!isDragging.value || event.pointerId !== activePointerId) return;
-
-  const now = performance.now();
-  const nextDelta = event.clientY - startY;
-  const elapsed = Math.max(now - lastMoveTime, 1);
-  const instantaneousVelocity = (nextDelta - previousDelta) / elapsed;
-
-  dragVelocity = dragVelocity * 0.6 + instantaneousVelocity * 0.4;
-  dragDelta.value = nextDelta;
-  previousDelta = nextDelta;
-  lastMoveTime = now;
-
-  if (startedExpanded) {
-    dragOffset.value = 0;
-    dragHeight.value = Math.max(
-      collapsedHeight,
-      Math.min(
-        window.innerHeight * EXPANDED_HEIGHT_RATIO,
-        startHeight - nextDelta,
-      ),
-    );
-  } else if (nextDelta < 0) {
-    dragOffset.value = 0;
-    dragHeight.value = Math.min(
-      window.innerHeight * EXPANDED_HEIGHT_RATIO,
-      startHeight - nextDelta,
-    );
-  } else {
-    dragHeight.value = null;
-    dragOffset.value = nextDelta;
-  }
-};
-
-const onPointerEnd = (event: PointerEvent, cancelled = false) => {
-  if (!isDragging.value || event.pointerId !== activePointerId) return;
-
-  const velocity = performance.now() - lastMoveTime <= 80 ? dragVelocity : 0;
-  const sheetHeight = sheetRef.value?.offsetHeight ?? window.innerHeight;
-  const distanceThreshold = Math.min(120, sheetHeight * 0.25);
-
-  activePointerId = null;
-  if (cancelled) {
-    if (startedExpanded) settleExpanded();
-    else settleCollapsed();
-    return;
-  }
-
-  if (startedExpanded) {
-    const shouldCollapse =
-      dragDelta.value >= 64 || (dragDelta.value >= 20 && velocity >= 0.5);
-    if (shouldCollapse) collapseSheet();
-    else settleExpanded();
-    return;
-  }
-
-  if (dragDelta.value < 0) {
-    const upwardDistance = Math.abs(dragDelta.value);
-    const shouldExpand =
-      upwardDistance >= 64 || (upwardDistance >= 20 && velocity <= -0.5);
-    if (shouldExpand) settleExpanded();
-    else settleCollapsed();
-    return;
-  }
-
-  const shouldClose =
-    dragOffset.value >= distanceThreshold ||
-    (dragOffset.value >= 24 && velocity >= 0.5);
-  if (shouldClose) closeFromDrag();
-  else settleCollapsed();
-};
-
-watch(
-  () => props.modelValue,
-  (isOpen) => {
-    if (!isOpen && !isClosingFromDrag.value) resetGesture();
-  },
-);
-
-onBeforeUnmount(clearSettleTimer);
 </script>
 
 <template>
