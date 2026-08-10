@@ -123,6 +123,7 @@ watch(isMobile, (mobile) => {
          关闭弹窗（遮罩 / ESC）等同于取消，守卫必须拿到结果才会放行 -->
     <ConfirmModal
       :model-value="showLeaveConfirm"
+      icon-class="text-red-500"
       :title="t('views.admin.PostEditor.leaveConfirm.title')"
       :question="t('views.admin.PostEditor.leaveConfirm.question')"
       :warning="t('views.admin.PostEditor.leaveConfirm.warning')"

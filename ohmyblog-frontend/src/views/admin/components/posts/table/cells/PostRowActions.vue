@@ -103,6 +103,7 @@ const postTitle = () =>
   <ConfirmModal
     v-model="showConfirm"
     :icon="isPermanentDelete ? TriangleAlert : Trash2"
+    :icon-class="isPermanentDelete ? 'text-red-500' : 'text-accent'"
     :title="
       isPermanentDelete
         ? t('views.admin.Posts.table.confirm.delete.title')

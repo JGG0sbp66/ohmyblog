@@ -23,7 +23,7 @@ const { t } = useLang();
   <ConfirmModal
     :model-value="modelValue"
     :icon="RotateCcw"
-    icon-class="text-amber-500"
+    icon-class="text-accent"
     :title="t('views.friendLinks.reopen.title')"
     :question="t('views.friendLinks.reopen.message')"
     :warning="t('views.friendLinks.reopen.warning')"

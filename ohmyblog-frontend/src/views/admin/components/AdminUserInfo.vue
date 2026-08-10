@@ -137,6 +137,7 @@ const avatarContainerClass = "w-12 flex items-center justify-center shrink-0";
     <ConfirmModal
       v-model="isModalOpen"
       :icon="TriangleAlert"
+      icon-class="text-red-500"
       :title="t('components.common.admin.AdminSidebar.user.modal.title')"
       :question="t('components.common.admin.AdminSidebar.user.modal.question')"
       :warning="t('components.common.admin.AdminSidebar.user.modal.warning')"
