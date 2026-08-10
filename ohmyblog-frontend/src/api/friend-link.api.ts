@@ -72,6 +72,14 @@ export const rejectFriendLink = (uuid: string, body: TRejectFriendLinkDTO) => {
 };
 
 /**
+ * PATCH /api/friends/:uuid/reopen
+ * 将已通过或已拒绝的友链重新放回待审批队列
+ */
+export const reopenFriendLink = (uuid: string) => {
+  return unwrap(api.api.friends({ uuid }).reopen.patch());
+};
+
+/**
  * PUT /api/friends/:uuid
  * 更新友链信息
  */

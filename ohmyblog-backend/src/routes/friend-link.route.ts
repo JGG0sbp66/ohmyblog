@@ -101,6 +101,18 @@ export const friendLinkRoute = new Elysia({ name: "friendLinkRoute" })
 					detail: { summary: "拒绝友链申请（管理员）(PATCH)" },
 				},
 			)
+			.patch(
+				"/:uuid/reopen",
+				async ({ params }) => {
+					const item = await friendLinkService.reopen(params.uuid);
+					return { message: "已重新进入待审批", item };
+				},
+				{
+					beforeHandle: ensureAdminIfExists,
+					params: uuidParam,
+					detail: { summary: "重新审批友链（管理员）(PATCH)" },
+				},
+			)
 			.put(
 				"/:uuid",
 				async ({ params, body }) => {

@@ -758,6 +758,7 @@
       "actions": {
         "approve": "Approve",
         "reject": "Reject",
+        "reopen": "Review again",
         "delete": "Delete"
       },
       "reject": {
@@ -771,6 +772,11 @@
         "title": "Delete Friend Link",
         "message": "Are you sure you want to delete this friend link?",
         "warning": "This action cannot be undone!"
+      },
+      "reopen": {
+        "title": "Review Friend Link Again",
+        "message": "Move this friend link back to pending review?",
+        "warning": "It will be removed from the public page, and its join date and rejection reason will be cleared."
       }
     },
     "emails": {
@@ -1074,7 +1080,10 @@
       "账户已被封禁": "This account has been banned",
       "文章不存在": "Post not found",
       "只能永久删除回收站中的文章，请先将文章移入回收站": "Only posts in Trash can be permanently deleted",
-      "该 slug 已被其他文章使用": "This slug is already used by another post"
+      "该 slug 已被其他文章使用": "This slug is already used by another post",
+      "友链不存在": "Friend link not found",
+      "友链已处于待审批状态": "This friend link is already pending review",
+      "该友链已完成审批，请先重新审批": "This friend link was already reviewed. Reopen it first"
     },
     "success": {
       "保存成功": "Settings saved successfully",
@@ -1094,6 +1103,7 @@
       "申请已提交，等待审核": "Application submitted, pending review",
       "已通过": "Approved",
       "已拒绝": "Rejected",
+      "已重新进入待审批": "Moved back to pending review",
       "删除成功": "Deleted successfully",
       "更新成功": "Updated successfully"
     }

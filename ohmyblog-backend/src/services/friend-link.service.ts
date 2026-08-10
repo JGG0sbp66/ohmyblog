@@ -6,6 +6,7 @@ import type {
 	TRejectFriendLinkDTO,
 	TUpdateFriendLinkDTO,
 } from "../dtos/friend-link.dto";
+import { BusinessError } from "../plugins/errors";
 import { emailSenderService } from "./email/email-sender.service";
 
 class FriendLinkService {
@@ -72,6 +73,7 @@ class FriendLinkService {
 	 * 管理员：审批通过，自动写入入驻时间
 	 */
 	async approve(uuid: string) {
+		await this.ensurePending(uuid);
 		const item = await friendLinkDao.update(uuid, {
 			status: "approved",
 			rejectReason: null,
@@ -96,9 +98,11 @@ class FriendLinkService {
 	 * 管理员：拒绝申请
 	 */
 	async reject(uuid: string, body: TRejectFriendLinkDTO) {
+		await this.ensurePending(uuid);
 		const item = await friendLinkDao.update(uuid, {
 			status: "rejected",
 			rejectReason: body.rejectReason ?? null,
+			joinedAt: null,
 		});
 
 		// 静默通知申请人
@@ -114,6 +118,26 @@ class FriendLinkService {
 		}
 
 		return item;
+	}
+
+	/**
+	 * 管理员：将已完成审批的友链重新放回待审批队列。
+	 * 这是内部状态修正，不向申请人发送邮件；再次通过或拒绝时才发送新结果。
+	 */
+	async reopen(uuid: string) {
+		const item = await friendLinkDao.findById(uuid);
+		if (!item) {
+			throw new BusinessError("友链不存在", { status: 404 });
+		}
+		if (item.status === "pending") {
+			throw new BusinessError("友链已处于待审批状态", { status: 409 });
+		}
+
+		return friendLinkDao.update(uuid, {
+			status: "pending",
+			joinedAt: null,
+			rejectReason: null,
+		});
 	}
 
 	/**
@@ -139,6 +163,20 @@ class FriendLinkService {
 	 */
 	async countPending() {
 		return friendLinkDao.countPending();
+	}
+
+	/** 审批结果只允许从 pending 产生，避免重复发信或覆盖入驻时间。 */
+	private async ensurePending(uuid: string) {
+		const item = await friendLinkDao.findById(uuid);
+		if (!item) {
+			throw new BusinessError("友链不存在", { status: 404 });
+		}
+		if (item.status !== "pending") {
+			throw new BusinessError("该友链已完成审批，请先重新审批", {
+				status: 409,
+			});
+		}
+		return item;
 	}
 }
 

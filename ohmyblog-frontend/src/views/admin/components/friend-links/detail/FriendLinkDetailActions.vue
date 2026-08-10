@@ -8,6 +8,7 @@
 -->
 <script setup lang="ts">
 import { ref } from "vue";
+import { RotateCcw } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 import { useFriendLinkStore } from "@/stores/friend-link.store";
@@ -15,9 +16,11 @@ import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import FriendLinkRejectModal from "./FriendLinkRejectModal.vue";
 import FriendLinkDeleteModal from "./FriendLinkDeleteModal.vue";
+import FriendLinkReopenModal from "./FriendLinkReopenModal.vue";
 import {
   approveFriendLink,
   rejectFriendLink,
+  reopenFriendLink,
   deleteFriendLink,
 } from "@/api/friend-link.api";
 import type { FriendLinkItem } from "../types";
@@ -37,6 +40,10 @@ const friendLinkStore = useFriendLinkStore();
 // ── 拒绝弹窗状态 ──────────────────────────────────────────────────────────────
 const rejectModalOpen = ref(false);
 const rejectLoading = ref(false);
+
+// ── 重新审批确认状态 ──────────────────────────────────────────────────────────
+const reopenModalOpen = ref(false);
+const reopenLoading = ref(false);
 
 // ── 删除确认弹窗状态 ──────────────────────────────────────────────────────────
 const deleteModalOpen = ref(false);
@@ -78,6 +85,24 @@ const handleRejectConfirm = async (reason: string | undefined) => {
   }
 };
 
+/** 将已完成审批的友链恢复为待审批，不重复发送结果邮件。 */
+const handleReopenConfirm = async () => {
+  reopenLoading.value = true;
+  try {
+    const res = await reopenFriendLink(props.item.uuid);
+    useToast.success(
+      t(`api.success.${(res as any)?.message ?? "已重新进入待审批"}`),
+    );
+    reopenModalOpen.value = false;
+    friendLinkStore.fetchPendingCount();
+    emit("updated");
+  } catch (e: any) {
+    useToast.error(t(`api.errors.${e?.message ?? e ?? "Error"}`));
+  } finally {
+    reopenLoading.value = false;
+  }
+};
+
 /** 删除确认 */
 const handleDeleteConfirm = async () => {
   deleteLoading.value = true;
@@ -114,6 +139,17 @@ const handleDeleteConfirm = async () => {
       @click="rejectModalOpen = true"
     />
 
+    <!-- 已完成的审批可以回到待审批；确认弹窗会说明字段清理与前台下架影响。 -->
+    <ButtonSecondary
+      v-if="item.status !== 'pending'"
+      :text="t('views.friendLinks.actions.reopen')"
+      :disabled="deleteLoading"
+      class="px-4 py-2 text-sm text-amber-500 hover:text-amber-500"
+      @click="reopenModalOpen = true"
+    >
+      <RotateCcw class="h-4 w-4" />
+    </ButtonSecondary>
+
     <!-- 删除：任意状态 -->
     <ButtonSecondary
       :text="t('views.friendLinks.actions.delete')"
@@ -137,5 +173,12 @@ const handleDeleteConfirm = async () => {
     :item="item"
     :loading="deleteLoading"
     @confirm="handleDeleteConfirm"
+  />
+
+  <FriendLinkReopenModal
+    v-model="reopenModalOpen"
+    :item="item"
+    :loading="reopenLoading"
+    @confirm="handleReopenConfirm"
   />
 </template>
