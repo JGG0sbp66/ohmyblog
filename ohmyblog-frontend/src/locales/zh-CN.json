@@ -104,7 +104,8 @@
       "ToggleTheme": {
         "light": "浅色",
         "dark": "深色",
-        "auto": "系统"
+        "auto": "系统",
+        "eyecare": "护眼"
       }
     }
   },

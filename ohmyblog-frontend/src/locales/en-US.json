@@ -104,7 +104,8 @@
       "ToggleTheme": {
         "light": "Light",
         "dark": "Dark",
-        "auto": "System"
+        "auto": "System",
+        "eyecare": "Eye Care"
       }
     }
   },
