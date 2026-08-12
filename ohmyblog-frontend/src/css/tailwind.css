@@ -251,21 +251,63 @@
     color: inherit;
   }
 
-  *,
-  ::after,
-  ::before {
-    /* 统一的全局过渡：服务于 hover / focus 等交互态
-       主题换色的同步不依赖这里，由 --app-hue 的补间负责（见文件末尾）
+  /*
+    交互态过渡：只挂在真正会因交互改变外观的元素上，而不是全站每个元素。
 
-       注意不要把 width 放回来：它是这份列表里唯一会触发 layout 的属性，
-       任意宽度变化都会被拖成 200ms 的布局动画，还会唤醒 auto-animate
-       挂在 documentElement 上的 ResizeObserver。真正需要宽度动画的组件
-       自己写了 transition-[width] */
-    transition-property:
-      color, background-color, border-color, fill, stroke, stop-color, opacity,
-      stop-opacity, transform, scale, box-shadow;
-    transition-timing-function: var(--default-transition-timing-function);
-    transition-duration: var(--default-transition-duration);
+    为什么不用 `*`：换主题时 --theme-* 在 <html> 上整批变更，会让整棵树的
+    样式失效，而每个挂了过渡的元素都要为每个过渡属性比对新旧值、决定是否
+    起过渡。678 个元素的文章页实测，一次换档的样式重算 68.5ms；收窄到交互
+    元素后 32.3ms。
+
+    成本几乎只取决于选择器命中多少元素，跟每个元素挂几个属性无关 ——
+    把属性从 11 个砍到 3 个毫无改善（72.0ms），砍选择器才有效。
+
+    :where() 把特异度归零，与原先 `*` 的 0 特异度一致，
+    不会压过组件里自己写的 transition-* 工具类。
+
+    &::before / &::after 必须一起给：ButtonSecondary 这类组件的 hover 效果
+    就做在伪元素上（before:opacity-0 scale-90 → hover:before:opacity-100
+    scale-100），且它自己没写 transition，完全靠这里兜底。
+
+    svg 与 svg * 也要给：图标多用 fill="currentColor"，颜色跟随继承来的
+    color，子节点没有过渡就会瞬变。
+
+    注意不要把 width 放进列表：它是唯一会触发 layout 的属性，任意宽度变化
+    都会被拖成 200ms 的布局动画，还会唤醒 auto-animate 挂在 documentElement
+    上的 ResizeObserver。真正需要宽度动画的组件自己写了 transition-[width]。
+
+    换主题时这份声明会被 .theme-shifting 压掉（见文件末尾的 utilities 层），
+    整页渐变由 View Transition 负责，不依赖这里。
+  */
+  :where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    label,
+    [tabindex],
+    [role="button"],
+    [role="tab"],
+    [role="menuitem"],
+    [role="switch"],
+    [role="option"],
+    [role="checkbox"],
+    [role="radio"],
+    [class*="btn"],
+    svg,
+    svg *
+  ) {
+    &,
+    &::before,
+    &::after {
+      transition-property:
+        color, background-color, border-color, fill, stroke, stop-color,
+        opacity, stop-opacity, transform, scale, box-shadow;
+      transition-timing-function: var(--default-transition-timing-function);
+      transition-duration: var(--default-transition-duration);
+    }
   }
 }
 
