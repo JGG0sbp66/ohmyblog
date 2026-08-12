@@ -384,7 +384,7 @@
               "groupTitlePlaceholder": "分组标题 (如 关于)",
               "namePlaceholder": "名称 (如 GitHub)",
               "urlPlaceholder": "地址 (如 https://...)",
-              "dragGroup": "拖拽调整分组顺序"
+              "reorderHint": "按住卡片即可拖动排序"
             }
           }
         },

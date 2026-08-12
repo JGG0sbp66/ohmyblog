@@ -384,7 +384,7 @@
               "groupTitlePlaceholder": "Group title (e.g., About)",
               "namePlaceholder": "Name (e.g., GitHub)",
               "urlPlaceholder": "URL (e.g., https://...)",
-              "dragGroup": "Drag to reorder group"
+              "reorderHint": "Press and drag a card to reorder"
             }
           }
         },

@@ -6,11 +6,12 @@ import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import AccordionItem from "@/components/common/list/AccordionItem.vue";
-import ListRowLayout from "@/components/common/list/ListRowLayout.vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
-import { RiAddLine, RiDraggable } from "@remixicon/vue";
+import FooterLinkGroup from "./FooterLinkGroup.vue";
+import { RiAddLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
 import { useListDrag } from "@/composables/list-drag.hook";
+import { useStableKey } from "@/composables/stable-key.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useToast } from "@/composables/toast.hook";
 import { upsertConfig } from "@/api/config.api";
@@ -28,23 +29,9 @@ const toggleGroup = (index: number) => {
 };
 
 // --- 分组拖拽排序 ---
-// 手柄挂在手风琴头部，鼠标与触摸走同一套 Pointer Events（见 list-drag.hook）
-const groupEls = ref<HTMLElement[]>([]);
-
-/**
- * 收集每个分组的根元素供拖拽测量高度。
- *
- * AccordionItem 是组件，模板 ref 拿到的是组件实例，取 $el 才是根 DOM。
- * 用数组下标而不是 push：v-for 重渲染时这个回调会被反复调用，
- * push 会越积越多且顺序错乱。
- */
-const setGroupEl = (el: unknown, index: number) => {
-  const node =
-    el && typeof el === "object" && "$el" in el
-      ? ((el as { $el: HTMLElement }).$el as HTMLElement)
-      : (el as HTMLElement | null);
-  if (node) groupEls.value[index] = node;
-};
+// 没有拖拽手柄：整张卡片都能拖，展开按钮/标题输入/删除按钮带 data-no-drag 除外。
+// 分组重排必须用稳定 key，否则 Vue 只换内容不搬 DOM，让位动画和拖拽状态都会错位。
+const keyOf = useStableKey();
 
 const moveGroup = (from: number, to: number) => {
   const groups = systemStore.siteInfo.footerLinks;
@@ -58,24 +45,14 @@ const moveGroup = (from: number, to: number) => {
   else if (expandedGroup.value === to) expandedGroup.value = from;
 };
 
-const {
-  dragStyle,
-  isDragging,
-  hasMoved,
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
-} = useListDrag({
-  count: () => systemStore.siteInfo.footerLinks?.length ?? 0,
-  move: moveGroup,
-  getItemEl: (index) => groupEls.value[index] ?? null,
-});
+const { listRef, isDragging, itemStyle, hasMoved, onItemPointerDown } =
+  useListDrag({ move: moveGroup });
 
 /**
  * 抑制拖拽结束时补发的那一下 click。
  *
- * 手柄位于手风琴头部内，而头部整块是「点击展开/收起」的区域。
- * 拖完松手浏览器仍会派发 click，不拦住的话每次拖拽都会顺手把分组折叠掉。
+ * 卡片头部整块既是拖拽握持区又是「点击展开/收起」区。拖完松手浏览器仍会派发 click，
+ * 不拦住的话每次拖拽都会顺手把分组折叠掉。
  */
 const onGroupToggle = (index: number) => {
   if (hasMoved()) return;
@@ -96,18 +73,6 @@ const removeGroup = (index: number) => {
   if (expandedGroup.value >= (systemStore.siteInfo.footerLinks?.length ?? 0)) {
     expandedGroup.value = (systemStore.siteInfo.footerLinks?.length ?? 1) - 1;
   }
-};
-
-// --- 链接操作 ---
-const addLink = (groupIndex: number) => {
-  systemStore.siteInfo.footerLinks?.[groupIndex]?.links.push({
-    name: "",
-    url: "",
-  });
-};
-
-const removeLink = (groupIndex: number, linkIndex: number) => {
-  systemStore.siteInfo.footerLinks?.[groupIndex]?.links.splice(linkIndex, 1);
 };
 
 // --- 保存 ---
@@ -174,9 +139,23 @@ const handleSave = async () => {
       <div class="flex flex-col gap-4">
         <!-- 头部：标题 + 添加分组按钮 -->
         <div class="flex items-center justify-between gap-3">
-          <h3 class="text-sm font-bold tracking-wider text-fg-subtle uppercase">
-            {{ t("views.admin.Settings.site.footer.links.title") }}
-          </h3>
+          <div class="flex flex-col gap-1 min-w-0">
+            <h3
+              class="text-sm font-bold tracking-wider text-fg-subtle uppercase"
+            >
+              {{ t("views.admin.Settings.site.footer.links.title") }}
+            </h3>
+            <!-- 手柄没了，得有句话告诉用户「按住就能拖」 -->
+            <p
+              v-if="
+                systemStore.siteInfo.footerLinks &&
+                systemStore.siteInfo.footerLinks.length > 1
+              "
+              class="text-xs text-fg-soft"
+            >
+              {{ t("views.admin.Settings.site.footer.links.reorderHint") }}
+            </p>
+          </div>
           <ButtonSecondary
             :text="t('views.admin.Settings.site.footer.links.addGroup')"
             size="sm"
@@ -189,45 +168,31 @@ const handleSave = async () => {
           </ButtonSecondary>
         </div>
 
-        <!-- 分组列表 (手风琴) -->
+        <!--
+          分组列表 (手风琴 + 拖拽排序)。
+          容器的直接子元素只能是分组卡片本身：hook 靠 data-sortable-item 认项并按 DOM
+          顺序对齐数据下标，混进别的元素就会错位。
+        -->
         <div
           v-if="
             systemStore.siteInfo.footerLinks &&
             systemStore.siteInfo.footerLinks.length > 0
           "
+          ref="listRef"
           class="flex flex-col gap-3"
         >
           <AccordionItem
             v-for="(group, gIndex) in systemStore.siteInfo.footerLinks"
-            :key="gIndex"
-            :ref="(el) => setGroupEl(el, gIndex)"
+            :key="keyOf(group)"
+            data-sortable-item
+            sortable
             :expanded="expandedGroup === gIndex"
-            :style="isDragging(gIndex) ? dragStyle : undefined"
+            :dragging="isDragging(gIndex)"
+            :style="itemStyle(gIndex)"
+            @pointerdown="onItemPointerDown"
             @toggle="onGroupToggle(gIndex)"
             @remove="removeGroup(gIndex)"
           >
-            <!--
-              拖拽手柄。
-              touch-none 是必须的：不禁掉浏览器的默认触摸行为，手指一动就变成页面滚动，
-              pointermove 收不到后续事件，移动端完全拖不起来。
-            -->
-            <template #handle>
-              <button
-                type="button"
-                class="shrink-0 touch-none cursor-grab rounded-md p-1 text-fg-subtle transition-colors hover:bg-fg-muted/10 hover:text-fg active:cursor-grabbing"
-                :aria-label="
-                  t('views.admin.Settings.site.footer.links.dragGroup')
-                "
-                @pointerdown="onPointerDown($event, gIndex)"
-                @pointermove="onPointerMove"
-                @pointerup="onPointerUp"
-                @pointercancel="onPointerUp"
-                @click.stop
-              >
-                <RiDraggable class="h-4 w-4" />
-              </button>
-            </template>
-
             <!-- 分组标题输入 -->
             <template #header>
               <TipInput
@@ -240,51 +205,8 @@ const handleSave = async () => {
               />
             </template>
 
-            <!-- 分组内的链接列表 -->
-            <div class="flex flex-col gap-3">
-              <ListRowLayout
-                v-for="(link, lIndex) in group.links"
-                :key="lIndex"
-                @remove="removeLink(gIndex, lIndex)"
-              >
-                <div class="flex items-start gap-3">
-                  <!-- 链接名称 -->
-                  <div class="w-1/3 min-w-20">
-                    <TipInput
-                      v-model="link.name"
-                      :placeholder="
-                        t(
-                          'views.admin.Settings.site.footer.links.namePlaceholder',
-                        )
-                      "
-                    />
-                  </div>
-                  <!-- 链接 URL -->
-                  <div class="flex-1 min-w-0">
-                    <TipInput
-                      v-model="link.url"
-                      :placeholder="
-                        t(
-                          'views.admin.Settings.site.footer.links.urlPlaceholder',
-                        )
-                      "
-                    />
-                  </div>
-                </div>
-              </ListRowLayout>
-
-              <!-- 添加链接按钮 -->
-              <ButtonSecondary
-                :text="t('views.admin.Settings.site.footer.links.addLink')"
-                size="sm"
-                class="self-start group/addlink"
-                @click="addLink(gIndex)"
-              >
-                <RiAddLine
-                  class="w-4 h-4 transition-transform duration-300 group-hover/addlink:rotate-90"
-                />
-              </ButtonSecondary>
-            </div>
+            <!-- 分组内的链接列表（自带一套独立的拖拽排序） -->
+            <FooterLinkGroup :group="group" />
           </AccordionItem>
         </div>
 

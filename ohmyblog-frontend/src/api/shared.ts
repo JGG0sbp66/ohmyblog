@@ -46,6 +46,17 @@ export type {
 
 export type { TResetPasswordDTO as ForgotPasswordForm } from "@server/dtos/auth.dto";
 
+import type { TSiteInfoConfigUpsertDTO } from "@server/dtos/config.dto";
+
+/**
+ * 页脚链接分组（站点配置里的一项）。
+ *
+ * 从 site_info 的 DTO 里推导而不是另写一份接口，避免前端结构和后端校验各自漂移。
+ */
+export type TFooterLinkGroup = NonNullable<
+  TSiteInfoConfigUpsertDTO["configValue"]["footerLinks"]
+>[number];
+
 // 4. 上传相关
 export {
   uploadLimits as UPLOAD_LIMITS,
