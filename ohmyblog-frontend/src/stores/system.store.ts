@@ -37,12 +37,16 @@ export const useSystemStore = defineStore("system", () => {
   const siteCreatedAt = ref<Date | string>("");
 
   // 个性化配置 (Hero, 头像, 简介, 显示名称等)
+  //
+  // heroEnabled 默认 true：这个开关是后加的，存量配置里没有这个字段，
+  // fetchConfig 的展开合并不会覆盖它，于是老站点保持「有图就显示」的原样。
   const personalInfo = ref<TPersonalInfoConfigUpsertDTO["configValue"]>({
     username: "",
     avatar: "",
     bio: "",
     socialLinks: [],
     hero: "",
+    heroEnabled: true,
     heroTitle: "",
     heroSubtitles: [],
   });
