@@ -145,6 +145,15 @@ bun run type-check 2>&1 | grep '^src/'
 - `composables/theme.hook.ts` 是模块级单例；本地 localStorage 优先，只有用户从没设置过才拉服务端的 `appearance` 配置
 - `composables/lang.hook.ts` 包装了 `t()`：`api.errors.*` 走 `tm()` + 属性名直查，因为这一段的 key 就是**后端返回的原始中文 message**（含 `.` 会被 vue-i18n 当路径解析）。加后端错误文案时，两份 locale 的 `api.errors` 下都要加对应条目
 
+### 列表拖拽排序
+
+`composables/list-drag.hook.ts` 是唯一实现（页脚分组、分组内链接各持一个实例，嵌套两层靠内层 `stopPropagation` 分流）。没有拖拽手柄按钮 —— 整张卡片都是握持区，三条约定容易踩：
+
+- 列表项必须用**稳定 key**（`composables/stable-key.hook.ts` 的 WeakMap 发号）。下标做 key 时 Vue 只换内容不搬 DOM，让位动画无从计算，被拖的节点还会把内容甩给隔壁
+- 跟手位移用 `translate` 独立属性、放大用 `scale`，**不要合并成 `transform`**：复合属性只能整条一起过渡，跟手就会被拖出橡皮筋般的延迟
+- 项内控件按用途打标记：按钮套 `data-no-drag`（永不起拖），输入框套 `data-drag-hold`（按住 240ms 才起拖，直接拖仍是拖选文字）。触摸一律走长按激活，并在激活后用非 passive 的 `touchmove` + `preventDefault` 吃掉滚动
+- 量位置一律用 `offsetTop` / `offsetHeight`（布局坐标）：不含 transform，量到的是静止槽位，既不受自身放大影响，也不受邻项让位动画和页面滚动干扰
+
 ## 构建与发布
 
 `scripts/build.ts <win|linux|linux-musl|mac>` 用 `Bun.build({ compile })` 产出单文件可执行程序，并复制 `db/drizzle` 和 `frontend-dist`（→ `public/`）。**前端产物必须先构建并放到 `ohmyblog-backend/frontend-dist/`**，否则只会打印警告然后产出一个没有前端的二进制。
@@ -152,6 +161,44 @@ bun run type-check 2>&1 | grep '^src/'
 图像处理用 Bun 1.3.14+ 内置的 `Bun.Image`（无 native 依赖，这是能编译成单文件、跑在 Alpine 上的前提）。Dockerfile 和 CI 都把 Bun 版本钉死在 `1.3.14`，升级前先确认这一点。
 
 推 `v*` tag 触发 `.github/workflows/docker-publish.yml`：生成 Release notes（按 commit 前缀 feat/fix/ci/chore 分组）、构建四平台二进制、推 ghcr 镜像。
+
+## 浏览器与移动端自测
+
+仓库没有测试框架，交互类改动（拖拽、动画、手势）靠**遥控真实浏览器**验证。`tools/cdp.mjs` 是一个零依赖的极简 CDP 客户端（用 Bun 跑）：
+
+```bash
+bun tools/cdp.mjs launch http://127.0.0.1:5173/   # 独立临时 profile + 调试端口 9222
+bun tools/cdp.mjs targets                          # 列出可连接页面
+bun tools/cdp.mjs eval "document.title"            # 页面里求值（支持 await）
+bun tools/cdp.mjs rect "[data-sortable-item]"      # 元素视口矩形
+bun tools/cdp.mjs drag 400 693 400 866             # 按住—移动—松手，真实指针事件
+bun tools/cdp.mjs press 400 693                    # 拆成三步，在拖拽**进行中**取样
+bun tools/cdp.mjs touchdrag 206 520 206 662        # 长按 + 拖，验证移动端手势
+bun tools/cdp.mjs shot out.png
+```
+
+几个必须知道的坑：
+
+- **一定要用独立 `--user-data-dir`**。Helium / Chrome 已在运行时，同 profile 再启动只会把参数转交给已有进程，调试端口根本不会打开（`launch` 子命令已经这么做了）
+- `Input.dispatchMouseEvent` 派发的是**可信事件**，和真人操作同一条路径。`Runtime.evaluate` 里 `new PointerEvent()` 是不可信事件，验证不了 pointer capture、`touch-action` 这类只对可信事件生效的行为
+- `Input.dispatchTouchEvent` **不会触发页面滚动**（绕过了浏览器的手势识别）。要验证「轻扫该滚页面 / 拖拽该吃掉滚动」，在页面里挂 `window.addEventListener('touchmove', e => log(e.defaultPrevented))`，看 `preventDefault` 有没有被调用
+- 后台标签页的 `setTimeout` 会被节流到秒级。拖拽结束后的清理定时器要多等一会儿再断言，否则会误判成「样式没清掉」
+- 拖拽这类连续手势要**分步移动**（十几帧），一步跳到终点等于什么都没拖
+
+移动端（安卓模拟器）：
+
+```bash
+adb devices
+adb shell am start -a android.intent.action.VIEW -d http://<局域网IP>:5173/
+adb forward tcp:9333 localabstract:chrome_devtools_remote
+bun tools/cdp.mjs targets --port=9333
+```
+
+模拟器要用**局域网 IP**（不是 127.0.0.1）。`adb devices` 没有在线设备通常就是模拟器没开机，跳过移动端验证即可。
+
+管理后台的页面需要登录，干净 profile 进不去 `/admin`。验证后台组件的办法是临时加一个 Vite 入口（`ohmyblog-frontend/xxx.html` + 一个只 `createApp` 挂目标组件的临时 `.ts`），绕开路由守卫，**测完删掉**。
+
+`.kiro/hooks/session-brief.ps1` 是 agentSpawn 钩子（挂在 `.kiro/agents/ohmyblog.json`）：会话启动时跑一次上面这些探测，并把 CLAUDE.md 注入上下文一次（放钩子而不是 steering/resources，是因为后者每轮对话都会重新塞一遍）。`.kiro/` 不入库，这套属于本机配置。钩子脚本**必须是纯 ASCII**：Windows PowerShell 5.1 读无 BOM 的 `.ps1` 会按 GBK 解码，中文源码被搞坏后会静默截断脚本（症状是后面几行输出凭空消失）。
 
 ## 约定
 
