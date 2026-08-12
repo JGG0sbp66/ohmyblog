@@ -603,7 +603,9 @@
           },
           "codeBlock": {
             "languageEmpty": "No matching language",
-            "copy": "Copy code"
+            "copy": "Copy code",
+            "wrapOn": "Enable line wrap",
+            "wrapOff": "Disable line wrap"
           },
           "slashMenu": {
             "empty": "No matching commands",

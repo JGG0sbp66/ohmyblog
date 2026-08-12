@@ -46,8 +46,16 @@
   height: 100%;
 }
 
-/* 常驻复制按钮：位于 header 右侧，静息态降透明度、hover 提亮 */
-.tiptap .code-block-copy-btn {
+/* header 右侧动作区：换行开关 + 复制按钮 */
+.tiptap .code-block-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+/* 常驻 header 按钮：静息态降透明度、hover 提亮。复制与换行开关共用同一套外观 */
+.tiptap .code-block-header-btn {
   flex-shrink: 0;
   background: transparent;
   border: 1px solid transparent;
@@ -64,10 +72,10 @@
     background 0.15s,
     border-color 0.15s;
 }
-.tiptap .code-block-container:hover .code-block-copy-btn {
+.tiptap .code-block-container:hover .code-block-header-btn {
   opacity: 1;
 }
-.tiptap .code-block-copy-btn:hover {
+.tiptap .code-block-header-btn:hover {
   opacity: 1;
   color: oklch(0.88 0.06 var(--app-hue));
   background: oklch(0.24 0.015 var(--app-hue));
@@ -76,6 +84,14 @@
 .tiptap .code-block-copy-btn.copied {
   opacity: 1; /* 复制成功期间保持可见 */
   color: #4ade80; /* 绿色反馈 */
+}
+
+/* 换行开关处于开启态：常亮 + 品牌色，让当前排版模式一眼可辨 */
+.tiptap .code-block-wrap-btn.is-active {
+  opacity: 1;
+  color: oklch(0.75 0.12 var(--app-hue));
+  background: oklch(0.26 0.03 var(--app-hue));
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .tiptap .code-block-lang-input {
@@ -171,11 +187,30 @@
 }
 
 .tiptap .line-numbers span {
-  height: 1.5rem; /* 与行高严格等高 */
+  height: 1.5rem; /* 与行高严格等高（不换行时逻辑行=视觉行） */
   display: flex;
   align-items: center; /* 数字在格内垂直居中 */
   justify-content: center;
   padding: 0 0.75rem;
+}
+
+/* ── 换行模式（.is-wrap，由 header 的换行开关切换） ──────────────────────────
+   代码区的 white-space 由两端各自以内联样式给出（编辑器必须内联才能压过 Tiptap
+   NodeViewContent 打的 pre-wrap，详见 CodeBlock.vue 模板注释），这里只补 CSS 侧
+   够不到的两件事。
+
+   1) 长 token 要能断开：不断的话 pre-wrap 也拦不住溢出，代码会横向捅出容器。
+      编辑器那侧从 .ProseMirror 继承了 overflow-wrap: break-word，阅读端没有，
+      统一在这里显式声明，省得两端行为不一致。
+   2) 行号要贴住所在逻辑行的首个视觉行：此时格子高度由 JS 按实测值写成 n 倍行高
+      （见 composables/code-block/line-numbers.ts），若仍居中，数字会浮到该行中部，
+      看起来像对错了行。 */
+.tiptap .code-block-container.is-wrap pre code {
+  overflow-wrap: break-word;
+}
+
+.tiptap .code-block-container.is-wrap .line-numbers span {
+  align-items: flex-start;
 }
 
 .tiptap pre {

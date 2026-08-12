@@ -598,7 +598,9 @@
           },
           "codeBlock": {
             "languageEmpty": "未匹配语言",
-            "copy": "复制代码"
+            "copy": "复制代码",
+            "wrapOn": "开启自动换行",
+            "wrapOff": "关闭自动换行"
           },
           "slashMenu": {
             "empty": "没有匹配的命令",

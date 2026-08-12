@@ -21,6 +21,7 @@ import {
   preloadLanguageIcons,
   formatLanguageLabel,
   countCodeLines,
+  syncLineNumberHeights,
   COPY_FEEDBACK_MS,
 } from "@/composables/code-block";
 
@@ -28,6 +29,8 @@ import {
 // 保证与编辑器复制按钮的图标逐像素一致。
 const COPY_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`;
 const CHECK_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>`;
+// 同上，等价于 <TextWrap :size="13" />
+const WRAP_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-text-wrap"><path d="m16 16-3 3 3 3"/><path d="M3 12h14.5a1 1 0 0 1 0 7H13"/><path d="M3 19h6"/><path d="M3 5h18"/></svg>`;
 
 /** 从 <code class="language-xxx"> 提取语言名；无匹配则返回空串 */
 function extractLanguage(code: Element): string {
@@ -49,6 +52,53 @@ function bindCopy(btn: HTMLButtonElement, text: string): void {
       timer = null;
     }, COPY_FEEDBACK_MS);
   });
+}
+
+/**
+ * 换行开关交互：切 .is-wrap 类与 <code> 的 white-space，并重排行号列高度。
+ *
+ * 默认关闭（不换行 + 横向滚动），与编辑器默认态一致。打开后一个逻辑行可能占多个
+ * 视觉行，行号必须按实测高度撑开，否则会错位（见 composables/code-block/line-numbers.ts）。
+ *
+ * 状态只活在这一个代码块的 DOM 上：不写进 URL、不落盘，刷新即回到默认，
+ * 与编辑器侧「不写进 node.attrs」的取舍一致 —— 换行纯属阅读姿势，不是正文内容。
+ */
+function bindWrapToggle(
+  btn: HTMLButtonElement,
+  container: HTMLElement,
+  code: HTMLElement,
+  lineNumbers: HTMLElement,
+): void {
+  let wrap = false;
+
+  const apply = () => {
+    container.classList.toggle("is-wrap", wrap);
+    btn.classList.toggle("is-active", wrap);
+    btn.setAttribute("aria-pressed", String(wrap));
+    code.style.whiteSpace = wrap ? "pre-wrap" : "pre";
+    syncLineNumberHeights(code, lineNumbers, wrap);
+  };
+
+  btn.addEventListener("click", () => {
+    wrap = !wrap;
+    apply();
+  });
+
+  // 容器变宽/变窄会改变换行位置（窗口缩放、横竖屏切换），换行态下需要重量。
+  // 只认宽度：重量会改写行号格子高度 → 容器高度变化 → observer 再次触发，
+  // 不加闸就是自反馈循环；高度变化不影响换行位置，忽略即可。
+  if (typeof ResizeObserver !== "undefined") {
+    let lastWidth = -1;
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width ?? -1;
+      if (Math.abs(width - lastWidth) < 0.5) return;
+      lastWidth = width;
+      if (wrap) syncLineNumberHeights(code, lineNumbers, true);
+    });
+    observer.observe(container);
+  }
+
+  apply();
 }
 
 /**
@@ -100,15 +150,27 @@ function enhanceOne(pre: HTMLPreElement): void {
   langBox.appendChild(icon);
   langBox.appendChild(langLabel);
 
+  const wrapBtn = document.createElement("button");
+  wrapBtn.type = "button";
+  wrapBtn.className = "code-block-header-btn code-block-wrap-btn";
+  wrapBtn.setAttribute("aria-label", "Toggle line wrap");
+  wrapBtn.innerHTML = WRAP_ICON;
+
   const copyBtn = document.createElement("button");
   copyBtn.type = "button";
-  copyBtn.className = "code-block-copy-btn";
+  copyBtn.className = "code-block-header-btn code-block-copy-btn";
   copyBtn.setAttribute("aria-label", "Copy code");
   copyBtn.innerHTML = COPY_ICON;
   bindCopy(copyBtn, rawText);
 
+  // 顺序与编辑器 header 一致：换行开关在复制按钮左侧
+  const actions = document.createElement("div");
+  actions.className = "code-block-actions";
+  actions.appendChild(wrapBtn);
+  actions.appendChild(copyBtn);
+
   header.appendChild(langBox);
-  header.appendChild(copyBtn);
+  header.appendChild(actions);
 
   // content：行号列 + 原 <pre>
   const content = document.createElement("div");
@@ -128,6 +190,9 @@ function enhanceOne(pre: HTMLPreElement): void {
   content.appendChild(pre);
   container.appendChild(header);
   container.appendChild(content);
+
+  // 接线要等 DOM 入档：测量依赖真实布局，脱离文档树量不到高度
+  bindWrapToggle(wrapBtn, container, code as HTMLElement, lineNumbers);
 }
 
 /**
