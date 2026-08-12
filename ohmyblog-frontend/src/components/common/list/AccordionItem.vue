@@ -32,6 +32,8 @@ const [contentRef] = useAutoAnimate();
       @click="$emit('toggle')"
     >
       <div class="flex items-center gap-3 flex-1 min-w-0">
+        <!-- 拖拽手柄插槽：不传则不占位，保持原有布局 -->
+        <slot name="handle" />
         <!-- 展开指示箭头 -->
         <RiArrowDownSLine
           class="w-4 h-4 text-fg-muted transition-transform duration-200 shrink-0"

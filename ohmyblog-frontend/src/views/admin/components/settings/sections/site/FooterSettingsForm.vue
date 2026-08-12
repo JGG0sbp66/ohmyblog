@@ -8,8 +8,9 @@ import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import AccordionItem from "@/components/common/list/AccordionItem.vue";
 import ListRowLayout from "@/components/common/list/ListRowLayout.vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
-import { RiAddLine } from "@remixicon/vue";
+import { RiAddLine, RiDraggable } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
+import { useListDrag } from "@/composables/list-drag.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useToast } from "@/composables/toast.hook";
 import { upsertConfig } from "@/api/config.api";
@@ -24,6 +25,61 @@ const expandedGroup = ref<number>(0);
 
 const toggleGroup = (index: number) => {
   expandedGroup.value = expandedGroup.value === index ? -1 : index;
+};
+
+// --- 分组拖拽排序 ---
+// 手柄挂在手风琴头部，鼠标与触摸走同一套 Pointer Events（见 list-drag.hook）
+const groupEls = ref<HTMLElement[]>([]);
+
+/**
+ * 收集每个分组的根元素供拖拽测量高度。
+ *
+ * AccordionItem 是组件，模板 ref 拿到的是组件实例，取 $el 才是根 DOM。
+ * 用数组下标而不是 push：v-for 重渲染时这个回调会被反复调用，
+ * push 会越积越多且顺序错乱。
+ */
+const setGroupEl = (el: unknown, index: number) => {
+  const node =
+    el && typeof el === "object" && "$el" in el
+      ? ((el as { $el: HTMLElement }).$el as HTMLElement)
+      : (el as HTMLElement | null);
+  if (node) groupEls.value[index] = node;
+};
+
+const moveGroup = (from: number, to: number) => {
+  const groups = systemStore.siteInfo.footerLinks;
+  if (!groups) return;
+  const [moved] = groups.splice(from, 1);
+  if (!moved) return;
+  groups.splice(to, 0, moved);
+
+  // 展开态跟着被拖的分组走，否则拖完展开的是别人
+  if (expandedGroup.value === from) expandedGroup.value = to;
+  else if (expandedGroup.value === to) expandedGroup.value = from;
+};
+
+const {
+  dragStyle,
+  isDragging,
+  hasMoved,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+} = useListDrag({
+  count: () => systemStore.siteInfo.footerLinks?.length ?? 0,
+  move: moveGroup,
+  getItemEl: (index) => groupEls.value[index] ?? null,
+});
+
+/**
+ * 抑制拖拽结束时补发的那一下 click。
+ *
+ * 手柄位于手风琴头部内，而头部整块是「点击展开/收起」的区域。
+ * 拖完松手浏览器仍会派发 click，不拦住的话每次拖拽都会顺手把分组折叠掉。
+ */
+const onGroupToggle = (index: number) => {
+  if (hasMoved()) return;
+  toggleGroup(index);
 };
 
 // --- 分组操作 ---
@@ -144,10 +200,34 @@ const handleSave = async () => {
           <AccordionItem
             v-for="(group, gIndex) in systemStore.siteInfo.footerLinks"
             :key="gIndex"
+            :ref="(el) => setGroupEl(el, gIndex)"
             :expanded="expandedGroup === gIndex"
-            @toggle="toggleGroup(gIndex)"
+            :style="isDragging(gIndex) ? dragStyle : undefined"
+            @toggle="onGroupToggle(gIndex)"
             @remove="removeGroup(gIndex)"
           >
+            <!--
+              拖拽手柄。
+              touch-none 是必须的：不禁掉浏览器的默认触摸行为，手指一动就变成页面滚动，
+              pointermove 收不到后续事件，移动端完全拖不起来。
+            -->
+            <template #handle>
+              <button
+                type="button"
+                class="shrink-0 touch-none cursor-grab rounded-md p-1 text-fg-subtle transition-colors hover:bg-fg-muted/10 hover:text-fg active:cursor-grabbing"
+                :aria-label="
+                  t('views.admin.Settings.site.footer.links.dragGroup')
+                "
+                @pointerdown="onPointerDown($event, gIndex)"
+                @pointermove="onPointerMove"
+                @pointerup="onPointerUp"
+                @pointercancel="onPointerUp"
+                @click.stop
+              >
+                <RiDraggable class="h-4 w-4" />
+              </button>
+            </template>
+
             <!-- 分组标题输入 -->
             <template #header>
               <TipInput

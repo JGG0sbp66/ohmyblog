@@ -383,7 +383,8 @@
               "addLink": "Add Link",
               "groupTitlePlaceholder": "Group title (e.g., About)",
               "namePlaceholder": "Name (e.g., GitHub)",
-              "urlPlaceholder": "URL (e.g., https://...)"
+              "urlPlaceholder": "URL (e.g., https://...)",
+              "dragGroup": "Drag to reorder group"
             }
           }
         },

@@ -383,7 +383,8 @@
               "addLink": "添加链接",
               "groupTitlePlaceholder": "分组标题 (如 关于)",
               "namePlaceholder": "名称 (如 GitHub)",
-              "urlPlaceholder": "地址 (如 https://...)"
+              "urlPlaceholder": "地址 (如 https://...)",
+              "dragGroup": "拖拽调整分组顺序"
             }
           }
         },
