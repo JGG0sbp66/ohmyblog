@@ -186,6 +186,13 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 				error: "personal_info.hero_invalid",
 			}),
 		),
+		// 与 hero 分开存：关掉横幅不该顺带丢掉已上传的图和标题，
+		// 否则重新打开又要从头配一遍。缺省视为开启，兼容此开关之前的存量配置。
+		heroEnabled: t.Optional(
+			t.Boolean({
+				description: "是否启用首页横幅",
+			}),
+		),
 		heroTitle: t.Optional(
 			t.String({
 				maxLength: 200,
