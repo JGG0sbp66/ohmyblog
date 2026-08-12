@@ -251,7 +251,25 @@ const lineCount = computed(() => countCodeLines(props.node.textContent));
       <div class="line-numbers" contenteditable="false">
         <span v-for="n in lineCount" :key="n">{{ n }}</span>
       </div>
-      <pre><node-view-content as="code" /></pre>
+      <!--
+        white-space: pre 必须写在这里，不能放进 code-block.css。
+
+        @tiptap/vue-3 的 NodeViewContent 会给内容元素打上内联样式
+        style="white-space: pre-wrap"，内联样式压过任何非 !important 的样式表规则，
+        因此 CSS 侧无论怎么写 .tiptap pre code { white-space: pre } 都不生效。
+        把 style 作为 prop 传下去，Vue 合并时以父级传入的为准，才能真正覆盖。
+
+        为什么要覆盖成 pre：行号列是「一个逻辑行一个定高 1.5rem 的格子」
+        （见 code-block.css .line-numbers span 与 lineCount）。pre-wrap 下超长行会
+        软换行占据多个视觉行，行号却只前进一格，于是行号与代码整体错位
+        —— 长行越长错得越远。改为 pre 后长行走 pre 的 overflow-x 横向滚动，
+        逻辑行与视觉行恒为 1:1，行号自然对齐。
+
+        另一个理由是两端一致：阅读端（enhance-code-blocks.ts）不加载 ProseMirror，
+        没有这条内联样式，本来就是 pre + 横向滚动。不覆盖的话「编辑时软换行、
+        发布后横向滚动」，同一段代码两种排版。
+      -->
+      <pre><node-view-content as="code" :style="{ whiteSpace: 'pre' }" /></pre>
     </div>
 
     <!-- 语言候选下拉（Teleport 出去，绕开父级 overflow:hidden 裁切） -->
