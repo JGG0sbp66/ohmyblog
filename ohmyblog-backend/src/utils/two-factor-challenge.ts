@@ -23,8 +23,13 @@ const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 /** 承载 challengeId 的 cookie 名 */
 export const CHALLENGE_COOKIE_NAME = "two_factor_challenge";
 
-/** cookie 的 maxAge（秒），与内存里的 TTL 保持一致，避免两者过期时间打架 */
-export const CHALLENGE_COOKIE_MAX_AGE = CHALLENGE_TTL_MS / 1000;
+/**
+ * challenge 有效期的秒数版本。
+ *
+ * route 层拿它当 cookie 的 maxAge —— 与内存里的 TTL 同源，避免 cookie 还在、
+ * 服务端记录已过期（或反之）这种两头打架的情况。
+ */
+export const CHALLENGE_TTL_SECONDS = CHALLENGE_TTL_MS / 1000;
 
 /**
  * 单个 challenge 允许的失败次数。

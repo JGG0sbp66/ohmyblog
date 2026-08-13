@@ -7,6 +7,10 @@
 //
 // 算法细节全在 utils/totp.ts，这里只管状态流转和可预期失败。
 
+import {
+	TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE,
+	TWO_FACTOR_EXHAUSTED_MESSAGE,
+} from "../../db/constants/two-factor.constants";
 import { configDao } from "../daos/config.dao";
 import { twoFactorDao } from "../daos/two-factor.dao";
 import { userDao } from "../daos/user.dao";
@@ -25,7 +29,6 @@ import {
 	getChallengeUser,
 	recordFailedAttempt,
 } from "../utils/two-factor-challenge";
-import { TWO_FACTOR_EXHAUSTED_MESSAGE } from "../../db/constants/two-factor.constants";
 import { authService } from "./auth.service";
 
 /** 验证器 App 里显示不出站点名时的兜底 issuer */
@@ -297,8 +300,9 @@ class TwoFactorService {
 	 * 把原来散落在 route 层的 challenge 管理、失败计数、消费、IP 记录全部收拢到这里，
 	 * route 只需要拿返回值设 cookie 和返 JSON。
 	 *
-	 * 抛出的 BusinessError 通过 message 区分：
-	 *   - TWO_FACTOR_EXHAUSTED_MESSAGE / "验证会话已过期，请重新登录" → route 需清除 cookie
+	 * 抛出的 BusinessError 通过 message 区分（两个文案都在 constants 里同源）：
+	 *   - TWO_FACTOR_EXHAUSTED_MESSAGE / TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE
+	 *     → challenge 已作废，route 需清除 cookie
 	 *   - 其他（如"验证码错误或已失效"） → 保留 cookie，用户还有剩余次数
 	 *
 	 * @param challengeId httpOnly cookie 里的 challenge 值
@@ -314,32 +318,42 @@ class TwoFactorService {
 		const userUuid = getChallengeUser(challengeId);
 
 		if (!userUuid) {
-			throw new BusinessError("验证会话已过期，请重新登录", { status: 401 });
+			throw new BusinessError(TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE, {
+				status: 401,
+			});
 		}
 
+		// try 只圈住「码对不对」这一件事。
+		// 消费 challenge 和登录收尾放到外面：它们失败属于服务端故障，
+		// 圈进来会被 catch 当成一次验证失败，让输对码的用户看到"次数过多"。
+		let user: Awaited<ReturnType<typeof this.verifyLoginCode>>;
 		try {
-			const user = await this.verifyLoginCode(userUuid, code);
-
-			// 验证通过：消费 challenge，确保不能签出第二个 token
-			consumeChallenge(challengeId);
-
-			// 登录收尾：记录时间/IP + 异地告警
-			await authService.recordSuccessfulLogin(user, ip);
-
-			return { uuid: user.uuid, username: user.username, role: user.role };
+			user = await this.verifyLoginCode(userUuid, code);
 		} catch (err) {
-			// 每次失败记一次数；用满后 challenge 作废
-			const { alive } = recordFailedAttempt(challengeId);
+			// 只有「凭证不对」才消耗次数配额。其余错误（如两步验证未启用的 400）
+			// 原样上抛，否则会被计数、攒满后还被改写成 401，掩盖真实原因。
+			const isCredentialError =
+				err instanceof BusinessError && err.status === 401;
+			if (!isCredentialError) throw err;
 
+			const { alive } = recordFailedAttempt(challengeId);
 			if (!alive) {
 				throw new BusinessError(TWO_FACTOR_EXHAUSTED_MESSAGE, {
 					status: 401,
 				});
 			}
 
-			// 原样上抛 service 的错误（验证码错误），challenge 还活着
+			// challenge 还活着，用户还有剩余次数
 			throw err;
 		}
+
+		// 验证通过：消费 challenge，确保不能签出第二个 token
+		consumeChallenge(challengeId);
+
+		// 登录收尾：记录时间/IP + 异地告警
+		await authService.recordSuccessfulLogin(user, ip);
+
+		return { uuid: user.uuid, username: user.username, role: user.role };
 	}
 }
 

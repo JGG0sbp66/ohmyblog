@@ -1,5 +1,8 @@
 import { Elysia } from "elysia";
-import { TWO_FACTOR_EXHAUSTED_MESSAGE } from "../../db/constants/two-factor.constants";
+import {
+	TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE,
+	TWO_FACTOR_EXHAUSTED_MESSAGE,
+} from "../../db/constants/two-factor.constants";
 import {
 	TwoFactorDisableDTO,
 	TwoFactorTokenDTO,
@@ -8,9 +11,9 @@ import {
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
 import { twoFactorService } from "../services/two-factor.service";
+import { issueAuthCookie } from "../utils/auth-cookie";
 import { isDemoUser } from "../utils/demo";
 import { getClientIp } from "../utils/getClientIp";
-import { isProduction } from "../utils/runtime";
 import { CHALLENGE_COOKIE_NAME } from "../utils/two-factor-challenge";
 
 /**
@@ -63,11 +66,12 @@ export const twoFactorRoute = new Elysia({ name: "twoFactorRoute" }).group(
 							ip,
 						);
 					} catch (err) {
-						// 会话过期或次数用尽时清除 cookie
+						// challenge 已作废（过期或次数用尽）时清除 cookie，
+						// 留着只会让用户在第二步一直失败。两个文案都来自共享常量
 						if (
 							err instanceof BusinessError &&
 							(err.message === TWO_FACTOR_EXHAUSTED_MESSAGE ||
-								err.message === "验证会话已过期，请重新登录")
+								err.message === TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE)
 						) {
 							cookie[CHALLENGE_COOKIE_NAME].remove();
 						}
@@ -77,20 +81,7 @@ export const twoFactorRoute = new Elysia({ name: "twoFactorRoute" }).group(
 					// 验证通过：清除 challenge cookie，签发 auth_token
 					cookie[CHALLENGE_COOKIE_NAME].remove();
 
-					const token = await jwt.sign({
-						uuid: user.uuid,
-						role: user.role,
-						username: user.username,
-					});
-
-					cookie.auth_token.set({
-						value: token,
-						httpOnly: true,
-						secure: isProduction(),
-						maxAge: 7 * 86400,
-						path: "/",
-						sameSite: isProduction() ? "strict" : "lax",
-					});
+					await issueAuthCookie({ jwt, cookie, user });
 
 					return {
 						message: "登录成功",

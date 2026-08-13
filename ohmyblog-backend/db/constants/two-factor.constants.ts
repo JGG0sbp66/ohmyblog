@@ -36,3 +36,12 @@ export const RECOVERY_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
  * 各自硬编码字面量，改一处就会静默失效，所以这里让它同源。
  */
 export const TWO_FACTOR_EXHAUSTED_MESSAGE = "验证失败次数过多，请重新登录";
+
+/**
+ * challenge 已过期 / 不存在时后端抛出的固定文案。
+ *
+ * 与 TWO_FACTOR_EXHAUSTED_MESSAGE 同理：route 层要靠它决定是否清除 challenge
+ * cookie，前端也要靠它把界面退回密码那一步，所以必须同源，不能各处写字面量。
+ */
+export const TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE =
+	"验证会话已过期，请重新登录";

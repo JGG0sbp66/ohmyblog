@@ -9,6 +9,7 @@ import {
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
 import { authService } from "../services/auth.service";
+import { issueAuthCookie } from "../utils/auth-cookie";
 import { DEMO_USER_UUID, isDemoUser } from "../utils/demo";
 import { getClientIp } from "../utils/getClientIp";
 import { isProduction } from "../utils/runtime";
@@ -57,10 +58,10 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 
 					if (result.requiresTwoFactor) {
 						cookie[CHALLENGE_COOKIE_NAME].set({
-							value: result.challenge.cookieValue,
+							value: result.challenge.challengeId,
 							httpOnly: true,
 							secure: isProduction(),
-							maxAge: result.challenge.cookieMaxAge,
+							maxAge: result.challenge.expiresIn,
 							path: "/",
 							sameSite: isProduction() ? "strict" : "lax",
 						});
@@ -72,20 +73,7 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 						};
 					}
 
-					const token = await jwt.sign({
-						uuid: result.user.uuid,
-						role: result.user.role,
-						username: result.user.username,
-					});
-
-					cookie.auth_token.set({
-						value: token,
-						httpOnly: true,
-						secure: isProduction(),
-						maxAge: 7 * 86400,
-						path: "/",
-						sameSite: isProduction() ? "strict" : "lax",
-					});
+					await issueAuthCookie({ jwt, cookie, user: result.user });
 
 					return {
 						message: "登录成功",

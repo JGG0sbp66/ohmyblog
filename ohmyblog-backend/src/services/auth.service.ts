@@ -7,7 +7,7 @@ import type { TRegisterDTO, TUpdateAccountDTO } from "../dtos/auth.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 import {
-	CHALLENGE_COOKIE_MAX_AGE,
+	CHALLENGE_TTL_SECONDS,
 	createChallenge,
 } from "../utils/two-factor-challenge";
 import { emailSenderService } from "./email/email-sender.service";
@@ -96,8 +96,13 @@ class AuthService {
 		// 4. 启用了两步验证：密码只是第一道，创建 challenge 等第二步
 		if (user.twoFactorEnabled) {
 			this.logger.info({ userId: user.uuid }, "密码校验通过，等待两步验证");
-			const challenge = this.issueChallenge(user.uuid);
-			return { requiresTwoFactor: true as const, challenge };
+			return {
+				requiresTwoFactor: true as const,
+				challenge: {
+					challengeId: createChallenge(user.uuid),
+					expiresIn: CHALLENGE_TTL_SECONDS,
+				},
+			};
 		}
 
 		// 5. 没开两步验证：直接收尾
@@ -106,21 +111,6 @@ class AuthService {
 		return {
 			requiresTwoFactor: false as const,
 			user: { uuid: user.uuid, username: user.username, role: user.role },
-		};
-	}
-
-	/**
-	 * 为通过密码校验的用户创建两步验证 challenge。
-	 *
-	 * 返回 cookie 需要的全部数据（值、选项），route 层拿到后直接 set 即可。
-	 *
-	 * @param userUuid 已通过密码校验的用户 UUID
-	 */
-	issueChallenge(userUuid: string) {
-		const challengeId = createChallenge(userUuid);
-		return {
-			cookieValue: challengeId,
-			cookieMaxAge: CHALLENGE_COOKIE_MAX_AGE,
 		};
 	}
 
