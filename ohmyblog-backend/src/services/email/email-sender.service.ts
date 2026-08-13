@@ -169,8 +169,8 @@ class EmailSenderService {
 
 	/**
 	 * 发送密码重置验证码邮件
-	 * @param params 密码重置参数（不包含验证码，内部自动生成）
-	 * @returns 包含生成的验证码和发送结果的对象
+	 * @param params 密码重置参数；不传 code 时内部自动生成一个
+	 * @returns 包含实际发送的验证码和发送结果的对象
 	 */
 	async sendResetPasswordEmail(params: SendResetPasswordParams) {
 		const smtpConfig = await emailConfigService.getSmtpConfig();
@@ -181,8 +181,9 @@ class EmailSenderService {
 		// 1. 获取管理员名称
 		const adminName = await emailConfigService.getAdminName();
 
-		// 2. 内部生成 6 位加密安全验证码
-		const code = String(randomInt(100000, 1000000));
+		// 2. 验证码：调用方指定则用它（重发场景，见 SendResetPasswordParams.code），
+		//    否则内部生成一个 6 位加密安全随机码
+		const code = params.code ?? String(randomInt(100000, 1000000));
 
 		// 3. 解析请求 IP 的位置（用于模板展示和日志 params 快照）
 		const location = geoService.formatLocation(

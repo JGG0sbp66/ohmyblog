@@ -1,5 +1,9 @@
 // src/services/auth.service.ts
 
+import {
+	RESET_PASSWORD_CODE_TTL_MIN,
+	RESET_PASSWORD_MAX_ATTEMPTS,
+} from "../../db/constants/email-verification.constants";
 import { configDao } from "../daos/config.dao";
 import { emailVerificationDao } from "../daos/email-verification.dao";
 import { userDao } from "../daos/user.dao";
@@ -7,13 +11,14 @@ import type { TRegisterDTO, TUpdateAccountDTO } from "../dtos/auth.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 import {
+	checkResetPasswordThrottle,
+	recordResetPasswordSend,
+} from "../utils/reset-password-throttle";
+import {
 	CHALLENGE_TTL_SECONDS,
 	createChallenge,
 } from "../utils/two-factor-challenge";
 import { emailSenderService } from "./email/email-sender.service";
-
-/** 重置密码验证码有效期（分钟） */
-const RESET_PASSWORD_CODE_TTL_MIN = 15;
 
 class AuthService {
 	private logger = logger.withTag("AuthService");
@@ -176,29 +181,72 @@ class AuthService {
 			return;
 		}
 
-		// 1. 发送邮件并在内部生成加密安全验证码
-		const { code } = await emailSenderService.sendResetPasswordEmail({
-			to: user.email,
-			expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
-			ip,
-		});
+		// 1. 节流：冷却期内或超出小时配额时静默返回。
+		//    静默是关键 —— 一旦对外报「请稍后再试」，攻击者就能凭响应差异
+		//    判断这个邮箱是否注册过，防枚举的设计就破了
+		const throttled = checkResetPasswordThrottle(user.uuid);
+		if (throttled) {
+			this.logger.warn(
+				{ userId: user.uuid, reason: throttled },
+				"重置密码请求被节流",
+			);
+			return;
+		}
 
-		// 2. 将生成的验证码及过期信息存入数据库
-		const expiresAt = new Date(
-			Date.now() + RESET_PASSWORD_CODE_TTL_MIN * 60 * 1000,
+		// 2. 已有未过期的码就重发它，不生成新码。
+		//    换新码会把已累计的 attempts 清零，那样 RESET_PASSWORD_MAX_ATTEMPTS
+		//    只要靠反复申请就能绕过
+		const existing = await emailVerificationDao.findActive(
+			user.uuid,
+			"reset_password",
 		);
 
-		// 先作废旧码 → 再写新码，避免同时存在多个有效验证码
-		await emailVerificationDao.invalidateByUser(user.uuid, "reset_password");
-		await emailVerificationDao.create({
-			userUuid: user.uuid,
-			type: "reset_password",
-			code,
-			expiresAt,
-			ip,
-		});
+		try {
+			const { code } = await emailSenderService.sendResetPasswordEmail({
+				to: user.email,
+				expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
+				ip,
+				code: existing?.code,
+			});
 
-		this.logger.info({ userId: user.uuid }, "重置密码验证码已发送");
+			if (!existing) {
+				const expiresAt = new Date(
+					Date.now() + RESET_PASSWORD_CODE_TTL_MIN * 60 * 1000,
+				);
+
+				// 先作废旧码 → 再写新码，避免同时存在多个有效验证码
+				await emailVerificationDao.invalidateByUser(
+					user.uuid,
+					"reset_password",
+				);
+				await emailVerificationDao.create({
+					userUuid: user.uuid,
+					type: "reset_password",
+					code,
+					expiresAt,
+					ip,
+				});
+			}
+		} catch (err) {
+			// 发信失败（最常见的是根本没配 SMTP）必须在这里吞掉。
+			// 让它冒到 route 层的话，「邮箱不存在」返回 200、「邮箱存在但没配
+			// SMTP」返回 400，两者响应不同 —— 接口就变成了一个邮箱枚举器，
+			// 而没配 SMTP 恰好是新装站点的默认状态。
+			// 站长排查看 data/logs/error.log 与 email_log 表
+			this.logger.error(
+				{ err, userId: user.uuid },
+				"重置密码邮件发送失败，已对外静默",
+			);
+			return;
+		}
+
+		// 3. 只有真的发出去了才记账，避免发信失败也白白消耗配额
+		recordResetPasswordSend(user.uuid);
+
+		this.logger.info(
+			{ userId: user.uuid, resent: Boolean(existing) },
+			"重置密码验证码已发送",
+		);
 	}
 
 	/**
@@ -214,6 +262,13 @@ class AuthService {
 			"reset_password",
 		);
 		if (!record) {
+			// 码不对：把这次失败记在该邮箱当前那个有效码上。
+			//
+			// 计数必须挂在「被攻击的那个码」而不是「提交上来的错码」上 ——
+			// 错码在库里根本没有对应记录，无处可记，那样就等于不限次数。
+			// 邮箱不存在时什么都不做，同样不能因为「有没有码可记」而产生
+			// 可观测的差异
+			await this.penalizeResetPasswordAttempt(email);
 			throw new BusinessError("验证码无效或已过期", { status: 400 });
 		}
 
@@ -223,6 +278,8 @@ class AuthService {
 				{ recordUserId: record.userUuid, submittedEmail: email },
 				"重置密码时 code 与邮箱不匹配",
 			);
+			// 猜中了别人的码但邮箱对不上，也算一次针对该邮箱的失败尝试
+			await this.penalizeResetPasswordAttempt(email);
 			throw new BusinessError("验证码无效或已过期", { status: 400 });
 		}
 		if (user.status === "banned") {
@@ -234,6 +291,47 @@ class AuthService {
 		await emailVerificationDao.markAsUsed(record.uuid);
 
 		this.logger.info({ userId: user.uuid }, "密码重置成功");
+	}
+
+	/**
+	 * 记一次重置密码的失败尝试：给该邮箱当前有效的验证码累加失败次数，
+	 * 达到 RESET_PASSWORD_MAX_ATTEMPTS 就直接作废它。
+	 *
+	 * 作废之后用户必须重新申请，而重新申请受冷却期和小时配额约束
+	 * （见 utils/reset-password-throttle.ts）—— 两者合起来才把 6 位数字
+	 * 从「几小时能撞开」压到不可行。
+	 *
+	 * 全程不抛错、不改变调用方的响应：任何失败路径对外都必须是同一句
+	 * 「验证码无效或已过期」，否则又成了可探测的信息。
+	 *
+	 * @param email 请求方提交的邮箱
+	 */
+	private async penalizeResetPasswordAttempt(email: string) {
+		try {
+			const user = await userDao.findByIdentifier(email);
+			if (!user) return;
+
+			const active = await emailVerificationDao.findActive(
+				user.uuid,
+				"reset_password",
+			);
+			if (!active) return;
+
+			const attempts = await emailVerificationDao.incrementAttempts(
+				active.uuid,
+			);
+
+			if (attempts >= RESET_PASSWORD_MAX_ATTEMPTS) {
+				await emailVerificationDao.markAsUsed(active.uuid);
+				this.logger.warn(
+					{ userId: user.uuid, attempts },
+					"重置密码验证码失败次数用尽，已作废该验证码",
+				);
+			}
+		} catch (err) {
+			// 记账失败不能影响对外响应，否则失败路径之间会产生可观测差异
+			this.logger.error({ err }, "累加重置密码失败次数时异常");
+		}
 	}
 
 	/**

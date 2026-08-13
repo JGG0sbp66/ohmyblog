@@ -3,14 +3,19 @@
 // 邮件验证码（如「忘记密码」6 位 OTP）的持久化层。
 //
 // 标准使用顺序：
-//   1. invalidateByUser(userUuid, type)  // 作废该用户该类型的所有旧码
-//   2. create({...})                      // 写入新码
-//   3. (用户提交后) findActiveByCode(code, type) // 校验并取出
-//   4. markAsUsed(uuid)                   // 流程完成后立即标记已用，防止重放
+//   1. findActive(userUuid, type)         // 已有未过期的码则重发它，不要换新码
+//   2. invalidateByUser(userUuid, type)   // 确实要发新码时，先作废所有旧码
+//   3. create({...})                      // 写入新码
+//   4. (用户提交后) findActiveByCode(code, type) // 校验并取出
+//   5a. markAsUsed(uuid)                  // 成功后立即标记已用，防止重放
+//   5b. incrementAttempts(uuid)           // 失败则累加，到上限后同样 markAsUsed
 //
-// 步骤 1 不可省略：否则同一用户可能同时存在多条「未使用 + 未过期」的记录，
+// 步骤 2 不可省略：否则同一用户可能同时存在多条「未使用 + 未过期」的记录，
 // 攻击者只要拿到任意一条就能完成重置。
-import { and, eq, gt, isNull } from "drizzle-orm";
+//
+// 步骤 1 也不可省略：直接换新码会把 attempts 清零，
+// RESET_PASSWORD_MAX_ATTEMPTS 就退化成靠反复申请即可绕过的软限制。
+import { and, eq, gt, isNull, sql } from "drizzle-orm";
 import { db } from "../../db/connection";
 import type { TEmailVerificationType } from "../../db/constants/email-verification.constants";
 import { emailVerification } from "../../db/schema";
@@ -93,6 +98,24 @@ class EmailVerificationDao {
 					isNull(emailVerification.usedAt),
 				),
 			);
+	}
+
+	/**
+	 * 失败次数 +1，返回累加后的值。
+	 *
+	 * 用 SQL 里的 `attempts + 1` 而不是先读再写，避免并发提交时两个请求
+	 * 读到同一个旧值、各自 +1 后互相覆盖，让上限被稀释成「并发数 × 上限」。
+	 *
+	 * @param uuid 验证码记录 UUID
+	 * @returns 累加后的失败次数
+	 */
+	async incrementAttempts(uuid: string) {
+		const result = await db
+			.update(emailVerification)
+			.set({ attempts: sql`${emailVerification.attempts} + 1` })
+			.where(eq(emailVerification.uuid, uuid))
+			.returning();
+		return result[0]?.attempts ?? 0;
 	}
 
 	/**
