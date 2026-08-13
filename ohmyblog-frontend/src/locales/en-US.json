@@ -404,7 +404,8 @@
                 "title": "Scan the QR code",
                 "description": "Scan the code below with any authenticator app such as Google Authenticator, 1Password or Bitwarden.",
                 "qrAlt": "Two-factor authentication QR code",
-                "manualHint": "Can't scan? Enter this key into your authenticator app manually:"
+                "manualHint": "Can't scan? Enter this key into your authenticator app manually",
+                "manualLabel": "Manual entry key"
               },
               "step2": {
                 "title": "Confirm the code",

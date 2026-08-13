@@ -404,7 +404,8 @@
                 "title": "扫描二维码",
                 "description": "用 Google Authenticator、1Password、Bitwarden 等任意验证器 App 扫描下方二维码。",
                 "qrAlt": "两步验证二维码",
-                "manualHint": "无法扫码？把下面这串密钥手动录入验证器 App："
+                "manualHint": "无法扫码？把下面这串密钥手动录入验证器 App",
+                "manualLabel": "手动录入密钥"
               },
               "step2": {
                 "title": "确认验证码",
