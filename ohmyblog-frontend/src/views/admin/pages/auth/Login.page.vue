@@ -18,7 +18,10 @@ import { RiArrowLeftLine } from "@remixicon/vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { login } from "@/api/auth.api";
 import { verifyTwoFactor } from "@/api/two-factor.api";
-import { TWO_FACTOR_EXHAUSTED_MESSAGE } from "@/api/shared";
+import {
+  TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE,
+  TWO_FACTOR_EXHAUSTED_MESSAGE,
+} from "@/api/shared";
 import { LoginDTO } from "@server/dtos/auth.dto";
 import { TwoFactorVerifyDTO } from "@server/dtos/two-factor.dto";
 import { useLang } from "@/composables/lang.hook";
@@ -103,8 +106,12 @@ const handleSubmit = async () => {
     if (needsTwoFactor.value) {
       form.value.twoFactorCode = "";
 
-      // 失败次数用尽：challenge 已作废，收起验证码框回到初始状态
-      if (error === TWO_FACTOR_EXHAUSTED_MESSAGE) {
+      // 次数用尽或 challenge 过期：后端已作废凭证，收起验证码框回到初始状态。
+      // 不收起的话用户会留在第二步反复失败，永远等不到成功
+      if (
+        error === TWO_FACTOR_EXHAUSTED_MESSAGE ||
+        error === TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE
+      ) {
         needsTwoFactor.value = false;
       }
     }
