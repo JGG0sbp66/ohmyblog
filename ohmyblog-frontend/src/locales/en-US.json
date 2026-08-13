@@ -814,17 +814,14 @@
       "unavailable": {
         "title": "Email recovery unavailable",
         "description": "This site has no mail service configured, so the code cannot be sent. You can reset the password directly on the server via the command line.",
-        "stepsTitle": "Reset from the command line",
         "step1": "Sign in to the server where this site is deployed",
         "step2": "Run the command matching your deployment:",
         "step3": "Enter the new password when prompted, then return to the login page",
         "cmdBinary": "Binary",
         "cmdDocker": "Docker",
         "cmdSource": "From source",
-        "copy": "Copy",
-        "copied": "Command copied",
-        "copyFailed": "Copy failed. Please select the command manually",
-        "twoFactorHint": "Lost your authenticator too? Append --disable-2fa to turn off two-factor at the same time.",
+        "copy": "Copy command",
+        "twoFactorToggle": "Authenticator lost too, also turn off two-factor",
         "smtpHint": "Alternatively, if you can still sign in, configure SMTP under Settings - Mail service to restore email recovery.",
         "backToLogin": "Back to Sign In"
       }
