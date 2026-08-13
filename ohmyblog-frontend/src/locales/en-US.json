@@ -394,6 +394,56 @@
             "description": "Manage your login credentials, including username, email, and password.",
             "passwordPlaceholder": "Leave blank to keep current"
           },
+          "twoFactor": {
+            "title": "Two-Factor Authentication",
+            "description": "Once enabled, signing in requires a code from your authenticator app in addition to your password.",
+            "enabledAt": "Enabled on {date}",
+            "enable": { "action": "Enable" },
+            "setup": {
+              "step1": {
+                "title": "Scan the QR code",
+                "description": "Scan the code below with any authenticator app such as Google Authenticator, 1Password or Bitwarden.",
+                "qrAlt": "Two-factor authentication QR code",
+                "manualHint": "Can't scan? Enter this key into your authenticator app manually:"
+              },
+              "step2": {
+                "title": "Confirm the code",
+                "description": "Enter the code shown in your authenticator app. Two-factor authentication is only enabled once this succeeds.",
+                "label": "Verification code",
+                "hint": "The code rotates every 30 seconds. If it keeps failing, check that your device clock is accurate.",
+                "submit": "Confirm and enable"
+              },
+              "step3": {
+                "title": "Save your recovery codes",
+                "description": "Use a recovery code to sign in if you lose your device or your authenticator is wiped. Each code works once, and they are shown only this time."
+              }
+            },
+            "codes": {
+              "remaining": "{remaining} of {total} recovery codes left",
+              "copy": "Copy all",
+              "download": "Download as file",
+              "copied": "Recovery codes copied to clipboard",
+              "copyFailed": "Copy failed, please select the codes manually",
+              "confirmSaved": "I have saved these recovery codes somewhere safe"
+            },
+            "regenerate": {
+              "action": "Regenerate recovery codes",
+              "title": "Regenerate recovery codes",
+              "description": "Generating new codes invalidates all existing ones. Enter the code from your authenticator app first.",
+              "submit": "Generate new codes",
+              "doneHint": "New recovery codes are ready and all previous ones are now invalid. Save them right away."
+            },
+            "disable": {
+              "action": "Disable",
+              "title": "Disable two-factor authentication",
+              "question": "After disabling, only your password will be required to sign in, which significantly weakens account security.",
+              "warning": "All existing recovery codes will be deleted. This cannot be undone.",
+              "password": "Current password",
+              "passwordPlaceholder": "Enter your password to confirm",
+              "required": "Please enter your current password",
+              "confirm": "Disable"
+            }
+          },
           "profile": {
             "title": "Profile",
             "description": "Set your personal bio and manage social platform links displayed on your homepage.",
@@ -702,7 +752,26 @@
       },
       "submit": "Sign In",
       "backToHome": "Back to Home",
-      "forgotPassword": "Forgot password?"
+      "forgotPassword": "Forgot password?",
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Enter the code currently shown in your authenticator app.",
+        "recoveryDescription": "Enter any recovery code you haven't used yet.",
+        "code": {
+          "label": "Two-factor authentication",
+          "placeholder": "Code or recovery code",
+          "hint": "Enter the 6-digit code from your authenticator app, or a recovery code"
+        },
+        "recoveryCode": {
+          "label": "Recovery code",
+          "placeholder": "e.g. ABCDE-FGHJK",
+          "hint": "One of the recovery codes you saved when enabling two-factor authentication. Each works once."
+        },
+        "submit": "Verify and sign in",
+        "useRecoveryCode": "Use a recovery code",
+        "useTotp": "Use authenticator code",
+        "back": "Back"
+      }
     },
     "forgotPassword": {
       "brand": {
@@ -991,6 +1060,11 @@
         "email_invalid": "Please enter a valid email address",
         "password_range": "Password must be between 6-50 characters"
       },
+      "two_factor": {
+        "token_invalid": "Please enter the 6-digit verification code",
+        "password_required": "Please enter your current password",
+        "code_invalid": "Please enter a verification code or recovery code"
+      },
       "appearance": {
         "theme_invalid": "Theme mode must be light/dark/auto",
         "hue_range": "Hue must be a number between 0 and 360",
@@ -1036,7 +1110,8 @@
     "confirm": "Confirm",
     "finish": "Finish",
     "save": "Save Settings",
-    "delete": "Delete"
+    "delete": "Delete",
+    "loading": "Loading..."
   },
   "stores": {
     "setup": {
@@ -1091,7 +1166,16 @@
       "该 slug 已被其他文章使用": "This slug is already used by another post",
       "友链不存在": "Friend link not found",
       "友链已处于待审批状态": "This friend link is already pending review",
-      "该友链已完成审批，请先重新审批": "This friend link was already reviewed. Reopen it first"
+      "该友链已完成审批，请先重新审批": "This friend link was already reviewed. Reopen it first",
+      "两步验证已启用，请先关闭再重新绑定": "Two-factor authentication is already enabled. Disable it before setting it up again",
+      "请先获取两步验证二维码": "Please generate the two-factor QR code first",
+      "两步验证尚未启用": "Two-factor authentication is not enabled",
+      "验证码错误，请检查验证器时间是否准确": "Incorrect code. Check that your device clock is accurate",
+      "验证码错误或已失效": "That code is incorrect or no longer valid",
+      "验证会话已过期，请重新登录": "This verification session has expired. Please sign in again",
+      "验证失败次数过多，请重新登录": "Too many failed attempts. Please sign in again",
+      "密码错误": "Incorrect password",
+      "演示模式不支持该操作": "This action is not available in demo mode"
     },
     "success": {
       "保存成功": "Settings saved successfully",
@@ -1113,7 +1197,10 @@
       "已拒绝": "Rejected",
       "已重新进入待审批": "Moved back to pending review",
       "删除成功": "Deleted successfully",
-      "更新成功": "Updated successfully"
+      "更新成功": "Updated successfully",
+      "两步验证已启用": "Two-factor authentication enabled",
+      "两步验证已关闭": "Two-factor authentication disabled",
+      "恢复码已重新生成": "Recovery codes regenerated"
     }
   }
 }
