@@ -19,6 +19,7 @@
 import { onBeforeUnmount, ref } from "vue";
 import { Check, Copy, TextWrap } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
+import { useToast } from "@/composables/toast.hook";
 import { COPY_FEEDBACK_MS } from "@/composables/code-block";
 
 const props = defineProps<{
@@ -38,7 +39,15 @@ const copied = ref(false);
 let copyTimer: ReturnType<typeof setTimeout> | null = null;
 
 const handleCopy = async () => {
-  await navigator.clipboard.writeText(props.text);
+  try {
+    await navigator.clipboard.writeText(props.text);
+  } catch {
+    // 非 HTTPS / 无剪贴板权限时 writeText 会抛。不接住的话就是一次静默的
+    // unhandled rejection —— 按钮不给对勾、也没有任何解释，
+    // 用户只当是自己没点中，会反复点
+    useToast.error(t("common.copyFailed"));
+    return;
+  }
 
   copied.value = true;
   // 连点时重置计时，避免多个 timer 竞争导致对勾提前复原
