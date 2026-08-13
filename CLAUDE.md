@@ -208,3 +208,60 @@ bun tools/cdp.mjs targets --port=9333
 - 格式化工具两边不同：后端 Biome（**tab 缩进**、双引号），前端 Prettier（默认 2 空格）。不要跨包套用
 - 命名：后端 `*.route.ts` / `*.service.ts` / `*.dao.ts` / `*.dto.ts` / `*.cache.ts`；前端 `*.api.ts` / `*.store.ts` / `*.hook.ts` / `*.page.vue`
 - 前端组件分层：`components/base/`（无业务的原子组件）→ `components/common/`（跨页面复用）→ `views/*/components/`（页面私有）。新组件先判断归属再落位
+
+## 安全待办
+
+按优先级排列。已完成的部分见 `db/constants/email-verification.constants.ts`
+与 `src/utils/reset-password-throttle.ts` 里的注释。
+
+背景一句话：**后端目前没有任何按 IP 的速率限制**。凡是"猜"类接口，防线
+只能靠"尝试次数上限 + 申请成本"，不能靠有效期——有效期限制的是一个凭证能
+活多久，限制不了每秒能猜多少次。
+
+### 1. `getClientIp` 无条件信任 `X-Forwarded-For`
+
+`src/utils/getClientIp.ts` 直接取 XFF 头的第一段，任何人都能伪造。后果：
+
+- 一切按 IP 的限流都可绕（换个假 IP 就重置计数）
+- 可以伪造成站长的 IP，去触发针对站长的惩罚
+- 现存影响：异地登录告警用的就是这个 IP，目前可被任意伪造以触发或抑制告警
+
+改法：env 加"是否信任代理"开关，默认只用 `server.requestIP()`，
+部署在 nginx / Cloudflare 后面时才读 XFF。**这是下面第 2 项的前提。**
+
+### 2. `/auth/login` 无速率限制
+
+密码可无限爆破。目前唯一的阻力是 `Bun.password.verify` 的 Argon2 开销，
+属于副作用而非设计。改法：按 IP 限流 + 失败递增延迟。依赖第 1 项先完成。
+
+### 3. 两步验证失败计数挂错了维度
+
+计数记在 challenge 上（`src/utils/two-factor-challenge.ts` 的 `attempts`），
+而 challenge 可无限申请，重新登录即可把计数刷掉。改法：改为按用户账号累计，
+配递增延迟（1s → 2s → 4s → 8s…）而不是硬锁定，避免站长被自己锁在门外。
+
+注意：**不要按账号做"锁定 N 分钟"式的惩罚**，用户名在站点上是公开的，
+那等于给游客一个把管理员锁死的开关。2FA 阶段可以按用户计，因为走到那一步
+必须先提交正确密码，游客触发不了。
+
+### 4. CAPTCHA：后台可配置，支持多家 provider
+
+在设置页加一块配置，让站长自选服务商并填 site key / secret，挂在
+`/auth/login`、`/auth/forgot-password`、`/public/friends/apply` 这几个
+面向公开的端点上。候选 provider（都提供免费额度、都是"前端拿 token →
+后端调 verify 接口校验"的同一套模式，所以适合抽一个 provider 接口 + 各家实现）：
+
+- **Cloudflare Turnstile** —— 无验证码交互、隐私友好、免费额度大，首选
+- **hCaptcha** —— 接口与 reCAPTCHA 兼容度高，隐私导向
+- **Google reCAPTCHA v3** —— 覆盖面最广，但国内可用性差，且依赖 Google 域名
+- **腾讯云验证码 / 阿里云验证码** —— 国内部署的备选
+
+设计要点：`enabled` 开关默认关闭（自托管用户多数不需要）；secret 存 config
+表时注意不要通过任何读接口回传给前端；校验失败的响应文案要和其他失败原因
+保持一致，别引入新的枚举面。
+
+### 5. 带外的管理员密码重置通道
+
+没配 SMTP 时站长忘了密码就彻底进不去（`forgotPassword` 现在会静默失败，
+只在 `data/logs/error.log` 留痕）。建议加一个直接连库改密码的 CLI 脚本，
+例如 `bun run scripts/reset-admin-password.ts`。
