@@ -7,6 +7,7 @@
 		"start": "NODE_ENV=production bun run src/index.ts",
 		"debug": "bun --inspect-wait --watch src/index.ts",
 		"email": "email dev --dir src/templates",
+		"reset-password": "bun run scripts/reset-password.ts",
 		"db:push": "drizzle-kit push --config=db/drizzle.config.ts",
 		"db:studio": "drizzle-kit studio --config=db/drizzle.config.ts",
 		"db:gen": "drizzle-kit generate --config=db/drizzle.config.ts",
