@@ -23,6 +23,11 @@ bun run db:gen         # 改完 db/table/*.ts 后生成迁移 SQL（启动时自
 bun run db:studio      # Drizzle Studio
 bun run reset-password # 带外重置密码：忘记密码又没配 SMTP 时的唯一自救途径
                        # 可选 --disable-2fa 一起关掉两步验证（验证器丢了时用）
+                       # 实现是 src/index.ts 的子命令而非 scripts/ 脚本，
+                       # 因为 build.ts 只编译 src/index.ts，scripts/ 进不了二进制。
+                       # 部署后对应 ./ohmyblog reset-password，
+                       # Docker 里 docker exec -it -u 10001 <容器> /app/ohmyblog reset-password
+                       # （-u 10001 不能省：以 root 跑会让 SQLite 的 -wal/-shm 归 root，主程序随后写不动）
 bun run email          # react-email 预览服务，调 src/templates/*.tsx 用
 bun run build:linux    # 单文件编译，产物在 scripts/dist/<platform>/
 bun run docker         # 多阶段镜像（build context 是仓库根）

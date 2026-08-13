@@ -21,6 +21,31 @@ import { viewerRoute } from "./routes/viewer.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
 import { isDemo, isProduction } from "./utils/runtime";
 
+// === 命令行子命令 ===
+// 必须在建服务器之前处理，处理完直接退出，不监听端口。
+//
+// 做成主程序的子命令而不是 scripts/ 下的独立脚本，是因为 build.ts 的
+// entrypoints 只有本文件，scripts/ 不会被编译进单文件产物；而二进制和
+// Docker 部署里既没有源码也没有 bun，偏偏那才是最需要带外重置的场景。
+const CLI_COMMANDS = new Set(["reset-password"]);
+const commandIndex = process.argv.findIndex((arg) => CLI_COMMANDS.has(arg));
+
+if (commandIndex !== -1) {
+	const command = process.argv[commandIndex];
+	const commandArgs = process.argv.slice(commandIndex + 1);
+
+	try {
+		if (command === "reset-password") {
+			const { runResetPassword } = await import("./cli/reset-password");
+			await runResetPassword(commandArgs);
+		}
+		process.exit(0);
+	} catch (err) {
+		console.error("✗ 命令执行失败：", err);
+		process.exit(1);
+	}
+}
+
 const app = new Elysia()
 	// SPA fallback：注册在 responsePlugin 之前，优先处理前端路由的 NOT_FOUND
 	// 非 /api 路径找不到路由时返回 index.html，让 Vue Router 接管
