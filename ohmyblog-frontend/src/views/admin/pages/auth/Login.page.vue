@@ -6,7 +6,7 @@
   - 验证码/恢复码共用一个输入框，后端按格式自动分派
 -->
 <script setup lang="ts">
-import { nextTick, ref, useTemplateRef } from "vue";
+import { ref, useTemplateRef } from "vue";
 import { useRouter } from "vue-router";
 import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import AuthLayout from "@/views/admin/components/layout/AuthLayout.vue";
@@ -23,7 +23,8 @@ import { LoginDTO } from "@server/dtos/auth.dto";
 import { TwoFactorVerifyDTO } from "@server/dtos/two-factor.dto";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
-import type { Validatable } from "@/composables/setup-step.hook";
+
+type TipInputInstance = InstanceType<typeof TipInput>;
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -43,9 +44,9 @@ const form = ref({
 const needsTwoFactor = ref(false);
 
 // 表单引用
-const identifierRef = useTemplateRef<Validatable>("identifierRef");
-const passwordRef = useTemplateRef<Validatable>("passwordRef");
-const codeRef = useTemplateRef<Validatable>("codeRef");
+const identifierRef = useTemplateRef<TipInputInstance>("identifierRef");
+const passwordRef = useTemplateRef<TipInputInstance>("passwordRef");
+const codeRef = useTemplateRef<TipInputInstance>("codeRef");
 
 // 状态
 const isSubmitting = ref(false);
@@ -87,9 +88,6 @@ const handleSubmit = async () => {
         // 展开验证码输入框
         needsTwoFactor.value = true;
         form.value.twoFactorCode = "";
-        // 等 DOM 更新后聚焦到验证码输入框
-        await nextTick();
-        (codeRef.value as any)?.focus?.();
       } else {
         await finishLogin();
       }
@@ -143,7 +141,6 @@ const handleSubmit = async () => {
             :label="t('views.login.identifier.label')"
             :placeholder="t('views.login.identifier.placeholder')"
             :schema="LoginDTO.properties.identifier"
-            :disabled="needsTwoFactor"
             required
           />
         </div>
@@ -157,7 +154,6 @@ const handleSubmit = async () => {
             :label="t('views.login.password.label')"
             :placeholder="t('views.login.password.placeholder')"
             :schema="LoginDTO.properties.password"
-            :disabled="needsTwoFactor"
             required
           />
         </div>
@@ -171,6 +167,7 @@ const handleSubmit = async () => {
             :placeholder="t('views.login.twoFactor.code.placeholder')"
             :hint="t('views.login.twoFactor.code.hint')"
             :schema="TwoFactorVerifyDTO.properties.code"
+            autocomplete="one-time-code"
             required
           />
         </div>

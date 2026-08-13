@@ -26,6 +26,8 @@ interface Props {
   externalError?: string;
   /** 可选：字段级 schema（与后端 DTO 共用） */
   schema?: TSchema;
+  /** HTML autocomplete 属性，用于密码管理器识别字段类型 */
+  autocomplete?: string;
 }
 
 const props = defineProps<Props>();
@@ -37,6 +39,8 @@ const innerValue = useVModel(props, "modelValue", emit);
 const { validate: runValidator } = useValidator();
 /** 内部校验产生的错误信息（由 runValidator 返回） */
 const internalError = ref("");
+/** 用户是否交互过此输入框（是否已产生 input 事件） */
+const touched = ref(false);
 
 /**
  * 最终展示出来的错误信息
@@ -60,10 +64,20 @@ const validate = () => {
   return isValid;
 };
 
-/** 失去焦点时触发校验 */
+/**
+ * 失去焦点时触发校验
+ * 只校验交互过的字段：密码管理器（如 Bitwarden）自动填充时的 blur 早于值同步，
+ * 无条件校验会闪出一次「不能为空」的误报。未交互字段仍由提交时的 validate() 兜底。
+ */
 const handleBlur = () => {
-  validate();
+  if (touched.value) validate();
   emit("blur");
+};
+
+/** 输入时标记为已交互，并在已有错误的情况下即时重新校验 */
+const handleInput = () => {
+  touched.value = true;
+  if (internalError.value) validate();
 };
 
 /** 暴露接口给父组件，支持外部手动触发校验 */
@@ -87,9 +101,10 @@ defineExpose({ validate });
         :type="type || 'text'"
         v-model="innerValue"
         @blur="handleBlur"
-        @input="internalError && validate()"
+        @input="handleInput"
         :placeholder="placeholder"
         :readonly="readonly"
+        :autocomplete="autocomplete"
         class="w-full min-h-10 bg-transparent px-4 outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
       />
     </BaseInputWrapper>
