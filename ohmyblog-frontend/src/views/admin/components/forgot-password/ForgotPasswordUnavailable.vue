@@ -15,7 +15,7 @@ import { computed, onMounted, ref } from "vue";
 import AuthCard from "@/components/base/card/AuthCard.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import SegmentedControl from "@/components/base/control/SegmentedControl.vue";
-import BaseCheckbox from "@/components/base/table/BaseCheckbox.vue";
+import BaseCheckbox from "@/components/base/control/BaseCheckbox.vue";
 import CodeBlockActions from "@/components/common/code/CodeBlockActions.vue";
 import { RiArrowLeftLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";

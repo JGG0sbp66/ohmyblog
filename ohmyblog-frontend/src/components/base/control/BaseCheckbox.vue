@@ -1,4 +1,4 @@
-<!-- src/components/base/table/BaseCheckbox.vue -->
+<!-- src/components/base/control/BaseCheckbox.vue -->
 <script setup lang="ts">
 import { Check, Minus } from "lucide-vue-next";
 

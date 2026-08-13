@@ -6,7 +6,7 @@ import { useLang } from "@/composables/lang.hook";
 import { useIsMobile } from "@/composables/breakpoint.hook";
 import BasePagination from "@/components/base/table/BasePagination.vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
-import BaseCheckbox from "@/components/base/table/BaseCheckbox.vue";
+import BaseCheckbox from "@/components/base/control/BaseCheckbox.vue";
 import PostStatusBadge from "./cells/PostStatusBadge.vue";
 import PostTimeCell from "./cells/PostTimeCell.vue";
 import PostTagsCell from "./cells/PostTagsCell.vue";
