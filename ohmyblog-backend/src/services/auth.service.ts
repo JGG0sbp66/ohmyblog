@@ -6,6 +6,10 @@ import { userDao } from "../daos/user.dao";
 import type { TRegisterDTO, TUpdateAccountDTO } from "../dtos/auth.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
+import {
+	CHALLENGE_COOKIE_MAX_AGE,
+	createChallenge,
+} from "../utils/two-factor-challenge";
 import { emailSenderService } from "./email/email-sender.service";
 
 /** 重置密码验证码有效期（分钟） */
@@ -54,10 +58,14 @@ class AuthService {
 
 	/**
 	 * 登录逻辑
+	 *
+	 * 返回区分两种情况的结果：
+	 *   - requiresTwoFactor: true  → 密码通过但需要第二步验证，附带 challenge cookie 数据
+	 *   - requiresTwoFactor: false → 直接登录成功，附带用户信息供签发 token
+	 *
 	 * @param identifier 用户名或邮箱
 	 * @param passwordPlain 明文密码
 	 * @param ip 客户端 IP，用于异地登录检测和登录历史记录
-	 * @returns 登录后的用户实体，调用方可读取 role / uuid 等字段
 	 */
 	async login(identifier: string, passwordPlain: string, ip: string) {
 		// 1. 查找用户
@@ -85,15 +93,63 @@ class AuthService {
 			user.status = "active";
 		}
 
-		// 4. 先抓上次登录的 IP（在更新前），后面用来做异地检测
+		// 4. 启用了两步验证：密码只是第一道，创建 challenge 等第二步
+		if (user.twoFactorEnabled) {
+			this.logger.info({ userId: user.uuid }, "密码校验通过，等待两步验证");
+			const challenge = this.issueChallenge(user.uuid);
+			return { requiresTwoFactor: true as const, challenge };
+		}
+
+		// 5. 没开两步验证：直接收尾
+		await this.recordSuccessfulLogin(user, ip);
+
+		return {
+			requiresTwoFactor: false as const,
+			user: { uuid: user.uuid, username: user.username, role: user.role },
+		};
+	}
+
+	/**
+	 * 为通过密码校验的用户创建两步验证 challenge。
+	 *
+	 * 返回 cookie 需要的全部数据（值、选项），route 层拿到后直接 set 即可。
+	 *
+	 * @param userUuid 已通过密码校验的用户 UUID
+	 */
+	issueChallenge(userUuid: string) {
+		const challengeId = createChallenge(userUuid);
+		return {
+			cookieValue: challengeId,
+			cookieMaxAge: CHALLENGE_COOKIE_MAX_AGE,
+		};
+	}
+
+	/**
+	 * 收尾一次成功登录：更新登录时间与 IP，并按需触发异地登录告警。
+	 *
+	 * 抽成独立方法是因为有两个调用点 —— 未启用两步验证时由 login() 顺势调用，
+	 * 启用时则要等第二道验证通过后才算真正登录（见 two-factor.route.ts）。
+	 *
+	 * @param user 登录用户实体，必须是**更新前**的记录，lastLoginIp 用于异地比对
+	 * @param ip 本次登录 IP
+	 */
+	async recordSuccessfulLogin(
+		user: {
+			uuid: string;
+			email: string;
+			lastLoginIp: string | null;
+		},
+		ip: string,
+	) {
+		// 先抓上次登录的 IP（在更新前），后面用来做异地检测
 		const previousIp = user.lastLoginIp;
 
-		// 5. 更新最后登录时间和 IP
+		// 更新最后登录时间和 IP
 		await userDao.updateLastLogin(user.uuid, ip);
 
 		this.logger.info({ userId: user.uuid }, "用户登录成功");
 
-		// 6. 异步触发异地登录检测（fire-and-forget）
+		// 异步触发异地登录检测（fire-and-forget）
 		if (previousIp) {
 			emailSenderService
 				.maybeSendLoginAlert({
@@ -106,8 +162,6 @@ class AuthService {
 					this.logger.error({ err }, "异地登录检测任务异常"),
 				);
 		}
-
-		return user;
 	}
 
 	/**
