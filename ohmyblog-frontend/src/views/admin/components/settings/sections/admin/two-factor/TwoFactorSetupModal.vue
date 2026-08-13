@@ -22,7 +22,6 @@ import TipInput from "@/components/common/input/TipInput.vue";
 import Loading from "@/components/common/item/Loading.vue";
 import RecoveryCodesPanel from "./RecoveryCodesPanel.vue";
 import { TwoFactorTokenDTO } from "@server/dtos/two-factor.dto";
-import { TOTP_DIGITS } from "@/api/shared";
 import { enableTwoFactor, startTwoFactorSetup } from "@/api/two-factor.api";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
@@ -194,7 +193,7 @@ const handleCloseRequest = () => {
           ref="tokenRef"
           v-model="token"
           :label="t('views.admin.Settings.admin.twoFactor.setup.step2.label')"
-          :placeholder="'0'.repeat(TOTP_DIGITS)"
+          :placeholder="t('views.admin.Settings.admin.twoFactor.setup.step2.placeholder')"
           :hint="t('views.admin.Settings.admin.twoFactor.setup.step2.hint')"
           :schema="TwoFactorTokenDTO.properties.token"
           autocomplete="one-time-code"

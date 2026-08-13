@@ -4,6 +4,8 @@ import { ref, computed } from "vue";
 import type { TSchema } from "@sinclair/typebox";
 import { useVModel } from "@vueuse/core";
 import { useValidator } from "@/composables/validator.hook";
+import { useToast } from "@/composables/toast.hook";
+import { useLang } from "@/composables/lang.hook";
 import BaseInputWrapper from "@/components/base/input/BaseInputWrapper.vue";
 import FieldLabel from "@/components/base/input/FieldLabel.vue";
 
@@ -34,6 +36,32 @@ const props = defineProps<Props>();
 const emit = defineEmits(["update:modelValue", "blur", "validate"]);
 
 const innerValue = useVModel(props, "modelValue", emit);
+
+const { t } = useLang();
+
+/** input 元素引用，用于 readonly 模式下全选文本 */
+const inputRef = ref<HTMLInputElement>();
+
+/**
+ * readonly 模式下点击输入框：全选文本并复制到剪贴板
+ */
+const handleReadonlyCopy = async () => {
+  if (!props.readonly || !inputRef.value) return;
+
+  // 全选文本
+  inputRef.value.select();
+
+  // 复制到剪贴板
+  const text = String(innerValue.value ?? "");
+  if (!text) return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    useToast.success(t("common.copied"));
+  } catch {
+    useToast.error(t("common.copyFailed"));
+  }
+};
 
 /** 初始化校验 Hook */
 const { validate: runValidator } = useValidator();
@@ -98,14 +126,17 @@ defineExpose({ validate });
     <!-- Input Wrapper：固定的最小高度，确保与旁边按钮对齐 -->
     <BaseInputWrapper :error="displayError" :disabled="readonly">
       <input
+        ref="inputRef"
         :type="type || 'text'"
         v-model="innerValue"
         @blur="handleBlur"
         @input="handleInput"
+        @click="handleReadonlyCopy"
         :placeholder="placeholder"
         :readonly="readonly"
         :autocomplete="autocomplete"
         class="w-full min-h-10 bg-transparent px-4 outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
+        :class="readonly ? 'cursor-pointer select-all' : ''"
       />
     </BaseInputWrapper>
   </div>

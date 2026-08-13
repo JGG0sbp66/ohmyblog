@@ -411,6 +411,7 @@
                 "title": "Confirm the code",
                 "description": "Enter the code shown in your authenticator app. Two-factor authentication is only enabled once this succeeds.",
                 "label": "Verification code",
+                "placeholder": "Enter 6-digit code",
                 "hint": "The code rotates every 30 seconds. If it keeps failing, check that your device clock is accurate.",
                 "submit": "Confirm and enable"
               },
@@ -1130,7 +1131,9 @@
     "finish": "Finish",
     "save": "Save Settings",
     "delete": "Delete",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Copy failed, please copy manually"
   },
   "stores": {
     "setup": {
