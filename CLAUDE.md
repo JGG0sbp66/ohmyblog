@@ -1,4 +1,4 @@
-# CLAUDE.md
+﻿# CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -19,8 +19,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 bun run dev            # 热重载，:3000；OpenAPI 文档在 /openapi（仅开发环境）
 bun run lint           # biome lint
 bun run lint:fix       # biome check --write（含格式化 + import 排序）
-bun run db:gen         # 改完 db/table/*.ts 后生成迁移 SQL
+bun run db:gen         # 改完 db/table/*.ts 后生成迁移 SQL（启动时自动 migrate，无需手动跑）
 bun run db:studio      # Drizzle Studio
+bun run reset-password # 带外重置密码：忘记密码又没配 SMTP 时的唯一自救途径
+                       # 可选 --disable-2fa 一起关掉两步验证（验证器丢了时用）
 bun run email          # react-email 预览服务，调 src/templates/*.tsx 用
 bun run build:linux    # 单文件编译，产物在 scripts/dist/<platform>/
 bun run docker         # 多阶段镜像（build context 是仓库根）
@@ -139,6 +141,8 @@ bun run type-check 2>&1 | grep '^src/'
 
 数据库迁移在 `db/connection.ts` 里**顶层 await 自动执行**（迁移目录 `process.cwd()/db/drizzle`），不需要手动跑 `db:migrate`；`build.ts` 会把 `db/drizzle` 复制到产物旁边。
 
+`data/.env` 里的 `TRUST_PROXY` 是**前置反向代理的层数**而非布尔：`0`（默认）完全忽略 `X-Forwarded-For`，`1` 是一层 nginx / Caddy，`2` 是 CDN 再套一层 nginx。取的是 XFF 链条右端往左数第 n 段——代理是往客户端送来的值后面追加真实对端地址，所以最左边那段恒不可信。配错会导致所有按 IP 的判断取到错误的人，反向代理部署后记得设它。
+
 ### 前端主题与 i18n
 
 - 主题色是**单一色相变量**驱动：`--app-hue`（0-360）经 OKLCH 推导出全部语义色（`src/css/tailwind.css`），Tailwind 侧只暴露 `bg`/`bg-muted`/`bg-card`/`fg`/`fg-muted`/`fg-subtle`/`fg-soft`/`border`/`accent` 这套语义 token。写样式请用这些 token，不要硬编码颜色
@@ -209,59 +213,30 @@ bun tools/cdp.mjs targets --port=9333
 - 命名：后端 `*.route.ts` / `*.service.ts` / `*.dao.ts` / `*.dto.ts` / `*.cache.ts`；前端 `*.api.ts` / `*.store.ts` / `*.hook.ts` / `*.page.vue`
 - 前端组件分层：`components/base/`（无业务的原子组件）→ `components/common/`（跨页面复用）→ `views/*/components/`（页面私有）。新组件先判断归属再落位
 
-## 安全待办
+## 安全约定与待办
 
-按优先级排列。已完成的部分见 `db/constants/email-verification.constants.ts`
-与 `src/utils/reset-password-throttle.ts` 里的注释。
+**防"猜"类攻击只能靠尝试次数上限，不能靠有效期。** 有效期限制的是一个凭证
+能活多久，限制不了每秒能猜多少次——TOTP 每 30 秒轮换，但爆破者是在报随机
+数字，轮换不削弱他的命中率。已落地的两处参考实现：
+`db/constants/email-verification.constants.ts`（重置密码：单码失败上限 +
+发信冷却 + 小时配额）和 `src/utils/two-factor-challenge.ts`。
 
-背景一句话：**后端目前没有任何按 IP 的速率限制**。凡是"猜"类接口，防线
-只能靠"尝试次数上限 + 申请成本"，不能靠有效期——有效期限制的是一个凭证能
-活多久，限制不了每秒能猜多少次。
+**惩罚要落在正确的维度上。** 按账号做"锁定 N 分钟"是危险的：用户名在站点上
+公开，等于给游客一个把管理员锁死的开关。按 IP 则要求 `TRUST_PROXY` 配置正确
+才有意义。两步验证阶段可以按账号计，因为走到那一步必须先提交正确密码。
 
-### 1. `getClientIp` 无条件信任 `X-Forwarded-For`
+**失败路径的响应必须恒定。** 忘记密码接口的所有分支（邮箱不存在、被节流、
+发信失败）都返回同一句提示，任何差异都会让它变成邮箱枚举器。
 
-`src/utils/getClientIp.ts` 直接取 XFF 头的第一段，任何人都能伪造。后果：
+### 待办
 
-- 一切按 IP 的限流都可绕（换个假 IP 就重置计数）
-- 可以伪造成站长的 IP，去触发针对站长的惩罚
-- 现存影响：异地登录告警用的就是这个 IP，目前可被任意伪造以触发或抑制告警
-
-改法：env 加"是否信任代理"开关，默认只用 `server.requestIP()`，
-部署在 nginx / Cloudflare 后面时才读 XFF。**这是下面第 2 项的前提。**
-
-### 2. `/auth/login` 无速率限制
-
-密码可无限爆破。目前唯一的阻力是 `Bun.password.verify` 的 Argon2 开销，
-属于副作用而非设计。改法：按 IP 限流 + 失败递增延迟。依赖第 1 项先完成。
-
-### 3. 两步验证失败计数挂错了维度
-
-计数记在 challenge 上（`src/utils/two-factor-challenge.ts` 的 `attempts`），
-而 challenge 可无限申请，重新登录即可把计数刷掉。改法：改为按用户账号累计，
-配递增延迟（1s → 2s → 4s → 8s…）而不是硬锁定，避免站长被自己锁在门外。
-
-注意：**不要按账号做"锁定 N 分钟"式的惩罚**，用户名在站点上是公开的，
-那等于给游客一个把管理员锁死的开关。2FA 阶段可以按用户计，因为走到那一步
-必须先提交正确密码，游客触发不了。
-
-### 4. CAPTCHA：后台可配置，支持多家 provider
-
-在设置页加一块配置，让站长自选服务商并填 site key / secret，挂在
-`/auth/login`、`/auth/forgot-password`、`/public/friends/apply` 这几个
-面向公开的端点上。候选 provider（都提供免费额度、都是"前端拿 token →
-后端调 verify 接口校验"的同一套模式，所以适合抽一个 provider 接口 + 各家实现）：
-
-- **Cloudflare Turnstile** —— 无验证码交互、隐私友好、免费额度大，首选
-- **hCaptcha** —— 接口与 reCAPTCHA 兼容度高，隐私导向
-- **Google reCAPTCHA v3** —— 覆盖面最广，但国内可用性差，且依赖 Google 域名
-- **腾讯云验证码 / 阿里云验证码** —— 国内部署的备选
-
-设计要点：`enabled` 开关默认关闭（自托管用户多数不需要）；secret 存 config
-表时注意不要通过任何读接口回传给前端；校验失败的响应文案要和其他失败原因
-保持一致，别引入新的枚举面。
-
-### 5. 带外的管理员密码重置通道
-
-没配 SMTP 时站长忘了密码就彻底进不去（`forgotPassword` 现在会静默失败，
-只在 `data/logs/error.log` 留痕）。建议加一个直接连库改密码的 CLI 脚本，
-例如 `bun run scripts/reset-admin-password.ts`。
+1. `/auth/login` 没有速率限制，密码可无限爆破（目前唯一阻力是 Argon2 的开销，
+   属于副作用而非设计）。做法：按 IP 限流 + 失败递增延迟。
+2. 两步验证的失败计数记在 challenge 上，而 challenge 可无限申请，重新登录即可
+   刷掉。改为按用户账号累计 + 递增延迟。
+3. CAPTCHA，后台可配置多家 provider，挂在 `/auth/login`、
+   `/auth/forgot-password`、`/public/friends/apply` 上。候选：Cloudflare
+   Turnstile（首选，无交互 + 隐私友好）、hCaptcha、reCAPTCHA v3（国内可用性差）、
+   腾讯云 / 阿里云验证码。各家都是"前端拿 token → 后端调 verify 校验"，适合抽
+   一个 provider 接口 + 各家实现。注意：默认关闭；secret 不能通过任何读接口回传
+   前端；校验失败的文案要和其他失败原因一致，别引入新的枚举面。
