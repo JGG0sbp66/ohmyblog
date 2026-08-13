@@ -19,8 +19,8 @@ import {
   onBeforeUnmount,
 } from "vue";
 import { onClickOutside } from "@vueuse/core";
-import { Copy, Check, TextWrap } from "lucide-vue-next";
 import { useLang } from "@/composables/lang.hook";
+import CodeBlockActions from "@/components/common/code/CodeBlockActions.vue";
 import {
   listAvailableLanguages,
   resolveLanguageIcon,
@@ -28,7 +28,6 @@ import {
   formatLanguageLabel,
   countCodeLines,
   syncLineNumberHeights,
-  COPY_FEEDBACK_MS,
 } from "@/composables/code-block";
 import { useAnchoredPosition } from "../composables/use-anchored-position";
 
@@ -180,7 +179,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", onScrollOrResize, true);
   window.removeEventListener("resize", onScrollOrResize);
-  if (copyTimer) clearTimeout(copyTimer);
 });
 
 // ─── 语言图标 ────────────────────────────────────────────────────────────────
@@ -200,21 +198,6 @@ const languageIcon = computed(() => {
   void iconsReady.value; // 建立依赖：图标表加载完成后重算
   return resolveLanguageIcon(props.node.attrs.language ?? "");
 });
-
-// ─── 复制按钮 ────────────────────────────────────────────────────────────────
-const copied = ref(false);
-let copyTimer: ReturnType<typeof setTimeout> | null = null;
-
-const copyCode = async () => {
-  await navigator.clipboard.writeText(props.node.textContent);
-  copied.value = true;
-  // 连点时重置计时，避免多个 timer 竞争导致对勾提前复原
-  if (copyTimer) clearTimeout(copyTimer);
-  copyTimer = setTimeout(() => {
-    copied.value = false;
-    copyTimer = null;
-  }, COPY_FEEDBACK_MS);
-};
 
 // ─── 行号 ────────────────────────────────────────────────────────────────────
 const lineCount = computed(() => countCodeLines(props.node.textContent));
@@ -239,10 +222,6 @@ const lineNumbersEl = () =>
 /** 重新对齐行号列；关闭换行时会清掉内联高度、交还 CSS 定高 */
 const resync = () =>
   syncLineNumberHeights(codeEl(), lineNumbersEl(), wrap.value);
-
-const toggleWrap = () => {
-  wrap.value = !wrap.value;
-};
 
 // 内容变化、行数变化、开关切换都要重量一次（换行边界会随之移动）
 watch(
@@ -304,35 +283,8 @@ onBeforeUnmount(() => {
         />
       </div>
 
-      <div class="code-block-actions" contenteditable="false">
-        <button
-          class="code-block-header-btn code-block-wrap-btn"
-          :class="{ 'is-active': wrap }"
-          type="button"
-          :aria-pressed="wrap"
-          :aria-label="
-            t(
-              wrap
-                ? 'views.admin.PostEditor.content.codeBlock.wrapOff'
-                : 'views.admin.PostEditor.content.codeBlock.wrapOn',
-            )
-          "
-          @click="toggleWrap"
-        >
-          <TextWrap :size="13" />
-        </button>
-
-        <button
-          class="code-block-header-btn code-block-copy-btn"
-          :class="{ copied }"
-          type="button"
-          :aria-label="t('views.admin.PostEditor.content.codeBlock.copy')"
-          @click="copyCode"
-        >
-          <Check v-if="copied" :size="13" />
-          <Copy v-else :size="13" />
-        </button>
-      </div>
+      <!-- 换行开关 + 复制按钮：与忘记密码兜底页共用同一个组件 -->
+      <CodeBlockActions v-model:wrap="wrap" :text="node.textContent" />
     </div>
 
     <div ref="contentRef" class="code-block-content">
