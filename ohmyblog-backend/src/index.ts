@@ -15,6 +15,7 @@ import { friendLinkRoute } from "./routes/friend-link.route.js";
 import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
 import { sitemapRoute } from "./routes/sitemap.route.js";
+import { twoFactorRoute } from "./routes/two-factor.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
 import { viewerRoute } from "./routes/viewer.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
@@ -59,6 +60,7 @@ const app = new Elysia()
 			.use(emailRoute)
 			.use(friendLinkRoute)
 			.use(postRoute)
+			.use(twoFactorRoute)
 			.use(uploadRoute)
 			.use(viewerRoute),
 	);

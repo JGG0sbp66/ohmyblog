@@ -10,6 +10,8 @@ const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 /** 演示模式下仍然放行的写接口 */
 const DEMO_ALLOWED_PATHS = new Set([
 	"/api/auth/login", // 站长仍要能登进来接管
+	"/api/two-factor/verify", // 登录第二步：此刻还没 auth_token，身份仍是虚拟的，
+	// 不放行的话开了两步验证的站长会卡在验证码这一步
 	"/api/auth/logout",
 	"/api/public/friends/apply", // 前台公开功能，属于演示内容的一部分
 ]);

@@ -12,6 +12,7 @@ import { authService } from "../services/auth.service";
 import { DEMO_USER_UUID, isDemoUser } from "../utils/demo";
 import { getClientIp } from "../utils/getClientIp";
 import { isProduction } from "../utils/runtime";
+import { CHALLENGE_COOKIE_NAME } from "../utils/two-factor-challenge";
 
 export const authRoute = new Elysia({ name: "authRoute" }).group(
 	"/auth",
@@ -48,16 +49,33 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				"/login",
 				async ({ body, jwt, cookie, request, server }) => {
 					const ip = getClientIp({ request, server });
-					const user = await authService.login(
+					const result = await authService.login(
 						body.identifier,
 						body.password,
 						ip,
 					);
 
+					if (result.requiresTwoFactor) {
+						cookie[CHALLENGE_COOKIE_NAME].set({
+							value: result.challenge.cookieValue,
+							httpOnly: true,
+							secure: isProduction(),
+							maxAge: result.challenge.cookieMaxAge,
+							path: "/",
+							sameSite: isProduction() ? "strict" : "lax",
+						});
+
+						return {
+							message: "请输入两步验证码",
+							requiresTwoFactor: true,
+							user: null,
+						};
+					}
+
 					const token = await jwt.sign({
-						uuid: user.uuid,
-						role: user.role,
-						username: user.username,
+						uuid: result.user.uuid,
+						role: result.user.role,
+						username: result.user.username,
 					});
 
 					cookie.auth_token.set({
@@ -71,10 +89,11 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 
 					return {
 						message: "登录成功",
+						requiresTwoFactor: false,
 						user: {
-							uuid: user.uuid,
-							username: user.username,
-							role: user.role,
+							uuid: result.user.uuid,
+							username: result.user.username,
+							role: result.user.role,
 						},
 					};
 				},
