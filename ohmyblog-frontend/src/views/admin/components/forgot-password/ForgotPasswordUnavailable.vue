@@ -9,15 +9,14 @@
   这里给出唯一可行的自救方式：在服务器上跑命令行脚本。纯展示组件。
 -->
 <script setup lang="ts">
+import AuthCard from "@/components/base/card/AuthCard.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
-import ButtonThird from "@/components/base/button/ButtonThird.vue";
+import TipInput from "@/components/common/input/TipInput.vue";
 import {
   RiArrowLeftLine,
-  RiFileCopyLine,
   RiMailForbidLine,
 } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
-import { useToast } from "@/composables/toast.hook";
 
 const emit = defineEmits<{
   /** 返回登录页 */
@@ -41,32 +40,16 @@ const COMMANDS = [
   },
   { key: "cmdSource", value: "bun run reset-password" },
 ] as const;
-
-const handleCopy = async (command: string) => {
-  try {
-    await navigator.clipboard.writeText(command);
-    useToast.success(t("views.forgotPassword.unavailable.copied"));
-  } catch {
-    // 非 HTTPS 或用户拒绝授权时 clipboard 不可用，命令本身就在屏幕上，手抄即可
-    useToast.error(t("views.forgotPassword.unavailable.copyFailed"));
-  }
-};
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <!-- 标题 -->
-    <div class="flex flex-col gap-2 onload-animation">
+  <AuthCard :description="t('views.forgotPassword.unavailable.description')">
+    <template #title>
       <div class="flex items-center gap-2">
         <RiMailForbidLine class="w-6 h-6 text-fg-subtle" aria-hidden="true" />
-        <h1 class="text-2xl font-bold text-fg">
-          {{ t("views.forgotPassword.unavailable.title") }}
-        </h1>
+        <span>{{ t("views.forgotPassword.unavailable.title") }}</span>
       </div>
-      <p class="text-fg-subtle text-sm">
-        {{ t("views.forgotPassword.unavailable.description") }}
-      </p>
-    </div>
+    </template>
 
     <!-- 命令行恢复指引 -->
     <div
@@ -84,24 +67,12 @@ const handleCopy = async (command: string) => {
             <div
               v-for="command in COMMANDS"
               :key="command.key"
-              class="flex flex-col gap-1"
             >
-              <span class="text-fg-soft text-xs">
-                {{ t(`views.forgotPassword.unavailable.${command.key}`) }}
-              </span>
-              <div class="flex items-center gap-2">
-                <code
-                  class="flex-1 rounded bg-fg-muted/10 px-2 py-1 font-mono text-xs text-fg break-all"
-                >
-                  {{ command.value }}
-                </code>
-                <ButtonThird
-                  :text="t('views.forgotPassword.unavailable.copy')"
-                  @click="handleCopy(command.value)"
-                >
-                  <RiFileCopyLine class="w-4 h-4" aria-hidden="true" />
-                </ButtonThird>
-              </div>
+              <TipInput
+                :model-value="command.value"
+                :label="t(`views.forgotPassword.unavailable.${command.key}`)"
+                readonly
+              />
             </div>
           </div>
         </li>
@@ -131,5 +102,5 @@ const handleCopy = async (command: string) => {
         <RiArrowLeftLine class="w-5 h-5" aria-hidden="true" />
       </ButtonSecondary>
     </div>
-  </div>
+  </AuthCard>
 </template>

@@ -5,6 +5,7 @@
 -->
 <script setup lang="ts">
 import { useTemplateRef } from "vue";
+import AuthCard from "@/components/base/card/AuthCard.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
@@ -36,17 +37,10 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <!-- 标题 -->
-    <div class="flex flex-col gap-2 onload-animation">
-      <h1 class="text-2xl font-bold text-fg">
-        {{ t("views.forgotPassword.step1.title") }}
-      </h1>
-      <p class="text-fg-subtle text-sm">
-        {{ t("views.forgotPassword.step1.description") }}
-      </p>
-    </div>
-
+  <AuthCard
+    :title="t('views.forgotPassword.step1.title')"
+    :description="t('views.forgotPassword.step1.description')"
+  >
     <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
       <!-- 邮箱 -->
       <div class="onload-animation anim-delay-50">
@@ -85,5 +79,5 @@ const handleSubmit = () => {
         </ButtonSecondary>
       </div>
     </form>
-  </div>
+  </AuthCard>
 </template>

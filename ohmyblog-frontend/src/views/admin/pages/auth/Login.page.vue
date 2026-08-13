@@ -10,6 +10,7 @@ import { ref, useTemplateRef } from "vue";
 import { useRouter } from "vue-router";
 import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import AuthLayout from "@/views/admin/components/layout/AuthLayout.vue";
+import AuthCard from "@/components/base/card/AuthCard.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
@@ -127,17 +128,10 @@ const handleSubmit = async () => {
     :brand-line2="t('views.login.brand.line2')"
     :brand-line3="t('views.login.brand.line3')"
   >
-    <div class="flex flex-col gap-6">
-      <!-- 标题 -->
-      <div class="flex flex-col gap-2 onload-animation">
-        <h1 class="text-2xl font-bold text-fg">
-          {{ t("views.login.title") }}
-        </h1>
-        <p class="text-fg-subtle text-sm">
-          {{ t("views.login.description") }}
-        </p>
-      </div>
-
+    <AuthCard
+      :title="t('views.login.title')"
+      :description="t('views.login.description')"
+    >
       <!-- 表单 -->
       <form ref="formRef" @submit.prevent="handleSubmit" class="flex flex-col gap-6">
         <!-- 用户名/邮箱 -->
@@ -217,6 +211,6 @@ const handleSubmit = async () => {
           </ButtonSecondary>
         </div>
       </form>
-    </div>
+    </AuthCard>
   </AuthLayout>
 </template>
