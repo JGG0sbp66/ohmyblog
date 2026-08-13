@@ -798,7 +798,7 @@
         "code": {
           "label": "Verification Code",
           "placeholder": "Enter 6-digit code",
-          "hint": "The code is valid for 15 minutes"
+          "hint": "The code is valid for {minutes} minutes"
         },
         "newPassword": {
           "label": "New Password",
@@ -806,7 +806,22 @@
         },
         "submit": "Reset Password",
         "back": "Back to previous step",
-        "resend": "Didn't receive? Resend"
+        "resend": "Didn't receive? Resend",
+        "resendCooldown": "Resend in {seconds}s"
+      },
+      "unavailable": {
+        "title": "Email recovery unavailable",
+        "description": "This site has no mail service configured, so the code cannot be sent. You can reset the password directly on the server via the command line.",
+        "stepsTitle": "Reset from the command line",
+        "step1": "Sign in to the server where this site is deployed",
+        "step2": "Change into the ohmyblog-backend directory and run:",
+        "step3": "Enter the new password when prompted, then return to the login page",
+        "copy": "Copy",
+        "copied": "Command copied",
+        "copyFailed": "Copy failed. Please select the command manually",
+        "twoFactorHint": "Lost your authenticator too? Append --disable-2fa to turn off two-factor at the same time.",
+        "smtpHint": "Alternatively, if you can still sign in, configure SMTP under Settings - Mail service to restore email recovery.",
+        "backToLogin": "Back to Sign In"
       }
     },
     "friendLinks": {

@@ -793,7 +793,7 @@
         "code": {
           "label": "验证码",
           "placeholder": "请输入 6 位验证码",
-          "hint": "验证码 15 分钟内有效，请尽快使用"
+          "hint": "验证码 {minutes} 分钟内有效，请尽快使用"
         },
         "newPassword": {
           "label": "新密码",
@@ -801,7 +801,22 @@
         },
         "submit": "重置密码",
         "back": "返回上一步",
-        "resend": "没收到？重新发送"
+        "resend": "没收到？重新发送",
+        "resendCooldown": "{seconds} 秒后可重新发送"
+      },
+      "unavailable": {
+        "title": "暂时无法通过邮件找回",
+        "description": "本站还没有配置邮件服务，验证码发不出去。你可以在服务器上用命令行直接重置密码。",
+        "stepsTitle": "命令行重置步骤",
+        "step1": "登录到部署本站的服务器",
+        "step2": "进入 ohmyblog-backend 目录，执行：",
+        "step3": "按提示输入新密码，完成后回到登录页即可使用新密码登录",
+        "copy": "复制",
+        "copied": "命令已复制",
+        "copyFailed": "复制失败，请手动选中命令复制",
+        "twoFactorHint": "验证器也丢了的话，在命令后加上 --disable-2fa，可同时关闭两步验证。",
+        "smtpHint": "另一种办法：如果你还能登录后台，先到「设置 - 邮件服务」配置好 SMTP，之后就能正常用邮件找回了。",
+        "backToLogin": "返回登录"
       }
     },
     "friendLinks": {

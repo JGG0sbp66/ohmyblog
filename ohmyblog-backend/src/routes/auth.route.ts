@@ -9,6 +9,7 @@ import {
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
 import { authService } from "../services/auth.service";
+import { emailConfigService } from "../services/email/email-config.service";
 import { issueAuthCookie } from "../utils/auth-cookie";
 import { DEMO_USER_UUID, isDemoUser } from "../utils/demo";
 import { getClientIp } from "../utils/getClientIp";
@@ -137,6 +138,25 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				{
 					detail: { summary: "更新账号信息" },
 					body: UpdateAccountDTO,
+				},
+			)
+			// === 忘记密码 - 查询这条路是否可用 ===
+			// 邮件服务没配置时，忘记密码流程走不通（服务端会静默失败，因为报错
+			// 会让接口变成邮箱枚举器）。前端需要先问一下，好把用户引导到命令行
+			// 恢复方式，而不是让他对着一个永远收不到邮件的表单反复提交。
+			//
+			// 只暴露一个与用户无关的布尔值，不涉及任何账号信息，可匿名访问。
+			.get(
+				"/forgot-password",
+				async () => {
+					return { available: await emailConfigService.isEmailUsable() };
+				},
+				{
+					detail: {
+						summary: "忘记密码 - 查询邮件服务是否可用",
+						description:
+							"返回 available=false 时前端应提示改用命令行重置（bun run reset-password）。",
+					},
 				},
 			)
 			// === 忘记密码 - 发送验证码 ===

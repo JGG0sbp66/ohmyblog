@@ -31,6 +31,26 @@ class EmailConfigService {
 	}
 
 	/**
+	 * 邮件服务当前是否可用（已配置且已启用）。
+	 *
+	 * 与 getSmtpConfig 的区别是不抛错，供需要「先问问能不能发」的调用方使用，
+	 * 例如忘记密码页要据此决定是显示邮箱表单还是显示命令行恢复指引。
+	 *
+	 * @returns 可发信返回 true
+	 */
+	async isEmailUsable(): Promise<boolean> {
+		try {
+			const record = await configDao.findByKey("smtp");
+			const value = record?.configValue as
+				| TSMTPConfigUpsertDTO["configValue"]
+				| undefined;
+			return Boolean(value?.enabled);
+		} catch {
+			return false;
+		}
+	}
+
+	/**
 	 * 读取外观配置（hue），供模板使用
 	 * @returns 外观配置记录
 	 */

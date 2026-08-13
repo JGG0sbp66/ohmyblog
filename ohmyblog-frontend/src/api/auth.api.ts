@@ -47,6 +47,17 @@ export const getMe = () => {
 };
 
 /**
+ * GET /api/auth/forgot-password
+ * 忘记密码 - 查询邮件服务是否可用
+ *
+ * 没配置 SMTP 时这条路走不通，且后端为了不泄漏邮箱是否注册会静默失败
+ * （提交后什么都不会发生），所以要先问一次，好把用户引导到命令行恢复
+ */
+export const getForgotPasswordAvailability = () => {
+  return unwrap(api.api.auth["forgot-password"].get());
+};
+
+/**
  * POST /api/auth/forgot-password
  * 忘记密码 - 请求验证码
  *

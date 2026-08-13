@@ -65,3 +65,17 @@ export {
 } from "@server/db/constants/upload.constants";
 
 export type { TUploadKind } from "@server/db/constants/upload.constants";
+
+// 5. 两步验证相关
+export {
+  TOTP_DIGITS,
+  RECOVERY_CODE_COUNT,
+  TWO_FACTOR_EXHAUSTED_MESSAGE,
+  TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE,
+} from "@server/db/constants/two-factor.constants";
+
+// 6. 邮件验证码（忘记密码）
+export {
+  RESET_PASSWORD_CODE_TTL_MIN,
+  RESET_PASSWORD_RESEND_COOLDOWN_SEC,
+} from "@server/db/constants/email-verification.constants";
