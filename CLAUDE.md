@@ -235,11 +235,10 @@ bun tools/cdp.mjs targets --port=9333
 
 ### 待办
 
-1. `/auth/login` 没有速率限制，密码可无限爆破（目前唯一阻力是 Argon2 的开销，
-   属于副作用而非设计）。做法：按 IP 限流 + 失败递增延迟。
-2. 两步验证的失败计数记在 challenge 上，而 challenge 可无限申请，重新登录即可
-   刷掉。改为按用户账号累计 + 递增延迟。
-3. CAPTCHA，后台可配置多家 provider，挂在 `/auth/login`、
+1. 现有限流都只压单个 IP / 单个账号的速率（`src/utils/rate-limit.ts`：登录每
+   IP 每分钟 10 次，两步验证每账号每秒 1 次），换 IP 的分布式爆破绕得过去。
+   补齐要靠下一条的 CAPTCHA，而不是继续加严限流——再严就开始影响正常用户了。
+2. CAPTCHA，后台可配置多家 provider，挂在 `/auth/login`、
    `/auth/forgot-password`、`/public/friends/apply` 上。候选：Cloudflare
    Turnstile（首选，无交互 + 隐私友好）、hCaptcha、reCAPTCHA v3（国内可用性差）、
    腾讯云 / 阿里云验证码。各家都是"前端拿 token → 后端调 verify 校验"，适合抽

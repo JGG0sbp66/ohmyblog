@@ -1179,6 +1179,7 @@
       "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP is disabled. Please enable it in Settings first.",
       "验证码无效或已过期": "Verification code is invalid or expired",
       "账户已被封禁": "This account has been banned",
+      "请求过于频繁，请稍后再试": "Too many requests. Please try again shortly",
       "文章不存在": "Post not found",
       "只能永久删除回收站中的文章，请先将文章移入回收站": "Only posts in Trash can be permanently deleted",
       "该 slug 已被其他文章使用": "This slug is already used by another post",

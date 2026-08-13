@@ -17,6 +17,10 @@ import { userDao } from "../daos/user.dao";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 import {
+	createIntervalLimiter,
+	RATE_LIMITED_MESSAGE,
+} from "../utils/rate-limit";
+import {
 	buildTotpUri,
 	generateRecoveryCodes,
 	generateTotpSecret,
@@ -33,6 +37,9 @@ import { authService } from "./auth.service";
 
 /** 验证器 App 里显示不出站点名时的兜底 issuer */
 const DEFAULT_ISSUER = "ohmyblog";
+
+/** 登录第二步的提交间隔：同一账号每秒最多验一次 */
+const verifyIntervalLimiter = createIntervalLimiter(1000);
 
 class TwoFactorService {
 	private logger = logger.withTag("TwoFactorService");
@@ -321,6 +328,17 @@ class TwoFactorService {
 			throw new BusinessError(TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE, {
 				status: 401,
 			});
+		}
+
+		// 限流按**账号**计而不按 challenge：challenge 可以靠重新登录无限申请，
+		// 计在它上面的任何限制都能被刷掉。也不按 IP —— 走到这一步说明密码已经
+		// 对了，此时限制正主自己的验证频率不会被拿去打击别人。
+		//
+		// 只压间隔、不设配额，所以不存在「被锁在门外」：等一秒就能再试。
+		// 人手输 6 位数字本来要好几秒，正常用户碰不到这条线
+		if (!verifyIntervalLimiter.consume(userUuid)) {
+			this.logger.warn({ userId: userUuid }, "两步验证提交过于频繁");
+			throw new BusinessError(RATE_LIMITED_MESSAGE, { status: 429 });
 		}
 
 		// try 只圈住「码对不对」这一件事。

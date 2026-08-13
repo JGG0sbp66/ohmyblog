@@ -11,6 +11,10 @@ import type { TRegisterDTO, TUpdateAccountDTO } from "../dtos/auth.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 import {
+	createFixedWindowLimiter,
+	RATE_LIMITED_MESSAGE,
+} from "../utils/rate-limit";
+import {
 	checkResetPasswordThrottle,
 	recordResetPasswordSend,
 } from "../utils/reset-password-throttle";
@@ -19,6 +23,18 @@ import {
 	createChallenge,
 } from "../utils/two-factor-challenge";
 import { emailSenderService } from "./email/email-sender.service";
+
+/**
+ * 登录限流：同一 IP 每分钟最多 10 次。
+ *
+ * 10 次对人类足够宽松（含输错重试），对爆破则把速率从「不限」压到每小时
+ * 600 次。注意真实 IP 依赖 TRUST_PROXY 配置正确，见 utils/getClientIp.ts；
+ * 换 IP 的分布式攻击绕不掉这一层，那需要 CAPTCHA，见 CLAUDE.md 待办
+ */
+const loginLimiter = createFixedWindowLimiter({
+	windowMs: 60_000,
+	max: 10,
+});
 
 class AuthService {
 	private logger = logger.withTag("AuthService");
@@ -73,6 +89,14 @@ class AuthService {
 	 * @param ip 客户端 IP，用于异地登录检测和登录历史记录
 	 */
 	async login(identifier: string, passwordPlain: string, ip: string) {
+		// 0. 限流。按 IP 而不按账号：用户名在站点上是公开的，按账号计等于给
+		//    任何人一个把站长锁在门外的开关。
+		//    在密码校验之前拦下来，顺带也挡住了拿 Argon2 的计算开销打 CPU
+		if (!loginLimiter.consume(ip)) {
+			this.logger.warn({ ip, identifier }, "登录请求被限流");
+			throw new BusinessError(RATE_LIMITED_MESSAGE, { status: 429 });
+		}
+
 		// 1. 查找用户
 		const user = await userDao.findByIdentifier(identifier);
 		if (!user) {
