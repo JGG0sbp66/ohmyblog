@@ -218,11 +218,7 @@ const wrap = ref(false);
           <!--
             原先这里是一句「验证器也丢了就在命令后加上 --disable-2fa」的小字，
             可复制按钮送出去的仍是不带该参数的命令，等于让人复制完再手动补一遍。
-            改成开关：命令本身跟着变，复制到的就是能直接粘进终端执行的那条。
-
-            整行可点靠外层 div 的 click：BaseCheckbox 自己的 click 带 .stop，
-            不会冒泡上来触发第二次翻转。键盘用户 Tab 到的是内部那个 button，
-            外层这一下纯属鼠标便利，不影响可达性
+            改成开关：命令本身跟着变，复制到的就是能直接粘进终端执行的那条
           -->
           <div
             class="flex items-center gap-2.5 w-fit cursor-pointer group"
@@ -235,7 +231,12 @@ const wrap = ref(false);
               "
             />
             <span
-              class="text-fg-subtle text-xs leading-5 transition-colors group-hover:text-fg"
+              class="text-xs leading-5 transition-colors"
+              :class="
+                disableTwoFactor
+                  ? 'text-fg-subtle'
+                  : 'text-fg-muted group-hover:text-fg-subtle'
+              "
             >
               {{ t("views.forgotPassword.unavailable.twoFactorToggle") }}
             </span>
@@ -254,11 +255,6 @@ const wrap = ref(false);
         </p>
       </li>
     </ol>
-
-    <!-- 另一条路：配好邮件服务。它不是这套流程的一环，所以留在步骤之外 -->
-    <p class="text-fg-subtle text-xs leading-5 onload-animation anim-delay-100">
-      {{ t("views.forgotPassword.unavailable.smtpHint") }}
-    </p>
 
     <!-- 分割线 -->
     <div class="border-t border-fg-muted/15"></div>

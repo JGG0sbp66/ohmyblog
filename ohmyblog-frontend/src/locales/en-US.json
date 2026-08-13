@@ -822,7 +822,6 @@
         "cmdSource": "From source",
         "copy": "Copy command",
         "twoFactorToggle": "Authenticator lost too, also turn off two-factor",
-        "smtpHint": "Alternatively, if you can still sign in, configure SMTP under Settings - Mail service to restore email recovery.",
         "backToLogin": "Back to Sign In"
       }
     },
