@@ -10,6 +10,7 @@
 -->
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import ModuleItem from "@/components/common/item/ModuleItem.vue";
 import ConfirmModal from "@/components/base/pop/ConfirmModal.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
@@ -22,6 +23,9 @@ import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 
 const { t } = useLang();
+
+// 开关状态变化引起的内容展开/收起动画，与 SMTP 设置保持一致
+const [rowRef] = useAutoAnimate();
 
 type TwoFactorStatus = Awaited<ReturnType<typeof getTwoFactorStatus>>;
 
@@ -142,14 +146,16 @@ const handleDisableClose = (open: boolean) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <div ref="rowRef" class="flex flex-col gap-4">
     <ModuleItem
       v-model="enabled"
+      :loading="isLoading"
       :title="t('views.admin.Settings.admin.twoFactor.title')"
       :description="t('views.admin.Settings.admin.twoFactor.description')"
     />
 
-    <!-- 已启用时：重新生成恢复码按钮 -->
+    <!-- 已启用时：重新生成恢复码按钮（加载中 status 为 null 不显示，
+         加载完成后由 rowRef 的 auto-animate 平滑展开） -->
     <div v-if="status?.enabled" class="flex justify-end">
       <ButtonSecondary
         :text="t('views.admin.Settings.admin.twoFactor.regenerate.action')"

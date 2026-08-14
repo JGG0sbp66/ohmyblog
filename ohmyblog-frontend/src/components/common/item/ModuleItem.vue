@@ -14,6 +14,12 @@ defineProps<{
   description: string;
   /** 可选的展示标签文本（如 "可选"、"推荐"） */
   tag?: string;
+  /**
+   * 开关状态加载中：开关换为同尺寸脉冲占位。
+   * 状态来自异步接口时必须传，否则开关会先按默认值渲染、
+   * 数据到达后再翻转，播放一段不属于用户操作的假动画
+   */
+  loading?: boolean;
 }>();
 
 /** 绑定开关状态 */
@@ -32,6 +38,11 @@ const modelValue = defineModel<boolean>({ default: false });
       </p>
     </div>
 
-    <ButtonToggle v-model="modelValue" />
+    <!-- 加载中：与 ButtonToggle 同尺寸的脉冲占位，高度恒定不跳动 -->
+    <div
+      v-if="loading"
+      class="h-7 w-12 shrink-0 rounded-full bg-fg-subtle/20 animate-pulse"
+    />
+    <ButtonToggle v-else v-model="modelValue" />
   </div>
 </template>
