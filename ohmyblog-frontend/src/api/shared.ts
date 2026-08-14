@@ -79,3 +79,16 @@ export {
   RESET_PASSWORD_CODE_TTL_MIN,
   RESET_PASSWORD_RESEND_COOLDOWN_SEC,
 } from "@server/db/constants/email-verification.constants";
+
+// 7. 人机验证
+export {
+  captchaProviders as CAPTCHA_PROVIDERS,
+  captchaScenes as CAPTCHA_SCENES,
+  CAPTCHA_FAILED_MESSAGE,
+  RECAPTCHA_DEFAULT_MIN_SCORE,
+} from "@server/db/constants/captcha.constants";
+
+export type {
+  TCaptchaProvider,
+  TCaptchaScene,
+} from "@server/db/constants/captcha.constants";
