@@ -25,5 +25,22 @@ export const configKeys = [
 	"personal_info",
 	"smtp",
 	"announcement",
+	"captcha",
 ] as const;
 export type TConfigKey = (typeof configKeys)[number];
+
+/**
+ * 每个 configKey 对应的默认描述。
+ *
+ * 后端创建配置时若前端没传 description，自动从这里取，
+ * 前端不再需要关心 description 字段。
+ * Record<TConfigKey, string> 保证新增 key 时 TS 会逼你补描述。
+ */
+export const configDescriptions: Record<TConfigKey, string> = {
+	appearance: "外观设置（主题颜色、色相、语言）",
+	site_info: "站点基本信息（标题、图标、备案号）",
+	personal_info: "个性化配置（头像、首页横幅、首页标题等）",
+	smtp: "SMTP 配置（基础连接与可选发件人信息）",
+	announcement: "公告配置（前台侧边栏公告卡片）",
+	captcha: "人机验证配置（服务商、密钥、启用场景）",
+};

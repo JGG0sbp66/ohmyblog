@@ -33,7 +33,6 @@ const handleSave = async () => {
     const res = await upsertConfig({
       configKey: "appearance",
       configValue,
-      description: "外观设置（主题颜色、色相、语言）",
     });
 
     // 使用接口返回的 message 作为 Key 解析

@@ -30,7 +30,6 @@ const handleNext = () => {
       return upsertConfig({
         configKey: "site_info",
         configValue,
-        description: "站点基本信息（标题、图标、备案号）",
       });
     },
     {
