@@ -46,7 +46,7 @@ bun run format         # prettier --write .
 
 ### type-check 的既有噪音
 
-`vue-tsc` 会顺着路径别名把**后端源码**一起检查（用的是前端的 DOM/strict 配置，没有 `bun-types`），因此 `../ohmyblog-backend/**` 下有约 40 条既有报错（`Cannot find name 'Bun'`、JSX runtime、`possibly undefined` 等）——**全是噪音，不要去修**。另有 1 条既有前端报错：`HeroSubtitleEditor.vue:40`。
+`vue-tsc` 会顺着路径别名把**后端源码**一起检查（用的是前端的 DOM/strict 配置，没有 `bun-types`），因此 `../ohmyblog-backend/**` 下有约 40 条既有报错（`Cannot find name 'Bun'`、JSX runtime、`possibly undefined` 等）——**全是噪音，不要去修**。前端 `src/` 下没有既有报错。
 
 甄别自己引入的新错误：
 

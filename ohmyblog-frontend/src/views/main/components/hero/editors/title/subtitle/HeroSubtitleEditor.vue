@@ -36,8 +36,8 @@ const {
   removeItem: removeRow,
   updateItem,
 } = useListEditor({
-  // 数据源：Store 里的副标题原始字符串数组
-  initialSource: systemStore.personalInfo.heroSubtitles,
+  // 数据源：Store 里的副标题原始字符串数组（DTO 里该字段可选，兜底空数组）
+  initialSource: systemStore.personalInfo.heroSubtitles ?? [],
   pageSize: props.pageSize,
   // 转换：将原始字符串映射为业务 Body 对象，Hook 会自动在此基础上注入 ID
   mapToLocal: (value) => ({ value }),
