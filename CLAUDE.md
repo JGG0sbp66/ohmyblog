@@ -176,7 +176,7 @@ bun run type-check 2>&1 | grep '^src/'
 仓库没有测试框架，交互类改动（拖拽、动画、手势）靠**遥控真实浏览器**验证。`tools/cdp.mjs` 是一个零依赖的极简 CDP 客户端（用 Bun 跑）：
 
 ```bash
-bun tools/cdp.mjs launch http://127.0.0.1:5173/   # 独立临时 profile + 调试端口 9222
+bun tools/cdp.mjs launch http://localhost:5173/   # 独立临时 profile + 调试端口 9222
 bun tools/cdp.mjs targets                          # 列出可连接页面
 bun tools/cdp.mjs eval "document.title"            # 页面里求值（支持 await）
 bun tools/cdp.mjs rect "[data-sortable-item]"      # 元素视口矩形
@@ -218,7 +218,7 @@ bun tools/cdp.mjs targets --port=9333
 - 命名：后端 `*.route.ts` / `*.service.ts` / `*.dao.ts` / `*.dto.ts` / `*.cache.ts`；前端 `*.api.ts` / `*.store.ts` / `*.hook.ts` / `*.page.vue`
 - 前端组件分层：`components/base/`（无业务的原子组件）→ `components/common/`（跨页面复用）→ `views/*/components/`（页面私有）。新组件先判断归属再落位
 
-## 安全约定与待办
+## 安全约定
 
 **防"猜"类攻击只能靠尝试次数上限，不能靠有效期。** 有效期限制的是一个凭证
 能活多久，限制不了每秒能猜多少次——TOTP 每 30 秒轮换，但爆破者是在报随机
@@ -232,15 +232,3 @@ bun tools/cdp.mjs targets --port=9333
 
 **失败路径的响应必须恒定。** 忘记密码接口的所有分支（邮箱不存在、被节流、
 发信失败）都返回同一句提示，任何差异都会让它变成邮箱枚举器。
-
-### 待办
-
-1. 现有限流都只压单个 IP / 单个账号的速率（`src/utils/rate-limit.ts`：登录每
-   IP 每分钟 10 次，两步验证每账号每秒 1 次），换 IP 的分布式爆破绕得过去。
-   补齐要靠下一条的 CAPTCHA，而不是继续加严限流——再严就开始影响正常用户了。
-2. CAPTCHA，后台可配置多家 provider，挂在 `/auth/login`、
-   `/auth/forgot-password`、`/public/friends/apply` 上。候选：Cloudflare
-   Turnstile（首选，无交互 + 隐私友好）、hCaptcha、reCAPTCHA v3（国内可用性差）、
-   腾讯云 / 阿里云验证码。各家都是"前端拿 token → 后端调 verify 校验"，适合抽
-   一个 provider 接口 + 各家实现。注意：默认关闭；secret 不能通过任何读接口回传
-   前端；校验失败的文案要和其他失败原因一致，别引入新的枚举面。

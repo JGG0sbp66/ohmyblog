@@ -40,7 +40,7 @@ const positional = args.filter((a) => !a.startsWith("--"));
 const [command, ...rest] = positional;
 
 const PORT = Number(flags.port ?? 9222);
-const HOST = flags.host ?? "127.0.0.1";
+const HOST = flags.host ?? "localhost";
 
 /** 极简 CDP 客户端：一条 WebSocket + 自增 id 配对回包 */
 class CDP {
