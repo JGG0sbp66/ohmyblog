@@ -1,0 +1,37 @@
+/* css/transitions.css — 主题切换动画（hue 补间 + View Transition） */
+
+/* 离散改色（预设按钮、远端配置同步）挂 .hue-animating：完整 200ms 扫掠 */
+html.hue-animating {
+  transition: --app-hue var(--default-transition-duration)
+    var(--default-transition-timing-function);
+}
+
+/*
+  拖拽滑块挂 .hue-animating-live：100ms 的轻微追随。
+  短到不会让人觉得页面在追手，又足以磨掉逐帧的台阶感。
+
+  刻意用 linear 而不是缓动：拖拽时每一帧都会重定目标，
+  ease-out 那种「先快后慢」叠在连续重定向上会显得发飘。
+*/
+html.hue-animating-live {
+  transition: --app-hue var(--theme-hue-live-duration) linear;
+}
+
+/* 深浅色切换：整页一次交叉淡入，天然同步，且只有一层合成开销 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--default-transition-duration);
+  animation-timing-function: var(--default-transition-timing-function);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.hue-animating,
+  html.hue-animating-live {
+    transition: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

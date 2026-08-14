@@ -1,0 +1,9 @@
+/* css/vendors.css — 第三方脚本的全局覆盖 */
+
+/* reCAPTCHA v3 右下角浮动徽章：官方允许隐藏，前提是页面上保留文字声明
+   （CaptchaWidget.vue 的 score 模式模板已包含隐私政策 + 服务条款链接）。
+   用 visibility: hidden 而非 display: none —— Google 文档明确要求如此，
+   避免干扰后台打分逻辑。 */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}

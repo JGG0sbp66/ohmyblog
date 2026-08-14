@@ -1,0 +1,23 @@
+/* css/utilities.css — @layer utilities（主题切换期间压制过渡） */
+
+@layer utilities {
+  /*
+    换主题期间压掉每个元素自己的颜色过渡。
+
+    不压的话，元素会各按自己的时长去「追」--app-hue 的插值：
+    既重新制造不同步，也让浏览器每帧重启整棵树的过渡 —— 这正是
+    拖拽卡顿的主因。
+
+    两点讲究：
+    - html 自身不被 `html.theme-shifting *` 命中，所以上面的
+      --app-hue 补间不会被这里连带清掉
+    - 必须 !important：本选择器只有 (0,1,1) 特异度，组件侧的
+      Tailwind 工具类和 Vue <style scoped>（编译成 .x[data-v-xxx]）
+      都比它高，只有 important 声明压得住
+  */
+  html.theme-shifting *,
+  html.theme-shifting ::before,
+  html.theme-shifting ::after {
+    transition-property: var(--theme-shift-keep) !important;
+  }
+}

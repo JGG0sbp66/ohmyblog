@@ -1,0 +1,120 @@
+/* css/base.css — @layer base（html/body 默认、选中高亮、交互过渡） */
+
+@layer base {
+  html {
+    font-size: 14px;
+
+    /* 预留滚动条空间，防止路由切换时页面宽度抖动 */
+    scrollbar-gutter: stable;
+  }
+
+  /*
+   * 让 100% 高度链一路通到 #app。
+   *
+   * 这条是 index.html 里 `interactive-widget=resizes-content` 的配套要求：
+   * 该声明的定义就是「虚拟键盘压缩 layout viewport / ICB」，而**视口百分比单位
+   * （vh / dvh / svh）不跟着缩**。所以后台外壳若用 h-dvh 撑满，键盘一弹出根节点
+   * 就比视口高，body 随之产生滚动 —— 表现为「手势滚的是整个窗口，不是编辑器」。
+   * 改用 height:100%（相对 ICB）才会跟着键盘一起变矮。
+   *
+   * 对普通页面无影响：内容比 100% 高时照常溢出、文档照常滚动。
+   */
+  html,
+  body {
+    height: 100%;
+  }
+
+  #app {
+    height: 100%;
+  }
+
+  @media (min-width: 48rem) {
+    html {
+      font-size: 16px;
+    }
+  }
+
+  /* 文字选中高亮 — 使用主题主色调替换浏览器默认蓝色 */
+  ::selection {
+    background-color: oklch(0.6 0.18 var(--app-hue) / 0.28);
+    color: inherit;
+  }
+  .dark ::selection {
+    background-color: oklch(0.65 0.18 var(--app-hue) / 0.35);
+    color: inherit;
+  }
+  /* 护眼档：选中底色仍用亮版 accent（0.6 而非本档的 0.48），
+     压暗版叠在豆沙绿上会太重，盖住 inherit 来的墨绿文字 */
+  .eyecare ::selection {
+    background-color: oklch(0.6 0.18 var(--app-hue) / 0.3);
+    color: inherit;
+  }
+
+  /*
+    交互态过渡：只挂在真正会因交互改变外观的元素上，而不是全站每个元素。
+
+    为什么不用 `*`：换主题时 --theme-* 在 <html> 上整批变更，会让整棵树的
+    样式失效，而每个挂了过渡的元素都要为每个过渡属性比对新旧值、决定是否
+    起过渡。678 个元素的文章页实测，一次换档的样式重算 68.5ms；收窄到交互
+    元素后 32.3ms。
+
+    成本几乎只取决于选择器命中多少元素，跟每个元素挂几个属性无关 ——
+    把属性从 11 个砍到 3 个毫无改善（72.0ms），砍选择器才有效。
+
+    :where() 把特异度归零，与原先 `*` 的 0 特异度一致，
+    不会压过组件里自己写的 transition-* 工具类。
+
+    &::before / &::after 必须一起给：ButtonSecondary 这类组件的 hover 效果
+    就做在伪元素上（before:opacity-0 scale-90 → hover:before:opacity-100
+    scale-100），且它自己没写 transition，完全靠这里兜底。
+
+    svg 与 svg * 也要给：图标多用 fill="currentColor"，颜色跟随继承来的
+    color，子节点没有过渡就会瞬变。
+
+    注意不要把 width 放进列表：它是唯一会触发 layout 的属性，任意宽度变化
+    都会被拖成 200ms 的布局动画，还会唤醒 auto-animate 挂在 documentElement
+    上的 ResizeObserver。真正需要宽度动画的组件自己写了 transition-[width]。
+
+    换主题时这份声明会被 .theme-shifting 压掉（见 utilities.css），
+    整页渐变由 View Transition 负责，不依赖这里。
+  */
+  :where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    label,
+    [tabindex],
+    [role="button"],
+    [role="tab"],
+    [role="menuitem"],
+    [role="switch"],
+    [role="option"],
+    [role="checkbox"],
+    [role="radio"],
+    [class*="btn"],
+    svg,
+    svg *
+  ) {
+    &,
+    &::before,
+    &::after {
+      transition-property:
+        color, background-color, border-color, fill, stroke, stop-color,
+        opacity, stop-opacity, transform, scale, box-shadow;
+      transition-timing-function: var(--default-transition-timing-function);
+      transition-duration: var(--default-transition-duration);
+    }
+  }
+}
+
+body {
+  background-color: var(--theme-bg);
+  color: var(--theme-fg);
+
+  /* 数字使用等宽字形，避免日期、ID、统计等数字列对不齐
+     （Inter 等比例字体下 1 比 0/6 窄，会出现"05-10 比 05-06 窄"的问题） */
+  font-variant-numeric: tabular-nums;
+}
