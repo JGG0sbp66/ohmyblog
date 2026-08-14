@@ -142,10 +142,15 @@ const viewportStyle = computed(() => {
         <!-- Tab 区域 -->
         <div class="flex items-end h-full">
           <template v-for="(tab, index) in tabList" :key="index">
-            <!-- Tab 之间的分隔竖线（不在选中 tab 两侧显示） -->
+            <!-- Tab 之间的分隔竖线（选中 tab 两侧变透明但保留占位） -->
             <div
-              v-if="isMultiTab && index > 0 && activeTab !== index && activeTab !== index - 1"
-              class="w-px h-4 bg-border/60 shrink-0 self-center"
+              v-if="isMultiTab && index > 0"
+              class="w-px h-4 shrink-0 self-center transition-opacity duration-200"
+              :class="
+                activeTab === index || activeTab === index - 1
+                  ? 'opacity-0'
+                  : 'opacity-100 bg-border/60'
+              "
             />
 
             <!-- Tab 按钮 -->
@@ -155,7 +160,7 @@ const viewportStyle = computed(() => {
                 activeTab === index
                   ? 'bg-bg-muted/80 border-x border-t border-border rounded-t-lg'
                   : isMultiTab
-                    ? 'hover:bg-bg-muted/30 opacity-60 hover:opacity-100 rounded-lg'
+                    ? 'hover:bg-bg-muted/30 opacity-60 hover:opacity-100 rounded-lg border-x border-t border-transparent'
                     : 'bg-bg-muted/80 border-x border-t border-border rounded-t-lg',
               ]"
               @click="activeTab = index"
