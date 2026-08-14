@@ -12,6 +12,7 @@ import AuthLayout from "@/views/admin/components/layout/AuthLayout.vue";
 import ForgotPasswordStep1Email from "@/views/admin/components/forgot-password/ForgotPasswordStep1Email.vue";
 import ForgotPasswordStep2Reset from "@/views/admin/components/forgot-password/ForgotPasswordStep2Reset.vue";
 import ForgotPasswordUnavailable from "@/views/admin/components/forgot-password/ForgotPasswordUnavailable.vue";
+import CaptchaWidget from "@/components/common/captcha/CaptchaWidget.vue";
 import {
   RESET_PASSWORD_RESEND_COOLDOWN_SEC,
   type ForgotPasswordForm,
@@ -21,8 +22,10 @@ import {
   getForgotPasswordAvailability,
   resetPassword,
 } from "@/api/auth.api";
+import { useCaptcha } from "@/composables/captcha.hook";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
+import { useTemplateRef } from "vue";
 const router = useRouter();
 const { t } = useLang();
 
@@ -39,6 +42,7 @@ const isSubmitting = ref(false);
 const emailAvailable = ref<boolean | null>(null);
 
 onMounted(async () => {
+  loadCaptcha();
   try {
     const res = await getForgotPasswordAvailability();
     emailAvailable.value = res?.available ?? true;
@@ -48,6 +52,34 @@ onMounted(async () => {
     emailAvailable.value = true;
   }
 });
+
+// === 人机验证 ===
+//
+// 验证框由本组件持有、通过插槽塞进当前那一步里 —— 两次调用
+// /auth/forgot-password 的地方（step1 的发送、step2 的重新发送）都在这里，
+// 凭证的取用和作废跟着调用方走，不用在两个子组件之间同步状态。
+//
+// step2 也要有一个：重新发送打的是同一个接口，同样要过验证码，而上一个
+// 凭证在 step1 提交时就已经用掉了。
+const { config: captchaConfig, load: loadCaptcha, isEnabledFor } = useCaptcha();
+const captchaRef =
+  useTemplateRef<InstanceType<typeof CaptchaWidget>>("captchaRef");
+const captchaToken = ref("");
+
+/**
+ * 取一个凭证；该入口没开启验证码时返回 undefined（不需要带）。
+ * @returns 需要但没拿到时返回 null，调用方据此中止提交
+ */
+const takeCaptchaToken = async (): Promise<string | undefined | null> => {
+  if (!isEnabledFor("forgotPassword")) return undefined;
+
+  const token = await captchaRef.value?.execute();
+  if (!token) {
+    useToast.error(t("components.common.captcha.required"));
+    return null;
+  }
+  return token;
+};
 
 // === 重发冷却 ===
 // 后端对同一账号有 RESET_PASSWORD_RESEND_COOLDOWN_SEC 的发信冷却，且冷却期内
@@ -79,9 +111,12 @@ const form = ref<ForgotPasswordForm>({
  * 后端无论邮箱是否存在都返回成功，这里只要请求顺利就推进
  */
 const handleSendCode = async () => {
+  const captchaToken = await takeCaptchaToken();
+  if (captchaToken === null) return;
+
   isSubmitting.value = true;
   try {
-    const res = await forgotPassword({ email: form.value.email });
+    const res = await forgotPassword({ email: form.value.email, captchaToken });
     if (res?.message) {
       useToast.success(t(`api.success.${res.message}`));
     }
@@ -89,6 +124,8 @@ const handleSendCode = async () => {
     step.value = 2;
   } catch (error: any) {
     useToast.error(t(`api.errors.${error}`));
+    // 凭证一次性，失败后必须换一个新的
+    captchaRef.value?.reset();
   } finally {
     isSubmitting.value = false;
   }
@@ -117,9 +154,13 @@ const handleResetPassword = async () => {
 /** 重新发送验证码（在 step 2 上提供的便捷操作） */
 const handleResend = async () => {
   if (isSubmitting.value || resendCountdown.value > 0) return;
+
+  const captchaToken = await takeCaptchaToken();
+  if (captchaToken === null) return;
+
   isSubmitting.value = true;
   try {
-    const res = await forgotPassword({ email: form.value.email });
+    const res = await forgotPassword({ email: form.value.email, captchaToken });
     if (res?.message) {
       useToast.success(t(`api.success.${res.message}`));
     }
@@ -127,6 +168,9 @@ const handleResend = async () => {
   } catch (error: any) {
     useToast.error(t(`api.errors.${error}`));
   } finally {
+    // 无论成败都要换一个新凭证：成功时旧的已被后端消费掉，
+    // 下次点重新发送还得再验一次
+    captchaRef.value?.reset();
     isSubmitting.value = false;
   }
 };
@@ -150,7 +194,22 @@ const handleResend = async () => {
       :is-submitting="isSubmitting"
       @submit="handleSendCode"
       @back="router.push({ name: 'login' })"
-    />
+    >
+      <template #captcha>
+        <CaptchaWidget
+          v-if="
+            isEnabledFor('forgotPassword') &&
+            captchaConfig.provider &&
+            captchaConfig.siteKey
+          "
+          ref="captchaRef"
+          v-model="captchaToken"
+          :provider="captchaConfig.provider"
+          :site-key="captchaConfig.siteKey"
+          action="forgot_password"
+        />
+      </template>
+    </ForgotPasswordStep1Email>
     <ForgotPasswordStep2Reset
       v-else
       :form="form"
@@ -159,6 +218,22 @@ const handleResend = async () => {
       @submit="handleResetPassword"
       @resend="handleResend"
       @back="step = 1"
-    />
+    >
+      <!-- 重新发送打的也是 /auth/forgot-password，同样要过验证码 -->
+      <template #captcha>
+        <CaptchaWidget
+          v-if="
+            isEnabledFor('forgotPassword') &&
+            captchaConfig.provider &&
+            captchaConfig.siteKey
+          "
+          ref="captchaRef"
+          v-model="captchaToken"
+          :provider="captchaConfig.provider"
+          :site-key="captchaConfig.siteKey"
+          action="forgot_password_resend"
+        />
+      </template>
+    </ForgotPasswordStep2Reset>
   </AuthLayout>
 </template>

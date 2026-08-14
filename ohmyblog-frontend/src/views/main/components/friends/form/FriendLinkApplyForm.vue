@@ -5,17 +5,28 @@
   标签约束（最大数量/字符数）直接从后端 DTO schema 读取，保持前后端一致。
 -->
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref, useTemplateRef } from "vue";
 import SettingCard from "@/components/base/card/SettingCard.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
+import CaptchaWidget from "@/components/common/captcha/CaptchaWidget.vue";
 import TagsInput from "./TagsInput.vue";
 import { applyFriendLink } from "@/api/friend-link.api";
 import { ApplyFriendLinkDTO } from "@server/dtos/friend-link.dto";
+import { useCaptcha } from "@/composables/captcha.hook";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
 
 const { t } = useLang();
+
+// === 人机验证 ===
+// 三个入口里只有这个完全没有身份门槛，机器人投稿全靠它挡
+const { config: captchaConfig, load: loadCaptcha, isEnabledFor } = useCaptcha();
+const captchaRef =
+  useTemplateRef<InstanceType<typeof CaptchaWidget>>("captchaRef");
+const captchaToken = ref("");
+
+onMounted(loadCaptcha);
 
 /** 从后端 DTO schema 读取标签约束，确保前后端一致 */
 const tagsSchema = ApplyFriendLinkDTO.properties.tags as any;
@@ -56,6 +67,16 @@ const handleSubmit = async () => {
   const emailOk = emailRef.value?.validate() ?? true;
   if (!nameOk || !urlOk || !emailOk) return;
 
+  // 该入口没开启验证码时 token 为 undefined，后端也不会要
+  let token: string | undefined;
+  if (isEnabledFor("friendApply")) {
+    token = (await captchaRef.value?.execute()) ?? undefined;
+    if (!token) {
+      useToast.error(t("components.common.captcha.required"));
+      return;
+    }
+  }
+
   submitting.value = true;
   try {
     const result = await applyFriendLink({
@@ -65,6 +86,7 @@ const handleSubmit = async () => {
       description: form.value.description.trim() || undefined,
       tags: form.value.tags.length > 0 ? form.value.tags : undefined,
       applicantEmail: form.value.applicantEmail.trim() || undefined,
+      captchaToken: token,
     });
     if ((result as any)?.message) {
       useToast.success(t(`api.success.${(result as any).message}`));
@@ -75,6 +97,9 @@ const handleSubmit = async () => {
       typeof error === "string" ? error : error?.message || "Error";
     useToast.error(t(`api.errors.${errorMsg}`));
   } finally {
+    // 凭证一次性：提交成功后它被后端消费掉了，失败时也已作废。
+    // 不重置的话用户改完再提交必然还是失败
+    captchaRef.value?.reset();
     submitting.value = false;
   }
 };
@@ -147,6 +172,20 @@ const handleSubmit = async () => {
         type="email"
         :schema="ApplyFriendLinkDTO.properties.applicantEmail"
         :hint="t('views.main.friends.form.emailHint')"
+      />
+
+      <!-- 人机验证 -->
+      <CaptchaWidget
+        v-if="
+          isEnabledFor('friendApply') &&
+          captchaConfig.provider &&
+          captchaConfig.siteKey
+        "
+        ref="captchaRef"
+        v-model="captchaToken"
+        :provider="captchaConfig.provider"
+        :site-key="captchaConfig.siteKey"
+        action="friend_apply"
       />
     </form>
 

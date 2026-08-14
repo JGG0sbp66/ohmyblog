@@ -99,6 +99,9 @@ const handleSubmit = () => {
         />
       </div>
 
+      <!-- 人机验证：给「重新发送」用的，组件本身由父页面持有 -->
+      <slot name="captcha" />
+
       <!-- 提交 -->
       <div class="pt-4 onload-animation anim-delay-150">
         <ButtonPrimary

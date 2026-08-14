@@ -55,6 +55,9 @@ const handleSubmit = () => {
         />
       </div>
 
+      <!-- 人机验证：组件本身由父页面持有，这里只提供位置 -->
+      <slot name="captcha" />
+
       <!-- 提交按钮 -->
       <div class="pt-4 onload-animation anim-delay-100">
         <ButtonPrimary

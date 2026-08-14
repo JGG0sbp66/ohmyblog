@@ -6,7 +6,7 @@
   - 验证码/恢复码共用一个输入框，后端按格式自动分派
 -->
 <script setup lang="ts">
-import { ref, useTemplateRef } from "vue";
+import { computed, onMounted, ref, useTemplateRef } from "vue";
 import { useRouter } from "vue-router";
 import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import AuthLayout from "@/views/admin/components/layout/AuthLayout.vue";
@@ -15,6 +15,7 @@ import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import ButtonThird from "@/components/base/button/ButtonThird.vue";
+import CaptchaWidget from "@/components/common/captcha/CaptchaWidget.vue";
 import { RiArrowLeftLine } from "@remixicon/vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { login } from "@/api/auth.api";
@@ -25,6 +26,7 @@ import {
 } from "@/api/shared";
 import { LoginDTO } from "@server/dtos/auth.dto";
 import { TwoFactorVerifyDTO } from "@server/dtos/two-factor.dto";
+import { useCaptcha } from "@/composables/captcha.hook";
 import { useLang } from "@/composables/lang.hook";
 import { useToast } from "@/composables/toast.hook";
 
@@ -51,6 +53,24 @@ const needsTwoFactor = ref(false);
 const identifierRef = useTemplateRef<TipInputInstance>("identifierRef");
 const passwordRef = useTemplateRef<TipInputInstance>("passwordRef");
 const codeRef = useTemplateRef<TipInputInstance>("codeRef");
+
+// === 人机验证 ===
+const { config: captchaConfig, load: loadCaptcha, isEnabledFor } = useCaptcha();
+const captchaRef =
+  useTemplateRef<InstanceType<typeof CaptchaWidget>>("captchaRef");
+const captchaToken = ref("");
+
+/**
+ * 只有第一步要过人机验证。
+ *
+ * 走到两步验证那一步说明密码已经对了，再拦一道没有意义 —— 后端也是这么
+ * 划的，ensureVerified 只挂在 /auth/login 上，/two-factor/verify 上没有。
+ */
+const needsCaptcha = computed(
+  () => !needsTwoFactor.value && isEnabledFor("login"),
+);
+
+onMounted(loadCaptcha);
 
 // 状态
 const isSubmitting = ref(false);
@@ -82,10 +102,21 @@ const handleSubmit = async () => {
       await verifyTwoFactor({ code: form.value.twoFactorCode });
       await finishLogin();
     } else {
-      // 第一步：提交账号密码
+      // 第一步：先取人机验证凭证。Turnstile / hCaptcha 是取用户已经点出来的
+      // 那个，reCAPTCHA v3 则是此刻现算一个
+      let token: string | undefined;
+      if (needsCaptcha.value) {
+        token = (await captchaRef.value?.execute()) ?? undefined;
+        if (!token) {
+          useToast.error(t("components.common.captcha.required"));
+          return;
+        }
+      }
+
       const res = await login({
         identifier: form.value.identifier,
         password: form.value.password,
+        captchaToken: token,
       });
 
       if (res?.requiresTwoFactor) {
@@ -102,6 +133,10 @@ const handleSubmit = async () => {
         ? t(`api.errors.${error}`)
         : error || t("api.errors.未登录或会话已过期"),
     );
+
+    // 凭证是一次性的，这次提交没成，它也跟着作废了。不重置的话用户再点
+    // 一次登录必然还是失败，而界面上看不出任何异常
+    captchaRef.value?.reset();
 
     // 验证码错误时清空输入，方便重试
     if (needsTwoFactor.value) {
@@ -133,7 +168,11 @@ const handleSubmit = async () => {
       :description="t('views.login.description')"
     >
       <!-- 表单 -->
-      <form ref="formRef" @submit.prevent="handleSubmit" class="flex flex-col gap-6">
+      <form
+        ref="formRef"
+        @submit.prevent="handleSubmit"
+        class="flex flex-col gap-6"
+      >
         <!-- 用户名/邮箱 -->
         <div class="onload-animation anim-delay-50">
           <TipInput
@@ -170,6 +209,19 @@ const handleSubmit = async () => {
             :schema="TwoFactorVerifyDTO.properties.code"
             autocomplete="one-time-code"
             required
+          />
+        </div>
+
+        <!-- 人机验证（auto-animate 处理出现/消失） -->
+        <div
+          v-if="needsCaptcha && captchaConfig.provider && captchaConfig.siteKey"
+        >
+          <CaptchaWidget
+            ref="captchaRef"
+            v-model="captchaToken"
+            :provider="captchaConfig.provider"
+            :site-key="captchaConfig.siteKey"
+            action="login"
           />
         </div>
 
