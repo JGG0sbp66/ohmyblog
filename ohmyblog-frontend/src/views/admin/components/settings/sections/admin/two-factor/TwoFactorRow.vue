@@ -46,6 +46,9 @@ const isDisabling = ref(false);
 
 /** 拉取当前状态 */
 const loadStatus = async () => {
+  // 同步期间置 true，让 sync watch 能识别出 enabled 的变化不是用户操作；
+  // 否则例如关闭成功后 true → false 的同步会误弹关闭确认弹窗
+  isLoading.value = true;
   try {
     status.value = await getTwoFactorStatus();
     enabled.value = status.value?.enabled ?? false;
@@ -62,25 +65,34 @@ onMounted(loadStatus);
 /**
  * 监听 toggle 变化，弹出对应弹窗。
  * 注意：不在这里直接修改后端状态，只弹弹窗。
+ *
+ * 必须用 flush: "sync"：默认的 pre 时机下回调会推迟到微任务，
+ * 那时 loadStatus 的 finally 已经把 isLoading 置回 false，
+ * 初始化同步 enabled（false → true）就会被误判成用户操作，
+ * 凭空弹出启用向导并触发 setup 请求。
  */
-watch(enabled, (newVal, oldVal) => {
-  // 初始化或 loadStatus 同步时跳过
-  if (isLoading.value) return;
+watch(
+  enabled,
+  (newVal, oldVal) => {
+    // 初始化或 loadStatus 同步时跳过
+    if (isLoading.value) return;
 
-  // 代码回退 toggle 时跳过，不弹弹窗
-  if (isReverting.value) {
-    isReverting.value = false;
-    return;
-  }
+    // 代码回退 toggle 时跳过，不弹弹窗
+    if (isReverting.value) {
+      isReverting.value = false;
+      return;
+    }
 
-  if (newVal && !oldVal) {
-    // 关 → 开：弹出启用向导
-    showSetup.value = true;
-  } else if (!newVal && oldVal) {
-    // 开 → 关：弹出关闭确认
-    showDisable.value = true;
-  }
-});
+    if (newVal && !oldVal) {
+      // 关 → 开：弹出启用向导
+      showSetup.value = true;
+    } else if (!newVal && oldVal) {
+      // 开 → 关：弹出关闭确认
+      showDisable.value = true;
+    }
+  },
+  { flush: "sync" },
+);
 
 /** 启用成功：刷新状态 */
 const handleEnabled = () => {
