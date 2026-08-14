@@ -8,7 +8,9 @@ import {
 } from "../dtos/friend-link.dto";
 import { ensureAdminIfExists } from "../plugins/adminGuard";
 import { authPlugin } from "../plugins/auth.plugin";
+import { captchaService } from "../services/captcha/captcha.service";
 import { friendLinkService } from "../services/friend-link.service";
+import { getClientIp } from "../utils/getClientIp";
 
 const uuidParam = t.Object({ uuid: t.String() });
 
@@ -30,7 +32,15 @@ export const friendLinkRoute = new Elysia({ name: "friendLinkRoute" })
 				)
 				.post(
 					"/apply",
-					async ({ body }) => {
+					async ({ body, request, server }) => {
+						// 放在业务之前：这个入口没有任何身份门槛，验证码是它唯一
+						// 挡机器人投稿的手段。未启用时这一行什么都不做
+						await captchaService.ensureVerified(
+							"friendApply",
+							body.captchaToken,
+							getClientIp({ request, server }),
+						);
+
 						const item = await friendLinkService.apply(body);
 						return { message: "申请已提交，等待审核", item };
 					},

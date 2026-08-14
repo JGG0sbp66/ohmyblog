@@ -8,6 +8,7 @@ import { demoPlugin } from "./plugins/demo.plugin.js";
 import { logPlugin } from "./plugins/logger.plugin.js";
 import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
+import { captchaRoute } from "./routes/captcha.route.js";
 import { configRoute } from "./routes/config.route.js";
 import { emailRoute } from "./routes/email.route.js";
 import { feedRoute } from "./routes/feed.route.js";
@@ -81,6 +82,7 @@ const app = new Elysia()
 		app
 			.use(healthRoute)
 			.use(authRoute)
+			.use(captchaRoute)
 			.use(configRoute)
 			.use(emailRoute)
 			.use(friendLinkRoute)

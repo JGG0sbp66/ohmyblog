@@ -22,6 +22,7 @@ import {
 	CHALLENGE_TTL_SECONDS,
 	createChallenge,
 } from "../utils/two-factor-challenge";
+import { captchaService } from "./captcha/captcha.service";
 import { emailSenderService } from "./email/email-sender.service";
 
 /**
@@ -87,8 +88,14 @@ class AuthService {
 	 * @param identifier 用户名或邮箱
 	 * @param passwordPlain 明文密码
 	 * @param ip 客户端 IP，用于异地登录检测和登录历史记录
+	 * @param captchaToken 人机验证的一次性凭证，未启用验证码时可不传
 	 */
-	async login(identifier: string, passwordPlain: string, ip: string) {
+	async login(
+		identifier: string,
+		passwordPlain: string,
+		ip: string,
+		captchaToken?: string,
+	) {
 		// 0. 限流。按 IP 而不按账号：用户名在站点上是公开的，按账号计等于给
 		//    任何人一个把站长锁在门外的开关。
 		//    在密码校验之前拦下来，顺带也挡住了拿 Argon2 的计算开销打 CPU
@@ -96,6 +103,18 @@ class AuthService {
 			this.logger.warn({ ip, identifier }, "登录请求被限流");
 			throw new BusinessError(RATE_LIMITED_MESSAGE, { status: 429 });
 		}
+
+		// 0.5 人机验证。位置是夹出来的，两边都不能挪：
+		//
+		//     在限流**之后** —— 校验要向服务商发一次外网请求，放在限流前面
+		//     等于给了任何人一个「刷我的接口就能让我无限次去打 Cloudflare」
+		//     的放大器。
+		//
+		//     在查账号**之前** —— 反过来的话，「验证码错」和「账号不存在」
+		//     会走出不同的响应路径，登录接口就成了账号枚举器。
+		//
+		// 未启用验证码、或登录这个入口没勾上时，这一行什么都不做
+		await captchaService.ensureVerified("login", captchaToken, ip);
 
 		// 1. 查找用户
 		const user = await userDao.findByIdentifier(identifier);
@@ -192,8 +211,15 @@ class AuthService {
 	 *
 	 * @param email 用户邮箱
 	 * @param ip 请求来源 IP，写入验证码记录供审计
+	 * @param captchaToken 人机验证的一次性凭证，未启用验证码时可不传
 	 */
-	async forgotPassword(email: string, ip: string) {
+	async forgotPassword(email: string, ip: string, captchaToken?: string) {
+		// 人机验证放在查邮箱之前。这个接口的每条失败路径对外都必须是同一句话，
+		// 而验证码的结论与邮箱是否注册无关，所以它抛出的错不会破坏防枚举 ——
+		// 反过来放在后面才会：那样「邮箱存在但验证码错」和「邮箱不存在」的
+		// 响应就不一样了
+		await captchaService.ensureVerified("forgotPassword", captchaToken, ip);
+
 		const user = await userDao.findByIdentifier(email);
 		// 邮箱不存在时静默返回，不暴露任何信息
 		if (!user) {

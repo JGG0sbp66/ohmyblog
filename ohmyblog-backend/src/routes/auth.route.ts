@@ -55,6 +55,7 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 						body.identifier,
 						body.password,
 						ip,
+						body.captchaToken,
 					);
 
 					if (result.requiresTwoFactor) {
@@ -164,7 +165,7 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				"/forgot-password",
 				async ({ body, request, server }) => {
 					const ip = getClientIp({ request, server });
-					await authService.forgotPassword(body.email, ip);
+					await authService.forgotPassword(body.email, ip, body.captchaToken);
 					// 无论邮箱是否存在，都返回同样的提示，防止接口被用来枚举有效邮箱
 					return {
 						message: "若邮箱存在，验证码已发送，请注意查收",
