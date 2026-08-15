@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
-import { PUBLIC_DIR, UPLOADS_DIR } from "./constants";
+import { PUBLIC_DIR } from "./constants";
 import { config } from "./env";
 import { demoPlugin } from "./plugins/demo.plugin.js";
 import { logPlugin } from "./plugins/logger.plugin.js";
@@ -18,6 +18,7 @@ import { postRoute } from "./routes/post.route.js";
 import { sitemapRoute } from "./routes/sitemap.route.js";
 import { twoFactorRoute } from "./routes/two-factor.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
+import { uploadsStaticRoute } from "./routes/uploads-static.route.js";
 import { viewerRoute } from "./routes/viewer.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
 import { isDemo, isProduction } from "./utils/runtime";
@@ -65,21 +66,14 @@ const app = new Elysia()
 	.use(responsePlugin)
 	// 演示模式写入闸门：必须在业务路由之前，且早于任何写 handler
 	.use(demoPlugin)
-	.use(
-		// 静态文件服务：提供上传的图片、头像、图标等资源访问
-		staticPlugin({
-			assets: UPLOADS_DIR,
-			prefix: "/api/uploads",
-			// 上传资源文件名可能含非 ASCII 字符（如中文平台名生成的社交图标），
-			// 浏览器会对其做 percent 编码，需解码后再匹配磁盘文件，否则 404
-			decodeURI: true,
-		}),
-	)
 	// 挂载路由
 	.use(feedRoute)
 	.use(sitemapRoute)
 	.group("/api", (app) =>
 		app
+			// 上传资源静态服务：自写路由实时读磁盘，勿改回 staticPlugin
+			// （其缓存会在文件覆盖变大后返回截断内容，详见 uploads-static.route.ts）
+			.use(uploadsStaticRoute)
 			.use(healthRoute)
 			.use(authRoute)
 			.use(captchaRoute)
