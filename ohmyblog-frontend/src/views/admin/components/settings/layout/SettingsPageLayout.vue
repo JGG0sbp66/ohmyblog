@@ -12,8 +12,14 @@ const isMobile = useIsMobile();
 
 <template>
   <div class="flex flex-col lg:flex-row gap-8 onload-animation min-h-0 flex-1">
-    <!-- 左侧：展示/预览区域（移动端不渲染） -->
-    <div v-if="!isMobile" class="flex-1 flex flex-col min-h-0">
+    <!--
+      左侧：展示/预览区域（移动端不渲染）
+      min-w-0 必需：预览组件（如 BrowserMockup）内部有 ResizeObserver 写入的 px
+      宽度，会经 intrinsic sizing 一路传递上来变成本列的 flex 自动最小宽度，
+      导致侧边栏 hover 展开压缩主内容时本列拒绝收缩、整行内容被平移推出行外。
+      不能用 overflow-hidden 替代：它同时会裁掉预览卡片溢出列外的阴影。
+    -->
+    <div v-if="!isMobile" class="flex-1 flex flex-col min-h-0 min-w-0">
       <slot name="preview" />
     </div>
 
