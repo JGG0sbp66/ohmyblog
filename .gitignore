@@ -46,6 +46,7 @@ perf/
 .DS_Store
 .vscode/
 .kiro/
+.qoder/
 !.vscode/extensions.json
 .idea/
 *.suo

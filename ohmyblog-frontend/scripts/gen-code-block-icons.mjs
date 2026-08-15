@@ -3,7 +3,8 @@
 // 生成 src/composables/code-block/icons.generated.ts —— 代码块 header 的语言图标表。
 //
 // 为什么是「构建期生成 + 产物入库」而不是运行时依赖 Iconify：
-//   代码块语言是动态的（lowlight common 37 种，且用户可在下拉里输入任意字符串），
+//   代码块语言是动态的（语言集见 composables/code-block/languages.ts，
+//   且用户可在下拉里输入任意字符串），
 //   unplugin-icons 这类编译期方案要求静态路径、接不了动态语言名；
 //   而整包 @iconify-json/vscode-icons 有 1500+ 图标，全量进 bundle 不可接受。
 //   这里只抽用得到的那几十个，产出一张纯字符串表，运行时零依赖。
@@ -42,49 +43,117 @@ const TARGET_CONTRAST = 3.6;
 
 /**
  * 语言 → 图标源（`collection:iconName`）。
- * 键取自 lowlight `common` 的语法名（见 composables/code-block/highlight.ts），
- * 未列出的语言在运行时回落到通用图标。
+ * 键取自语言集的语法名与常用别名（见 composables/code-block/languages.ts
+ * 的 GRAMMARS 与 POPULAR_ALIASES），未列出的语言（reasonml/scheme/thrift/
+ * ebnf/isbl 等 vscode-icons 无对应图标）在运行时回落到通用图标。
+ * 别名条目复用主语言的图标，保证选中 toml/yml/md 时 header 不回落兜底图标。
  */
 const ICON_SOURCES = {
+  ada: "vscode-icons:file-type-ada",
+  apache: "vscode-icons:file-type-apache",
+  applescript: "vscode-icons:file-type-applescript",
   arduino: "vscode-icons:file-type-arduino",
-  // vscode-icons 没有 shell/bash 图标，借 devicon 的
+  // vscode-icons 没有 shell/bash 图标，借 devicon 的；sh/zsh/console 同属会话类
   bash: "devicon:bash",
   shell: "devicon:bash",
+  sh: "devicon:bash",
+  zsh: "devicon:bash",
+  console: "devicon:bash",
+  bat: "vscode-icons:file-type-bat",
+  batch: "vscode-icons:file-type-bat",
   c: "vscode-icons:file-type-c",
+  clojure: "vscode-icons:file-type-clojure",
+  cmake: "vscode-icons:file-type-cmake",
+  coffeescript: "vscode-icons:file-type-coffeescript",
   cpp: "vscode-icons:file-type-cpp",
+  cs: "vscode-icons:file-type-csharp",
   csharp: "vscode-icons:file-type-csharp",
   css: "vscode-icons:file-type-css",
+  dart: "vscode-icons:file-type-dartlang",
   diff: "vscode-icons:file-type-diff",
+  // vscode-icons 里 docker 图标叫 file-type-docker；docker 别名一并配上
+  dockerfile: "vscode-icons:file-type-docker",
+  docker: "vscode-icons:file-type-docker",
+  dos: "vscode-icons:file-type-bat",
+  elixir: "vscode-icons:file-type-elixir",
+  elm: "vscode-icons:file-type-elm",
+  erlang: "vscode-icons:file-type-erlang",
+  fortran: "vscode-icons:file-type-fortran",
+  fsharp: "vscode-icons:file-type-fsharp",
+  // Gherkin 是 Cucumber 的语法，借其图标
+  gherkin: "vscode-icons:file-type-cucumber",
+  glsl: "vscode-icons:file-type-glsl",
   go: "vscode-icons:file-type-go",
+  golang: "vscode-icons:file-type-go",
+  gradle: "vscode-icons:file-type-gradle",
   graphql: "vscode-icons:file-type-graphql",
+  groovy: "vscode-icons:file-type-groovy",
+  handlebars: "vscode-icons:file-type-handlebars",
+  haskell: "vscode-icons:file-type-haskell",
+  html: "vscode-icons:file-type-html",
+  http: "vscode-icons:file-type-http",
   ini: "vscode-icons:file-type-ini",
   java: "vscode-icons:file-type-java",
   javascript: "vscode-icons:file-type-js",
+  js: "vscode-icons:file-type-js",
   json: "vscode-icons:file-type-json",
+  jsonc: "vscode-icons:file-type-json",
+  // vscode-icons 没有独立的 jsx/tsx 图标，用 React 系列代替
+  jsx: "vscode-icons:file-type-reactts",
+  tsx: "vscode-icons:file-type-reactts",
+  julia: "vscode-icons:file-type-julia",
   kotlin: "vscode-icons:file-type-kotlin",
+  latex: "vscode-icons:file-type-tex",
   less: "vscode-icons:file-type-less",
+  lisp: "vscode-icons:file-type-lisp",
   // GNU Make 无专属图标，用 GNU 标志代替
   makefile: "vscode-icons:file-type-gnu",
   markdown: "vscode-icons:file-type-markdown",
+  matlab: "vscode-icons:file-type-matlab",
+  md: "vscode-icons:file-type-markdown",
+  nginx: "vscode-icons:file-type-nginx",
+  nix: "vscode-icons:file-type-nix",
   objectivec: "vscode-icons:file-type-objectivec",
+  ocaml: "vscode-icons:file-type-ocaml",
   perl: "vscode-icons:file-type-perl",
   php: "vscode-icons:file-type-php",
   "php-template": "vscode-icons:file-type-php",
   plaintext: "vscode-icons:file-type-text",
   text: "vscode-icons:file-type-text",
+  powershell: "vscode-icons:file-type-powershell",
+  prolog: "vscode-icons:file-type-prolog",
+  // .properties 无专属图标，用通用配置图标
+  properties: "vscode-icons:file-type-config",
+  protobuf: "vscode-icons:file-type-protobuf",
+  ps1: "vscode-icons:file-type-powershell",
+  py: "vscode-icons:file-type-python",
   python: "vscode-icons:file-type-python",
   "python-repl": "vscode-icons:file-type-python",
   r: "vscode-icons:file-type-r",
+  rs: "vscode-icons:file-type-rust",
   ruby: "vscode-icons:file-type-ruby",
   rust: "vscode-icons:file-type-rust",
+  scala: "vscode-icons:file-type-scala",
   scss: "vscode-icons:file-type-scss",
   sql: "vscode-icons:file-type-sql",
+  stylus: "vscode-icons:file-type-stylus",
+  svg: "vscode-icons:file-type-svg",
   swift: "vscode-icons:file-type-swift",
+  tcl: "vscode-icons:file-type-tcl",
+  tex: "vscode-icons:file-type-tex",
+  // toml 是 ini 的内置别名，但用户常直接写 toml，单独配图（深色 header 用 light 变体）
+  toml: "vscode-icons:file-type-light-toml",
+  ts: "vscode-icons:file-type-typescript",
+  twig: "vscode-icons:file-type-twig",
   typescript: "vscode-icons:file-type-typescript",
   vbnet: "vscode-icons:file-type-vb",
+  verilog: "vscode-icons:file-type-verilog",
+  vhdl: "vscode-icons:file-type-vhdl",
+  vim: "vscode-icons:file-type-vim",
   wasm: "vscode-icons:file-type-wasm",
   xml: "vscode-icons:file-type-xml",
   yaml: "vscode-icons:file-type-yaml",
+  yml: "vscode-icons:file-type-yaml",
 };
 
 // ─── 色彩工具 ────────────────────────────────────────────────────────────────

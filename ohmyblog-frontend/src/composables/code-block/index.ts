@@ -8,7 +8,11 @@
 // 因此合并的粒度是「逻辑层」而非「组件」：语法高亮、语言图标、行数计算、交互常量
 //   全部收敛到这里，两端只各自负责把它们摆进 DOM。
 
-export { listAvailableLanguages, highlightToHtml } from "./highlight";
+export {
+  listAvailableLanguages,
+  highlightToHtml,
+  detectLanguage,
+} from "./highlight";
 export { resolveLanguageIcon, preloadLanguageIcons } from "./icons";
 export { formatLanguageLabel } from "./labels";
 export {

@@ -16,6 +16,7 @@
 -->
 <script setup lang="ts">
 import { onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import {
   BOX_HEIGHT,
   getBoxVendor,
@@ -25,6 +26,7 @@ import {
 } from "@/composables/captcha-vendor";
 import { useLang } from "@/composables/lang.hook";
 import { useTheme } from "@/composables/theme.hook";
+import Loading from "@/components/common/item/Loading.vue";
 import type { TCaptchaProvider } from "@/api/shared";
 
 const props = withDefaults(
@@ -45,6 +47,11 @@ const token = defineModel<string>({ default: "" });
 const { t } = useLang();
 const { isDark } = useTheme();
 
+// 根容器挂 auto-animate：切服务商时 box 框 ↔ score 声明文字是「常驻组件内部
+// 的直接子节点互换」，外层的 auto-animate 都观察不到，容器高度会瞬变，
+// 只能在这一层自己接住
+const [widgetRef] = useAutoAnimate();
+
 const boxRef = useTemplateRef<HTMLDivElement>("boxRef");
 
 /** 脚本没加载完之前提示一句，免得站长以为配错了 */
@@ -53,15 +60,28 @@ const status = ref<"loading" | "ready" | "failed">("loading");
 /** box 模式下厂商返回的 widget 句柄，reset / remove 都要用它 */
 let widgetId: string | null = null;
 
+/**
+ * 当前 widget 是【哪一家】渲染出来的。
+ * 不能用 props.provider 代替 —— watch 触发重挂时 props 已经变成新服务商了，
+ * 拿新服务商去 remove 旧服务商的 widget 必然失败，旧框就会一直留在容器里，
+ * 来回切服务商会叠出好几个验证码框
+ */
+let mountedProvider: TCaptchaProvider | null = null;
+
+/** mount 是异步的，快速切换时会有多个同时在跑，只有最后一次才允许落地 */
+let mountSeq = 0;
+let alive = true;
+
 /** 卸载已渲染的框。切服务商、换 siteKey、组件卸载时都要先清干净 */
 const teardown = () => {
   if (widgetId === null) return;
   try {
-    getBoxVendor(props.provider)?.remove(widgetId);
+    getBoxVendor(mountedProvider!)?.remove(widgetId);
   } catch {
     // 厂商脚本在页面卸载途中可能已经不可用了，这里失败无所谓
   }
   widgetId = null;
+  mountedProvider = null;
 };
 
 /** 按当前 provider / siteKey 重新挂一个框 */
@@ -72,20 +92,30 @@ const mount = async () => {
 
   if (!props.siteKey) return;
 
+  // 先把本次要挂的参数快照下来，后面一律用快照，不读可能已经变掉的 props
+  const seq = ++mountSeq;
+  const provider = props.provider;
+  const siteKey = props.siteKey;
+
   try {
-    await loadVendorScript(props.provider, props.siteKey);
+    await loadVendorScript(provider, siteKey);
   } catch {
+    if (seq !== mountSeq || !alive) return;
     status.value = "failed";
     return;
   }
 
-  if (vendorKind(props.provider) === "score") {
+  // 等待期间来了更新的 mount（或组件已卸载），本次直接放弃，
+  // 否则会和后来的那次各挂一个框，叠出多个验证码
+  if (seq !== mountSeq || !alive) return;
+
+  if (vendorKind(provider) === "score") {
     // v3 没有要渲染的东西，脚本就绪即可用
     status.value = "ready";
     return;
   }
 
-  const vendor = getBoxVendor(props.provider);
+  const vendor = getBoxVendor(provider);
   const el = boxRef.value;
   if (!vendor || !el) {
     status.value = "failed";
@@ -93,7 +123,7 @@ const mount = async () => {
   }
 
   widgetId = vendor.render(el, {
-    sitekey: props.siteKey,
+    sitekey: siteKey,
     theme: isDark.value ? "dark" : "light",
     callback: (value: string) => {
       token.value = value;
@@ -107,6 +137,7 @@ const mount = async () => {
       token.value = "";
     },
   });
+  mountedProvider = provider;
 
   status.value = "ready";
 };
@@ -119,7 +150,7 @@ const reset = () => {
   token.value = "";
   if (widgetId === null) return;
   try {
-    getBoxVendor(props.provider)?.reset(widgetId);
+    getBoxVendor(mountedProvider!)?.reset(widgetId);
   } catch {
     // 同 teardown：厂商脚本不可用时忽略
   }
@@ -171,23 +202,31 @@ watch(isDark, () => {
   if (vendorKind(props.provider) === "box") void mount();
 });
 
-onBeforeUnmount(teardown);
+onBeforeUnmount(() => {
+  alive = false;
+  teardown();
+});
 
 defineExpose({ reset, execute });
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 text-left">
+  <div ref="widgetRef" class="flex flex-col gap-2 text-left">
     <!-- box 模式：厂商的框挂在这里。留出高度，免得脚本加载完那一刻表单往下跳 -->
     <div
       v-if="vendorKind(provider) === 'box'"
       ref="boxRef"
       :style="{ minHeight: `${BOX_HEIGHT[provider] ?? 65}px` }"
-      class="flex items-center"
+      class="flex items-center transition-[min-height] duration-250 ease-in-out"
     >
-      <span v-if="status === 'loading'" class="text-xs text-fg-soft">
-        {{ t("components.common.captcha.loading") }}
-      </span>
+      <!-- 加载指示器单独套一层全宽居中容器：不能给 boxRef 加 justify-center，
+           否则厂商渲染出来的验证框也会跟着居中 -->
+      <div
+        v-if="status === 'loading'"
+        class="flex w-full items-center justify-center"
+      >
+        <Loading size-class="w-6 h-6" color-class="text-accent" />
+      </div>
     </div>
 
     <!-- score 模式：没有框，但 Google 要求页面上有一句声明 -->
