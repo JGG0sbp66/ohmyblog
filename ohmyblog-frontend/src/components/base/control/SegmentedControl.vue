@@ -3,7 +3,7 @@
 /**
  * 极简分段选择器 (Apple / Linear 风格)
  */
-import { computed } from "vue";
+import { computed, type Component } from "vue";
 
 const props = defineProps<{
   /** 当前选中的值 */
@@ -12,6 +12,8 @@ const props = defineProps<{
   options: Array<{
     value: T;
     label: string;
+    /** 可选的图标组件，渲染在文字左侧（品牌 logo 宽高比不一，由使用方自行定高） */
+    icon?: Component;
   }>;
 }>();
 
@@ -40,12 +42,13 @@ const selectedIndex = computed(() =>
       v-for="opt in options"
       :key="String(opt.value)"
       type="button"
-      class="relative z-10 flex-1 py-2 text-xs font-medium rounded-lg cursor-pointer transition-colors duration-200"
+      class="relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium rounded-lg cursor-pointer transition-colors duration-200"
       :class="
         modelValue === opt.value ? 'text-fg' : 'text-fg-soft hover:text-fg'
       "
       @click="$emit('update:modelValue', opt.value)"
     >
+      <component :is="opt.icon" v-if="opt.icon" class="h-3.5 w-auto shrink-0" />
       {{ opt.label }}
     </button>
   </div>

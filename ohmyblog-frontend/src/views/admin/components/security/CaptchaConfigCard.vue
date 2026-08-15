@@ -15,6 +15,9 @@ import FieldLabel from "@/components/base/input/FieldLabel.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ModuleItem from "@/components/common/item/ModuleItem.vue";
 import CaptchaTestPanel from "./CaptchaTestPanel.vue";
+import TurnstileIcon from "@/components/common/captcha/icons/TurnstileIcon.vue";
+import HCaptchaIcon from "@/components/common/captcha/icons/HCaptchaIcon.vue";
+import ReCaptchaIcon from "@/components/common/captcha/icons/ReCaptchaIcon.vue";
 import {
   CAPTCHA_PROVIDERS,
   RECAPTCHA_DEFAULT_MIN_SCORE,
@@ -52,10 +55,18 @@ const current = computed(() => form.value.credentials[form.value.provider]);
 /** reCAPTCHA v3 才有分数线 */
 const isScoreProvider = computed(() => form.value.provider === "recaptcha");
 
+/** 服务商对应的官方品牌图标（SVG 数据取自 Iconify 的 logos 集，见各组件内注释） */
+const providerIcons: Record<TCaptchaProvider, typeof TurnstileIcon> = {
+  turnstile: TurnstileIcon,
+  hcaptcha: HCaptchaIcon,
+  recaptcha: ReCaptchaIcon,
+};
+
 const providerOptions = computed(() =>
   CAPTCHA_PROVIDERS.map((value) => ({
     value,
     label: t(`views.admin.Security.providers.${value}`),
+    icon: providerIcons[value],
   })),
 );
 
