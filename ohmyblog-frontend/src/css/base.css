@@ -39,6 +39,32 @@
     background-color: oklch(0.6 0.18 var(--app-hue) / 0.28);
     color: inherit;
   }
+
+  /*
+    压掉浏览器自带的密码框装饰，避免与 TipInput 自己的小眼睛叠成两个：
+
+    - ::-ms-reveal：Chrome / Edge 原生「显示密码」眼睛按钮。这是 Edge 捐给
+      Chromium 的实现，作者侧钩子至今仍叫 -ms-reveal，微软官方文档给出的
+      移除方式就是 display: none。
+    - ::-ms-clear：同源的输入清除小叉，一并移除保持输入框右侧干净。
+    - ::-webkit-credentials-auto-fill-button：Safari 有可用登录凭据时出现的
+      钥匙图标，同样顶在输入框右侧，与我们自己的 suffix 按钮争位。
+
+    ⚠ -webkit-* 与 -ms-* 两类不能写进同一条选择器列表：列表里出现浏览器
+    不认识的伪元素时，整条规则（包括同列表的其他选择器）会被直接丢弃。
+    同族的 -ms-reveal / -ms-clear 则被同一批引擎认识，可以合写。
+
+    另注：Firefox 桌面版 Release 渠道尚未默认启用原生眼睛（bug 502258，
+    仍在偏好开关后面），暂无冲突；一旦它默认上线且不提供作者钩子，
+    需要时可在 @supports (-moz-appearance: none) 里隐藏 TipInput 的按钮。
+  */
+  input::-ms-reveal,
+  input::-ms-clear {
+    display: none;
+  }
+  input::-webkit-credentials-auto-fill-button {
+    display: none;
+  }
   .dark ::selection {
     background-color: oklch(0.65 0.18 var(--app-hue) / 0.35);
     color: inherit;
