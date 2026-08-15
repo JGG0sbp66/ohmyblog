@@ -46,6 +46,17 @@ export type {
 
 export type { TResetPasswordDTO as ForgotPasswordForm } from "@server/dtos/auth.dto";
 
+import type { TSiteInfoConfigUpsertDTO } from "@server/dtos/config.dto";
+
+/**
+ * 页脚链接分组（站点配置里的一项）。
+ *
+ * 从 site_info 的 DTO 里推导而不是另写一份接口，避免前端结构和后端校验各自漂移。
+ */
+export type TFooterLinkGroup = NonNullable<
+  TSiteInfoConfigUpsertDTO["configValue"]["footerLinks"]
+>[number];
+
 // 4. 上传相关
 export {
   uploadLimits as UPLOAD_LIMITS,
@@ -54,3 +65,30 @@ export {
 } from "@server/db/constants/upload.constants";
 
 export type { TUploadKind } from "@server/db/constants/upload.constants";
+
+// 5. 两步验证相关
+export {
+  TOTP_DIGITS,
+  RECOVERY_CODE_COUNT,
+  TWO_FACTOR_EXHAUSTED_MESSAGE,
+  TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE,
+} from "@server/db/constants/two-factor.constants";
+
+// 6. 邮件验证码（忘记密码）
+export {
+  RESET_PASSWORD_CODE_TTL_MIN,
+  RESET_PASSWORD_RESEND_COOLDOWN_SEC,
+} from "@server/db/constants/email-verification.constants";
+
+// 7. 人机验证
+export {
+  captchaProviders as CAPTCHA_PROVIDERS,
+  captchaScenes as CAPTCHA_SCENES,
+  CAPTCHA_FAILED_MESSAGE,
+  RECAPTCHA_DEFAULT_MIN_SCORE,
+} from "@server/db/constants/captcha.constants";
+
+export type {
+  TCaptchaProvider,
+  TCaptchaScene,
+} from "@server/db/constants/captcha.constants";

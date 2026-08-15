@@ -1,6 +1,14 @@
 {
   "components": {
     "common": {
+      "captcha": {
+        "loading": "Loading verification…",
+        "loadFailed": "Verification failed to load. Check your connection and refresh",
+        "required": "Complete the human verification first",
+        "recaptchaNotice": "This site is protected by Google reCAPTCHA.",
+        "privacyPolicy": "Privacy Policy",
+        "termsOfService": "Terms of Service"
+      },
       "layout": {
         "Header": {
           "nav": {
@@ -45,6 +53,7 @@
             "post-edit": "Edit Post",
             "emails": "Emails",
             "friend-links": "Friend Links",
+            "security": "Security",
             "settings": "Settings",
             "default": "Admin"
           },
@@ -104,7 +113,8 @@
       "ToggleTheme": {
         "light": "Light",
         "dark": "Dark",
-        "auto": "System"
+        "auto": "System",
+        "eyecare": "Eye Care"
       }
     }
   },
@@ -314,12 +324,82 @@
           }
         }
       },
+      "Security": {
+        "title": "Human verification",
+        "description": "Rate limiting only caps one IP at a time, so a distributed attack routes around it. Turn this on and the entries you pick will also ask visitors to prove they are human.",
+        "toggle": {
+          "title": "Enable human verification",
+          "description": "While off nothing is checked anywhere, exactly as if it were never configured."
+        },
+        "providers": {
+          "turnstile": "Turnstile",
+          "hcaptcha": "hCaptcha",
+          "recaptcha": "reCAPTCHA v3"
+        },
+        "provider": {
+          "label": "Provider",
+          "hint": "Keys are stored per provider, so switching never overwrites the previous one. Only the selected provider is active."
+        },
+        "siteKey": {
+          "label": "Site key",
+          "placeholder": "The public key from your provider dashboard",
+          "hint": "Public by design, it ships to every visitor's browser. Exposure is not a problem."
+        },
+        "secretKey": {
+          "label": "Secret key",
+          "placeholder": "The server key from your provider dashboard",
+          "hint": "Used only on your server. If it leaks, anyone can forge a passing verification."
+        },
+        "minScore": {
+          "label": "Score threshold",
+          "hint": "Only reCAPTCHA v3 has this. It returns a 0–1 confidence score instead of a yes or no, where 1 is most human-like, so raising the threshold makes it stricter rather than looser. Start at 0.5, then run the test below and tune against a real score."
+        },
+        "test": {
+          "label": "Test it first",
+          "hint": "The only way to know your keys work is to ask the provider with a real credential. The box below is what visitors will see. Complete it, then hit Test. Nothing already saved is touched.",
+          "button": "Test",
+          "needToken": "Complete the box above first",
+          "passed": "Passed, keys work",
+          "passedWithScore": "Passed, scored {score}",
+          "errors": {
+            "unknown": "Failed, and the provider gave no reason",
+            "raw": "Failed: {code}",
+            "invalid-input-secret": "Wrong secret key. Check for a truncated copy, or the site key and secret key being swapped",
+            "missing-input-secret": "No secret key entered",
+            "invalid-input-response": "The credential from the box is invalid. Complete the box again, or check that both keys belong to the same site",
+            "missing-input-response": "No credential received. Complete the box above first",
+            "timeout-or-duplicate": "That credential expired or was already used. Complete the box again",
+            "bad-request": "The provider rejected the request. Check that both keys belong to the same site and the right provider is selected",
+            "invalid-widget-id": "The site key and secret key belong to different sites",
+            "low-score": "Passed the human check but scored below your threshold. Lower the score threshold and retry",
+            "not-using-dummy-secret": "A test credential was used with a secret key that is not the provider's test key",
+            "request-failed": "Your server could not reach the provider. Check its network or proxy"
+          }
+        },
+        "scenes": {
+          "label": "Which entries to protect",
+          "hint": "Only the entries you tick are affected. The rest behave exactly as they do now.",
+          "login": {
+            "title": "Sign in",
+            "description": "Stops password guessing. Note: if the provider is unreachable, you cannot sign in either."
+          },
+          "forgotPassword": {
+            "title": "Forgot password",
+            "description": "Stops this endpoint being used to spray email or probe for addresses."
+          },
+          "friendApply": {
+            "title": "Link exchange requests",
+            "description": "Stops bot submissions. It is the only one of the three with no identity gate at all."
+          }
+        }
+      },
       "Settings": {
         "nav": {
           "appearance": "Appearance",
           "site": "Site Info",
           "admin": "Admin Info",
-          "smtp": "SMTP Settings"
+          "smtp": "SMTP Settings",
+          "security": "Security"
         },
         "announcement": {
           "section": {
@@ -357,7 +437,11 @@
             "description": "Set your site name and icon, which will appear in the browser tab."
           },
           "hero": {
-            "description": "Set the main title and subtitles displayed on the homepage, with support for automatic cycling."
+            "description": "Set the main title and subtitles displayed on the homepage, with support for automatic cycling.",
+            "enabled": {
+              "label": "Enable homepage banner",
+              "description": "When off, the banner is hidden on the site. The uploaded image and titles are kept."
+            }
           },
           "footer": {
             "title": "Footer Settings",
@@ -378,7 +462,8 @@
               "addLink": "Add Link",
               "groupTitlePlaceholder": "Group title (e.g., About)",
               "namePlaceholder": "Name (e.g., GitHub)",
-              "urlPlaceholder": "URL (e.g., https://...)"
+              "urlPlaceholder": "URL (e.g., https://...)",
+              "reorderHint": "Press and drag a card to reorder"
             }
           }
         },
@@ -387,6 +472,58 @@
             "title": "Account Security",
             "description": "Manage your login credentials, including username, email, and password.",
             "passwordPlaceholder": "Leave blank to keep current"
+          },
+          "twoFactor": {
+            "title": "Two-Factor Authentication",
+            "description": "Once enabled, signing in requires a code from your authenticator app in addition to your password.",
+            "enabledAt": "Enabled on {date}",
+            "enable": { "action": "Enable" },
+            "setup": {
+              "step1": {
+                "title": "Scan the QR code",
+                "description": "Scan the code below with any authenticator app such as Google Authenticator, 1Password or Bitwarden.",
+                "qrAlt": "Two-factor authentication QR code",
+                "manualHint": "Can't scan? Enter this key into your authenticator app manually",
+                "manualLabel": "Manual entry key"
+              },
+              "step2": {
+                "title": "Confirm the code",
+                "description": "Enter the code shown in your authenticator app. Two-factor authentication is only enabled once this succeeds.",
+                "label": "Verification code",
+                "placeholder": "Enter 6-digit code",
+                "hint": "The code rotates every 30 seconds. If it keeps failing, check that your device clock is accurate.",
+                "submit": "Confirm and enable"
+              },
+              "step3": {
+                "title": "Save your recovery codes",
+                "description": "Use a recovery code to sign in if you lose your device or your authenticator is wiped. Each code works once, and they are shown only this time."
+              }
+            },
+            "codes": {
+              "remaining": "{remaining} of {total} recovery codes left",
+              "copy": "Copy all",
+              "download": "Download as file",
+              "copied": "Recovery codes copied to clipboard",
+              "copyFailed": "Copy failed, please select the codes manually",
+              "confirmSaved": "I have saved these recovery codes somewhere safe"
+            },
+            "regenerate": {
+              "action": "Regenerate recovery codes",
+              "title": "Regenerate recovery codes",
+              "description": "Generating new codes invalidates all existing ones. Enter the code from your authenticator app first.",
+              "submit": "Generate new codes",
+              "doneHint": "New recovery codes are ready and all previous ones are now invalid. Save them right away."
+            },
+            "disable": {
+              "action": "Disable",
+              "title": "Disable two-factor authentication",
+              "question": "After disabling, only your password will be required to sign in, which significantly weakens account security.",
+              "warning": "All existing recovery codes will be deleted. This cannot be undone.",
+              "password": "Current password",
+              "passwordPlaceholder": "Enter your password to confirm",
+              "required": "Please enter your current password",
+              "confirm": "Disable"
+            }
           },
           "profile": {
             "title": "Profile",
@@ -602,7 +739,9 @@
           },
           "codeBlock": {
             "languageEmpty": "No matching language",
-            "copy": "Copy code"
+            "copy": "Copy code",
+            "wrapOn": "Enable line wrap",
+            "wrapOff": "Disable line wrap"
           },
           "slashMenu": {
             "empty": "No matching commands",
@@ -694,7 +833,26 @@
       },
       "submit": "Sign In",
       "backToHome": "Back to Home",
-      "forgotPassword": "Forgot password?"
+      "forgotPassword": "Forgot password?",
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Enter the code currently shown in your authenticator app.",
+        "recoveryDescription": "Enter any recovery code you haven't used yet.",
+        "code": {
+          "label": "Two-factor authentication",
+          "placeholder": "Code or recovery code",
+          "hint": "Enter the 6-digit code from your authenticator app, or a recovery code"
+        },
+        "recoveryCode": {
+          "label": "Recovery code",
+          "placeholder": "e.g. ABCDE-FGHJK",
+          "hint": "One of the recovery codes you saved when enabling two-factor authentication. Each works once."
+        },
+        "submit": "Verify and sign in",
+        "useRecoveryCode": "Use a recovery code",
+        "useTotp": "Use authenticator code",
+        "back": "Back"
+      }
     },
     "forgotPassword": {
       "brand": {
@@ -721,7 +879,7 @@
         "code": {
           "label": "Verification Code",
           "placeholder": "Enter 6-digit code",
-          "hint": "The code is valid for 15 minutes"
+          "hint": "The code is valid for {minutes} minutes"
         },
         "newPassword": {
           "label": "New Password",
@@ -729,7 +887,21 @@
         },
         "submit": "Reset Password",
         "back": "Back to previous step",
-        "resend": "Didn't receive? Resend"
+        "resend": "Didn't receive? Resend",
+        "resendCooldown": "Resend in {seconds}s"
+      },
+      "unavailable": {
+        "title": "Email recovery unavailable",
+        "description": "This site has no mail service configured, so the code cannot be sent. You can reset the password directly on the server via the command line.",
+        "step1": "Sign in to the server where this site is deployed",
+        "step2": "Run the command matching your deployment:",
+        "step3": "Enter the new password when prompted, then return to the login page",
+        "cmdBinary": "Binary",
+        "cmdDocker": "Docker",
+        "cmdSource": "From source",
+        "copy": "Copy command",
+        "twoFactorToggle": "Authenticator lost too, also turn off two-factor",
+        "backToLogin": "Back to Sign In"
       }
     },
     "friendLinks": {
@@ -758,6 +930,7 @@
       "actions": {
         "approve": "Approve",
         "reject": "Reject",
+        "reopen": "Review again",
         "delete": "Delete"
       },
       "reject": {
@@ -771,6 +944,11 @@
         "title": "Delete Friend Link",
         "message": "Are you sure you want to delete this friend link?",
         "warning": "This action cannot be undone!"
+      },
+      "reopen": {
+        "title": "Review Friend Link Again",
+        "message": "Move this friend link back to pending review?",
+        "warning": "It will be removed from the public page, and its join date and rejection reason will be cleared."
       }
     },
     "emails": {
@@ -977,6 +1155,11 @@
         "email_invalid": "Please enter a valid email address",
         "password_range": "Password must be between 6-50 characters"
       },
+      "two_factor": {
+        "token_invalid": "Please enter the 6-digit verification code",
+        "password_required": "Please enter your current password",
+        "code_invalid": "Please enter a verification code or recovery code"
+      },
       "appearance": {
         "theme_invalid": "Theme mode must be light/dark/auto",
         "hue_range": "Hue must be a number between 0 and 360",
@@ -1014,6 +1197,14 @@
       "post": {
         "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post",
         "excerpt_range": "Excerpt cannot exceed 500 characters"
+      },
+      "captcha": {
+        "provider_invalid": "Unsupported captcha provider",
+        "site_key_range": "Site key cannot exceed 255 characters",
+        "secret_key_range": "Secret key cannot exceed 255 characters",
+        "secret_key_required": "Secret key is required",
+        "token_required": "Missing verification credential",
+        "recaptcha_score_range": "Score threshold must be a number between 0 and 1"
       }
     },
     "next": "Next Step",
@@ -1022,7 +1213,10 @@
     "confirm": "Confirm",
     "finish": "Finish",
     "save": "Save Settings",
-    "delete": "Delete"
+    "delete": "Delete",
+    "loading": "Loading...",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Copy failed, please copy manually"
   },
   "stores": {
     "setup": {
@@ -1072,9 +1266,23 @@
       "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP is disabled. Please enable it in Settings first.",
       "验证码无效或已过期": "Verification code is invalid or expired",
       "账户已被封禁": "This account has been banned",
+      "请求过于频繁，请稍后再试": "Too many requests. Please try again shortly",
       "文章不存在": "Post not found",
       "只能永久删除回收站中的文章，请先将文章移入回收站": "Only posts in Trash can be permanently deleted",
-      "该 slug 已被其他文章使用": "This slug is already used by another post"
+      "该 slug 已被其他文章使用": "This slug is already used by another post",
+      "友链不存在": "Friend link not found",
+      "友链已处于待审批状态": "This friend link is already pending review",
+      "该友链已完成审批，请先重新审批": "This friend link was already reviewed. Reopen it first",
+      "两步验证已启用，请先关闭再重新绑定": "Two-factor authentication is already enabled. Disable it before setting it up again",
+      "请先获取两步验证二维码": "Please generate the two-factor QR code first",
+      "两步验证尚未启用": "Two-factor authentication is not enabled",
+      "验证码错误，请检查验证器时间是否准确": "Incorrect code. Check that your device clock is accurate",
+      "验证码错误或已失效": "That code is incorrect or no longer valid",
+      "验证会话已过期，请重新登录": "This verification session has expired. Please sign in again",
+      "验证失败次数过多，请重新登录": "Too many failed attempts. Please sign in again",
+      "密码错误": "Incorrect password",
+      "演示模式不支持该操作": "This action is not available in demo mode",
+      "人机验证未通过，请重试": "Human verification failed, please try again"
     },
     "success": {
       "保存成功": "Settings saved successfully",
@@ -1094,8 +1302,12 @@
       "申请已提交，等待审核": "Application submitted, pending review",
       "已通过": "Approved",
       "已拒绝": "Rejected",
+      "已重新进入待审批": "Moved back to pending review",
       "删除成功": "Deleted successfully",
-      "更新成功": "Updated successfully"
+      "更新成功": "Updated successfully",
+      "两步验证已启用": "Two-factor authentication enabled",
+      "两步验证已关闭": "Two-factor authentication disabled",
+      "恢复码已重新生成": "Recovery codes regenerated"
     }
   }
 }

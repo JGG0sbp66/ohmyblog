@@ -1,4 +1,4 @@
-# CLAUDE.md
+﻿# CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -19,8 +19,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 bun run dev            # 热重载，:3000；OpenAPI 文档在 /openapi（仅开发环境）
 bun run lint           # biome lint
 bun run lint:fix       # biome check --write（含格式化 + import 排序）
-bun run db:gen         # 改完 db/table/*.ts 后生成迁移 SQL
+bun run db:gen         # 改完 db/table/*.ts 后生成迁移 SQL（启动时自动 migrate，无需手动跑）
 bun run db:studio      # Drizzle Studio
+bun run reset-password # 带外重置密码：忘记密码又没配 SMTP 时的唯一自救途径
+                       # 可选 --disable-2fa 一起关掉两步验证（验证器丢了时用）
+                       # 实现是 src/index.ts 的子命令而非 scripts/ 脚本，
+                       # 因为 build.ts 只编译 src/index.ts，scripts/ 进不了二进制。
+                       # 部署后对应 ./ohmyblog reset-password，
+                       # Docker 里 docker exec -it -u 10001 <容器> /app/ohmyblog reset-password
+                       # （-u 10001 不能省：以 root 跑会让 SQLite 的 -wal/-shm 归 root，主程序随后写不动）
 bun run email          # react-email 预览服务，调 src/templates/*.tsx 用
 bun run build:linux    # 单文件编译，产物在 scripts/dist/<platform>/
 bun run docker         # 多阶段镜像（build context 是仓库根）
@@ -39,7 +46,7 @@ bun run format         # prettier --write .
 
 ### type-check 的既有噪音
 
-`vue-tsc` 会顺着路径别名把**后端源码**一起检查（用的是前端的 DOM/strict 配置，没有 `bun-types`），因此 `../ohmyblog-backend/**` 下有约 40 条既有报错（`Cannot find name 'Bun'`、JSX runtime、`possibly undefined` 等）——**全是噪音，不要去修**。另有 1 条既有前端报错：`HeroSubtitleEditor.vue:40`。
+`vue-tsc` 会顺着路径别名把**后端源码**一起检查（用的是前端的 DOM/strict 配置，没有 `bun-types`），因此 `../ohmyblog-backend/**` 下有约 40 条既有报错（`Cannot find name 'Bun'`、JSX runtime、`possibly undefined` 等）——**全是噪音，不要去修**。前端 `src/` 下没有既有报错。
 
 甄别自己引入的新错误：
 
@@ -139,11 +146,22 @@ bun run type-check 2>&1 | grep '^src/'
 
 数据库迁移在 `db/connection.ts` 里**顶层 await 自动执行**（迁移目录 `process.cwd()/db/drizzle`），不需要手动跑 `db:migrate`；`build.ts` 会把 `db/drizzle` 复制到产物旁边。
 
+`data/.env` 里的 `TRUST_PROXY` 是**前置反向代理的层数**而非布尔：`0`（默认）完全忽略 `X-Forwarded-For`，`1` 是一层 nginx / Caddy，`2` 是 CDN 再套一层 nginx。取的是 XFF 链条右端往左数第 n 段——代理是往客户端送来的值后面追加真实对端地址，所以最左边那段恒不可信。配错会导致所有按 IP 的判断取到错误的人，反向代理部署后记得设它。
+
 ### 前端主题与 i18n
 
 - 主题色是**单一色相变量**驱动：`--app-hue`（0-360）经 OKLCH 推导出全部语义色（`src/css/tailwind.css`），Tailwind 侧只暴露 `bg`/`bg-muted`/`bg-card`/`fg`/`fg-muted`/`fg-subtle`/`fg-soft`/`border`/`accent` 这套语义 token。写样式请用这些 token，不要硬编码颜色
 - `composables/theme.hook.ts` 是模块级单例；本地 localStorage 优先，只有用户从没设置过才拉服务端的 `appearance` 配置
 - `composables/lang.hook.ts` 包装了 `t()`：`api.errors.*` 走 `tm()` + 属性名直查，因为这一段的 key 就是**后端返回的原始中文 message**（含 `.` 会被 vue-i18n 当路径解析）。加后端错误文案时，两份 locale 的 `api.errors` 下都要加对应条目
+
+### 列表拖拽排序
+
+`composables/list-drag.hook.ts` 是唯一实现（页脚分组、分组内链接各持一个实例，嵌套两层靠内层 `stopPropagation` 分流）。没有拖拽手柄按钮 —— 整张卡片都是握持区，三条约定容易踩：
+
+- 列表项必须用**稳定 key**（`composables/stable-key.hook.ts` 的 WeakMap 发号）。下标做 key 时 Vue 只换内容不搬 DOM，让位动画无从计算，被拖的节点还会把内容甩给隔壁
+- 跟手位移用 `translate` 独立属性、放大用 `scale`，**不要合并成 `transform`**：复合属性只能整条一起过渡，跟手就会被拖出橡皮筋般的延迟
+- 项内控件按用途打标记：按钮套 `data-no-drag`（永不起拖），输入框套 `data-drag-hold`（按住 240ms 才起拖，直接拖仍是拖选文字）。触摸一律走长按激活，并在激活后用非 passive 的 `touchmove` + `preventDefault` 吃掉滚动
+- 量位置一律用 `offsetTop` / `offsetHeight`（布局坐标）：不含 transform，量到的是静止槽位，既不受自身放大影响，也不受邻项让位动画和页面滚动干扰
 
 ## 构建与发布
 
@@ -153,6 +171,44 @@ bun run type-check 2>&1 | grep '^src/'
 
 推 `v*` tag 触发 `.github/workflows/docker-publish.yml`：生成 Release notes（按 commit 前缀 feat/fix/ci/chore 分组）、构建四平台二进制、推 ghcr 镜像。
 
+## 浏览器与移动端自测
+
+仓库没有测试框架，交互类改动（拖拽、动画、手势）靠**遥控真实浏览器**验证。`tools/cdp.mjs` 是一个零依赖的极简 CDP 客户端（用 Bun 跑）：
+
+```bash
+bun tools/cdp.mjs launch http://localhost:5173/   # 独立临时 profile + 调试端口 9222
+bun tools/cdp.mjs targets                          # 列出可连接页面
+bun tools/cdp.mjs eval "document.title"            # 页面里求值（支持 await）
+bun tools/cdp.mjs rect "[data-sortable-item]"      # 元素视口矩形
+bun tools/cdp.mjs drag 400 693 400 866             # 按住—移动—松手，真实指针事件
+bun tools/cdp.mjs press 400 693                    # 拆成三步，在拖拽**进行中**取样
+bun tools/cdp.mjs touchdrag 206 520 206 662        # 长按 + 拖，验证移动端手势
+bun tools/cdp.mjs shot out.png
+```
+
+几个必须知道的坑：
+
+- **一定要用独立 `--user-data-dir`**。Helium / Chrome 已在运行时，同 profile 再启动只会把参数转交给已有进程，调试端口根本不会打开（`launch` 子命令已经这么做了）
+- `Input.dispatchMouseEvent` 派发的是**可信事件**，和真人操作同一条路径。`Runtime.evaluate` 里 `new PointerEvent()` 是不可信事件，验证不了 pointer capture、`touch-action` 这类只对可信事件生效的行为
+- `Input.dispatchTouchEvent` **不会触发页面滚动**（绕过了浏览器的手势识别）。要验证「轻扫该滚页面 / 拖拽该吃掉滚动」，在页面里挂 `window.addEventListener('touchmove', e => log(e.defaultPrevented))`，看 `preventDefault` 有没有被调用
+- 后台标签页的 `setTimeout` 会被节流到秒级。拖拽结束后的清理定时器要多等一会儿再断言，否则会误判成「样式没清掉」
+- 拖拽这类连续手势要**分步移动**（十几帧），一步跳到终点等于什么都没拖
+
+移动端（安卓模拟器）：
+
+```bash
+adb devices
+adb shell am start -a android.intent.action.VIEW -d http://<局域网IP>:5173/
+adb forward tcp:9333 localabstract:chrome_devtools_remote
+bun tools/cdp.mjs targets --port=9333
+```
+
+模拟器要用**局域网 IP**（不是 127.0.0.1）。`adb devices` 没有在线设备通常就是模拟器没开机，跳过移动端验证即可。
+
+管理后台的页面需要登录，干净 profile 进不去 `/admin`。验证后台组件的办法是临时加一个 Vite 入口（`ohmyblog-frontend/xxx.html` + 一个只 `createApp` 挂目标组件的临时 `.ts`），绕开路由守卫，**测完删掉**。
+
+`.kiro/hooks/session-brief.ps1` 是 agentSpawn 钩子（挂在 `.kiro/agents/ohmyblog.json`）：会话启动时跑一次上面这些探测，并把 CLAUDE.md 注入上下文一次（放钩子而不是 steering/resources，是因为后者每轮对话都会重新塞一遍）。`.kiro/` 不入库，这套属于本机配置。钩子脚本**必须是纯 ASCII**：Windows PowerShell 5.1 读无 BOM 的 `.ps1` 会按 GBK 解码，中文源码被搞坏后会静默截断脚本（症状是后面几行输出凭空消失）。
+
 ## 约定
 
 - **注释、日志、面向用户的文案一律中文**；标识符用英文
@@ -161,3 +217,18 @@ bun run type-check 2>&1 | grep '^src/'
 - 格式化工具两边不同：后端 Biome（**tab 缩进**、双引号），前端 Prettier（默认 2 空格）。不要跨包套用
 - 命名：后端 `*.route.ts` / `*.service.ts` / `*.dao.ts` / `*.dto.ts` / `*.cache.ts`；前端 `*.api.ts` / `*.store.ts` / `*.hook.ts` / `*.page.vue`
 - 前端组件分层：`components/base/`（无业务的原子组件）→ `components/common/`（跨页面复用）→ `views/*/components/`（页面私有）。新组件先判断归属再落位
+
+## 安全约定
+
+**防"猜"类攻击只能靠尝试次数上限，不能靠有效期。** 有效期限制的是一个凭证
+能活多久，限制不了每秒能猜多少次——TOTP 每 30 秒轮换，但爆破者是在报随机
+数字，轮换不削弱他的命中率。已落地的两处参考实现：
+`db/constants/email-verification.constants.ts`（重置密码：单码失败上限 +
+发信冷却 + 小时配额）和 `src/utils/two-factor-challenge.ts`。
+
+**惩罚要落在正确的维度上。** 按账号做"锁定 N 分钟"是危险的：用户名在站点上
+公开，等于给游客一个把管理员锁死的开关。按 IP 则要求 `TRUST_PROXY` 配置正确
+才有意义。两步验证阶段可以按账号计，因为走到那一步必须先提交正确密码。
+
+**失败路径的响应必须恒定。** 忘记密码接口的所有分支（邮箱不存在、被节流、
+发信失败）都返回同一句提示，任何差异都会让它变成邮箱枚举器。

@@ -1,0 +1,26 @@
+/* css/theme/dark.css — 深色模式变量 */
+
+@variant dark (&:where(.dark, .dark *));
+
+.dark {
+  /* Dark Mode 下的主色 */
+  --theme-accent: oklch(0.65 0.18 var(--app-hue));
+  --theme-accent-hover: oklch(0.7 0.18 var(--app-hue));
+  --theme-accent-active: oklch(0.6 0.18 var(--app-hue));
+
+  /* --- 背景色 --- */
+  --theme-bg: oklch(0.16 0.014 var(--app-hue));
+  --theme-bg-muted: oklch(0.25 0.03 var(--app-hue));
+  --theme-bg-card: oklch(0.2 0.02 var(--app-hue));
+
+  /* --- 边框色 --- */
+  --theme-border: oklch(0.3 0.03 var(--app-hue));
+
+  /* --- 文本色 --- */
+  --theme-fg: oklch(0.95 0.01 var(--app-hue));
+  --theme-fg-muted: #ffffff80;
+  --theme-fg-subtle: oklch(0.75 0.14 var(--app-hue));
+  --theme-fg-soft: color-mix(in oklch, var(--theme-fg-subtle) 40%, transparent);
+
+  color-scheme: dark;
+}

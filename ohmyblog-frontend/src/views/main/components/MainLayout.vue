@@ -35,7 +35,15 @@ const fillHeight = computed(() => route.name === "not-found");
       id="content-wrapper"
       :class="[
         'flex-1 w-full md:max-w-300 md:w-[95%] mx-auto relative z-10 px-4 md:px-0 mb-12',
-        systemStore.personalInfo.hero ? 'mt-4' : 'mt-28',
+        /*
+          有横幅时它带 -mb-28 把正文往上拉进图里，正文只需要 mt-4 的呼吸位；
+          没横幅时那份负边距不存在，正文得自己补 mt-28 才不会钻到固定头部底下。
+
+          判据必须用 store 的 heroVisible（与 HeroSection 的渲染条件同源），
+          不能只看 personalInfo.hero：横幅还受启用开关控制，
+          「有图但关掉开关」时图不渲染而这里若仍按有图处理，正文会整体上移一截。
+        */
+        systemStore.heroVisible ? 'mt-4' : 'mt-28',
         fillHeight ? 'flex flex-col' : '',
       ]"
     >

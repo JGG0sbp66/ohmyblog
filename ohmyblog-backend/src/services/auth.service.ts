@@ -1,15 +1,41 @@
 // src/services/auth.service.ts
 
+import {
+	RESET_PASSWORD_CODE_TTL_MIN,
+	RESET_PASSWORD_MAX_ATTEMPTS,
+} from "../../db/constants/email-verification.constants";
 import { configDao } from "../daos/config.dao";
 import { emailVerificationDao } from "../daos/email-verification.dao";
 import { userDao } from "../daos/user.dao";
 import type { TRegisterDTO, TUpdateAccountDTO } from "../dtos/auth.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
+import {
+	createFixedWindowLimiter,
+	RATE_LIMITED_MESSAGE,
+} from "../utils/rate-limit";
+import {
+	checkResetPasswordThrottle,
+	recordResetPasswordSend,
+} from "../utils/reset-password-throttle";
+import {
+	CHALLENGE_TTL_SECONDS,
+	createChallenge,
+} from "../utils/two-factor-challenge";
+import { captchaService } from "./captcha/captcha.service";
 import { emailSenderService } from "./email/email-sender.service";
 
-/** 重置密码验证码有效期（分钟） */
-const RESET_PASSWORD_CODE_TTL_MIN = 15;
+/**
+ * 登录限流：同一 IP 每分钟最多 10 次。
+ *
+ * 10 次对人类足够宽松（含输错重试），对爆破则把速率从「不限」压到每小时
+ * 600 次。注意真实 IP 依赖 TRUST_PROXY 配置正确，见 utils/getClientIp.ts；
+ * 换 IP 的分布式攻击绕不掉这一层，那需要 CAPTCHA，见 CLAUDE.md 待办
+ */
+const loginLimiter = createFixedWindowLimiter({
+	windowMs: 60_000,
+	max: 10,
+});
 
 class AuthService {
 	private logger = logger.withTag("AuthService");
@@ -54,12 +80,42 @@ class AuthService {
 
 	/**
 	 * 登录逻辑
+	 *
+	 * 返回区分两种情况的结果：
+	 *   - requiresTwoFactor: true  → 密码通过但需要第二步验证，附带 challenge cookie 数据
+	 *   - requiresTwoFactor: false → 直接登录成功，附带用户信息供签发 token
+	 *
 	 * @param identifier 用户名或邮箱
 	 * @param passwordPlain 明文密码
 	 * @param ip 客户端 IP，用于异地登录检测和登录历史记录
-	 * @returns 登录后的用户实体，调用方可读取 role / uuid 等字段
+	 * @param captchaToken 人机验证的一次性凭证，未启用验证码时可不传
 	 */
-	async login(identifier: string, passwordPlain: string, ip: string) {
+	async login(
+		identifier: string,
+		passwordPlain: string,
+		ip: string,
+		captchaToken?: string,
+	) {
+		// 0. 限流。按 IP 而不按账号：用户名在站点上是公开的，按账号计等于给
+		//    任何人一个把站长锁在门外的开关。
+		//    在密码校验之前拦下来，顺带也挡住了拿 Argon2 的计算开销打 CPU
+		if (!loginLimiter.consume(ip)) {
+			this.logger.warn({ ip, identifier }, "登录请求被限流");
+			throw new BusinessError(RATE_LIMITED_MESSAGE, { status: 429 });
+		}
+
+		// 0.5 人机验证。位置是夹出来的，两边都不能挪：
+		//
+		//     在限流**之后** —— 校验要向服务商发一次外网请求，放在限流前面
+		//     等于给了任何人一个「刷我的接口就能让我无限次去打 Cloudflare」
+		//     的放大器。
+		//
+		//     在查账号**之前** —— 反过来的话，「验证码错」和「账号不存在」
+		//     会走出不同的响应路径，登录接口就成了账号枚举器。
+		//
+		// 未启用验证码、或登录这个入口没勾上时，这一行什么都不做
+		await captchaService.ensureVerified("login", captchaToken, ip);
+
 		// 1. 查找用户
 		const user = await userDao.findByIdentifier(identifier);
 		if (!user) {
@@ -85,15 +141,53 @@ class AuthService {
 			user.status = "active";
 		}
 
-		// 4. 先抓上次登录的 IP（在更新前），后面用来做异地检测
+		// 4. 启用了两步验证：密码只是第一道，创建 challenge 等第二步
+		if (user.twoFactorEnabled) {
+			this.logger.info({ userId: user.uuid }, "密码校验通过，等待两步验证");
+			return {
+				requiresTwoFactor: true as const,
+				challenge: {
+					challengeId: createChallenge(user.uuid),
+					expiresIn: CHALLENGE_TTL_SECONDS,
+				},
+			};
+		}
+
+		// 5. 没开两步验证：直接收尾
+		await this.recordSuccessfulLogin(user, ip);
+
+		return {
+			requiresTwoFactor: false as const,
+			user: { uuid: user.uuid, username: user.username, role: user.role },
+		};
+	}
+
+	/**
+	 * 收尾一次成功登录：更新登录时间与 IP，并按需触发异地登录告警。
+	 *
+	 * 抽成独立方法是因为有两个调用点 —— 未启用两步验证时由 login() 顺势调用，
+	 * 启用时则要等第二道验证通过后才算真正登录（见 two-factor.route.ts）。
+	 *
+	 * @param user 登录用户实体，必须是**更新前**的记录，lastLoginIp 用于异地比对
+	 * @param ip 本次登录 IP
+	 */
+	async recordSuccessfulLogin(
+		user: {
+			uuid: string;
+			email: string;
+			lastLoginIp: string | null;
+		},
+		ip: string,
+	) {
+		// 先抓上次登录的 IP（在更新前），后面用来做异地检测
 		const previousIp = user.lastLoginIp;
 
-		// 5. 更新最后登录时间和 IP
+		// 更新最后登录时间和 IP
 		await userDao.updateLastLogin(user.uuid, ip);
 
 		this.logger.info({ userId: user.uuid }, "用户登录成功");
 
-		// 6. 异步触发异地登录检测（fire-and-forget）
+		// 异步触发异地登录检测（fire-and-forget）
 		if (previousIp) {
 			emailSenderService
 				.maybeSendLoginAlert({
@@ -106,8 +200,6 @@ class AuthService {
 					this.logger.error({ err }, "异地登录检测任务异常"),
 				);
 		}
-
-		return user;
 	}
 
 	/**
@@ -119,8 +211,15 @@ class AuthService {
 	 *
 	 * @param email 用户邮箱
 	 * @param ip 请求来源 IP，写入验证码记录供审计
+	 * @param captchaToken 人机验证的一次性凭证，未启用验证码时可不传
 	 */
-	async forgotPassword(email: string, ip: string) {
+	async forgotPassword(email: string, ip: string, captchaToken?: string) {
+		// 人机验证放在查邮箱之前。这个接口的每条失败路径对外都必须是同一句话，
+		// 而验证码的结论与邮箱是否注册无关，所以它抛出的错不会破坏防枚举 ——
+		// 反过来放在后面才会：那样「邮箱存在但验证码错」和「邮箱不存在」的
+		// 响应就不一样了
+		await captchaService.ensureVerified("forgotPassword", captchaToken, ip);
+
 		const user = await userDao.findByIdentifier(email);
 		// 邮箱不存在时静默返回，不暴露任何信息
 		if (!user) {
@@ -132,29 +231,72 @@ class AuthService {
 			return;
 		}
 
-		// 1. 发送邮件并在内部生成加密安全验证码
-		const { code } = await emailSenderService.sendResetPasswordEmail({
-			to: user.email,
-			expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
-			ip,
-		});
+		// 1. 节流：冷却期内或超出小时配额时静默返回。
+		//    静默是关键 —— 一旦对外报「请稍后再试」，攻击者就能凭响应差异
+		//    判断这个邮箱是否注册过，防枚举的设计就破了
+		const throttled = checkResetPasswordThrottle(user.uuid);
+		if (throttled) {
+			this.logger.warn(
+				{ userId: user.uuid, reason: throttled },
+				"重置密码请求被节流",
+			);
+			return;
+		}
 
-		// 2. 将生成的验证码及过期信息存入数据库
-		const expiresAt = new Date(
-			Date.now() + RESET_PASSWORD_CODE_TTL_MIN * 60 * 1000,
+		// 2. 已有未过期的码就重发它，不生成新码。
+		//    换新码会把已累计的 attempts 清零，那样 RESET_PASSWORD_MAX_ATTEMPTS
+		//    只要靠反复申请就能绕过
+		const existing = await emailVerificationDao.findActive(
+			user.uuid,
+			"reset_password",
 		);
 
-		// 先作废旧码 → 再写新码，避免同时存在多个有效验证码
-		await emailVerificationDao.invalidateByUser(user.uuid, "reset_password");
-		await emailVerificationDao.create({
-			userUuid: user.uuid,
-			type: "reset_password",
-			code,
-			expiresAt,
-			ip,
-		});
+		try {
+			const { code } = await emailSenderService.sendResetPasswordEmail({
+				to: user.email,
+				expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
+				ip,
+				code: existing?.code,
+			});
 
-		this.logger.info({ userId: user.uuid }, "重置密码验证码已发送");
+			if (!existing) {
+				const expiresAt = new Date(
+					Date.now() + RESET_PASSWORD_CODE_TTL_MIN * 60 * 1000,
+				);
+
+				// 先作废旧码 → 再写新码，避免同时存在多个有效验证码
+				await emailVerificationDao.invalidateByUser(
+					user.uuid,
+					"reset_password",
+				);
+				await emailVerificationDao.create({
+					userUuid: user.uuid,
+					type: "reset_password",
+					code,
+					expiresAt,
+					ip,
+				});
+			}
+		} catch (err) {
+			// 发信失败（最常见的是根本没配 SMTP）必须在这里吞掉。
+			// 让它冒到 route 层的话，「邮箱不存在」返回 200、「邮箱存在但没配
+			// SMTP」返回 400，两者响应不同 —— 接口就变成了一个邮箱枚举器，
+			// 而没配 SMTP 恰好是新装站点的默认状态。
+			// 站长排查看 data/logs/error.log 与 email_log 表
+			this.logger.error(
+				{ err, userId: user.uuid },
+				"重置密码邮件发送失败，已对外静默",
+			);
+			return;
+		}
+
+		// 3. 只有真的发出去了才记账，避免发信失败也白白消耗配额
+		recordResetPasswordSend(user.uuid);
+
+		this.logger.info(
+			{ userId: user.uuid, resent: Boolean(existing) },
+			"重置密码验证码已发送",
+		);
 	}
 
 	/**
@@ -170,6 +312,13 @@ class AuthService {
 			"reset_password",
 		);
 		if (!record) {
+			// 码不对：把这次失败记在该邮箱当前那个有效码上。
+			//
+			// 计数必须挂在「被攻击的那个码」而不是「提交上来的错码」上 ——
+			// 错码在库里根本没有对应记录，无处可记，那样就等于不限次数。
+			// 邮箱不存在时什么都不做，同样不能因为「有没有码可记」而产生
+			// 可观测的差异
+			await this.penalizeResetPasswordAttempt(email);
 			throw new BusinessError("验证码无效或已过期", { status: 400 });
 		}
 
@@ -179,6 +328,8 @@ class AuthService {
 				{ recordUserId: record.userUuid, submittedEmail: email },
 				"重置密码时 code 与邮箱不匹配",
 			);
+			// 猜中了别人的码但邮箱对不上，也算一次针对该邮箱的失败尝试
+			await this.penalizeResetPasswordAttempt(email);
 			throw new BusinessError("验证码无效或已过期", { status: 400 });
 		}
 		if (user.status === "banned") {
@@ -190,6 +341,47 @@ class AuthService {
 		await emailVerificationDao.markAsUsed(record.uuid);
 
 		this.logger.info({ userId: user.uuid }, "密码重置成功");
+	}
+
+	/**
+	 * 记一次重置密码的失败尝试：给该邮箱当前有效的验证码累加失败次数，
+	 * 达到 RESET_PASSWORD_MAX_ATTEMPTS 就直接作废它。
+	 *
+	 * 作废之后用户必须重新申请，而重新申请受冷却期和小时配额约束
+	 * （见 utils/reset-password-throttle.ts）—— 两者合起来才把 6 位数字
+	 * 从「几小时能撞开」压到不可行。
+	 *
+	 * 全程不抛错、不改变调用方的响应：任何失败路径对外都必须是同一句
+	 * 「验证码无效或已过期」，否则又成了可探测的信息。
+	 *
+	 * @param email 请求方提交的邮箱
+	 */
+	private async penalizeResetPasswordAttempt(email: string) {
+		try {
+			const user = await userDao.findByIdentifier(email);
+			if (!user) return;
+
+			const active = await emailVerificationDao.findActive(
+				user.uuid,
+				"reset_password",
+			);
+			if (!active) return;
+
+			const attempts = await emailVerificationDao.incrementAttempts(
+				active.uuid,
+			);
+
+			if (attempts >= RESET_PASSWORD_MAX_ATTEMPTS) {
+				await emailVerificationDao.markAsUsed(active.uuid);
+				this.logger.warn(
+					{ userId: user.uuid, attempts },
+					"重置密码验证码失败次数用尽，已作废该验证码",
+				);
+			}
+		} catch (err) {
+			// 记账失败不能影响对外响应，否则失败路径之间会产生可观测差异
+			this.logger.error({ err }, "累加重置密码失败次数时异常");
+		}
 	}
 
 	/**

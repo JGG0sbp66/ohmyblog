@@ -36,6 +36,7 @@ const initial = computed(() =>
   <ConfirmModal
     :model-value="modelValue"
     :icon="Trash2"
+    icon-class="text-red-500"
     :title="t('views.friendLinks.delete.title')"
     :question="t('views.friendLinks.delete.message')"
     :warning="t('views.friendLinks.delete.warning')"

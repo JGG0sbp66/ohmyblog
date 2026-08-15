@@ -46,7 +46,6 @@ const handleNext = () => {
       return upsertConfig({
         configKey: "smtp",
         configValue,
-        description: "SMTP 配置（基础连接与可选发件人信息）",
         isPublic: false, // SMTP 配置包含敏感信息，仅后端可访问
       });
     },

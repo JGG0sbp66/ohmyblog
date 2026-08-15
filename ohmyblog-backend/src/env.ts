@@ -30,6 +30,28 @@ const configSchema = {
 			const normalized = v.trim().toLowerCase();
 			return normalized === "true" || normalized === "1";
 		}),
+	// 前置反向代理的层数，决定 getClientIp 能不能信任 X-Forwarded-For。
+	//
+	// 语义是「从 XFF 链条右端数第几个才是真实客户端」，而不是布尔开关：
+	// nginx 的 $proxy_add_x_forwarded_for 是在客户端送来的值后面**追加**真实
+	// 对端地址，所以链条最左边那一段永远是客户端自己写的、不可信；可信的是
+	// 右边由自己的代理追加的部分。层数不对就会取错人。
+	//   0 = 直连，完全忽略 XFF（默认，也是最安全的）
+	//   1 = 只有一层自己的 nginx / Caddy
+	//   2 = Cloudflare 或其他 CDN 再套一层 nginx
+	// 为了少踩坑，也接受 true（等价于 1）/ false（等价于 0）
+	TRUST_PROXY: z
+		.string()
+		.default("0")
+		.transform((v) => {
+			const normalized = v.trim().toLowerCase();
+			if (normalized === "true") return 1;
+			if (normalized === "false" || normalized === "") return 0;
+			const parsed = Number.parseInt(normalized, 10);
+			// 拼错时退回 0：宁可拿到代理自身的 IP（限流退化成全局），
+			// 也不要盲信一个可伪造的头
+			return Number.isNaN(parsed) || parsed < 0 ? 0 : parsed;
+		}),
 } as const;
 
 // 配置描述（用于生成 .env 文件的注释）
@@ -40,6 +62,8 @@ const configDesc = {
 	JWT_EXP:
 		"Token 过期时间 (支持格式: 7d=7天, 24h=24小时, 60m=60分钟, 3600s=3600秒)",
 	DEMO_MODE: "演示模式 (true | false)：游客可只读浏览后台，所有写操作被拒绝",
+	TRUST_PROXY:
+		"前置反向代理层数：0=直连(忽略 X-Forwarded-For)，1=一层 nginx，2=CDN 再套一层。填错会导致取到错误的客户端 IP",
 } as const;
 
 // 默认值映射（用于生成 .env 文件）
@@ -49,6 +73,7 @@ const configDefaults = {
 	JWT_SECRET: () => randomBytes(32).toString("hex"), // 函数表示自动生成
 	JWT_EXP: "7d",
 	DEMO_MODE: "false",
+	TRUST_PROXY: "0",
 } as const;
 
 // =================================================================

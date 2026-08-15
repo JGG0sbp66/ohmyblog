@@ -28,8 +28,10 @@ const [errorContainerRef] = useAutoAnimate();
 <template>
   <div class="flex flex-col w-full">
     <!-- 输入框主体：背景 + 圆角 + 聚焦 / 错误环 -->
+    <!-- transition-shadow 是显式声明：聚焦环走 box-shadow(ring-*)，而全局
+         交互过渡只挂在 a/button/input 这类元素上，本容器是 div 不在其中 -->
     <div
-      class="w-full bg-bg-muted rounded-xl border border-transparent flex items-center overflow-hidden text-fg"
+      class="w-full bg-bg-muted rounded-xl border border-transparent flex items-center overflow-hidden text-fg transition-shadow"
       :class="[
         disabled ? 'opacity-60 cursor-not-allowed' : '',
         error

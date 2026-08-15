@@ -1,5 +1,6 @@
 // src/dtos/config.dto.ts
 import { type Static, t } from "elysia";
+import { captchaProviders } from "../../db/constants/captcha.constants";
 import {
 	supportedLanguages,
 	themeModes,
@@ -186,6 +187,13 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 				error: "personal_info.hero_invalid",
 			}),
 		),
+		// 与 hero 分开存：关掉横幅不该顺带丢掉已上传的图和标题，
+		// 否则重新打开又要从头配一遍。缺省视为开启，兼容此开关之前的存量配置。
+		heroEnabled: t.Optional(
+			t.Boolean({
+				description: "是否启用首页横幅",
+			}),
+		),
 		heroTitle: t.Optional(
 			t.String({
 				maxLength: 200,
@@ -285,6 +293,89 @@ export const AnnouncementConfigUpsertDTO = t.Object({
 	...ConfigMetaDTO,
 });
 
+// captcha 配置 DTO（人机验证，非 setup 向导步骤）
+//
+// 与 smtp 同属敏感配置：isPublic 存 false，只有管理员读得到，secretKey 会
+// 照常回显给管理端（与 smtp 密码一致）。前台登录页等处是未登录状态，读不到
+// 这条配置，改走 GET /api/captcha —— 那个接口只吐渲染验证框需要的字段。
+
+/**
+ * 单个服务商的一对密钥。
+ *
+ * 写成工厂函数而不是共用同一个 schema 实例：Elysia 在编译校验器时会往
+ * schema 上挂东西，同一个对象出现在树里多个位置容易出意外，三次调用各得
+ * 一份互不相干的结构最稳妥。
+ *
+ * 两个字段刻意不设 minLength —— 关掉总开关时前端会跳过表单校验，此时
+ * key 很可能是空串，设了非空约束会让「先清空再关掉」这种操作存不进去。
+ * 填一半的后果由读接口兜住：缺 key 时一律当作未启用，见 captcha.service.ts
+ */
+const captchaCredentialDTO = () =>
+	t.Object({
+		siteKey: t.String({
+			maxLength: 255,
+			description: "站点密钥（公开，前端加载验证框时要用）",
+			error: "captcha.site_key_range",
+		}),
+		secretKey: t.String({
+			maxLength: 255,
+			description: "服务端密钥（私密，仅后端向服务商求证时使用）",
+			error: "captcha.secret_key_range",
+		}),
+	});
+
+export const CaptchaConfigUpsertDTO = t.Object({
+	configKey: t.Literal("captcha"),
+	configValue: t.Object({
+		enabled: t.Boolean({
+			description: "总开关，关闭时所有入口都不校验",
+		}),
+		provider: tStringEnum(captchaProviders, {
+			description: "当前启用的验证码服务商",
+			error: "captcha.provider_invalid",
+		}),
+		// 每家各存一份密钥，只有 provider 指向的那家真正生效。
+		//
+		// 同时启用多家是没有意义的（一个表单只放得下一个验证框），这么存是
+		// 为了换服务商时不把上一家的 key 冲掉 —— 国内 Turnstile 时好时坏，
+		// 站长很可能同时申请两三家轮着试，每切一次都要重新粘密钥太折腾。
+		//
+		// 整体和每一家都可选：初次保存、以及以后 captchaProviders 里加了新
+		// 服务商时，存量配置不会因为少字段而校验失败。
+		// 字段名必须与 db/constants/captcha.constants.ts 的 captchaProviders 一致
+		credentials: t.Optional(
+			t.Object({
+				turnstile: t.Optional(captchaCredentialDTO()),
+				hcaptcha: t.Optional(captchaCredentialDTO()),
+				recaptcha: t.Optional(captchaCredentialDTO()),
+			}),
+		),
+		// 仅 reCAPTCHA v3 用得上：它不回答「是 / 否」，只给一个 0.0~1.0 的
+		// 可信度分，越接近 1 越像真人 —— 所以阈值调高是更严格，不是更宽松。
+		// Turnstile 和 hCaptcha 没有这个概念，前端应当只在选中 recaptcha 时
+		// 显示这一项。缺省时后端按 RECAPTCHA_DEFAULT_MIN_SCORE(0.5) 处理
+		recaptchaMinScore: t.Optional(
+			t.Number({
+				minimum: 0,
+				maximum: 1,
+				description: "reCAPTCHA v3 的通过分数线（0~1，越高越严格）",
+				error: "captcha.recaptcha_score_range",
+			}),
+		),
+		// 各入口的分开关。字段全部可选、缺省视为关闭：以后 captchaScenes 里
+		// 加了新入口，存量配置不会因为少一个字段而校验失败。
+		// 字段名必须与 db/constants/captcha.constants.ts 的 captchaScenes 一致
+		scenes: t.Optional(
+			t.Object({
+				login: t.Optional(t.Boolean({ description: "登录" })),
+				forgotPassword: t.Optional(t.Boolean({ description: "忘记密码" })),
+				friendApply: t.Optional(t.Boolean({ description: "友链申请" })),
+			}),
+		),
+	}),
+	...ConfigMetaDTO,
+});
+
 // 创建或更新配置 DTO
 export const ConfigUpsertDTO = t.Union([
 	AppearanceConfigUpsertDTO,
@@ -292,6 +383,7 @@ export const ConfigUpsertDTO = t.Union([
 	PersonalInfoConfigUpsertDTO,
 	SMTPConfigUpsertDTO,
 	AnnouncementConfigUpsertDTO,
+	CaptchaConfigUpsertDTO,
 ]);
 
 export type TAppearanceConfigUpsertDTO = Static<
@@ -305,4 +397,5 @@ export type TSMTPConfigUpsertDTO = Static<typeof SMTPConfigUpsertDTO>;
 export type TAnnouncementConfigUpsertDTO = Static<
 	typeof AnnouncementConfigUpsertDTO
 >;
+export type TCaptchaConfigUpsertDTO = Static<typeof CaptchaConfigUpsertDTO>;
 export type TConfigUpsertDTO = Static<typeof ConfigUpsertDTO>;

@@ -35,7 +35,6 @@ const handleNext = () => {
     return upsertConfig({
       configKey: "personal_info",
       configValue,
-      description: "个性化配置（头像、首页横幅、首页标题等）",
     });
   });
 };

@@ -37,15 +37,10 @@ const props = withDefaults(defineProps<Props>(), {
 const toDisplay = computed(() =>
   props.recipients.length > 0 ? props.recipients.join(", ") : "you@example.com",
 );
-
-// 模拟标签页标题和图标，保持与其他预览页面一致
 </script>
 
 <template>
-  <BrowserMockup
-    :title="systemStore.siteInfo.title"
-    :icon="systemStore.siteInfo.favicon"
-  >
+  <BrowserMockup>
     <!-- 邮件模拟界面-->
     <div
       class="h-full w-full bg-bg-card p-6 lg:p-8 flex flex-col overflow-y-auto"

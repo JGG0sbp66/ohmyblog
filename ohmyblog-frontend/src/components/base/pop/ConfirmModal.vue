@@ -25,13 +25,13 @@ const props = withDefaults(
     cancelText?: string;
     /** 确认按钮额外 class，用于覆盖颜色等样式 */
     confirmClass?: string;
-    /** 标题栏图标颜色 class，默认红色（用于危险操作） */
+    /** 标题栏图标颜色 class，默认使用主题色；危险操作需显式传入红色 */
     iconClass?: string;
     /** 确认按钮 loading 状态 */
     loading?: boolean;
   }>(),
   {
-    iconClass: "text-red-500",
+    iconClass: "text-accent",
     confirmClass: "",
     loading: false,
   },

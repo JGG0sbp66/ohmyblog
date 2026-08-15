@@ -2,6 +2,7 @@
 import { type Static, t } from "elysia";
 import { friendLinkStatuses } from "../../db/constants/friend-link.constants";
 import { tStringEnum } from "../utils/typebox";
+import { CaptchaTokenField } from "./captcha.dto";
 
 export const FriendLinkStatusFilter = tStringEnum(friendLinkStatuses);
 
@@ -42,6 +43,7 @@ export const ApplyFriendLinkDTO = t.Object({
 			description: "联系邮箱（审批结果将发送到此邮箱）",
 		}),
 	),
+	...CaptchaTokenField,
 });
 
 export type TApplyFriendLinkDTO = Static<typeof ApplyFriendLinkDTO>;

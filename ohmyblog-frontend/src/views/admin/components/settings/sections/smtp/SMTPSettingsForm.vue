@@ -27,6 +27,9 @@ const formData = ref({
 const isAdvancedExpanded = ref(false);
 const formRef = ref<InstanceType<typeof SMTPForm> | null>(null);
 const isSaving = ref(false);
+// 配置拉取完成前不渲染开关：toggle 先按默认值渲染再翻转到真实状态，
+// 会播放一段不属于任何用户操作的假动画
+const isLoaded = ref(false);
 const [parentRef] = useAutoAnimate();
 
 /**
@@ -47,6 +50,8 @@ const loadConfig = async () => {
     console.warn(
       "Failed to load SMTP config, it might not be initialized yet.",
     );
+  } finally {
+    isLoaded.value = true;
   }
 };
 
@@ -89,19 +94,33 @@ defineExpose({
     <div ref="parentRef" class="flex flex-col gap-6">
       <ModuleItem
         v-model="formData.enabled"
+        :loading="!isLoaded"
         :title="t('views.setup.steps.step5.smtp.title')"
         :description="t('views.setup.steps.step5.smtp.description')"
       />
 
-      <template v-if="formData.enabled">
-        <SMTPForm
-          ref="formRef"
-          v-model="formData"
-          v-model:is-advanced-expanded="isAdvancedExpanded"
-        />
+      <!-- 表单依赖接口数据，加载完成前不渲染 -->
+      <template v-if="isLoaded">
+        <template v-if="formData.enabled">
+          <SMTPForm
+            ref="formRef"
+            v-model="formData"
+            v-model:is-advanced-expanded="isAdvancedExpanded"
+          />
 
-        <!-- 操作按钮 -->
-        <div class="flex justify-end pt-4">
+          <!-- 操作按钮 -->
+          <div class="flex justify-end pt-4">
+            <ButtonPrimary
+              :text="t('common.save')"
+              :loading="isSaving"
+              class="w-full sm:w-auto px-8"
+              @click="handleSave"
+            />
+          </div>
+        </template>
+
+        <!-- 未开启时的保存按钮（仅保存开关状态） -->
+        <div v-else class="flex justify-end pt-4">
           <ButtonPrimary
             :text="t('common.save')"
             :loading="isSaving"
@@ -110,16 +129,6 @@ defineExpose({
           />
         </div>
       </template>
-
-      <!-- 未开启时的保存按钮（仅保存开关状态） -->
-      <div v-else class="flex justify-end pt-4">
-        <ButtonPrimary
-          :text="t('common.save')"
-          :loading="isSaving"
-          class="w-full sm:w-auto px-8"
-          @click="handleSave"
-        />
-      </div>
     </div>
   </SettingCard>
 </template>

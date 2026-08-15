@@ -27,7 +27,6 @@ const handleNext = () => {
     return upsertConfig({
       configKey: "appearance",
       configValue,
-      description: "外观设置（主题颜色、色相、语言）",
     });
   });
 };

@@ -1,6 +1,10 @@
 // src/services/config.service.ts
 import { configDao, type NewConfig } from "../daos/config.dao";
 import type { TConfigUpsertDTO } from "../dtos/config.dto";
+import {
+	configDescriptions,
+	type TConfigKey,
+} from "../../db/constants/config.constants";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 
@@ -32,8 +36,14 @@ class ConfigService {
 					},
 				);
 			}
+			// 前端没传 description 时，用常量映射表兜底
+			const description =
+				data.description || configDescriptions[configKey as TConfigKey];
 			// 不存在则创建
-			const created = await configDao.createConfig(data as NewConfig);
+			const created = await configDao.createConfig({
+				...data,
+				description,
+			} as NewConfig);
 			this.logger.info({ configKey }, "配置已创建");
 			return created;
 		}

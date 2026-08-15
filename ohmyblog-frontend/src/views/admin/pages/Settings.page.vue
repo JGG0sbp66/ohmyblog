@@ -5,6 +5,7 @@ import AppearanceSection from "../components/settings/sections/appearance/Appear
 import SiteSection from "../components/settings/sections/site/SiteSection.vue";
 import AdminSection from "../components/settings/sections/admin/AdminSection.vue";
 import SMTPSection from "../components/settings/sections/smtp/SMTPSection.vue";
+import SecuritySection from "../components/settings/sections/security/SecuritySection.vue";
 import SettingsNav from "../components/settings/layout/SettingsNav.vue";
 import { useLang } from "@/composables/lang.hook";
 
@@ -30,6 +31,11 @@ const menuItems = computed(() => [
     id: "smtp",
     name: t("views.admin.Settings.nav.smtp"),
     component: markRaw(SMTPSection),
+  },
+  {
+    id: "security",
+    name: t("views.admin.Settings.nav.security"),
+    component: markRaw(SecuritySection),
   },
 ]);
 

@@ -2,12 +2,13 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
-import { PUBLIC_DIR, UPLOADS_DIR } from "./constants";
+import { PUBLIC_DIR } from "./constants";
 import { config } from "./env";
 import { demoPlugin } from "./plugins/demo.plugin.js";
 import { logPlugin } from "./plugins/logger.plugin.js";
 import { responsePlugin } from "./plugins/response.plugin.js";
 import { authRoute } from "./routes/auth.route.js";
+import { captchaRoute } from "./routes/captcha.route.js";
 import { configRoute } from "./routes/config.route.js";
 import { emailRoute } from "./routes/email.route.js";
 import { feedRoute } from "./routes/feed.route.js";
@@ -15,10 +16,37 @@ import { friendLinkRoute } from "./routes/friend-link.route.js";
 import { healthRoute } from "./routes/health.route.js";
 import { postRoute } from "./routes/post.route.js";
 import { sitemapRoute } from "./routes/sitemap.route.js";
+import { twoFactorRoute } from "./routes/two-factor.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
+import { uploadsStaticRoute } from "./routes/uploads-static.route.js";
 import { viewerRoute } from "./routes/viewer.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
 import { isDemo, isProduction } from "./utils/runtime";
+
+// === 命令行子命令 ===
+// 必须在建服务器之前处理，处理完直接退出，不监听端口。
+//
+// 做成主程序的子命令而不是 scripts/ 下的独立脚本，是因为 build.ts 的
+// entrypoints 只有本文件，scripts/ 不会被编译进单文件产物；而二进制和
+// Docker 部署里既没有源码也没有 bun，偏偏那才是最需要带外重置的场景。
+const CLI_COMMANDS = new Set(["reset-password"]);
+const commandIndex = process.argv.findIndex((arg) => CLI_COMMANDS.has(arg));
+
+if (commandIndex !== -1) {
+	const command = process.argv[commandIndex];
+	const commandArgs = process.argv.slice(commandIndex + 1);
+
+	try {
+		if (command === "reset-password") {
+			const { runResetPassword } = await import("./cli/reset-password");
+			await runResetPassword(commandArgs);
+		}
+		process.exit(0);
+	} catch (err) {
+		console.error("✗ 命令执行失败：", err);
+		process.exit(1);
+	}
+}
 
 const app = new Elysia()
 	// SPA fallback：注册在 responsePlugin 之前，优先处理前端路由的 NOT_FOUND
@@ -38,27 +66,22 @@ const app = new Elysia()
 	.use(responsePlugin)
 	// 演示模式写入闸门：必须在业务路由之前，且早于任何写 handler
 	.use(demoPlugin)
-	.use(
-		// 静态文件服务：提供上传的图片、头像、图标等资源访问
-		staticPlugin({
-			assets: UPLOADS_DIR,
-			prefix: "/api/uploads",
-			// 上传资源文件名可能含非 ASCII 字符（如中文平台名生成的社交图标），
-			// 浏览器会对其做 percent 编码，需解码后再匹配磁盘文件，否则 404
-			decodeURI: true,
-		}),
-	)
 	// 挂载路由
 	.use(feedRoute)
 	.use(sitemapRoute)
 	.group("/api", (app) =>
 		app
+			// 上传资源静态服务：自写路由实时读磁盘，勿改回 staticPlugin
+			// （其缓存会在文件覆盖变大后返回截断内容，详见 uploads-static.route.ts）
+			.use(uploadsStaticRoute)
 			.use(healthRoute)
 			.use(authRoute)
+			.use(captchaRoute)
 			.use(configRoute)
 			.use(emailRoute)
 			.use(friendLinkRoute)
 			.use(postRoute)
+			.use(twoFactorRoute)
 			.use(uploadRoute)
 			.use(viewerRoute),
 	);

@@ -1,5 +1,5 @@
 // src/stores/system.store.ts
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { getHealth } from "@/api/health.api";
 import { getConfig } from "@/api/config.api";
@@ -37,15 +37,36 @@ export const useSystemStore = defineStore("system", () => {
   const siteCreatedAt = ref<Date | string>("");
 
   // 个性化配置 (Hero, 头像, 简介, 显示名称等)
+  //
+  // heroEnabled 默认 true：这个开关是后加的，存量配置里没有这个字段，
+  // fetchConfig 的展开合并不会覆盖它，于是老站点保持「有图就显示」的原样。
   const personalInfo = ref<TPersonalInfoConfigUpsertDTO["configValue"]>({
     username: "",
     avatar: "",
     bio: "",
     socialLinks: [],
     hero: "",
+    heroEnabled: true,
     heroTitle: "",
     heroSubtitles: [],
   });
+
+  /**
+   * 首页横幅是否真的会渲染出来 —— 有图，且开关没关。
+   *
+   * 放在 store 而不是各自组件里算，是因为这个判断有两个消费方，且必须一致：
+   * HeroSection 用它决定渲不渲染，MainLayout 用它决定正文的上边距
+   * （横幅带 -mb-28 负边距把正文往上拉，没有横幅时正文得自己补 mt-28 让开固定头部）。
+   * 两边各写一份的代价是真实的：加开关时只改了 HeroSection，MainLayout 还在看
+   * personalInfo.hero，于是「有图但关掉开关」时横幅没了、负边距的补偿却还在，
+   * 正文整体上移一截、首篇文章标题被头部盖掉。
+   *
+   * 显式判 !== false 而不是取真值：heroEnabled 在 DTO 里是可选的，
+   * 存量配置读出来是 undefined，必须按「开启」解释。
+   */
+  const heroVisible = computed(
+    () => !!personalInfo.value.hero && personalInfo.value.heroEnabled !== false,
+  );
 
   // 侧边栏公告（未配置过时后端返回 404，保持 enabled=false 即可）
   const announcement = ref<TAnnouncementConfigUpsertDTO["configValue"]>({
@@ -195,6 +216,7 @@ export const useSystemStore = defineStore("system", () => {
     siteInfo,
     siteCreatedAt,
     personalInfo,
+    heroVisible,
     announcement,
     fetchSiteInfo,
     fetchPersonalInfo,

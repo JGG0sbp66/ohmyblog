@@ -6,10 +6,12 @@ import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
 import AccordionItem from "@/components/common/list/AccordionItem.vue";
-import ListRowLayout from "@/components/common/list/ListRowLayout.vue";
 import EmptyState from "@/components/common/list/EmptyState.vue";
+import FooterLinkGroup from "./FooterLinkGroup.vue";
 import { RiAddLine } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
+import { useListDrag } from "@/composables/list-drag.hook";
+import { useStableKey } from "@/composables/stable-key.hook";
 import { useSystemStore } from "@/stores/system.store";
 import { useToast } from "@/composables/toast.hook";
 import { upsertConfig } from "@/api/config.api";
@@ -26,6 +28,37 @@ const toggleGroup = (index: number) => {
   expandedGroup.value = expandedGroup.value === index ? -1 : index;
 };
 
+// --- 分组拖拽排序 ---
+// 没有拖拽手柄：整张卡片都能拖，展开按钮/标题输入/删除按钮带 data-no-drag 除外。
+// 分组重排必须用稳定 key，否则 Vue 只换内容不搬 DOM，让位动画和拖拽状态都会错位。
+const keyOf = useStableKey();
+
+const moveGroup = (from: number, to: number) => {
+  const groups = systemStore.siteInfo.footerLinks;
+  if (!groups) return;
+  const [moved] = groups.splice(from, 1);
+  if (!moved) return;
+  groups.splice(to, 0, moved);
+
+  // 展开态跟着被拖的分组走，否则拖完展开的是别人
+  if (expandedGroup.value === from) expandedGroup.value = to;
+  else if (expandedGroup.value === to) expandedGroup.value = from;
+};
+
+const { listRef, isDragging, itemStyle, hasMoved, onItemPointerDown } =
+  useListDrag({ move: moveGroup });
+
+/**
+ * 抑制拖拽结束时补发的那一下 click。
+ *
+ * 卡片头部整块既是拖拽握持区又是「点击展开/收起」区。拖完松手浏览器仍会派发 click，
+ * 不拦住的话每次拖拽都会顺手把分组折叠掉。
+ */
+const onGroupToggle = (index: number) => {
+  if (hasMoved()) return;
+  toggleGroup(index);
+};
+
 // --- 分组操作 ---
 const addGroup = () => {
   if (!systemStore.siteInfo.footerLinks) {
@@ -40,18 +73,6 @@ const removeGroup = (index: number) => {
   if (expandedGroup.value >= (systemStore.siteInfo.footerLinks?.length ?? 0)) {
     expandedGroup.value = (systemStore.siteInfo.footerLinks?.length ?? 1) - 1;
   }
-};
-
-// --- 链接操作 ---
-const addLink = (groupIndex: number) => {
-  systemStore.siteInfo.footerLinks?.[groupIndex]?.links.push({
-    name: "",
-    url: "",
-  });
-};
-
-const removeLink = (groupIndex: number, linkIndex: number) => {
-  systemStore.siteInfo.footerLinks?.[groupIndex]?.links.splice(linkIndex, 1);
 };
 
 // --- 保存 ---
@@ -118,9 +139,23 @@ const handleSave = async () => {
       <div class="flex flex-col gap-4">
         <!-- 头部：标题 + 添加分组按钮 -->
         <div class="flex items-center justify-between gap-3">
-          <h3 class="text-sm font-bold tracking-wider text-fg-subtle uppercase">
-            {{ t("views.admin.Settings.site.footer.links.title") }}
-          </h3>
+          <div class="flex flex-col gap-1 min-w-0">
+            <h3
+              class="text-sm font-bold tracking-wider text-fg-subtle uppercase"
+            >
+              {{ t("views.admin.Settings.site.footer.links.title") }}
+            </h3>
+            <!-- 手柄没了，得有句话告诉用户「按住就能拖」 -->
+            <p
+              v-if="
+                systemStore.siteInfo.footerLinks &&
+                systemStore.siteInfo.footerLinks.length > 1
+              "
+              class="text-xs text-fg-soft"
+            >
+              {{ t("views.admin.Settings.site.footer.links.reorderHint") }}
+            </p>
+          </div>
           <ButtonSecondary
             :text="t('views.admin.Settings.site.footer.links.addGroup')"
             size="sm"
@@ -133,19 +168,29 @@ const handleSave = async () => {
           </ButtonSecondary>
         </div>
 
-        <!-- 分组列表 (手风琴) -->
+        <!--
+          分组列表 (手风琴 + 拖拽排序)。
+          容器的直接子元素只能是分组卡片本身：hook 靠 data-sortable-item 认项并按 DOM
+          顺序对齐数据下标，混进别的元素就会错位。
+        -->
         <div
           v-if="
             systemStore.siteInfo.footerLinks &&
             systemStore.siteInfo.footerLinks.length > 0
           "
+          ref="listRef"
           class="flex flex-col gap-3"
         >
           <AccordionItem
             v-for="(group, gIndex) in systemStore.siteInfo.footerLinks"
-            :key="gIndex"
+            :key="keyOf(group)"
+            data-sortable-item
+            sortable
             :expanded="expandedGroup === gIndex"
-            @toggle="toggleGroup(gIndex)"
+            :dragging="isDragging(gIndex)"
+            :style="itemStyle(gIndex)"
+            @pointerdown="onItemPointerDown"
+            @toggle="onGroupToggle(gIndex)"
             @remove="removeGroup(gIndex)"
           >
             <!-- 分组标题输入 -->
@@ -160,51 +205,8 @@ const handleSave = async () => {
               />
             </template>
 
-            <!-- 分组内的链接列表 -->
-            <div class="flex flex-col gap-3">
-              <ListRowLayout
-                v-for="(link, lIndex) in group.links"
-                :key="lIndex"
-                @remove="removeLink(gIndex, lIndex)"
-              >
-                <div class="flex items-start gap-3">
-                  <!-- 链接名称 -->
-                  <div class="w-1/3 min-w-20">
-                    <TipInput
-                      v-model="link.name"
-                      :placeholder="
-                        t(
-                          'views.admin.Settings.site.footer.links.namePlaceholder',
-                        )
-                      "
-                    />
-                  </div>
-                  <!-- 链接 URL -->
-                  <div class="flex-1 min-w-0">
-                    <TipInput
-                      v-model="link.url"
-                      :placeholder="
-                        t(
-                          'views.admin.Settings.site.footer.links.urlPlaceholder',
-                        )
-                      "
-                    />
-                  </div>
-                </div>
-              </ListRowLayout>
-
-              <!-- 添加链接按钮 -->
-              <ButtonSecondary
-                :text="t('views.admin.Settings.site.footer.links.addLink')"
-                size="sm"
-                class="self-start group/addlink"
-                @click="addLink(gIndex)"
-              >
-                <RiAddLine
-                  class="w-4 h-4 transition-transform duration-300 group-hover/addlink:rotate-90"
-                />
-              </ButtonSecondary>
-            </div>
+            <!-- 分组内的链接列表（自带一套独立的拖拽排序） -->
+            <FooterLinkGroup :group="group" />
           </AccordionItem>
         </div>
 

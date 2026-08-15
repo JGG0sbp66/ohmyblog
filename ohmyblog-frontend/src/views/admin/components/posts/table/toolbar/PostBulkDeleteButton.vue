@@ -84,6 +84,7 @@ const handleConfirm = async () => {
   <ConfirmListModal
     v-model="showModal"
     :icon="isPermanentDelete ? TriangleAlert : Trash2"
+    :icon-class="isPermanentDelete ? 'text-red-500' : 'text-accent'"
     :title="
       isPermanentDelete
         ? t('views.admin.Posts.table.bulk.deleteModal.title')

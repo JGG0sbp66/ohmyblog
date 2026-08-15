@@ -15,6 +15,15 @@ const authStore = useAuthStore();
 
 const isHome = computed(() => route.name === "home");
 
+/**
+ * 横幅地址。
+ *
+ * 单独抽一个 computed 是为了给 HeroImageTransition 一个确定的 string：
+ * 模板用 systemStore.heroVisible 控制渲染，TS 顺着 v-if 收窄类型的链在这里断了。
+ * ?? "" 只是兜底，heroVisible 为假时 section 根本不渲染。
+ */
+const heroSrc = computed(() => systemStore.personalInfo.hero ?? "");
+
 // Banner 动画控制 (声明式)
 const isBannerVisible = ref(false);
 
@@ -27,9 +36,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- 只在有 hero 图时才渲染整个 section -->
+  <!-- 有图且开关开启时才渲染整个 section（判断在 store，与 MainLayout 的上边距共用） -->
   <section
-    v-if="systemStore.personalInfo.hero"
+    v-if="systemStore.heroVisible"
     id="hero"
     :class="[
       'relative w-full overflow-hidden onload-animation transition-[height] duration-700 ease-in-out -mb-28',
@@ -38,7 +47,7 @@ onMounted(() => {
   >
     <!-- 使用专用的 Hero 过渡组件 -->
     <HeroImageTransition
-      :src="systemStore.personalInfo.hero"
+      :src="heroSrc"
       :show="isBannerVisible"
       alt="Hero banner image"
       :duration="1000"

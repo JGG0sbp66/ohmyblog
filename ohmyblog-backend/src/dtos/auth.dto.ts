@@ -1,5 +1,6 @@
 // src/dtos/auth.dto.ts
 import { type Static, t } from "elysia";
+import { CaptchaTokenField } from "./captcha.dto";
 
 // 1. 注册 DTO
 export const RegisterDTO = t.Object({
@@ -33,6 +34,7 @@ export const LoginDTO = t.Object({
 	password: t.String({
 		description: "密码",
 	}),
+	...CaptchaTokenField,
 });
 
 // 3. 更新账号信息 DTO
@@ -70,6 +72,7 @@ export const ForgotPasswordDTO = t.Object({
 		examples: ["test@example.com"],
 		error: "auth.email_invalid",
 	}),
+	...CaptchaTokenField,
 });
 
 // 5. 重置密码 - 提交验证码 + 新密码

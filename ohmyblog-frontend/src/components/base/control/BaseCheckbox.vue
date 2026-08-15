@@ -1,4 +1,4 @@
-<!-- src/components/base/table/BaseCheckbox.vue -->
+<!-- src/components/base/control/BaseCheckbox.vue -->
 <script setup lang="ts">
 import { Check, Minus } from "lucide-vue-next";
 
@@ -18,6 +18,8 @@ defineEmits<{ "update:modelValue": [value: boolean] }>();
 <template>
   <button
     type="button"
+    role="checkbox"
+    :aria-checked="indeterminate ? 'mixed' : modelValue"
     class="group w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg focus:ring-accent active:scale-90 cursor-pointer select-none shrink-0"
     :class="
       modelValue || indeterminate

@@ -5,6 +5,7 @@ import {
   RiContrastLine,
   RiSunLine,
   RiMoonLine,
+  RiEyeLine,
   RiCheckLine,
 } from "@remixicon/vue";
 import { useLang } from "@/composables/lang.hook";
@@ -37,6 +38,7 @@ const currentLabel = computed(() => {
       <RiContrastLine v-if="colorMode === 'auto'" class="w-3.5 h-3.5" />
       <RiSunLine v-if="colorMode === 'light'" class="w-3.5 h-3.5" />
       <RiMoonLine v-if="colorMode === 'dark'" class="w-3.5 h-3.5" />
+      <RiEyeLine v-if="colorMode === 'eyecare'" class="w-3.5 h-3.5" />
     </template>
 
     <div class="flex flex-col gap-0.5">
@@ -51,6 +53,7 @@ const currentLabel = computed(() => {
         <RiContrastLine v-if="option.value === 'auto'" class="h-3.5 w-3.5" />
         <RiSunLine v-if="option.value === 'light'" class="h-3.5 w-3.5" />
         <RiMoonLine v-if="option.value === 'dark'" class="h-3.5 w-3.5" />
+        <RiEyeLine v-if="option.value === 'eyecare'" class="h-3.5 w-3.5" />
 
         <template #suffix>
           <RiCheckLine

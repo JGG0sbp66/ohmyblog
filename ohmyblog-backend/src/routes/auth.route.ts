@@ -9,9 +9,12 @@ import {
 import { authPlugin } from "../plugins/auth.plugin";
 import { BusinessError } from "../plugins/errors";
 import { authService } from "../services/auth.service";
+import { emailConfigService } from "../services/email/email-config.service";
+import { issueAuthCookie } from "../utils/auth-cookie";
 import { DEMO_USER_UUID, isDemoUser } from "../utils/demo";
 import { getClientIp } from "../utils/getClientIp";
 import { isProduction } from "../utils/runtime";
+import { CHALLENGE_COOKIE_NAME } from "../utils/two-factor-challenge";
 
 export const authRoute = new Elysia({ name: "authRoute" }).group(
 	"/auth",
@@ -48,33 +51,39 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 				"/login",
 				async ({ body, jwt, cookie, request, server }) => {
 					const ip = getClientIp({ request, server });
-					const user = await authService.login(
+					const result = await authService.login(
 						body.identifier,
 						body.password,
 						ip,
+						body.captchaToken,
 					);
 
-					const token = await jwt.sign({
-						uuid: user.uuid,
-						role: user.role,
-						username: user.username,
-					});
+					if (result.requiresTwoFactor) {
+						cookie[CHALLENGE_COOKIE_NAME].set({
+							value: result.challenge.challengeId,
+							httpOnly: true,
+							secure: isProduction(),
+							maxAge: result.challenge.expiresIn,
+							path: "/",
+							sameSite: isProduction() ? "strict" : "lax",
+						});
 
-					cookie.auth_token.set({
-						value: token,
-						httpOnly: true,
-						secure: isProduction(),
-						maxAge: 7 * 86400,
-						path: "/",
-						sameSite: isProduction() ? "strict" : "lax",
-					});
+						return {
+							message: "请输入两步验证码",
+							requiresTwoFactor: true,
+							user: null,
+						};
+					}
+
+					await issueAuthCookie({ jwt, cookie, user: result.user });
 
 					return {
 						message: "登录成功",
+						requiresTwoFactor: false,
 						user: {
-							uuid: user.uuid,
-							username: user.username,
-							role: user.role,
+							uuid: result.user.uuid,
+							username: result.user.username,
+							role: result.user.role,
 						},
 					};
 				},
@@ -132,12 +141,31 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 					body: UpdateAccountDTO,
 				},
 			)
+			// === 忘记密码 - 查询这条路是否可用 ===
+			// 邮件服务没配置时，忘记密码流程走不通（服务端会静默失败，因为报错
+			// 会让接口变成邮箱枚举器）。前端需要先问一下，好把用户引导到命令行
+			// 恢复方式，而不是让他对着一个永远收不到邮件的表单反复提交。
+			//
+			// 只暴露一个与用户无关的布尔值，不涉及任何账号信息，可匿名访问。
+			.get(
+				"/forgot-password",
+				async () => {
+					return { available: await emailConfigService.isEmailUsable() };
+				},
+				{
+					detail: {
+						summary: "忘记密码 - 查询邮件服务是否可用",
+						description:
+							"返回 available=false 时前端应提示改用命令行重置（bun run reset-password）。",
+					},
+				},
+			)
 			// === 忘记密码 - 发送验证码 ===
 			.post(
 				"/forgot-password",
 				async ({ body, request, server }) => {
 					const ip = getClientIp({ request, server });
-					await authService.forgotPassword(body.email, ip);
+					await authService.forgotPassword(body.email, ip, body.captchaToken);
 					// 无论邮箱是否存在，都返回同样的提示，防止接口被用来枚举有效邮箱
 					return {
 						message: "若邮箱存在，验证码已发送，请注意查收",

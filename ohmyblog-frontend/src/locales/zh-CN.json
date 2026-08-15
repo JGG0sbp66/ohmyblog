@@ -1,6 +1,14 @@
 {
   "components": {
     "common": {
+      "captcha": {
+        "loading": "验证框加载中…",
+        "loadFailed": "验证框加载失败，请检查网络后刷新重试",
+        "required": "请先完成人机验证",
+        "recaptchaNotice": "本站受 Google reCAPTCHA 保护。",
+        "privacyPolicy": "隐私政策",
+        "termsOfService": "服务条款"
+      },
       "layout": {
         "Header": {
           "nav": {
@@ -45,6 +53,7 @@
             "post-edit": "文章编辑",
             "emails": "邮件管理",
             "friend-links": "友链审批",
+            "security": "安全",
             "settings": "系统设置",
             "default": "管理后台"
           },
@@ -104,7 +113,8 @@
       "ToggleTheme": {
         "light": "浅色",
         "dark": "深色",
-        "auto": "系统"
+        "auto": "系统",
+        "eyecare": "护眼"
       }
     }
   },
@@ -314,12 +324,82 @@
           }
         }
       },
+      "Security": {
+        "title": "人机验证",
+        "description": "限速只能压住单个 IP 的速度，换 IP 的分布式爆破绕得过去。开启后，选中的入口会多一道「你是不是真人」的校验。",
+        "toggle": {
+          "title": "启用人机验证",
+          "description": "关闭时所有入口都不校验，与从没配置过完全一样。"
+        },
+        "providers": {
+          "turnstile": "Turnstile",
+          "hcaptcha": "hCaptcha",
+          "recaptcha": "reCAPTCHA v3"
+        },
+        "provider": {
+          "label": "服务商",
+          "hint": "每家的密钥各存一份，切换不会把上一家的覆盖掉。只有当前选中的这家会生效。"
+        },
+        "siteKey": {
+          "label": "Site Key",
+          "placeholder": "服务商后台给的前端密钥",
+          "hint": "公开密钥，会出现在访客的页面上。泄露不要紧 —— 它本来就是给浏览器看的。"
+        },
+        "secretKey": {
+          "label": "Secret Key",
+          "placeholder": "服务商后台给的服务端密钥",
+          "hint": "只在服务器上使用，不要外传。泄露后任何人都能伪造「验证通过」。"
+        },
+        "minScore": {
+          "label": "通过分数线",
+          "hint": "只有 reCAPTCHA v3 有这个概念。它不给「是/否」，只给 0~1 的可信度分，越接近 1 越像真人 —— 所以阈值调高是更严格，不是更宽松。推荐 0.5，先用下面的测试看看实际分数再调。"
+        },
+        "test": {
+          "label": "先测一下",
+          "hint": "密钥对不对，只有拿一个真实凭证去问服务商才知道。下面这个就是访客会看到的验证框，完成它再点测试。不会动已保存的配置。",
+          "button": "测试",
+          "needToken": "先完成上面的验证框",
+          "passed": "通过，密钥可用",
+          "passedWithScore": "通过，本次得分 {score}",
+          "errors": {
+            "unknown": "没通过，服务商没说原因",
+            "raw": "没通过：{code}",
+            "invalid-input-secret": "Secret Key 不对。检查是不是复制漏了字符，或者和 Site Key 填反了",
+            "missing-input-secret": "没填 Secret Key",
+            "invalid-input-response": "验证框的凭证无效。重新完成一次验证再测，或确认两把密钥属于同一个站点",
+            "missing-input-response": "没拿到验证凭证，先完成上面的验证框",
+            "timeout-or-duplicate": "这个凭证过期了或者已经用过。重新完成一次验证再测",
+            "bad-request": "服务商拒绝了这次请求。确认两把密钥属于同一个站点、且服务商选对了",
+            "invalid-widget-id": "Site Key 与 Secret Key 不是同一个站点的",
+            "low-score": "真人校验过了，但分数低于你设的阈值。把分数线调低一点再试",
+            "not-using-dummy-secret": "用的是测试凭证，但 Secret Key 不是服务商的测试密钥",
+            "request-failed": "服务器连不上服务商。检查服务器的网络或代理"
+          }
+        },
+        "scenes": {
+          "label": "保护哪些入口",
+          "hint": "只对勾上的入口生效，没勾的跟现在完全一样。",
+          "login": {
+            "title": "登录",
+            "description": "挡猜密码的。注意：服务商连不上时你自己也登不进来。"
+          },
+          "forgotPassword": {
+            "title": "忘记密码",
+            "description": "挡拿这个接口刷邮件、碰邮箱的。"
+          },
+          "friendApply": {
+            "title": "友链申请",
+            "description": "挡机器人投稿。它是三个入口里唯一没有任何身份门槛的。"
+          }
+        }
+      },
       "Settings": {
         "nav": {
           "appearance": "界面外观",
           "site": "站点信息",
           "admin": "管理员信息",
-          "smtp": "SMTP设置"
+          "smtp": "SMTP设置",
+          "security": "安全"
         },
         "announcement": {
           "section": {
@@ -357,7 +437,11 @@
             "description": "设置站点名称和图标，将展示在浏览器标签页中。"
           },
           "hero": {
-            "description": "设置首页显示的标题和副标题，支持多条副标题自动循环播放。"
+            "description": "设置首页显示的标题和副标题，支持多条副标题自动循环播放。",
+            "enabled": {
+              "label": "启用首页横幅",
+              "description": "关闭后前台不再显示横幅，已上传的图片与标题会保留。"
+            }
           },
           "footer": {
             "title": "页脚设置",
@@ -378,7 +462,8 @@
               "addLink": "添加链接",
               "groupTitlePlaceholder": "分组标题 (如 关于)",
               "namePlaceholder": "名称 (如 GitHub)",
-              "urlPlaceholder": "地址 (如 https://...)"
+              "urlPlaceholder": "地址 (如 https://...)",
+              "reorderHint": "按住卡片即可拖动排序"
             }
           }
         },
@@ -387,6 +472,58 @@
             "title": "账号安全",
             "description": "管理您的登录凭据，包括用户名、邮箱和密码。",
             "passwordPlaceholder": "不修改请留空"
+          },
+          "twoFactor": {
+            "title": "两步验证",
+            "description": "开启后，登录时除密码外还需要输入验证器 App 上的动态验证码。",
+            "enabledAt": "已于 {date} 启用",
+            "enable": { "action": "启用" },
+            "setup": {
+              "step1": {
+                "title": "扫描二维码",
+                "description": "用 Google Authenticator、1Password、Bitwarden 等任意验证器 App 扫描下方二维码。",
+                "qrAlt": "两步验证二维码",
+                "manualHint": "无法扫码？把下面这串密钥手动录入验证器 App",
+                "manualLabel": "手动录入密钥"
+              },
+              "step2": {
+                "title": "确认验证码",
+                "description": "输入验证器 App 上显示的验证码，确认绑定成功后才会真正启用。",
+                "label": "验证码",
+                "placeholder": "请输入 6 位验证码",
+                "hint": "验证码每 30 秒更新一次，若一直提示错误请检查手机时间是否准确",
+                "submit": "确认启用"
+              },
+              "step3": {
+                "title": "保存恢复码",
+                "description": "手机丢失或验证器被清空时，用恢复码登录。每个恢复码只能用一次，这些内容只显示这一次。"
+              }
+            },
+            "codes": {
+              "remaining": "剩余 {remaining} / {total} 个恢复码",
+              "copy": "复制全部",
+              "download": "下载为文件",
+              "copied": "恢复码已复制到剪贴板",
+              "copyFailed": "复制失败，请手动选中恢复码复制",
+              "confirmSaved": "我已妥善保存这些恢复码"
+            },
+            "regenerate": {
+              "action": "重新生成恢复码",
+              "title": "重新生成恢复码",
+              "description": "生成新恢复码会让现有的全部失效。请先输入验证器 App 上的验证码。",
+              "submit": "生成新恢复码",
+              "doneHint": "新的恢复码已生成，旧的已全部失效。请立即保存。"
+            },
+            "disable": {
+              "action": "关闭",
+              "title": "关闭两步验证",
+              "question": "关闭后，登录只需要密码，账号安全性会明显下降。",
+              "warning": "现有的恢复码会被一并清空，此操作不可撤销",
+              "password": "当前密码",
+              "passwordPlaceholder": "请输入密码以确认身份",
+              "required": "请输入当前密码",
+              "confirm": "确认关闭"
+            }
           },
           "profile": {
             "title": "个人资料",
@@ -597,7 +734,9 @@
           },
           "codeBlock": {
             "languageEmpty": "未匹配语言",
-            "copy": "复制代码"
+            "copy": "复制代码",
+            "wrapOn": "开启自动换行",
+            "wrapOff": "关闭自动换行"
           },
           "slashMenu": {
             "empty": "没有匹配的命令",
@@ -689,7 +828,26 @@
       },
       "submit": "登录",
       "backToHome": "返回首页",
-      "forgotPassword": "忘记密码？"
+      "forgotPassword": "忘记密码？",
+      "twoFactor": {
+        "title": "两步验证",
+        "description": "请输入验证器 App 上显示的动态验证码。",
+        "recoveryDescription": "请输入任意一个尚未使用过的恢复码。",
+        "code": {
+          "label": "两步验证",
+          "placeholder": "验证码或恢复码",
+          "hint": "输入验证器 App 上的 6 位数字，或恢复码"
+        },
+        "recoveryCode": {
+          "label": "恢复码",
+          "placeholder": "例如 ABCDE-FGHJK",
+          "hint": "启用两步验证时保存的恢复码，每个只能使用一次"
+        },
+        "submit": "验证并登录",
+        "useRecoveryCode": "用恢复码登录",
+        "useTotp": "改用验证码",
+        "back": "返回上一步"
+      }
     },
     "forgotPassword": {
       "brand": {
@@ -716,7 +874,7 @@
         "code": {
           "label": "验证码",
           "placeholder": "请输入 6 位验证码",
-          "hint": "验证码 15 分钟内有效，请尽快使用"
+          "hint": "验证码 {minutes} 分钟内有效，请尽快使用"
         },
         "newPassword": {
           "label": "新密码",
@@ -724,7 +882,21 @@
         },
         "submit": "重置密码",
         "back": "返回上一步",
-        "resend": "没收到？重新发送"
+        "resend": "没收到？重新发送",
+        "resendCooldown": "{seconds} 秒后可重新发送"
+      },
+      "unavailable": {
+        "title": "暂时无法通过邮件找回",
+        "description": "本站还没有配置邮件服务，验证码发不出去。你可以在服务器上用命令行直接重置密码。",
+        "step1": "登录到部署本站的服务器",
+        "step2": "按你的部署方式执行对应命令：",
+        "step3": "按提示输入新密码，完成后回到登录页即可使用新密码登录",
+        "cmdBinary": "二进制部署",
+        "cmdDocker": "Docker 部署",
+        "cmdSource": "源码开发",
+        "copy": "复制命令",
+        "twoFactorToggle": "验证器也丢了，同时关闭两步验证",
+        "backToLogin": "返回登录"
       }
     },
     "friendLinks": {
@@ -753,6 +925,7 @@
       "actions": {
         "approve": "通过",
         "reject": "拒绝",
+        "reopen": "重新审批",
         "delete": "删除"
       },
       "reject": {
@@ -766,6 +939,11 @@
         "title": "删除友链",
         "message": "确定要删除这个友链吗？",
         "warning": "此操作不可撤销！"
+      },
+      "reopen": {
+        "title": "重新审批友链",
+        "message": "确定要将这个友链恢复为待审批吗？",
+        "warning": "友链将从前台撤下，原入驻时间和拒绝原因会被清除。"
       }
     },
     "emails": {
@@ -972,6 +1150,11 @@
         "email_invalid": "请输入有效的电子邮箱地址",
         "password_range": "密码长度需在6-50位之间"
       },
+      "two_factor": {
+        "token_invalid": "请输入 6 位数字验证码",
+        "password_required": "请输入当前密码",
+        "code_invalid": "请输入验证码或恢复码"
+      },
       "appearance": {
         "theme_invalid": "主题模式仅支持 light/dark/auto",
         "hue_range": "主题色相必须为 0-360 之间的数字",
@@ -1009,6 +1192,14 @@
       "post": {
         "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post",
         "excerpt_range": "摘要不能超过 500 字"
+      },
+      "captcha": {
+        "provider_invalid": "不支持的验证码服务商",
+        "site_key_range": "Site Key 长度不能超过 255 个字符",
+        "secret_key_range": "Secret Key 长度不能超过 255 个字符",
+        "secret_key_required": "请填写 Secret Key",
+        "token_required": "缺少验证凭证",
+        "recaptcha_score_range": "分数线必须是 0 到 1 之间的数字"
       }
     },
     "next": "下一步",
@@ -1017,7 +1208,10 @@
     "confirm": "确认",
     "finish": "完成",
     "save": "保存设置",
-    "delete": "删除"
+    "delete": "删除",
+    "loading": "加载中...",
+    "copied": "已复制到剪贴板",
+    "copyFailed": "复制失败，请手动复制"
   },
   "stores": {
     "setup": {
@@ -1067,9 +1261,23 @@
       "SMTP 服务未启用，请先在设置中开启邮件服务": "SMTP 服务未启用，请先在设置中开启邮件服务",
       "验证码无效或已过期": "验证码无效或已过期",
       "账户已被封禁": "账户已被封禁",
+      "请求过于频繁，请稍后再试": "请求过于频繁，请稍后再试",
       "文章不存在": "文章不存在",
       "只能永久删除回收站中的文章，请先将文章移入回收站": "只能永久删除回收站中的文章，请先将文章移入回收站",
-      "该 slug 已被其他文章使用": "该 slug 已被其他文章使用"
+      "该 slug 已被其他文章使用": "该 slug 已被其他文章使用",
+      "友链不存在": "友链不存在",
+      "友链已处于待审批状态": "友链已处于待审批状态",
+      "该友链已完成审批，请先重新审批": "该友链已完成审批，请先重新审批",
+      "两步验证已启用，请先关闭再重新绑定": "两步验证已启用，请先关闭再重新绑定",
+      "请先获取两步验证二维码": "请先获取两步验证二维码",
+      "两步验证尚未启用": "两步验证尚未启用",
+      "验证码错误，请检查验证器时间是否准确": "验证码错误，请检查验证器时间是否准确",
+      "验证码错误或已失效": "验证码错误或已失效",
+      "验证会话已过期，请重新登录": "验证会话已过期，请重新登录",
+      "验证失败次数过多，请重新登录": "验证失败次数过多，请重新登录",
+      "密码错误": "密码错误",
+      "演示模式不支持该操作": "演示模式不支持该操作",
+      "人机验证未通过，请重试": "人机验证未通过，请重试"
     },
     "success": {
       "保存成功": "保存成功",
@@ -1089,8 +1297,12 @@
       "申请已提交，等待审核": "申请已提交，等待审核",
       "已通过": "已通过",
       "已拒绝": "已拒绝",
+      "已重新进入待审批": "已重新进入待审批",
       "删除成功": "删除成功",
-      "更新成功": "更新成功"
+      "更新成功": "更新成功",
+      "两步验证已启用": "两步验证已启用",
+      "两步验证已关闭": "两步验证已关闭",
+      "恢复码已重新生成": "恢复码已重新生成"
     }
   }
 }

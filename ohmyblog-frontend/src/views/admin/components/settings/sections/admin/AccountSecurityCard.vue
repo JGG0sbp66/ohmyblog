@@ -4,6 +4,7 @@ import { ref, reactive, onMounted } from "vue";
 import SettingCard from "@/components/base/card/SettingCard.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
+import TwoFactorRow from "./two-factor/TwoFactorRow.vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { useSystemStore } from "@/stores/system.store";
 import { useLang } from "@/composables/lang.hook";
@@ -136,6 +137,9 @@ const handleSave = async () => {
         :placeholder="t('views.setup.steps.step3.confirm.placeholder')"
       />
     </div>
+
+    <!-- 两步验证：即时生效的独立操作，不受下方保存按钮管辖 -->
+    <TwoFactorRow />
 
     <template #footer>
       <div class="flex justify-end pt-4">

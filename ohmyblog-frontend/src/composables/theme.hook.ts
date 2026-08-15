@@ -9,7 +9,7 @@ import { THEME_MODES } from "@/api/shared";
  * 主题配置常量存储键名
  */
 const STORAGE_KEYS = {
-  THEME: "colorMode", // 存储主题模式 (light/dark/auto)
+  THEME: "colorMode", // 存储主题模式 (light/dark/auto/eyecare)
   HUE: "app-hue", // 存储主题色相 (0-360)
 } as const;
 
@@ -169,6 +169,14 @@ const colorMode = useColorMode<TThemeMode>({
   initialValue: "auto",
   emitAuto: true,
   disableTransition: false,
+  /*
+    useColorMode 内置的类名映射只认 auto / light / dark，自定义档必须在这里
+    显式登记，否则切过去时 <html> 上不会落 .eyecare 类，配色不生效。
+    值就是要写到 <html> 的类名，与 css/tailwind.css 里的 .eyecare 对应。
+  */
+  modes: {
+    eyecare: "eyecare",
+  },
 });
 
 /**
@@ -213,6 +221,10 @@ export function useTheme() {
   /**
    * 是否处于深色模式 (计算属性)
    * 逻辑：明确为 'dark'，或者为 'auto' 且系统当前偏好为深色
+   *
+   * 'eyecare' 是浅底档，这里落在 false 分支 —— 正是期望值：
+   * 消费方（App.vue 的 Toaster 主题、ProfileCard 的社交图标明暗版本）
+   * 在护眼档下应当取浅色那一套
    */
   const isDark = computed(
     () =>
@@ -258,7 +270,7 @@ export function useTheme() {
 
   /**
    * 循环切换主题模式
-   * 顺序：light -> dark -> auto -> light
+   * 顺序取自 THEME_MODES：light -> dark -> auto -> eyecare -> light
    */
   const cycleTheme = () => {
     const currentIndex = THEME_MODES.indexOf(colorMode.value);

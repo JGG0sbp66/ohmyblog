@@ -32,4 +32,12 @@ export interface SendResetPasswordParams {
 	to: string;
 	expiresInMinutes: number;
 	ip: string;
+	/**
+	 * 指定要发送的验证码。省略时内部生成一个新的。
+	 *
+	 * 传值的场景是「重发」：库里已有一个未过期的码，此时必须发原来那个，
+	 * 不能换新的 —— 换码会把它已累计的失败次数一起清零，等于把
+	 * RESET_PASSWORD_MAX_ATTEMPTS 变成可以靠反复申请无限刷新的软限制。
+	 */
+	code?: string;
 }

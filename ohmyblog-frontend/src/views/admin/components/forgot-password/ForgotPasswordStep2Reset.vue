@@ -4,18 +4,24 @@
   纯展示组件，所有副作用通过 emit 上抛由父页面处理
 -->
 <script setup lang="ts">
-import { useTemplateRef } from "vue";
+import { computed, useTemplateRef } from "vue";
+import AuthCard from "@/components/base/card/AuthCard.vue";
 import TipInput from "@/components/common/input/TipInput.vue";
 import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ButtonThird from "@/components/base/button/ButtonThird.vue";
 import { ResetPasswordDTO } from "@server/dtos/auth.dto";
 import { useLang } from "@/composables/lang.hook";
 import type { Validatable } from "@/composables/setup-step.hook";
-import type { ForgotPasswordForm } from "@/api/shared";
+import {
+  RESET_PASSWORD_CODE_TTL_MIN,
+  type ForgotPasswordForm,
+} from "@/api/shared";
 
-defineProps<{
+const props = defineProps<{
   form: ForgotPasswordForm;
   isSubmitting: boolean;
+  /** 重发冷却剩余秒数，大于 0 时禁用重发按钮 */
+  resendCountdown: number;
 }>();
 
 const emit = defineEmits<{
@@ -31,6 +37,15 @@ const { t } = useLang();
 const codeRef = useTemplateRef<Validatable>("codeRef");
 const newPasswordRef = useTemplateRef<Validatable>("newPasswordRef");
 
+/** 冷却中显示剩余秒数，否则显示原文案 */
+const resendText = computed(() =>
+  props.resendCountdown > 0
+    ? t("views.forgotPassword.step2.resendCooldown", {
+        seconds: props.resendCountdown,
+      })
+    : t("views.forgotPassword.step2.resend"),
+);
+
 const handleSubmit = () => {
   const codeValid = codeRef.value?.validate();
   const passwordValid = newPasswordRef.value?.validate();
@@ -40,17 +55,10 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <!-- 标题 -->
-    <div class="flex flex-col gap-2 onload-animation">
-      <h1 class="text-2xl font-bold text-fg">
-        {{ t("views.forgotPassword.step2.title") }}
-      </h1>
-      <p class="text-fg-subtle text-sm">
-        {{ t("views.forgotPassword.step2.description") }}
-      </p>
-    </div>
-
+  <AuthCard
+    :title="t('views.forgotPassword.step2.title')"
+    :description="t('views.forgotPassword.step2.description')"
+  >
     <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
       <!-- 邮箱（只读，由 step1 带过来） -->
       <div class="onload-animation anim-delay-50">
@@ -68,7 +76,11 @@ const handleSubmit = () => {
           v-model="form.code"
           :label="t('views.forgotPassword.step2.code.label')"
           :placeholder="t('views.forgotPassword.step2.code.placeholder')"
-          :hint="t('views.forgotPassword.step2.code.hint')"
+          :hint="
+            t('views.forgotPassword.step2.code.hint', {
+              minutes: RESET_PASSWORD_CODE_TTL_MIN,
+            })
+          "
           :schema="ResetPasswordDTO.properties.code"
           required
         />
@@ -87,6 +99,9 @@ const handleSubmit = () => {
         />
       </div>
 
+      <!-- 人机验证：给「重新发送」用的，组件本身由父页面持有 -->
+      <slot name="captcha" />
+
       <!-- 提交 -->
       <div class="pt-4 onload-animation anim-delay-150">
         <ButtonPrimary
@@ -102,8 +117,8 @@ const handleSubmit = () => {
         class="flex items-center justify-between text-xs onload-animation anim-delay-200"
       >
         <ButtonThird
-          :text="t('views.forgotPassword.step2.resend')"
-          :disabled="isSubmitting"
+          :text="resendText"
+          :disabled="isSubmitting || resendCountdown > 0"
           @click="emit('resend')"
         />
         <ButtonThird
@@ -112,5 +127,5 @@ const handleSubmit = () => {
         />
       </div>
     </form>
-  </div>
+  </AuthCard>
 </template>

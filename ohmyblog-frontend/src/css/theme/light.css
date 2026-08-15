@@ -1,0 +1,62 @@
+/* css/theme/light.css — 浅色模式变量（默认） */
+
+/*
+  把 --app-hue 注册成 <number>，浏览器才会对它做补间。
+
+  这是全站换色动画同步的关键：所有语义色都由这一个数推导，
+  只要这个数在动，派生出的每个颜色就天然同步 —— 组件本身
+  不需要写任何颜色过渡，也不会因为各自时长不同而错拍。
+
+  必须放在 @layer 之外（@property 不能嵌在层里）。
+*/
+@property --app-hue {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 250;
+}
+
+:root {
+  /*
+       默认 Hue (兜底用，JS 加载后会覆盖它)
+       250 = 蓝色
+    */
+  --app-hue: 250;
+
+  /*
+       拖拽滑块时的短补间时长
+       JS 侧的压制窗口按它推算，改这里就够
+    */
+  --theme-hue-live-duration: 100ms;
+
+  /*
+       换主题期间仍然允许过渡的属性
+       即下方全局列表里剔除掉所有承载颜色的那些，外加组件常用的布局属性，
+       避免压制期间把别人正在跑的展开/位移动画掐断
+    */
+  --theme-shift-keep:
+    opacity, stop-opacity, transform, scale, translate, rotate, width, height,
+    grid-template-rows, grid-template-columns, padding, margin,
+    stroke-dashoffset;
+
+  /* Light Mode 下的主色 */
+  --theme-accent: oklch(0.6 0.18 var(--app-hue));
+  --theme-accent-hover: oklch(0.55 0.18 var(--app-hue));
+  --theme-accent-active: oklch(0.5 0.18 var(--app-hue));
+
+  /* --- 背景色 --- */
+  --theme-bg: oklch(0.97 0.01 var(--app-hue));
+  --theme-bg-muted: oklch(0.95 0.03 var(--app-hue));
+  --theme-bg-card: white;
+
+  /* --- 边框色 --- */
+  --theme-border: oklch(0.9 0.02 var(--app-hue));
+
+  /* --- 文本色 --- */
+  --theme-fg: oklch(0.2 0.03 var(--app-hue));
+  --theme-fg-muted: #00000080;
+  --theme-fg-subtle: oklch(0.65 0.15 var(--app-hue));
+  --theme-fg-soft: color-mix(in oklch, var(--theme-fg-subtle) 40%, transparent);
+
+  /* 浏览器系统样式 */
+  color-scheme: light;
+}
