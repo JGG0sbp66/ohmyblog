@@ -2,7 +2,6 @@
   "components": {
     "common": {
       "captcha": {
-        "loading": "Loading verification…",
         "loadFailed": "Verification failed to load. Check your connection and refresh",
         "required": "Complete the human verification first",
         "recaptchaNotice": "This site is protected by Google reCAPTCHA.",

@@ -16,6 +16,7 @@
 -->
 <script setup lang="ts">
 import { onBeforeUnmount, ref, useTemplateRef, watch } from "vue";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import {
   BOX_HEIGHT,
   getBoxVendor,
@@ -25,6 +26,7 @@ import {
 } from "@/composables/captcha-vendor";
 import { useLang } from "@/composables/lang.hook";
 import { useTheme } from "@/composables/theme.hook";
+import Loading from "@/components/common/item/Loading.vue";
 import type { TCaptchaProvider } from "@/api/shared";
 
 const props = withDefaults(
@@ -44,6 +46,11 @@ const token = defineModel<string>({ default: "" });
 
 const { t } = useLang();
 const { isDark } = useTheme();
+
+// 根容器挂 auto-animate：切服务商时 box 框 ↔ score 声明文字是「常驻组件内部
+// 的直接子节点互换」，外层的 auto-animate 都观察不到，容器高度会瞬变，
+// 只能在这一层自己接住
+const [widgetRef] = useAutoAnimate();
 
 const boxRef = useTemplateRef<HTMLDivElement>("boxRef");
 
@@ -204,17 +211,22 @@ defineExpose({ reset, execute });
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 text-left">
+  <div ref="widgetRef" class="flex flex-col gap-2 text-left">
     <!-- box 模式：厂商的框挂在这里。留出高度，免得脚本加载完那一刻表单往下跳 -->
     <div
       v-if="vendorKind(provider) === 'box'"
       ref="boxRef"
       :style="{ minHeight: `${BOX_HEIGHT[provider] ?? 65}px` }"
-      class="flex items-center"
+      class="flex items-center transition-[min-height] duration-250 ease-in-out"
     >
-      <span v-if="status === 'loading'" class="text-xs text-fg-soft">
-        {{ t("components.common.captcha.loading") }}
-      </span>
+      <!-- 加载指示器单独套一层全宽居中容器：不能给 boxRef 加 justify-center，
+           否则厂商渲染出来的验证框也会跟着居中 -->
+      <div
+        v-if="status === 'loading'"
+        class="flex w-full items-center justify-center"
+      >
+        <Loading size-class="w-6 h-6" color-class="text-accent" />
+      </div>
     </div>
 
     <!-- score 模式：没有框，但 Google 要求页面上有一句声明 -->

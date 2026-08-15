@@ -2,7 +2,6 @@
   "components": {
     "common": {
       "captcha": {
-        "loading": "验证框加载中…",
         "loadFailed": "验证框加载失败，请检查网络后刷新重试",
         "required": "请先完成人机验证",
         "recaptchaNotice": "本站受 Google reCAPTCHA 保护。",
