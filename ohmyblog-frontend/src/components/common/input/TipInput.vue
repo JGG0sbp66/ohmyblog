@@ -3,6 +3,7 @@
 import { ref, computed } from "vue";
 import type { TSchema } from "@sinclair/typebox";
 import { useVModel } from "@vueuse/core";
+import { RiEyeLine, RiEyeOffLine } from "@remixicon/vue";
 import { useValidator } from "@/composables/validator.hook";
 import { useToast } from "@/composables/toast.hook";
 import { useLang } from "@/composables/lang.hook";
@@ -41,6 +42,33 @@ const { t } = useLang();
 
 /** input 元素引用，用于 readonly 模式下全选文本 */
 const inputRef = ref<HTMLInputElement>();
+
+/**
+ * 密码明文可见状态。仅 type=password 且非只读时生效；
+ * 浏览器自带的密码眼睛已在 css/base.css 里压掉（::-ms-reveal 等），
+ * 显隐统一由这里的按钮负责，避免出现两个眼睛。
+ */
+const passwordVisible = ref(false);
+
+/** 是否为可切换显隐的密码框（只读密码框走点击复制逻辑，不给切换按钮） */
+const isPasswordField = computed(
+  () => props.type === "password" && !props.readonly,
+);
+
+/** 实际渲染的 input 类型：密码框在 password / text 间切换 */
+const effectiveType = computed(() => {
+  if (isPasswordField.value) return passwordVisible.value ? "text" : "password";
+  return props.type || "text";
+});
+
+/**
+ * 切换密码显隐。
+ * mousedown.prevent：点击按钮不应把焦点从输入框抢走，
+ * 否则正在输入的用户会被打断（blur 触发校验、光标丢失）。
+ */
+const togglePasswordVisible = () => {
+  passwordVisible.value = !passwordVisible.value;
+};
 
 /**
  * readonly 模式下点击输入框：全选文本并复制到剪贴板
@@ -127,7 +155,7 @@ defineExpose({ validate });
     <BaseInputWrapper :error="displayError" :disabled="readonly">
       <input
         ref="inputRef"
-        :type="type || 'text'"
+        :type="effectiveType"
         v-model="innerValue"
         @blur="handleBlur"
         @input="handleInput"
@@ -136,8 +164,39 @@ defineExpose({ validate });
         :readonly="readonly"
         :autocomplete="autocomplete"
         class="w-full min-h-10 bg-transparent px-4 outline-none placeholder:text-fg-soft text-sm font-medium py-2.5"
-        :class="readonly ? 'cursor-pointer select-all' : ''"
+        :class="[
+          readonly ? 'cursor-pointer select-all' : '',
+          isPasswordField ? 'pr-2' : '',
+        ]"
       />
+
+      <!-- 密码显隐切换：图标语义与浏览器习惯一致 ——
+           密文态显示睁眼（点了可看），明文态显示划线眼（点了隐藏） -->
+      <template v-if="isPasswordField" #suffix>
+        <button
+          type="button"
+          class="shrink-0 mr-3 p-1 text-fg-soft hover:text-fg-subtle transition-colors duration-150 cursor-pointer"
+          :title="
+            t(
+              passwordVisible
+                ? 'components.common.input.TipInput.hidePassword'
+                : 'components.common.input.TipInput.showPassword',
+            )
+          "
+          :aria-label="
+            t(
+              passwordVisible
+                ? 'components.common.input.TipInput.hidePassword'
+                : 'components.common.input.TipInput.showPassword',
+            )
+          "
+          @mousedown.prevent
+          @click="togglePasswordVisible"
+        >
+          <RiEyeOffLine v-if="passwordVisible" class="w-4 h-4" />
+          <RiEyeLine v-else class="w-4 h-4" />
+        </button>
+      </template>
     </BaseInputWrapper>
   </div>
 </template>

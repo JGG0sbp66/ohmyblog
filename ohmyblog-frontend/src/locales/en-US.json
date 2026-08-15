@@ -64,7 +64,9 @@
       },
       "input": {
         "TipInput": {
-          "required": "This field cannot be empty"
+          "required": "This field cannot be empty",
+          "showPassword": "Show password",
+          "hidePassword": "Hide password"
         },
         "SearchInput": {
           "placeholder": "Search..."

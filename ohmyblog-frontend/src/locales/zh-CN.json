@@ -64,7 +64,9 @@
       },
       "input": {
         "TipInput": {
-          "required": "此项不能为空"
+          "required": "此项不能为空",
+          "showPassword": "显示密码",
+          "hidePassword": "隐藏密码"
         },
         "SearchInput": {
           "placeholder": "搜索..."
