@@ -28,6 +28,7 @@ import {
   formatLanguageLabel,
   countCodeLines,
   syncLineNumberHeights,
+  detectLanguage,
 } from "@/composables/code-block";
 import { useAnchoredPosition } from "../composables/use-anchored-position";
 
@@ -102,9 +103,12 @@ const onLangFocus = () => {
   nextTick(updatePopupPosition);
 };
 
-/** 失焦：把输入框内容规范化回当前语言的展示名，丢弃未成型的搜索词 */
+/** 失焦：把输入框内容规范化回当前语言的展示名，丢弃未成型的搜索词；
+ *  没设语言时用识别结果回填，保持 header 始终有可读的语言名 */
 const onLangBlur = () => {
-  langInput.value = formatLanguageLabel(props.node.attrs.language ?? "");
+  langInput.value = formatLanguageLabel(
+    props.node.attrs.language || detected.value || "",
+  );
 };
 
 const onLangInput = (event: Event) => {
@@ -194,9 +198,53 @@ onMounted(() => {
   });
 });
 
+// 语言自动识别：语言没设置时，CodeBlockLowlight 内部会 highlightAuto 兜底
+// 上色 —— 之前只有代码区域有色、header 仍显示 Text 占位，用户误以为语言
+// 已生效（发布后阅读端其实全白）。这里把识别结果同步到 header：
+// 图标换成识别语言的图标，识别出的语言名直接填进输入框当起始值 ——
+// 用户可以像手打的一样继续删改（改成 IN 重新搜）、回车确认。
+//
+// 填充只改输入框显示值、不回写 attrs：启发式会猜错（见 detectLanguage
+// 注释），猜的语言落库就是错的持久语义；真要生效请从下拉里选中。
+const detected = ref<string | null>(null);
+let detectTimer: ReturnType<typeof setTimeout> | null = null;
+
+// 防抖：自动检测要拿内容对 ~100 种语法全部评分，不便宜；
+// 输入停顿后再跑，避免每次击键都全量评分。200ms 大于正常击键间隔
+// （50~150ms）足够合并击键，粘贴这类一次性大变更也几乎无感。
+const refreshDetected = () => {
+  if (detectTimer) clearTimeout(detectTimer);
+  detectTimer = setTimeout(() => {
+    detected.value = props.node.attrs.language
+      ? null
+      : detectLanguage(props.node.textContent);
+    // 识别结果填进输入框：用户正在编辑时不覆盖（焦点在输入框内说明
+    // 里面是他自己敲的内容，比猜测值优先）
+    if (!props.node.attrs.language && document.activeElement !== langInputRef.value) {
+      langInput.value = formatLanguageLabel(detected.value ?? "");
+    }
+  }, 200);
+};
+
+watch(() => props.node.textContent, refreshDetected);
+watch(
+  () => props.node.attrs.language,
+  () => {
+    // 显式选中后清掉检测结果：header 与代码区都以显式语言为准
+    detected.value = null;
+    if (detectTimer) clearTimeout(detectTimer);
+  },
+);
+onMounted(refreshDetected);
+onBeforeUnmount(() => {
+  if (detectTimer) clearTimeout(detectTimer);
+});
+
 const languageIcon = computed(() => {
   void iconsReady.value; // 建立依赖：图标表加载完成后重算
-  return resolveLanguageIcon(props.node.attrs.language ?? "");
+  const language = props.node.attrs.language ?? "";
+  // 未设语言时用识别结果的图标，与代码区正在显示的自动检测配色对应
+  return resolveLanguageIcon(language || detected.value || "");
 });
 
 // ─── 行号 ────────────────────────────────────────────────────────────────────

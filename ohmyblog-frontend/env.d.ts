@@ -13,3 +13,11 @@ declare module "highlight.js/lib/common" {
   const hljs: HLJSApi;
   export default hljs;
 }
+
+// 单个语言语法模块（如 highlight.js/lib/languages/dockerfile）同样没有声明，
+// 默认导出为 LanguageFn，供 code-block/languages.ts 按需 import 扩充语言集。
+declare module "highlight.js/lib/languages/*" {
+  import type { LanguageFn } from "highlight.js";
+  const language: LanguageFn;
+  export default language;
+}

@@ -17,6 +17,7 @@
 
 import {
   highlightToHtml,
+  detectLanguage,
   resolveLanguageIcon,
   preloadLanguageIcons,
   formatLanguageLabel,
@@ -117,8 +118,20 @@ function enhanceOne(pre: HTMLPreElement): void {
 
   // 语法高亮：语言集与编辑器同源（见 composables/code-block/highlight.ts），
   // 产出相同的 hljs-* token 类，由 syntax.css 上色。
-  // 语言为空或不在语言集内（含 "text"）时返回 null，保持纯文本，与编辑器行为一致。
-  const highlighted = highlightToHtml(rawText, language);
+  // 语言为空或不在语言集内（含 "text"）时返回 null，此时走自动检测兜底：
+  //   编辑器端 CodeBlockLowlight 在语言为空时会 highlightAuto 上色，
+  //   阅读端同步行为，避免「编辑时有颜色、发布后全白」的两端分裂。
+  // 检测结果只用于渲染，不回写 className —— contentHtml/RSS 保持原样的干净语义，
+  //   且启发式可能猜错（见 detectLanguage 注释），猜的不该冒充作者声明。
+  let displayLang = language;
+  let highlighted = highlightToHtml(rawText, language);
+  if (highlighted === null) {
+    const detected = detectLanguage(rawText);
+    if (detected) {
+      highlighted = highlightToHtml(rawText, detected);
+      displayLang = detected;
+    }
+  }
   if (highlighted !== null) {
     code.innerHTML = highlighted;
     code.classList.add("hljs");
@@ -137,15 +150,16 @@ function enhanceOne(pre: HTMLPreElement): void {
 
   const icon = document.createElement("span");
   icon.className = "code-block-lang-icon";
-  // 记下语言：图标表异步就绪后要按它回填（见 enhanceCodeBlocks）
-  icon.dataset.lang = language;
-  icon.innerHTML = resolveLanguageIcon(language);
+  // 记下语言：图标表异步就绪后要按它回填（见 enhanceCodeBlocks）；
+  // 无显式语言时记检测结果，图标与代码区的兜底配色对应
+  icon.dataset.lang = displayLang;
+  icon.innerHTML = resolveLanguageIcon(displayLang);
 
   // 阅读端语言名是纯展示，直接用 <span>；
   // 后台那侧同位置是可编辑 input + 语言下拉，样式由 code-block.css 统一。
   const langLabel = document.createElement("span");
   langLabel.className = "code-block-lang-input";
-  langLabel.textContent = formatLanguageLabel(language || "text");
+  langLabel.textContent = formatLanguageLabel(displayLang || "text");
 
   langBox.appendChild(icon);
   langBox.appendChild(langLabel);
