@@ -1,6 +1,14 @@
 {
   "components": {
     "common": {
+      "captcha": {
+        "loading": "Loading verification…",
+        "loadFailed": "Verification failed to load. Check your connection and refresh",
+        "required": "Complete the human verification first",
+        "recaptchaNotice": "This site is protected by Google reCAPTCHA.",
+        "privacyPolicy": "Privacy Policy",
+        "termsOfService": "Terms of Service"
+      },
       "layout": {
         "Header": {
           "nav": {
@@ -45,6 +53,7 @@
             "post-edit": "Edit Post",
             "emails": "Emails",
             "friend-links": "Friend Links",
+            "security": "Security",
             "settings": "Settings",
             "default": "Admin"
           },
@@ -315,12 +324,82 @@
           }
         }
       },
+      "Security": {
+        "title": "Human verification",
+        "description": "Rate limiting only caps one IP at a time, so a distributed attack routes around it. Turn this on and the entries you pick will also ask visitors to prove they are human.",
+        "toggle": {
+          "title": "Enable human verification",
+          "description": "While off nothing is checked anywhere, exactly as if it were never configured."
+        },
+        "providers": {
+          "turnstile": "Turnstile",
+          "hcaptcha": "hCaptcha",
+          "recaptcha": "reCAPTCHA v3"
+        },
+        "provider": {
+          "label": "Provider",
+          "hint": "Keys are stored per provider, so switching never overwrites the previous one. Only the selected provider is active."
+        },
+        "siteKey": {
+          "label": "Site key",
+          "placeholder": "The public key from your provider dashboard",
+          "hint": "Public by design, it ships to every visitor's browser. Exposure is not a problem."
+        },
+        "secretKey": {
+          "label": "Secret key",
+          "placeholder": "The server key from your provider dashboard",
+          "hint": "Used only on your server. If it leaks, anyone can forge a passing verification."
+        },
+        "minScore": {
+          "label": "Score threshold",
+          "hint": "Only reCAPTCHA v3 has this. It returns a 0–1 confidence score instead of a yes or no, where 1 is most human-like, so raising the threshold makes it stricter rather than looser. Start at 0.5, then run the test below and tune against a real score."
+        },
+        "test": {
+          "label": "Test it first",
+          "hint": "The only way to know your keys work is to ask the provider with a real credential. The box below is what visitors will see. Complete it, then hit Test. Nothing already saved is touched.",
+          "button": "Test",
+          "needToken": "Complete the box above first",
+          "passed": "Passed, keys work",
+          "passedWithScore": "Passed, scored {score}",
+          "errors": {
+            "unknown": "Failed, and the provider gave no reason",
+            "raw": "Failed: {code}",
+            "invalid-input-secret": "Wrong secret key. Check for a truncated copy, or the site key and secret key being swapped",
+            "missing-input-secret": "No secret key entered",
+            "invalid-input-response": "The credential from the box is invalid. Complete the box again, or check that both keys belong to the same site",
+            "missing-input-response": "No credential received. Complete the box above first",
+            "timeout-or-duplicate": "That credential expired or was already used. Complete the box again",
+            "bad-request": "The provider rejected the request. Check that both keys belong to the same site and the right provider is selected",
+            "invalid-widget-id": "The site key and secret key belong to different sites",
+            "low-score": "Passed the human check but scored below your threshold. Lower the score threshold and retry",
+            "not-using-dummy-secret": "A test credential was used with a secret key that is not the provider's test key",
+            "request-failed": "Your server could not reach the provider. Check its network or proxy"
+          }
+        },
+        "scenes": {
+          "label": "Which entries to protect",
+          "hint": "Only the entries you tick are affected. The rest behave exactly as they do now.",
+          "login": {
+            "title": "Sign in",
+            "description": "Stops password guessing. Note: if the provider is unreachable, you cannot sign in either."
+          },
+          "forgotPassword": {
+            "title": "Forgot password",
+            "description": "Stops this endpoint being used to spray email or probe for addresses."
+          },
+          "friendApply": {
+            "title": "Link exchange requests",
+            "description": "Stops bot submissions. It is the only one of the three with no identity gate at all."
+          }
+        }
+      },
       "Settings": {
         "nav": {
           "appearance": "Appearance",
           "site": "Site Info",
           "admin": "Admin Info",
-          "smtp": "SMTP Settings"
+          "smtp": "SMTP Settings",
+          "security": "Security"
         },
         "announcement": {
           "section": {
@@ -1118,6 +1197,14 @@
       "post": {
         "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post",
         "excerpt_range": "Excerpt cannot exceed 500 characters"
+      },
+      "captcha": {
+        "provider_invalid": "Unsupported captcha provider",
+        "site_key_range": "Site key cannot exceed 255 characters",
+        "secret_key_range": "Secret key cannot exceed 255 characters",
+        "secret_key_required": "Secret key is required",
+        "token_required": "Missing verification credential",
+        "recaptcha_score_range": "Score threshold must be a number between 0 and 1"
       }
     },
     "next": "Next Step",
@@ -1194,7 +1281,8 @@
       "验证会话已过期，请重新登录": "This verification session has expired. Please sign in again",
       "验证失败次数过多，请重新登录": "Too many failed attempts. Please sign in again",
       "密码错误": "Incorrect password",
-      "演示模式不支持该操作": "This action is not available in demo mode"
+      "演示模式不支持该操作": "This action is not available in demo mode",
+      "人机验证未通过，请重试": "Human verification failed, please try again"
     },
     "success": {
       "保存成功": "Settings saved successfully",
