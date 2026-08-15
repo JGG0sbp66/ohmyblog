@@ -325,11 +325,11 @@
         }
       },
       "Security": {
-        "title": "Human verification",
-        "description": "Rate limiting only caps one IP at a time, so a distributed attack routes around it. Turn this on and the entries you pick will also ask visitors to prove they are human.",
+        "title": "Captcha",
+        "description": "Add a human verification step at key entry points to block bots from brute-forcing logins, flooding emails, or spamming applications.",
         "toggle": {
           "title": "Enable human verification",
-          "description": "While off nothing is checked anywhere, exactly as if it were never configured."
+          "description": "When off, no entry point performs human verification."
         },
         "providers": {
           "turnstile": "Turnstile",
@@ -338,58 +338,58 @@
         },
         "provider": {
           "label": "Provider",
-          "hint": "Keys are stored per provider, so switching never overwrites the previous one. Only the selected provider is active."
+          "hint": "Keys are stored separately for each provider; switching providers keeps previously entered keys, and only the selected one takes effect."
         },
         "siteKey": {
-          "label": "Site key",
-          "placeholder": "The public key from your provider dashboard",
-          "hint": "Public by design, it ships to every visitor's browser. Exposure is not a problem."
+          "label": "Site Key",
+          "placeholder": "Enter the public key from the provider's dashboard",
+          "hint": "A public key visible to visitors; exposure poses no risk."
         },
         "secretKey": {
-          "label": "Secret key",
-          "placeholder": "The server key from your provider dashboard",
-          "hint": "Used only on your server. If it leaks, anyone can forge a passing verification."
+          "label": "Secret Key",
+          "placeholder": "Enter the server-side key from the provider's dashboard",
+          "hint": "Stored on the server only; do not share it. If leaked, others could forge verification results."
         },
         "minScore": {
           "label": "Score threshold",
-          "hint": "Only reCAPTCHA v3 has this. It returns a 0–1 confidence score instead of a yes or no, where 1 is most human-like, so raising the threshold makes it stricter rather than looser. Start at 0.5, then run the test below and tune against a real score."
+          "hint": "Applies to reCAPTCHA v3 only: instead of a pass/fail result, it returns a 0–1 confidence score where closer to 1 means more likely human. A higher threshold is stricter. Start with the default 0.5 and adjust based on real scores from the test below."
         },
         "test": {
-          "label": "Test it first",
-          "hint": "The only way to know your keys work is to ask the provider with a real credential. The box below is what visitors will see. Complete it, then hit Test. Nothing already saved is touched.",
+          "label": "Key Test",
+          "hint": "Whether the keys work can only be confirmed by submitting a real verification to the provider. The widget below is what visitors will see — complete it, then click Test. This does not modify saved settings.",
           "button": "Test",
-          "needToken": "Complete the box above first",
-          "passed": "Passed, keys work",
-          "passedWithScore": "Passed, scored {score}",
+          "needToken": "Please complete the verification above first",
+          "passed": "Verification passed; the keys are valid",
+          "passedWithScore": "Verification passed; score: {score}",
           "errors": {
-            "unknown": "Failed, and the provider gave no reason",
-            "raw": "Failed: {code}",
-            "invalid-input-secret": "Wrong secret key. Check for a truncated copy, or the site key and secret key being swapped",
-            "missing-input-secret": "No secret key entered",
-            "invalid-input-response": "The credential from the box is invalid. Complete the box again, or check that both keys belong to the same site",
-            "missing-input-response": "No credential received. Complete the box above first",
-            "timeout-or-duplicate": "That credential expired or was already used. Complete the box again",
-            "bad-request": "The provider rejected the request. Check that both keys belong to the same site and the right provider is selected",
-            "invalid-widget-id": "The site key and secret key belong to different sites",
-            "low-score": "Passed the human check but scored below your threshold. Lower the score threshold and retry",
-            "not-using-dummy-secret": "A test credential was used with a secret key that is not the provider's test key",
-            "request-failed": "Your server could not reach the provider. Check its network or proxy"
+            "unknown": "Verification failed; the provider returned no reason",
+            "raw": "Verification failed: {code}",
+            "invalid-input-secret": "Invalid Secret Key. Check for missing characters, or that the keys were not swapped",
+            "missing-input-secret": "Secret Key is missing",
+            "invalid-input-response": "Invalid verification token. Complete the verification again, or confirm both keys belong to the same site",
+            "missing-input-response": "No verification token received; complete the verification above first",
+            "timeout-or-duplicate": "The token has expired or was already used; complete the verification again",
+            "bad-request": "The provider rejected the request. Confirm both keys belong to the same site and the correct provider is selected",
+            "invalid-widget-id": "The Site Key and Secret Key belong to different sites",
+            "low-score": "The human check passed, but the score is below your threshold; lower the threshold and retry",
+            "not-using-dummy-secret": "A test credential was used, but the Secret Key is not the provider's test key",
+            "request-failed": "The server could not reach the provider; check the server's network or proxy settings"
           }
         },
         "scenes": {
-          "label": "Which entries to protect",
-          "hint": "Only the entries you tick are affected. The rest behave exactly as they do now.",
+          "label": "Verification Scenes",
+          "hint": "Only the checked scenes require human verification; the rest are unaffected.",
           "login": {
             "title": "Sign in",
-            "description": "Stops password guessing. Note: if the provider is unreachable, you cannot sign in either."
+            "description": "Protects against automated password guessing. Note: if the server cannot reach the provider, you will not be able to sign in either."
           },
           "forgotPassword": {
             "title": "Forgot password",
-            "description": "Stops this endpoint being used to spray email or probe for addresses."
+            "description": "Protects against bots using this endpoint to flood emails or probe registered addresses."
           },
           "friendApply": {
             "title": "Link exchange requests",
-            "description": "Stops bot submissions. It is the only one of the three with no identity gate at all."
+            "description": "Protects against bot submissions; this entry requires no sign-in and is the most exposed."
           }
         }
       },
@@ -399,7 +399,7 @@
           "site": "Site Info",
           "admin": "Admin Info",
           "smtp": "SMTP Settings",
-          "security": "Security"
+          "security": "Captcha"
         },
         "announcement": {
           "section": {

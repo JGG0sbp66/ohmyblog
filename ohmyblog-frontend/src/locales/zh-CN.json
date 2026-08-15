@@ -326,10 +326,10 @@
       },
       "Security": {
         "title": "人机验证",
-        "description": "限速只能压住单个 IP 的速度，换 IP 的分布式爆破绕得过去。开启后，选中的入口会多一道「你是不是真人」的校验。",
+        "description": "在关键入口增加一道人机验证，防止机器人批量猜测密码、滥发邮件或提交垃圾申请。",
         "toggle": {
           "title": "启用人机验证",
-          "description": "关闭时所有入口都不校验，与从没配置过完全一样。"
+          "description": "关闭后，所有入口都不再进行人机验证。"
         },
         "providers": {
           "turnstile": "Turnstile",
@@ -338,58 +338,58 @@
         },
         "provider": {
           "label": "服务商",
-          "hint": "每家的密钥各存一份，切换不会把上一家的覆盖掉。只有当前选中的这家会生效。"
+          "hint": "每个服务商的密钥单独保存，切换服务商不会丢失已填写的密钥；只有当前选中的服务商会生效。"
         },
         "siteKey": {
           "label": "Site Key",
-          "placeholder": "服务商后台给的前端密钥",
-          "hint": "公开密钥，会出现在访客的页面上。泄露不要紧 —— 它本来就是给浏览器看的。"
+          "placeholder": "请输入服务商提供的前端密钥",
+          "hint": "公开密钥，会展示在访客页面上，泄露不会造成风险。"
         },
         "secretKey": {
           "label": "Secret Key",
-          "placeholder": "服务商后台给的服务端密钥",
-          "hint": "只在服务器上使用，不要外传。泄露后任何人都能伪造「验证通过」。"
+          "placeholder": "请输入服务商提供的服务端密钥",
+          "hint": "仅保存在服务器端，请勿外传；一旦泄露，他人可能伪造验证结果。"
         },
         "minScore": {
           "label": "通过分数线",
-          "hint": "只有 reCAPTCHA v3 有这个概念。它不给「是/否」，只给 0~1 的可信度分，越接近 1 越像真人 —— 所以阈值调高是更严格，不是更宽松。推荐 0.5，先用下面的测试看看实际分数再调。"
+          "hint": "仅 reCAPTCHA v3 使用此项：它不返回「通过 / 不通过」，而是给出 0~1 的可信度评分，越接近 1 越可能是真人。阈值越高要求越严格，推荐先使用默认值 0.5，再根据下方测试的实际得分进行调整。"
         },
         "test": {
-          "label": "先测一下",
-          "hint": "密钥对不对，只有拿一个真实凭证去问服务商才知道。下面这个就是访客会看到的验证框，完成它再点测试。不会动已保存的配置。",
+          "label": "密钥测试",
+          "hint": "密钥是否可用，需要向服务商实际提交一次验证才能确认。下方是访客看到的验证组件，完成验证后点击「测试」即可；测试不会影响已保存的配置。",
           "button": "测试",
-          "needToken": "先完成上面的验证框",
-          "passed": "通过，密钥可用",
-          "passedWithScore": "通过，本次得分 {score}",
+          "needToken": "请先完成上方的验证",
+          "passed": "验证通过，密钥可用",
+          "passedWithScore": "验证通过，本次得分 {score}",
           "errors": {
-            "unknown": "没通过，服务商没说原因",
-            "raw": "没通过：{code}",
-            "invalid-input-secret": "Secret Key 不对。检查是不是复制漏了字符，或者和 Site Key 填反了",
-            "missing-input-secret": "没填 Secret Key",
-            "invalid-input-response": "验证框的凭证无效。重新完成一次验证再测，或确认两把密钥属于同一个站点",
-            "missing-input-response": "没拿到验证凭证，先完成上面的验证框",
-            "timeout-or-duplicate": "这个凭证过期了或者已经用过。重新完成一次验证再测",
-            "bad-request": "服务商拒绝了这次请求。确认两把密钥属于同一个站点、且服务商选对了",
-            "invalid-widget-id": "Site Key 与 Secret Key 不是同一个站点的",
-            "low-score": "真人校验过了，但分数低于你设的阈值。把分数线调低一点再试",
-            "not-using-dummy-secret": "用的是测试凭证，但 Secret Key 不是服务商的测试密钥",
-            "request-failed": "服务器连不上服务商。检查服务器的网络或代理"
+            "unknown": "验证未通过，服务商未返回原因",
+            "raw": "验证未通过：{code}",
+            "invalid-input-secret": "Secret Key 无效，请检查是否复制完整，或是否与 Site Key 互相填反了",
+            "missing-input-secret": "未填写 Secret Key",
+            "invalid-input-response": "验证凭证无效，请重新完成验证，或确认两把密钥属于同一站点",
+            "missing-input-response": "未获取到验证凭证，请先完成上方的验证",
+            "timeout-or-duplicate": "验证凭证已过期或已被使用，请重新完成验证",
+            "bad-request": "服务商拒绝了本次请求，请确认两把密钥属于同一站点、且已选择正确的服务商",
+            "invalid-widget-id": "Site Key 与 Secret Key 不属于同一站点",
+            "low-score": "人机验证已通过，但得分低于设定的分数线，可适当调低分数线后重试",
+            "not-using-dummy-secret": "使用的是测试凭证，但 Secret Key 不是服务商提供的测试密钥",
+            "request-failed": "服务器无法连接服务商，请检查服务器的网络或代理配置"
           }
         },
         "scenes": {
-          "label": "保护哪些入口",
-          "hint": "只对勾上的入口生效，没勾的跟现在完全一样。",
+          "label": "验证场景",
+          "hint": "仅勾选的场景会要求人机验证，未勾选的场景不受影响。",
           "login": {
             "title": "登录",
-            "description": "挡猜密码的。注意：服务商连不上时你自己也登不进来。"
+            "description": "防止机器人暴力猜测密码。注意：若服务器无法连接验证服务商，你自己也将无法登录。"
           },
           "forgotPassword": {
             "title": "忘记密码",
-            "description": "挡拿这个接口刷邮件、碰邮箱的。"
+            "description": "防止机器人利用该接口批量发送邮件、探测注册邮箱。"
           },
           "friendApply": {
             "title": "友链申请",
-            "description": "挡机器人投稿。它是三个入口里唯一没有任何身份门槛的。"
+            "description": "防止机器人提交垃圾申请；该入口无需登录，最容易被滥用。"
           }
         }
       },
@@ -399,7 +399,7 @@
           "site": "站点信息",
           "admin": "管理员信息",
           "smtp": "SMTP设置",
-          "security": "安全"
+          "security": "人机验证"
         },
         "announcement": {
           "section": {
