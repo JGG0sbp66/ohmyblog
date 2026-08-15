@@ -14,6 +14,11 @@ const props = defineProps<{
     label: string;
     /** 可选的图标组件，渲染在文字左侧（品牌 logo 宽高比不一，由使用方自行定高） */
     icon?: Component;
+    /**
+     * 图标尺寸类，缺省 `h-3.5 w-auto`。
+     * 给宽扁形 logo（如 Cloudflare 云标）单独压低高度、平衡视觉面积时用。
+     */
+    iconClass?: string;
   }>;
 }>();
 
@@ -48,7 +53,12 @@ const selectedIndex = computed(() =>
       "
       @click="$emit('update:modelValue', opt.value)"
     >
-      <component :is="opt.icon" v-if="opt.icon" class="h-3.5 w-auto shrink-0" />
+      <component
+        :is="opt.icon"
+        v-if="opt.icon"
+        class="shrink-0"
+        :class="opt.iconClass ?? 'h-3.5 w-auto'"
+      />
       {{ opt.label }}
     </button>
   </div>

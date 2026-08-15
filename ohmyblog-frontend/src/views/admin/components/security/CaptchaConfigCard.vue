@@ -55,18 +55,27 @@ const current = computed(() => form.value.credentials[form.value.provider]);
 /** reCAPTCHA v3 才有分数线 */
 const isScoreProvider = computed(() => form.value.provider === "recaptcha");
 
-/** 服务商对应的官方品牌图标（SVG 数据取自 Iconify 的 logos 集，见各组件内注释） */
-const providerIcons: Record<TCaptchaProvider, typeof TurnstileIcon> = {
-  turnstile: TurnstileIcon,
-  hcaptcha: HCaptchaIcon,
-  recaptcha: ReCaptchaIcon,
+/**
+ * 服务商对应的官方品牌图标（SVG 数据取自 Iconify 的 logos 集，见各组件内注释）。
+ *
+ * iconClass 按各家的 viewBox 宽高比做视觉配平：hCaptcha / reCAPTCHA 近正方形，
+ * 默认 h-3.5（14×14）正好；Cloudflare 云标是 256:117 的宽扁形，同高会撑到
+ * ~31px 宽、显得明显偏大，故单独压到 h-2.5（≈10×22），三者视觉面积大致相当。
+ */
+const providerIconMeta: Record<
+  TCaptchaProvider,
+  { icon: typeof TurnstileIcon; iconClass?: string }
+> = {
+  turnstile: { icon: TurnstileIcon, iconClass: "h-2.5 w-auto" },
+  hcaptcha: { icon: HCaptchaIcon },
+  recaptcha: { icon: ReCaptchaIcon },
 };
 
 const providerOptions = computed(() =>
   CAPTCHA_PROVIDERS.map((value) => ({
     value,
     label: t(`views.admin.Security.providers.${value}`),
-    icon: providerIcons[value],
+    ...providerIconMeta[value],
   })),
 );
 
