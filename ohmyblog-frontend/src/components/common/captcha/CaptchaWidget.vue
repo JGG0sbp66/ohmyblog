@@ -53,15 +53,28 @@ const status = ref<"loading" | "ready" | "failed">("loading");
 /** box 模式下厂商返回的 widget 句柄，reset / remove 都要用它 */
 let widgetId: string | null = null;
 
+/**
+ * 当前 widget 是【哪一家】渲染出来的。
+ * 不能用 props.provider 代替 —— watch 触发重挂时 props 已经变成新服务商了，
+ * 拿新服务商去 remove 旧服务商的 widget 必然失败，旧框就会一直留在容器里，
+ * 来回切服务商会叠出好几个验证码框
+ */
+let mountedProvider: TCaptchaProvider | null = null;
+
+/** mount 是异步的，快速切换时会有多个同时在跑，只有最后一次才允许落地 */
+let mountSeq = 0;
+let alive = true;
+
 /** 卸载已渲染的框。切服务商、换 siteKey、组件卸载时都要先清干净 */
 const teardown = () => {
   if (widgetId === null) return;
   try {
-    getBoxVendor(props.provider)?.remove(widgetId);
+    getBoxVendor(mountedProvider!)?.remove(widgetId);
   } catch {
     // 厂商脚本在页面卸载途中可能已经不可用了，这里失败无所谓
   }
   widgetId = null;
+  mountedProvider = null;
 };
 
 /** 按当前 provider / siteKey 重新挂一个框 */
@@ -72,20 +85,30 @@ const mount = async () => {
 
   if (!props.siteKey) return;
 
+  // 先把本次要挂的参数快照下来，后面一律用快照，不读可能已经变掉的 props
+  const seq = ++mountSeq;
+  const provider = props.provider;
+  const siteKey = props.siteKey;
+
   try {
-    await loadVendorScript(props.provider, props.siteKey);
+    await loadVendorScript(provider, siteKey);
   } catch {
+    if (seq !== mountSeq || !alive) return;
     status.value = "failed";
     return;
   }
 
-  if (vendorKind(props.provider) === "score") {
+  // 等待期间来了更新的 mount（或组件已卸载），本次直接放弃，
+  // 否则会和后来的那次各挂一个框，叠出多个验证码
+  if (seq !== mountSeq || !alive) return;
+
+  if (vendorKind(provider) === "score") {
     // v3 没有要渲染的东西，脚本就绪即可用
     status.value = "ready";
     return;
   }
 
-  const vendor = getBoxVendor(props.provider);
+  const vendor = getBoxVendor(provider);
   const el = boxRef.value;
   if (!vendor || !el) {
     status.value = "failed";
@@ -93,7 +116,7 @@ const mount = async () => {
   }
 
   widgetId = vendor.render(el, {
-    sitekey: props.siteKey,
+    sitekey: siteKey,
     theme: isDark.value ? "dark" : "light",
     callback: (value: string) => {
       token.value = value;
@@ -107,6 +130,7 @@ const mount = async () => {
       token.value = "";
     },
   });
+  mountedProvider = provider;
 
   status.value = "ready";
 };
@@ -119,7 +143,7 @@ const reset = () => {
   token.value = "";
   if (widgetId === null) return;
   try {
-    getBoxVendor(props.provider)?.reset(widgetId);
+    getBoxVendor(mountedProvider!)?.reset(widgetId);
   } catch {
     // 同 teardown：厂商脚本不可用时忽略
   }
@@ -171,7 +195,10 @@ watch(isDark, () => {
   if (vendorKind(props.provider) === "box") void mount();
 });
 
-onBeforeUnmount(teardown);
+onBeforeUnmount(() => {
+  alive = false;
+  teardown();
+});
 
 defineExpose({ reset, execute });
 </script>
