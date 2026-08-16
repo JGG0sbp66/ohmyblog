@@ -210,9 +210,9 @@ jobs:
           username: root
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           envs: IMAGE_VERSION
-          # 任一命令非零退出即中止，避免带着旧镜像继续"假部署"
-          script_stop: true
           script: |
+            # ssh-action v1 已移除 script_stop 参数，官方替代：脚本开头 set -e
+            set -e
             cd /root/docker/container/ohmyblog
             # ref 形如 v1.3.6，镜像 tag 是 1.3.6，去掉前缀 v
             echo "IMAGE_TAG=${IMAGE_VERSION#v}" > .env
