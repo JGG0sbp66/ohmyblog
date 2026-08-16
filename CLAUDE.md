@@ -205,7 +205,7 @@ bun tools/cdp.mjs targets --port=9333
 
 模拟器要用**局域网 IP**（不是 127.0.0.1）。`adb devices` 没有在线设备通常就是模拟器没开机，跳过移动端验证即可。
 
-管理后台的页面需要登录，干净 profile 进不去 `/admin`。验证后台组件的办法是临时加一个 Vite 入口（`ohmyblog-frontend/xxx.html` + 一个只 `createApp` 挂目标组件的临时 `.ts`），绕开路由守卫，**测完删掉**。
+管理后台的页面需要登录，干净 profile 进不去 `/admin`。验证后台组件的办法是**开演示模式**：`ohmyblog-backend/data/.env` 里把 `DEMO_MODE` 改成 `true` 重启后端（命令行环境变量优先级更高，也可启动时直接带 `DEMO_MODE=true`），未登录游客会拿到虚拟管理员身份（`__demo__`，只读——所有写操作被后端拒绝），`/admin` 无需登录直接逛，**测完改回 false**。要验证写操作路径时这套不够用，再临时加一个 Vite 入口（`ohmyblog-frontend/xxx.html` + 一个只 `createApp` 挂目标组件的临时 `.ts`）绕开路由守卫，**测完删掉**。
 
 `.kiro/hooks/session-brief.ps1` 是 agentSpawn 钩子（挂在 `.kiro/agents/ohmyblog.json`）：会话启动时跑一次上面这些探测，并把 CLAUDE.md 注入上下文一次（放钩子而不是 steering/resources，是因为后者每轮对话都会重新塞一遍）。`.kiro/` 不入库，这套属于本机配置。钩子脚本**必须是纯 ASCII**：Windows PowerShell 5.1 读无 BOM 的 `.ps1` 会按 GBK 解码，中文源码被搞坏后会静默截断脚本（症状是后面几行输出凭空消失）。
 
