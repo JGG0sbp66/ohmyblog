@@ -18,10 +18,10 @@ const recentPostsRef = ref<InstanceType<typeof RecentPostsCard> | null>(null);
     <DashboardStatsRow />
 
     <!-- 下半区域：文章(宽) + 右侧列(灵感速记 + 系统信息) -->
-    <!-- 对齐策略：左列是撑满剩余高度、内部自滚的列表卡，右列两张卡都是内容高度，
-         两边底边天然对不齐——这里选择不去强行拉平。右列按 gap-6 依次往下排，
-         富余空间留在最底部：把空隙塞到两卡之间（justify-between）虽然能让四角对齐，
-         但会割裂「速记 → 系统信息」的阅读顺序，代价比参差的底边大。 -->
+    <!-- 左列撑满剩余高度、内部自滚；右列按内容自然往下排，不强行拉平两列底边。
+         视口不够高时右列同样自滚而不是撑破 row 向下溢出——这种 flex 溢出不会被
+         main 的滚动范围完整计入（Chromium 会少算），戳出去的卡片会贴死视口底边，
+         连 main 的 padding-bottom 都滚不出来。 -->
     <div
       class="flex-1 flex flex-col md:flex-row gap-6 items-start onload-animation anim-delay-200 min-h-0"
     >
@@ -30,7 +30,9 @@ const recentPostsRef = ref<InstanceType<typeof RecentPostsCard> | null>(null);
         ref="recentPostsRef"
         class="md:flex-2 self-stretch min-h-0"
       />
-      <div class="w-full md:flex-1 flex flex-col gap-6">
+      <div
+        class="w-full flex-1 self-stretch flex flex-col gap-6 min-h-0 overflow-y-auto custom-scrollbar"
+      >
         <QuickNoteCard @saved="recentPostsRef?.refresh()" />
         <SystemInfoCard />
       </div>
