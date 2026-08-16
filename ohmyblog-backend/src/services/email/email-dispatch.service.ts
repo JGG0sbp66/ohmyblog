@@ -26,7 +26,12 @@ class EmailDispatchService {
 		return nodemailer.createTransport({
 			host: smtpConfig.host,
 			port: smtpConfig.port,
-			secure: smtpConfig.port !== 25,
+			// 端口语义：465 = 隐式 TLS（一连上就握手），587 = STARTTLS（先明文
+			// 打招呼再升级），25 = 明文中继。secure 只在隐式 TLS 下为 true ——
+			// 此前写成 port !== 25，587 也被当隐式 TLS，对着说明文的端口发
+			// TLS 握手必然失败；requireTLS 只在 secure:false 时有意义，那时
+			// 它才是 587 的正确开关
+			secure: smtpConfig.port === 465,
 			auth: { user: smtpConfig.username, pass: smtpConfig.password },
 			requireTLS: smtpConfig.port === 587,
 			connectionTimeout: 10000,
