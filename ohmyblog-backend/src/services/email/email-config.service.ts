@@ -27,6 +27,13 @@ class EmailConfigService {
 				status: 400,
 			});
 		}
+		// 配置 DTO 允许空串入库（否则空着保存「关闭」状态会 422），
+		// 这里拦下半配置状态，不能放给 nodemailer
+		if (!config.host || !config.username || !config.password) {
+			throw new BusinessError("SMTP 配置不完整，请先在设置中填写邮件服务信息", {
+				status: 400,
+			});
+		}
 		return config;
 	}
 
@@ -38,17 +45,20 @@ class EmailConfigService {
 	 *
 	 * @returns 可发信返回 true
 	 */
-	async isEmailUsable(): Promise<boolean> {
-		try {
-			const record = await configDao.findByKey("smtp");
-			const value = record?.configValue as
-				| TSMTPConfigUpsertDTO["configValue"]
-				| undefined;
-			return Boolean(value?.enabled);
-		} catch {
-			return false;
+		async isEmailUsable(): Promise<boolean> {
+			try {
+				const record = await configDao.findByKey("smtp");
+				const value = record?.configValue as
+					| TSMTPConfigUpsertDTO["configValue"]
+					| undefined;
+				// 与 getSmtpConfig 的完整性判断保持一致：enabled 但必填字段为空同样视为不可用
+				return Boolean(
+					value?.enabled && value.host && value.username && value.password,
+				);
+			} catch {
+				return false;
+			}
 		}
-	}
 
 	/**
 	 * 读取外观配置（hue），供模板使用

@@ -218,36 +218,52 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 });
 
 // Step5：smtp 配置 DTO
+//
+// host/username/password 刻意允许空串（同 captcha 密钥的处理，见下方注释）：
+// 关掉开关时前端会跳过表单校验，这几个字段很可能是空串，设非空约束会让
+// 「空着保存关闭状态」直接 422 —— 整个 ConfigUpsertDTO Union 一个分支都
+// 匹配不上，报出谁也看不懂的 "Expected union value"。
+// 启用时的完整性由读接口兜底：enabled 但必填字段为空一律当作不可用，
+// 见 email-config.service.ts
 export const SMTPConfigUpsertDTO = t.Object({
 	configKey: t.Literal("smtp"),
 	configValue: t.Object({
 		enabled: t.Boolean({
 			description: "是否启用 SMTP",
 		}),
-		host: t.String({
-			minLength: 1,
-			maxLength: 255,
-			description: "SMTP 服务器地址",
-			error: "smtp.host_range",
-		}),
+		host: t.Union([
+			t.Literal(""),
+			t.String({
+				minLength: 1,
+				maxLength: 255,
+				description: "SMTP 服务器地址",
+				error: "smtp.host_range",
+			}),
+		]),
 		port: t.Number({
 			minimum: 1,
 			maximum: 65535,
 			description: "SMTP 端口",
 			error: "smtp.port_range",
 		}),
-		username: t.String({
-			minLength: 1,
-			maxLength: 255,
-			description: "SMTP 用户名",
-			error: "smtp.username_range",
-		}),
-		password: t.String({
-			minLength: 1,
-			maxLength: 255,
-			description: "SMTP 密码",
-			error: "smtp.password_range",
-		}),
+		username: t.Union([
+			t.Literal(""),
+			t.String({
+				minLength: 1,
+				maxLength: 255,
+				description: "SMTP 用户名",
+				error: "smtp.username_range",
+			}),
+		]),
+		password: t.Union([
+			t.Literal(""),
+			t.String({
+				minLength: 1,
+				maxLength: 255,
+				description: "SMTP 密码",
+				error: "smtp.password_range",
+			}),
+		]),
 		senderEmail: t.Optional(
 			t.Union([
 				t.Literal(""),
