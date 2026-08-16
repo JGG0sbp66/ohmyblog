@@ -46,5 +46,9 @@ try {
 	await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
 	logger.info("✅ 数据库同步成功");
 } catch (error) {
-	logger.error({ err: error }, "❌ 数据库同步失败");
+	// 迁移失败必须让进程退出：吞掉的话服务会带着旧结构/缺表照常启动，
+	// 每个请求撞一次 "no such table/column"，比启动失败难排查得多。
+	// 顶层 throw 会让 Bun 以非零码退出，容器编排据此重启/告警
+	logger.error({ err: error }, "❌ 数据库同步失败，进程退出");
+	throw error;
 }
