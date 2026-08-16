@@ -53,7 +53,6 @@ const { formData, isLoaded, load, save } = useConfigForm<CaptchaForm>(
     scenes: { login: false, forgotPassword: false, friendApply: false },
   },
   {
-    isPublic: false, // 与 smtp 同属敏感配置
     merge: (loaded, defaults) => ({
       enabled: Boolean(loaded.enabled),
       provider: loaded.provider ?? defaults.provider,

@@ -12,7 +12,7 @@ import { getClientIp } from "../utils/getClientIp";
  * 配置的增删改查走通用的 /api/config（与 smtp 一致），这里只放两个通用接口
  * 装不下的东西：
  *
- *   GET  /captcha       公开。那条配置 isPublic=false，而登录页、忘记密码页、
+ *   GET  /captcha       公开。那条配置不在公开白名单里，而登录页、忘记密码页、
  *                       友链申请表单恰恰都是未登录状态，读不到却又需要 siteKey
  *                       才能把验证框渲染出来。这里只吐渲染需要的字段，没有 secret
  *   POST /captcha/test  管理员。拿表单里当前填的密钥试一次，先试通再保存

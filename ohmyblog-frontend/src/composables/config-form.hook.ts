@@ -13,8 +13,11 @@ import { useToast } from "@/composables/toast.hook";
  * - 「404 = 还没配置过 = 保持调用方传入的默认值」这条约定只在这一处实现。
  *   手写样板的年代各表单自己抄这段逻辑，SMTP 就抄错过一次——默认值写成
  *   true，导致从未配置过的开关显示为开启
- * - 默认值本身、加载后的字段归一化（merge）、敏感配置的 isPublic 仍是
- *   调用方的语义决策，作为参数传入
+ * - 默认值本身、加载后的字段归一化（merge）仍是调用方的语义决策，作为
+ *   参数传入
+ *
+ * 配置的公开性不在这里也不在调用方：那是后端 publicConfigKeys 白名单
+ * 决定的访问控制规则，请求体已经没有 isPublic 这个字段。
  *
  * 适用「页面私有、本地 ref 即数据源」的配置表单（SMTP、人机验证）。
  * 状态住在全局 store、前台也要读的配置（公告、Hero）不适用，别硬套。
@@ -23,8 +26,6 @@ export function useConfigForm<TValue extends object>(
   configKey: TConfigKey,
   defaults: TValue,
   options?: {
-    /** 敏感配置（含密钥/密码）传 false；省略则不随本次保存改动该字段 */
-    isPublic?: boolean;
     /**
      * 加载成功后的归一化，返回值直接成为新的表单值。
      * 默认浅合并（{...表单默认值, ...接口值}）；嵌套结构需要逐字段
@@ -81,7 +82,6 @@ export function useConfigForm<TValue extends object>(
       await upsertConfig({
         configKey,
         configValue: formData.value,
-        ...(options?.isPublic !== undefined && { isPublic: options.isPublic }),
       } as TConfigUpsertDTO);
       useToast.success(t("api.success.保存成功"));
       return true;

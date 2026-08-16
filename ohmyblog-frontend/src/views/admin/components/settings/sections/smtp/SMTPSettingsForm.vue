@@ -27,7 +27,6 @@ const { formData, isLoaded, isSaving, load, save } = useConfigForm<
     senderEmail: "",
     senderName: "",
   },
-  { isPublic: false },
 );
 
 const isAdvancedExpanded = ref(false);

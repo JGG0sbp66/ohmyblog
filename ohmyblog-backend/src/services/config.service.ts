@@ -1,10 +1,12 @@
 // src/services/config.service.ts
-import { configDao, type NewConfig } from "../daos/config.dao";
-import type { TConfigUpsertDTO } from "../dtos/config.dto";
+
 import {
 	configDescriptions,
+	publicConfigKeys,
 	type TConfigKey,
 } from "../../db/constants/config.constants";
+import { configDao, type NewConfig } from "../daos/config.dao";
+import type { TConfigUpsertDTO } from "../dtos/config.dto";
 import { BusinessError } from "../plugins/errors";
 import { logger } from "../plugins/logger.plugin";
 
@@ -65,13 +67,17 @@ class ConfigService {
 
 	/**
 	 * 获取单个配置
+	 *
+	 * 公开性不看数据库也不看请求，只认 publicConfigKeys 白名单（访问控制
+	 * 规则是开发期知识，见该常量的注释）：白名单外的键一律仅管理员可读。
 	 * @param configKey 键名
-	 * @param isAdmin 是否以管理员身份访问 (如果是，则绕过 isPublic 限制)
+	 * @param isAdmin 是否以管理员身份访问 (如果是，则绕过白名单限制)
 	 * @returns 配置记录，若不存在或无权限则抛出 404
 	 */
 	async getByKey(configKey: string, isAdmin: boolean = false) {
 		const item = await configDao.findByKey(configKey);
-		if (!item || (!isAdmin && !item.isPublic)) {
+		const isPublic = publicConfigKeys.includes(configKey as TConfigKey);
+		if (!item || (!isAdmin && !isPublic)) {
 			throw new BusinessError("配置不存在", { status: 404 });
 		}
 		return item;

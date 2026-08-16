@@ -15,11 +15,6 @@ const ConfigMetaDTO = {
 			error: "config.description_range",
 		}),
 	),
-	isPublic: t.Optional(
-		t.Boolean({
-			description: "是否公开给前端",
-		}),
-	),
 };
 
 // Step1：appearance 配置 DTO
@@ -311,9 +306,10 @@ export const AnnouncementConfigUpsertDTO = t.Object({
 
 // captcha 配置 DTO（人机验证，非 setup 向导步骤）
 //
-// 与 smtp 同属敏感配置：isPublic 存 false，只有管理员读得到，secretKey 会
-// 照常回显给管理端（与 smtp 密码一致）。前台登录页等处是未登录状态，读不到
-// 这条配置，改走 GET /api/captcha —— 那个接口只吐渲染验证框需要的字段。
+// 与 smtp 同属敏感配置：不在 publicConfigKeys 白名单里，未登录访客读不到，
+// secretKey 会照常回显给管理端（与 smtp 密码一致）。前台登录页等处是未登录
+// 状态，读不到这条配置，改走 GET /api/captcha —— 那个接口只吐渲染验证框
+// 需要的字段。
 
 /**
  * 单个服务商的一对密钥。
