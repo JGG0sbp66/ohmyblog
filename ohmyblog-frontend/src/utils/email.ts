@@ -27,6 +27,24 @@ export function getEmailBodyPreview(item: EmailLogItem, t: TFunc): string {
         ip: p.ip ?? "-",
         minutes: p.expiresInMinutes ?? "-",
       });
+    // 友链四类：后端 templateProps 字段与词条插值不同名（siteName/applicantSiteName → {name}）
+    case "friend_link_apply":
+      return t("views.emails.body_preview.friend_link_apply", {
+        name: p.siteName ?? "-",
+        url: p.siteUrl ?? "-",
+      });
+    case "friend_link_apply_confirmed":
+      return t("views.emails.body_preview.friend_link_apply_confirmed", {
+        name: p.applicantSiteName ?? "-",
+      });
+    case "friend_link_approved":
+      return t("views.emails.body_preview.friend_link_approved", {
+        name: p.applicantSiteName ?? "-",
+      });
+    case "friend_link_rejected":
+      return t("views.emails.body_preview.friend_link_rejected", {
+        name: p.applicantSiteName ?? "-",
+      });
     default:
       return item.to;
   }
