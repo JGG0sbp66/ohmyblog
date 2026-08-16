@@ -11,7 +11,6 @@ const slots = useSlots();
  * - isActive: 是否处于激活状态（默认 false）
  * - text: 按钮文本，可选
  * - disabled: 是否禁用（默认 false）
- * - gap: 图标与文本之间的间距级别（对应 tailwind gap-n，默认 "2"）
  *
  * 插槽:
  * - default: 图标或其他内容，通常放在文本左侧
@@ -22,9 +21,8 @@ const props = withDefaults(
     isActive?: boolean;
     text?: string;
     disabled?: boolean;
-    gap?: string;
   }>(),
-  { isActive: false, text: "", disabled: false, gap: "2" },
+  { isActive: false, text: "", disabled: false },
 );
 
 // 检测插槽是否渲染出实际内容：
@@ -95,11 +93,12 @@ const dynamicClass = computed(() => {
 // 内容容器样式
 const contentClass = "relative z-10 pointer-events-none";
 
-// 计算间距样式
-const gapClass = computed(() => {
-  if (!hasSlot.value || !props.text) return "";
-  return `gap-${props.gap}`;
-});
+// 图标与文本的间距。必须是源码里的字面量：Tailwind 只扫文本不执行代码，
+// 此前 `gap-${props.gap}` 的运行时拼接永远进不了产物，间距全靠其他文件
+// 恰好写了同名类才生效——那些文件一改这里就静默失效。需要别的档位时用
+// class 覆盖（gap-1.5! 这种带 ! 的字面量，与 ResponsiveGroupedSelect 等
+// 现存模式一致）。
+const gapClass = computed(() => (hasSlot.value && props.text ? "gap-2" : ""));
 </script>
 
 <template>

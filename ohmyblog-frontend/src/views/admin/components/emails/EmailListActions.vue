@@ -55,10 +55,9 @@ const typeGroups = computed<GroupedSelectGroup[]>(() =>
     <div class="flex items-center gap-1.5 rounded-2xl bg-bg-muted-soft p-1">
       <div class="h-9">
         <ButtonSecondary
-          class="h-full w-full text-sm"
+          class="h-full w-full text-sm gap-1.5!"
           :is-active="isRead === undefined"
           :text="t('views.emails.filters.all')"
-          gap="1.5"
           @click="emit('update:isRead', undefined)"
         >
           <Mail class="h-3.5 w-3.5" />
@@ -66,10 +65,9 @@ const typeGroups = computed<GroupedSelectGroup[]>(() =>
       </div>
       <div class="h-9">
         <ButtonSecondary
-          class="h-full w-full text-sm"
+          class="h-full w-full text-sm gap-1.5!"
           :is-active="isRead === false"
           :text="t('views.emails.filters.unread')"
-          gap="1.5"
           @click="emit('update:isRead', false)"
         >
           <MailOpen class="h-3.5 w-3.5" />
