@@ -47,17 +47,28 @@ const formattedDate = computed(() => {
 
 const wordCount = computed(() => post.value?.wordCount ?? 0);
 
+/**
+ * 请求序号守卫：A→B 快速切文章时，A 的响应可能比 B 的还晚到 —— 不拦的话
+ * 旧响应会覆盖新文章的内容；A 的 404 迟到更糟，会把用户从存在的文章页
+ * 踢进 404。每次 fetch 自增序号，响应回来时序号已不是自己的就整批丢弃
+ * （loading 与 404 跳转一并归最新请求所有）
+ */
+let fetchSeq = 0;
+
 const fetchPost = async () => {
+  const seq = ++fetchSeq;
   loading.value = true;
   // 先清空，避免切换文章时目录残留上一篇的标题
   headings.value = [];
   try {
     const result = await getPublicPostBySlug(slug.value);
+    if (seq !== fetchSeq) return;
     post.value = (result as any)?.post ?? null;
   } catch {
+    if (seq !== fetchSeq) return;
     post.value = null;
   } finally {
-    loading.value = false;
+    if (seq === fetchSeq) loading.value = false;
   }
 
   // 文章不存在：跳转到统一 404 页。
