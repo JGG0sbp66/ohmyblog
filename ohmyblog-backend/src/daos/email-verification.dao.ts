@@ -119,6 +119,19 @@ class EmailVerificationDao {
 	}
 
 	/**
+	 * 重发已有验证码时刷新审计 ip —— 记录应指向「最近一次触发申请」的来源，
+	 * 而不是永远停在第一次
+	 * @param uuid 验证码记录 UUID
+	 * @param ip 最新触发申请的来源 IP
+	 */
+	async updateIp(uuid: string, ip: string) {
+		await db
+			.update(emailVerification)
+			.set({ ip })
+			.where(eq(emailVerification.uuid, uuid));
+	}
+
+	/**
 	 * 将指定记录标记为已使用
 	 * @param uuid 验证码记录 UUID
 	 */

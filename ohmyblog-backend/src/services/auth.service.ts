@@ -258,6 +258,9 @@ class AuthService {
 
 		try {
 			let codeToSend = existing?.code;
+			// 邮件里写的有效期：新码是完整 TTL；重发的是存量旧码，必须按它的
+			// **剩余**时长写 —— 满额写 5 分钟，用户拿到只剩 1 分钟的码就被误导了
+			let validityMinutes = RESET_PASSWORD_CODE_TTL_MIN;
 			if (!codeToSend) {
 				// 新码「先生成落库、再发信」，顺序不能反：先发后存的话，落库
 				// 失败（磁盘满 / 锁超时）时邮件已经送达，站长邮箱里躺着一个
@@ -279,11 +282,16 @@ class AuthService {
 					expiresAt,
 					ip,
 				});
+			} else {
+				const remainingMs = existing.expiresAt.getTime() - Date.now();
+				validityMinutes = Math.max(1, Math.ceil(remainingMs / 60_000));
+				// 审计 ip 指向最近一次触发申请的来源，而不是永远停在第一次
+				await emailVerificationDao.updateIp(existing.uuid, ip);
 			}
 
 			await emailSenderService.sendResetPasswordEmail({
 				to: user.email,
-				expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
+				expiresInMinutes: validityMinutes,
 				ip,
 				code: codeToSend,
 			});
