@@ -623,6 +623,10 @@
         "validation": {
           "slugRequired": "发布前请先填写标题或永久链接"
         },
+        "loadFailed": {
+          "message": "文章加载失败。为防止空表单覆盖原文，编辑器已停用",
+          "retry": "重试加载"
+        },
         "saveError": {
           "content": "正文保存失败，文章状态未改动：{reason}",
           "status": "正文已保存，但状态更新失败，请重试：{reason}"

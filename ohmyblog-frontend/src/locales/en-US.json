@@ -625,6 +625,10 @@
         "validation": {
           "slugRequired": "Please set a title or permalink before publishing"
         },
+        "loadFailed": {
+          "message": "Failed to load this post. The editor is disabled to prevent an empty form from overwriting the original.",
+          "retry": "Retry"
+        },
         "saveError": {
           "content": "Failed to save content; post status was left unchanged: {reason}",
           "status": "Content saved, but the status update failed. Please retry: {reason}"
