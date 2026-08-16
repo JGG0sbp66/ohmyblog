@@ -7,6 +7,7 @@
 // 3. 所有外部依赖（网络、解析）失败一律降级为「未知」并返回，不向上层抛错。
 // 4. 本地/保留 IP 直接跳过外部请求（开发环境登录看到的多是 ::1 / 192.168.x.x）
 import { logger } from "../plugins/logger.plugin";
+import { TTLCache } from "../utils/cache";
 
 export interface GeoInfo {
 	/** 两位国家代码，如 CN / US；解析失败时为 null */
@@ -37,9 +38,19 @@ const UNKNOWN_GEO: GeoInfo = {
 
 class GeoService {
 	private logger = logger.withTag("GeoService");
-	/** IP -> GeoInfo 缓存，避免短时间内对同一 IP 反复调用外部 API */
-	private cache = new Map<string, { info: GeoInfo; expiresAt: number }>();
 	private readonly CACHE_TTL_MS = 60 * 60 * 1000; // 1 小时
+	/**
+	 * IP -> GeoInfo 缓存，避免短时间内对同一 IP 反复调用外部 API。
+	 * 用 TTLCache 而不是裸 Map：裸 Map 的过期条目只会在同 IP 再查时被
+	 * 覆盖、从不删除，也没有条目上限 —— 互联网访客的 IP 长尾无限多，
+	 * 跑久了就是只增不减的泄漏。TTL 到期即删，maxSize 满了淘汰最早的
+	 */
+	private readonly cache = new TTLCache<string, GeoInfo>({
+		ttlMs: this.CACHE_TTL_MS,
+		// 每小时唯一访客 IP 的量级给足余量；异地登录检测对「被淘汰」
+		// 无感，大不了多发一次外部查询
+		maxSize: 4096,
+	});
 
 	/**
 	 * 解析 IP 的地理位置信息
@@ -52,10 +63,10 @@ class GeoService {
 			return UNKNOWN_GEO;
 		}
 
-		// 命中缓存
+		// 命中缓存（TTLCache.get 自带过期判断与删除）
 		const cached = this.cache.get(ip);
-		if (cached && cached.expiresAt > Date.now()) {
-			return cached.info;
+		if (cached) {
+			return cached;
 		}
 
 		try {
@@ -78,10 +89,7 @@ class GeoService {
 				city: data.city ?? null,
 				ok: true,
 			};
-			this.cache.set(ip, {
-				info,
-				expiresAt: Date.now() + this.CACHE_TTL_MS,
-			});
+			this.cache.set(ip, info);
 			return info;
 		} catch (err) {
 			this.logger.warn({ ip, err }, "IP geo 查询异常");
