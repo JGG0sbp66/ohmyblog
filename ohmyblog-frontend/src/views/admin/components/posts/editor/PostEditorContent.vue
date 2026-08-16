@@ -82,8 +82,9 @@ const bottomGap = computed(() => dockHeight.value + inset.value);
       class="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6 sm:px-8 sm:py-10"
       :style="{ paddingBottom: `calc(2.5rem + ${bottomGap}px)` }"
     >
-      <!-- 标题 + 副标题：紧挨成组（gap-2），间距小于容器的 gap-4 节奏 -->
-      <div class="flex flex-col gap-2">
+      <!-- 标题 + 副标题：与前台 PostHeader 同款版式（accent 竖条贯穿开场块），
+           编辑态即可预览成稿观感；紧挨成组（gap-2），间距小于容器的 gap-4 节奏 -->
+      <div class="-ml-0.5 flex flex-col gap-2 border-l-4 border-accent pl-4">
         <PostEditorTitle v-model="title" />
         <PostEditorSubtitle v-model="subtitle" />
       </div>
