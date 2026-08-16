@@ -16,18 +16,15 @@ const { t } = useLang();
 // 这里只声明语义：默认值是什么、属于敏感配置不公开
 const { formData, isLoaded, isSaving, load, save } = useConfigForm<
   TSMTPConfigUpsertDTO["configValue"]
->(
-  "smtp",
-  {
-    enabled: false,
-    host: "",
-    port: 587,
-    username: "",
-    password: "",
-    senderEmail: "",
-    senderName: "",
-  },
-);
+>("smtp", {
+  enabled: false,
+  host: "",
+  port: 465,
+  username: "",
+  password: "",
+  senderEmail: "",
+  senderName: "",
+});
 
 const isAdvancedExpanded = ref(false);
 const formRef = ref<InstanceType<typeof SMTPForm> | null>(null);

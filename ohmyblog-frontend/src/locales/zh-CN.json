@@ -1110,7 +1110,7 @@
             },
             "port": {
               "label": "端口",
-              "placeholder": "例如：587"
+              "placeholder": "例如：465"
             },
             "username": {
               "label": "SMTP 用户名",

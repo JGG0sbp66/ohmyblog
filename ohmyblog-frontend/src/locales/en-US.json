@@ -1115,7 +1115,7 @@
             },
             "port": {
               "label": "Port",
-              "placeholder": "e.g., 587"
+              "placeholder": "e.g., 465"
             },
             "username": {
               "label": "SMTP Username",
