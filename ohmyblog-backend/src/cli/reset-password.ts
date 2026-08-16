@@ -21,8 +21,14 @@
 //   <用户名或邮箱>   指定账号，省略时自动选中唯一的管理员
 //   --disable-2fa   顺便关掉两步验证（验证器也丢了时用）
 //
-// 密码通过交互式输入，不作为命令行参数传，避免留在 shell 历史里。
-// 也支持管道：echo "newpass" | ./ohmyblog reset-password admin
+// 密码来源按模式二选一：
+//   交互（TTY）   系统生成随机密码并打印 —— 想设自己惯用的密码，登录后
+//                到后台设置页改，那里走浏览器的完整输入栈。此前交互分支
+//                在 raw mode 下按字节拼密码，中文等多字节字符会拼成乱码
+//                哈希，把「用中文密码的站长」锁在这个自救工具要救的门外面；
+//                不再接收手输，这一类问题从结构上消失
+//   管道 / 重定向  读 stdin 作为自定义密码（echo "newpass" | ...），整块
+//                utf8 解码，无字节边界问题，供自动化使用
 
 import { twoFactorDao } from "../daos/two-factor.dao";
 import { userDao } from "../daos/user.dao";
@@ -50,73 +56,36 @@ const validatePasswordLength = (value: string): string | null => {
 	return null;
 };
 
-/**
- * 从终端读一行密码，输入过程回显为 *。
- *
- * 不是 TTY（例如被管道喂数据）时退化为直接读 stdin，方便自动化调用。
- */
-async function readSecret(promptText: string): Promise<string> {
-	const stdin = process.stdin;
+/** 生成字母表：剔除 0/1/l/I/O/o 等形近字符，万一需要手抄不至于抄错 */
+const PASSWORD_ALPHABET =
+	"23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+const GENERATED_LENGTH = 20;
 
-	if (!stdin.isTTY) {
-		const chunks: Uint8Array[] = [];
-		for await (const chunk of stdin) chunks.push(chunk as Uint8Array);
-		return Buffer.concat(chunks).toString("utf8").trim();
+/** 拒绝采样取 [0, max) 的均匀随机数，消掉 256 % max 的模偏差 */
+function randomIndex(max: number): number {
+	// 只接受落在完整重复段内的字节值，其余丢弃重取
+	const limit = 256 - (256 % max);
+	const buf = new Uint8Array(1);
+	do {
+		crypto.getRandomValues(buf);
+	} while (buf[0] >= limit);
+	return buf[0] % max;
+}
+
+/** 生成随机密码（crypto 级随机，长度落在 DTO 约束内） */
+function generatePassword(): string {
+	let out = "";
+	for (let i = 0; i < GENERATED_LENGTH; i++) {
+		out += PASSWORD_ALPHABET[randomIndex(PASSWORD_ALPHABET.length)];
 	}
+	return out;
+}
 
-	process.stdout.write(promptText);
-	stdin.setRawMode(true);
-	stdin.resume();
-
-	return await new Promise<string>((resolve, reject) => {
-		let value = "";
-
-		const onData = (chunk: Buffer) => {
-			for (const byte of chunk) {
-				// Ctrl+C
-				if (byte === 3) {
-					cleanup();
-					process.stdout.write("\n已取消\n");
-					process.exit(130);
-				}
-				// 回车 / 换行 → 结束输入
-				if (byte === 13 || byte === 10) {
-					cleanup();
-					process.stdout.write("\n");
-					resolve(value);
-					return;
-				}
-				// 退格
-				if (byte === 8 || byte === 127) {
-					if (value.length > 0) {
-						value = value.slice(0, -1);
-						process.stdout.write("\b \b");
-					}
-					continue;
-				}
-				// 忽略其余控制字符，避免方向键之类把乱码塞进密码
-				if (byte < 32) continue;
-
-				value += String.fromCharCode(byte);
-				process.stdout.write("*");
-			}
-		};
-
-		const cleanup = () => {
-			stdin.setRawMode(false);
-			stdin.pause();
-			stdin.off("data", onData);
-			stdin.off("error", onError);
-		};
-
-		const onError = (err: Error) => {
-			cleanup();
-			reject(err);
-		};
-
-		stdin.on("data", onData);
-		stdin.on("error", onError);
-	});
+/** 从 stdin 读自定义密码（管道 / 重定向喂入时用），整块 utf8 解码 */
+async function readPasswordFromStdin(): Promise<string> {
+	const chunks: Uint8Array[] = [];
+	for await (const chunk of process.stdin) chunks.push(chunk as Uint8Array);
+	return Buffer.concat(chunks).toString("utf8").trim();
 }
 
 /**
@@ -142,34 +111,20 @@ export async function runResetPassword(args: string[]) {
 		process.exit(1);
 	}
 
-	console.log(`目标账号：${target.username} <${target.email}>`);
-	if (target.twoFactorEnabled && !disableTwoFactor) {
-		console.log(
-			"提示：该账号启用了两步验证，改完密码登录时仍需验证码。\n" +
-				"      验证器也丢了的话，加 --disable-2fa 一起关掉。",
-		);
-	}
+	// 2. 定密码：交互模式生成随机值，管道模式读 stdin
+	const password = process.stdin.isTTY
+		? generatePassword()
+		: await readPasswordFromStdin();
 
-	// 2. 读新密码
-	const password = await readSecret("新密码：");
 	const lengthError = validatePasswordLength(password);
 	if (lengthError) {
 		console.error(`✗ ${lengthError}`);
 		process.exit(1);
 	}
 
-	if (process.stdin.isTTY) {
-		const confirm = await readSecret("再输一次：");
-		if (confirm !== password) {
-			console.error("✗ 两次输入不一致");
-			process.exit(1);
-		}
-	}
-
-	// 3. 落库
+	// 3. 落库（先落库再打印：保证打出来的密码一定是存进去的那个）
 	const passwordHash = await Bun.password.hash(password);
 	await userDao.update(target.uuid, { passwordHash });
-	console.log("✓ 密码已重置");
 
 	if (disableTwoFactor && target.twoFactorEnabled) {
 		await twoFactorDao.deleteByUser(target.uuid);
@@ -179,12 +134,11 @@ export async function runResetPassword(args: string[]) {
 			twoFactorEnabledAt: null,
 			twoFactorLastUsedCounter: null,
 		});
-		console.log("✓ 两步验证已关闭，恢复码已全部清除");
-	} else if (disableTwoFactor) {
-		console.log("· 该账号本来就没开两步验证，跳过");
 	}
 
-	// 已签发的 auth_token 不受影响：项目的 JWT 没有黑名单，改密码不会踢掉
-	// 现有会话。真要强制下线，改 data/.env 里的 JWT_SECRET 并重启
-	console.log("\n现在可以用新密码登录了。");
+	// 4. 输出。就这两行 —— 打印顺序放在所有写操作之后，中途失败不会
+	//    印出一个没有生效的密码。已签发的 auth_token 不受影响：项目的
+	//    JWT 没有黑名单，改密码不会踢掉现有会话
+	console.log(`账号：${target.username} <${target.email}>`);
+	console.log(`新密码：${password}`);
 }
