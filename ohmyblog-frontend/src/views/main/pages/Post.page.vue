@@ -119,6 +119,7 @@ watch(slug, fetchPost, { immediate: true });
 
           <PostHeader
             :title="post.title ?? ''"
+            :subtitle="post.subtitle ?? null"
             :formatted-date="formattedDate"
             :tags="post.tags"
             :word-count="wordCount"

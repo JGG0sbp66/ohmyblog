@@ -12,6 +12,10 @@ export const post = sqliteTable("post", {
 	// 文章标题
 	title: text("title").notNull().default(""),
 
+	// 副标题：主标题下方的说明性文字（Stripe 文档式「大标题 + 副题」版式）。
+	// 文章级属性而非正文内容：一篇文章至多一条，前台渲染在标题下、不进目录
+	subtitle: text("subtitle"),
+
 	// 【管理端专用】编辑器源数据：ProseMirror JSON 格式
 	// 保存了所有富文本细节（如图片宽高、块级自定义属性），是后台编辑器的唯一数据来源，
 	// 也是前台文章渲染的输入（只读 Tiptap 实例直接 setContent(json)）

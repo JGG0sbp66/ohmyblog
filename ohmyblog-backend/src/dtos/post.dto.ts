@@ -12,6 +12,14 @@ export const SavePostDTO = t.Object({
 			error: "post.title_range",
 		}),
 	),
+	// 副标题：主标题下方的说明性文字，文章级属性（非正文富文本），传空串即清除
+	subtitle: t.Optional(
+		t.String({
+			maxLength: 255,
+			description: "文章副标题，主标题下方的说明性文字",
+			error: "post.subtitle_range",
+		}),
+	),
 	// 编辑器输出的 ProseMirror JSON，原样传入，后端直接存储
 	content: t.Optional(
 		t.Any({

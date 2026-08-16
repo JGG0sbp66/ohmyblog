@@ -24,6 +24,7 @@ export type PostUpdate = Partial<
 const listColumns = {
 	uuid: post.uuid,
 	title: post.title,
+	subtitle: post.subtitle,
 	contentText: post.contentText,
 	coverImage: effectiveCoverImage,
 	coverEnabled: post.coverEnabled,
@@ -121,6 +122,7 @@ class PostDao {
 				.select({
 					uuid: post.uuid,
 					title: post.title,
+					subtitle: post.subtitle,
 					contentHtml: post.contentHtml,
 					wordCount: sql<number>`LENGTH(${post.contentText})`,
 					coverImage: effectiveCoverImage,

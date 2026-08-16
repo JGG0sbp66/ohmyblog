@@ -17,6 +17,8 @@ import { TTLCache } from "../../utils/cache";
 export type PublishedPostRow = {
 	uuid: string;
 	title: string;
+	// 主标题下方的说明性副标题（文章级属性，可空）
+	subtitle: string | null;
 	// 前台渲染源：editor.getHTML() 导出的 HTML（不再下发 ProseMirror JSON）
 	contentHtml: string | null;
 	wordCount: number;
@@ -43,6 +45,7 @@ export type ArchiveRow = {
 export type PublishedListRow = {
 	uuid: string;
 	title: string;
+	subtitle: string | null;
 	contentText: string | null;
 	// 经 effectiveCoverImage 遮蔽后的生效封面：开关关闭时为 null
 	coverImage: string | null;
