@@ -101,7 +101,6 @@
       "search": {
         "HeaderSearch": {
           "placeholder": "Search posts...",
-          "searching": "Searching...",
           "noResults": "No posts found",
           "untitled": "Untitled"
         }
@@ -271,11 +270,7 @@
           },
           "actions": {
             "edit": "Edit",
-            "publish": "Publish",
-            "toDraft": "Revert to Draft",
-            "archive": "Archive",
             "trash": "Move to Trash",
-            "restore": "Restore to Draft",
             "permanentDelete": "Delete Permanently"
           },
           "untitled": "New Post",
@@ -292,14 +287,12 @@
             "trashModal": {
               "title": "Move to Trash",
               "question": "Are you sure you want to move the following posts to Trash?",
-              "listHeader": "Posts to be moved",
               "warning": "You can find and restore them from the Trash section at any time.",
               "confirm": "Move All to Trash"
             },
             "deleteModal": {
               "title": "Permanent Bulk Delete",
               "question": "Are you sure you want to permanently delete the following posts?",
-              "listHeader": "Posts to be permanently deleted",
               "warning": "This action cannot be undone. The posts will be permanently deleted and cannot be recovered.",
               "confirm": "Delete All Permanently"
             }
@@ -477,8 +470,6 @@
           "twoFactor": {
             "title": "Two-Factor Authentication",
             "description": "Once enabled, signing in requires a code from your authenticator app in addition to your password.",
-            "enabledAt": "Enabled on {date}",
-            "enable": { "action": "Enable" },
             "setup": {
               "step1": {
                 "title": "Scan the QR code",
@@ -501,12 +492,7 @@
               }
             },
             "codes": {
-              "remaining": "{remaining} of {total} recovery codes left",
-              "copy": "Copy all",
-              "download": "Download as file",
-              "copied": "Recovery codes copied to clipboard",
-              "copyFailed": "Copy failed, please select the codes manually",
-              "confirmSaved": "I have saved these recovery codes somewhere safe"
+              "download": "Download as file"
             },
             "regenerate": {
               "action": "Regenerate recovery codes",
@@ -516,13 +502,11 @@
               "doneHint": "New recovery codes are ready and all previous ones are now invalid. Save them right away."
             },
             "disable": {
-              "action": "Disable",
               "title": "Disable two-factor authentication",
               "question": "After disabling, only your password will be required to sign in, which significantly weakens account security.",
               "warning": "All existing recovery codes will be deleted. This cannot be undone.",
               "password": "Current password",
               "passwordPlaceholder": "Enter your password to confirm",
-              "required": "Please enter your current password",
               "confirm": "Disable"
             }
           },
@@ -533,8 +517,6 @@
             "bioPlaceholder": "Introduce yourself in a few sentences..."
           },
           "social": {
-            "title": "Social Links",
-            "description": "Configure social platform links displayed in your sidebar.",
             "links": {
               "title": "Social Platforms",
               "add": "Add Link",
@@ -547,10 +529,6 @@
           }
         },
         "smtp": {
-          "section": {
-            "title": "SMTP Service",
-            "description": "Configure SMTP server to enable email notification functions."
-          },
           "preview": {
             "testEmailTitle": "A test email from ohmyblog",
             "greeting": "Hello, {name}!",
@@ -846,23 +824,12 @@
       "backToHome": "Back to Home",
       "forgotPassword": "Forgot password?",
       "twoFactor": {
-        "title": "Two-Factor Authentication",
-        "description": "Enter the code currently shown in your authenticator app.",
-        "recoveryDescription": "Enter any recovery code you haven't used yet.",
         "code": {
           "label": "Two-factor authentication",
           "placeholder": "Code or recovery code",
           "hint": "Enter the 6-digit code from your authenticator app, or a recovery code"
         },
-        "recoveryCode": {
-          "label": "Recovery code",
-          "placeholder": "e.g. ABCDE-FGHJK",
-          "hint": "One of the recovery codes you saved when enabling two-factor authentication. Each works once."
-        },
-        "submit": "Verify and sign in",
-        "useRecoveryCode": "Use a recovery code",
-        "useTotp": "Use authenticator code",
-        "back": "Back"
+        "submit": "Verify and sign in"
       }
     },
     "forgotPassword": {
@@ -947,9 +914,7 @@
       "reject": {
         "title": "Reject Friend Link",
         "reasonLabel": "Reason",
-        "reasonPlaceholder": "Let the applicant know why...",
-        "confirm": "Confirm Reject",
-        "cancel": "Cancel"
+        "reasonPlaceholder": "Let the applicant know why..."
       },
       "delete": {
         "title": "Delete Friend Link",
@@ -963,13 +928,11 @@
       }
     },
     "emails": {
-      "title": "Email Management",
       "filters": {
         "all": "All",
         "unread": "Unread",
         "type": "Email type",
         "allTypes": "All types",
-        "clear": "Clear type filter",
         "close": "Close type filter",
         "typeHint": "Choose which email types to display"
       },
@@ -1007,7 +970,6 @@
     "setup": {
       "steps": {
         "step1": {
-          "welcome": "Welcome to your new blog journey.",
           "title": "Appearance",
           "description": "Customize how your blog looks and feels.",
           "settings": {
@@ -1140,12 +1102,6 @@
               "placeholder": "e.g., ohmyblog Bot",
               "hint": "If not specified, only email address is shown; when filled, displays as 'Name <email>' format"
             }
-          },
-          "preview": {
-            "title": "Email Preview",
-            "subject": "This is a test email",
-            "body": "If you are reading this email, it means your SMTP service is configured correctly!",
-            "footer": "This is an automated system email sent by {name}. Please do not reply."
           }
         }
       }
@@ -1156,8 +1112,6 @@
       "count": "{count} items in total",
       "empty": "No data yet, click the button above to add"
     },
-    "refresh": "Refresh List",
-    "clear_all": "Clear Logs",
     "no_data": "No messages",
     "no_more_data": "No more data",
     "validation": {
@@ -1226,7 +1180,6 @@
     "finish": "Finish",
     "save": "Save Settings",
     "delete": "Delete",
-    "loading": "Loading...",
     "copied": "Copied to clipboard",
     "copyFailed": "Copy failed, please copy manually"
   },
@@ -1266,7 +1219,6 @@
       "请上传 10MB 以内的有效图片": "Please upload a valid image under 10MB.",
       "\"body.image\" has invalid file type": "Invalid file type. Please upload an image file.",
       "文章行内图处理失败，请重试": "Failed to process the image. Please try again.",
-      "图片处理失败，请重试": "Failed to process the image. Please try again.",
       "网站图标处理失败，请重试": "Failed to process the favicon. Please try again.",
       "首页横幅处理失败，请重试": "Failed to process the hero image. Please try again.",
       "管理员头像处理失败，请重试": "Failed to process the avatar. Please try again.",
@@ -1293,8 +1245,6 @@
       "两步验证尚未启用": "Two-factor authentication is not enabled",
       "验证码错误，请检查验证器时间是否准确": "Incorrect code. Check that your device clock is accurate",
       "验证码错误或已失效": "That code is incorrect or no longer valid",
-      "验证会话已过期，请重新登录": "This verification session has expired. Please sign in again",
-      "验证失败次数过多，请重新登录": "Too many failed attempts. Please sign in again",
       "密码错误": "Incorrect password",
       "演示模式不支持该操作": "This action is not available in demo mode",
       "人机验证未通过，请重试": "Human verification failed, please try again"
