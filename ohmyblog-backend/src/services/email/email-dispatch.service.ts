@@ -55,7 +55,14 @@ class EmailDispatchService {
 	}: DispatchOptions): Promise<{ message: string; count?: number }> {
 		const transporter = await this.createTransporter(smtpConfig);
 		const fromAddress = smtpConfig.senderEmail || smtpConfig.username;
-		const fromName = smtpConfig.senderName || siteTitle;
+		// display-name 消毒：from 头是字符串拼接（"名字" <地址>），名字里带
+		// 引号会提前闭合、把余下文本拆成额外的地址段 —— 与 SQL 注入同构，
+		// 把未消毒数据拼进有语法结构的字符串。真正的换行注入（CRLF 伪造
+		// 头）nodemailer 会拦，这里管的是引号/尖括号逃逸
+		const fromName = (smtpConfig.senderName || siteTitle).replace(
+			/["\\<>]/g,
+			"",
+		);
 		try {
 			await transporter.sendMail({
 				from: `"${fromName}" <${fromAddress}>`,
