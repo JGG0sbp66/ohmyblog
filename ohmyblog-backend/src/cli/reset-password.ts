@@ -21,44 +21,18 @@
 //   <用户名或邮箱>   指定账号，省略时自动选中唯一的管理员
 //   --disable-2fa   顺便关掉两步验证（验证器也丢了时用）
 //
-// 密码来源按模式二选一：
-//   交互（TTY）   系统生成随机密码并打印 —— 想设自己惯用的密码，登录后
-//                到后台设置页改，那里走浏览器的完整输入栈。此前交互分支
-//                在 raw mode 下按字节拼密码，中文等多字节字符会拼成乱码
-//                哈希，把「用中文密码的站长」锁在这个自救工具要救的门外面；
-//                不再接收手输，这一类问题从结构上消失
-//   管道 / 重定向  读 stdin 作为自定义密码（echo "newpass" | ...），整块
-//                utf8 解码，无字节边界问题，供自动化使用
+// 密码一律由系统生成并打印，不接收任何形式的输入：此前交互分支在 raw
+// mode 下按字节拼密码，中文等多字节字符会拼成乱码哈希，把「用中文密码的
+// 站长」锁在这个自救工具要救的门外面。想设自己惯用的密码，登录后到后台
+// 设置页改 —— 那里走浏览器的完整输入栈，没有字节边界问题。
 
 import { twoFactorDao } from "../daos/two-factor.dao";
 import { userDao } from "../daos/user.dao";
-import { ResetPasswordDTO } from "../dtos/auth.dto";
-
-// 长度约束直接读 DTO，不另抄一份数字：HTTP 接口、前端 TipInput 的表单校验、
-// 这里，三处共用同一个 schema，改 DTO 就全都跟着变。
-//
-// TypeBox 把这两个字段标成可选。schema 里真没写约束时就不施加对应限制，
-// 而不是回填一个猜出来的默认值 —— 那等于又把数字硬编码回来了
-const { minLength, maxLength } = ResetPasswordDTO.properties.newPassword;
-
-/**
- * 按 DTO 的约束校验密码长度
- * @param value 待校验的明文密码
- * @returns 不合规时返回给用户看的原因，合规返回 null
- */
-const validatePasswordLength = (value: string): string | null => {
-	if (minLength !== undefined && value.length < minLength) {
-		return `密码长度不能少于 ${minLength} 位`;
-	}
-	if (maxLength !== undefined && value.length > maxLength) {
-		return `密码长度不能超过 ${maxLength} 位`;
-	}
-	return null;
-};
 
 /** 生成字母表：剔除 0/1/l/I/O/o 等形近字符，万一需要手抄不至于抄错 */
 const PASSWORD_ALPHABET =
 	"23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+/** 生成长度。须落在 ResetPasswordDTO 的 6~50 约束内（auth.dto.ts） */
 const GENERATED_LENGTH = 20;
 
 /** 拒绝采样取 [0, max) 的均匀随机数，消掉 256 % max 的模偏差 */
@@ -72,20 +46,13 @@ function randomIndex(max: number): number {
 	return buf[0] % max;
 }
 
-/** 生成随机密码（crypto 级随机，长度落在 DTO 约束内） */
+/** 生成随机密码（crypto 级随机） */
 function generatePassword(): string {
 	let out = "";
 	for (let i = 0; i < GENERATED_LENGTH; i++) {
 		out += PASSWORD_ALPHABET[randomIndex(PASSWORD_ALPHABET.length)];
 	}
 	return out;
-}
-
-/** 从 stdin 读自定义密码（管道 / 重定向喂入时用），整块 utf8 解码 */
-async function readPasswordFromStdin(): Promise<string> {
-	const chunks: Uint8Array[] = [];
-	for await (const chunk of process.stdin) chunks.push(chunk as Uint8Array);
-	return Buffer.concat(chunks).toString("utf8").trim();
 }
 
 /**
@@ -111,18 +78,8 @@ export async function runResetPassword(args: string[]) {
 		process.exit(1);
 	}
 
-	// 2. 定密码：交互模式生成随机值，管道模式读 stdin
-	const password = process.stdin.isTTY
-		? generatePassword()
-		: await readPasswordFromStdin();
-
-	const lengthError = validatePasswordLength(password);
-	if (lengthError) {
-		console.error(`✗ ${lengthError}`);
-		process.exit(1);
-	}
-
-	// 3. 落库（先落库再打印：保证打出来的密码一定是存进去的那个）
+	// 2. 生成并落库（先落库再打印：保证打出来的密码一定是存进去的那个）
+	const password = generatePassword();
 	const passwordHash = await Bun.password.hash(password);
 	await userDao.update(target.uuid, { passwordHash });
 
@@ -136,9 +93,8 @@ export async function runResetPassword(args: string[]) {
 		});
 	}
 
-	// 4. 输出。就这两行 —— 打印顺序放在所有写操作之后，中途失败不会
-	//    印出一个没有生效的密码。已签发的 auth_token 不受影响：项目的
-	//    JWT 没有黑名单，改密码不会踢掉现有会话
+	// 3. 输出。就这两行。已签发的 auth_token 不受影响：项目的 JWT 没有
+	//    黑名单，改密码不会踢掉现有会话
 	console.log(`账号：${target.username} <${target.email}>`);
 	console.log(`新密码：${password}`);
 }
