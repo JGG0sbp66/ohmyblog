@@ -10,16 +10,13 @@
 import { onMounted, ref } from "vue";
 import CaptchaConfigCard from "./CaptchaConfigCard.vue";
 import CaptchaEntriesCard from "./CaptchaEntriesCard.vue";
-import { getConfig, upsertConfig } from "@/api/config.api";
 import {
   RECAPTCHA_DEFAULT_MIN_SCORE,
   type TCaptchaProvider,
 } from "@/api/shared";
 import { useCaptcha } from "@/composables/captcha.hook";
-import { useLang } from "@/composables/lang.hook";
-import { useToast } from "@/composables/toast.hook";
+import { useConfigForm } from "@/composables/config-form.hook";
 
-const { t } = useLang();
 const { refresh: refreshPublicConfig } = useCaptcha();
 
 const emit = defineEmits<{
@@ -34,70 +31,52 @@ const emptyCredentials = (): Record<TCaptchaProvider, Credential> => ({
   recaptcha: { siteKey: "", secretKey: "" },
 });
 
-const configForm = ref({
-  enabled: false,
-  provider: "turnstile" as TCaptchaProvider,
-  credentials: emptyCredentials(),
-  recaptchaMinScore: RECAPTCHA_DEFAULT_MIN_SCORE,
-});
+/** 表单整体形状：比 DTO 多了「必填」的credentials/scenes（DTO 里两者可选），
+ *  两张卡片直接按这个形状编辑，不会遇到 undefined */
+type CaptchaForm = {
+  enabled: boolean;
+  provider: TCaptchaProvider;
+  credentials: Record<TCaptchaProvider, Credential>;
+  recaptchaMinScore: number;
+  scenes: { login: boolean; forgotPassword: boolean; friendApply: boolean };
+};
 
-const scenesForm = ref({
-  login: false,
-  forgotPassword: false,
-  friendApply: false,
-});
+// 读写机制由 useConfigForm 收敛；嵌套密钥的逐字段兜底（存量的 credentials
+// 可能只配过其中一家）浅合并拿不准，用 merge 接管归一化
+const { formData, isLoaded, load, save } = useConfigForm<CaptchaForm>(
+  "captcha",
+  {
+    enabled: false,
+    provider: "turnstile",
+    credentials: emptyCredentials(),
+    recaptchaMinScore: RECAPTCHA_DEFAULT_MIN_SCORE,
+    scenes: { login: false, forgotPassword: false, friendApply: false },
+  },
+  {
+    isPublic: false, // 与 smtp 同属敏感配置
+    merge: (loaded, defaults) => ({
+      enabled: Boolean(loaded.enabled),
+      provider: loaded.provider ?? defaults.provider,
+      credentials: { ...defaults.credentials, ...loaded.credentials },
+      recaptchaMinScore: loaded.recaptchaMinScore ?? defaults.recaptchaMinScore,
+      scenes: { ...defaults.scenes, ...loaded.scenes },
+    }),
+  },
+);
+
+// ── 保存 ────────────────────────────────────────────────────────────────
+// 两张卡片的保存按钮写的是同一份整体配置（后端只有一个 captcha key），
+// payload 无差别，差别只在按钮各自的 loading 和保存后的联动
 
 const isConfigSaving = ref(false);
 const isScenesSaving = ref(false);
-const isLoaded = ref(false);
-
-// ── 读写配置 ────────────────────────────────────────────────────────────
-
-const loadConfig = async () => {
-  try {
-    const res = await getConfig("captcha");
-    const value = res?.config?.configValue as any | undefined;
-    if (!value) return;
-
-    configForm.value = {
-      enabled: Boolean(value.enabled),
-      provider: value.provider ?? "turnstile",
-      credentials: { ...emptyCredentials(), ...value.credentials },
-      recaptchaMinScore: value.recaptchaMinScore ?? RECAPTCHA_DEFAULT_MIN_SCORE,
-    };
-
-    scenesForm.value = {
-      login: false,
-      forgotPassword: false,
-      friendApply: false,
-      ...value.scenes,
-    };
-  } catch {
-    // 404 = 还没配置过，用默认值即可
-  } finally {
-    isLoaded.value = true;
-  }
-};
 
 /** 保存配置卡片（开关 + 服务商 + 密钥） */
 const handleSaveConfig = async () => {
   isConfigSaving.value = true;
   try {
-    await upsertConfig({
-      configKey: "captcha",
-      configValue: {
-        enabled: configForm.value.enabled,
-        provider: configForm.value.provider,
-        credentials: configForm.value.credentials,
-        recaptchaMinScore: configForm.value.recaptchaMinScore,
-        scenes: scenesForm.value,
-      },
-      isPublic: false,
-    });
-    useToast.success(t("api.success.保存成功"));
-    await refreshPublicConfig();
-  } catch (error: any) {
-    useToast.error(t(`api.errors.${error}`));
+    // 配置卡片影响前台验证框的加载，保存成功后刷新公开配置缓存
+    if (await save()) await refreshPublicConfig();
   } finally {
     isConfigSaving.value = false;
   }
@@ -107,40 +86,27 @@ const handleSaveConfig = async () => {
 const handleSaveScenes = async () => {
   isScenesSaving.value = true;
   try {
-    await upsertConfig({
-      configKey: "captcha",
-      configValue: {
-        enabled: configForm.value.enabled,
-        provider: configForm.value.provider,
-        credentials: configForm.value.credentials,
-        recaptchaMinScore: configForm.value.recaptchaMinScore,
-        scenes: scenesForm.value,
-      },
-      isPublic: false,
-    });
-    useToast.success(t("api.success.保存成功"));
-  } catch (error: any) {
-    useToast.error(t(`api.errors.${error}`));
+    await save();
   } finally {
     isScenesSaving.value = false;
   }
 };
 
-onMounted(loadConfig);
+onMounted(load);
 </script>
 
 <template>
   <div class="flex flex-col gap-8">
     <CaptchaConfigCard
-      v-model:form="configForm"
+      :form="formData"
       :is-loaded="isLoaded"
       :is-saving="isConfigSaving"
       @save="handleSaveConfig"
     />
 
     <CaptchaEntriesCard
-      v-if="configForm.enabled && isLoaded"
-      v-model:scenes="scenesForm"
+      v-if="formData.enabled && isLoaded"
+      :scenes="formData.scenes"
       :is-loaded="isLoaded"
       :is-saving="isScenesSaving"
       @save="handleSaveScenes"

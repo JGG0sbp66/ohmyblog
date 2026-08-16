@@ -17,6 +17,8 @@ export interface CaptchaScenesForm {
 }
 
 defineProps<{
+  /** 场景开关组由父级持有，本卡片只就地编辑嵌套字段，所以是 prop 而非 v-model */
+  scenes: CaptchaScenesForm;
   isLoaded: boolean;
   isSaving: boolean;
 }>();
@@ -26,8 +28,6 @@ const emit = defineEmits<{
   /** 用户点击了某个入口条目，抛出对应的索引 */
   "scene-focus": [index: number];
 }>();
-
-const scenes = defineModel<CaptchaScenesForm>("scenes", { required: true });
 
 const { t } = useLang();
 </script>
@@ -58,9 +58,7 @@ const { t } = useLang();
         v-model="scenes.friendApply"
         :loading="!isLoaded"
         :title="t('views.admin.Security.scenes.friendApply.title')"
-        :description="
-          t('views.admin.Security.scenes.friendApply.description')
-        "
+        :description="t('views.admin.Security.scenes.friendApply.description')"
         @click="emit('scene-focus', 2)"
       />
     </div>

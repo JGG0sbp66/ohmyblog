@@ -35,7 +35,12 @@ export interface CaptchaConfigForm {
   recaptchaMinScore: number;
 }
 
-defineProps<{
+/**
+ * 表单对象由父级（CaptchaSettingsForm 的 useConfigForm）持有，
+ * 本卡片只就地编辑嵌套字段、从不整对象替换，所以是 prop 而非 v-model
+ */
+const props = defineProps<{
+  form: CaptchaConfigForm;
   isLoaded: boolean;
   isSaving: boolean;
 }>();
@@ -44,16 +49,16 @@ const emit = defineEmits<{
   save: [];
 }>();
 
-const form = defineModel<CaptchaConfigForm>("form", { required: true });
-
 const { t } = useLang();
 const [formRef] = useAutoAnimate();
 
 /** 当前选中那家的密钥 */
-const current = computed(() => form.value.credentials[form.value.provider]);
+const current = computed(() => props.form.credentials[props.form.provider]);
 
 /** reCAPTCHA v3 才有分数线 */
-const isScoreProvider = computed(() => form.value.provider === "recaptcha");
+const isScoreProvider = computed(
+  () => props.form.provider === "recaptcha",
+);
 
 /**
  * 服务商对应的官方品牌图标（SVG 数据取自 Iconify 的 logos 集，见各组件内注释）。
