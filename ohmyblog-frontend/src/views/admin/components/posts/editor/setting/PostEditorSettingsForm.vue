@@ -20,6 +20,7 @@ const tags = defineModel<string[]>("tags", { default: () => [] });
 const status = defineModel<TPostStatus>("status", { default: "draft" });
 const excerpt = defineModel<string>("excerpt", { default: "" });
 const coverImage = defineModel<string | null>("coverImage", { default: null });
+const coverEnabled = defineModel<boolean>("coverEnabled", { default: true });
 const pinned = defineModel<boolean>("pinned", { default: false });
 </script>
 
@@ -29,7 +30,15 @@ const pinned = defineModel<boolean>("pinned", { default: false });
     <PostEditorSlugSetting v-model="slug" required />
     <PostEditorStatusSetting v-model="status" />
     <PostEditorExcerptSetting v-model="excerpt" />
-    <PostEditorCoverSetting v-model="coverImage" :uuid="props.uuid" />
-    <PostEditorPropertySetting v-model:pinned="pinned" />
+    <PostEditorCoverSetting
+      v-model="coverImage"
+      v-model:cover-enabled="coverEnabled"
+      :uuid="props.uuid"
+    />
+    <PostEditorPropertySetting
+      v-model:pinned="pinned"
+      v-model:cover-image="coverImage"
+      v-model:cover-enabled="coverEnabled"
+    />
   </div>
 </template>

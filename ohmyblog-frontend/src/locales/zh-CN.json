@@ -663,6 +663,9 @@
           "properties": {
             "label": "文章属性",
             "tooltip": "控制文章在前台的展示行为",
+            "cover": {
+              "label": "显示封面"
+            },
             "pinned": {
               "label": "置顶文章",
               "tooltip": "置顶后将在前台文章列表中排在最前"

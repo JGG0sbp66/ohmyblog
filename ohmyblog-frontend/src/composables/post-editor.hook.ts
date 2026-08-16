@@ -43,6 +43,8 @@ export const usePostEditor = () => {
   const contentText = ref("");
   const contentHtml = ref("");
   const coverImage = ref<string | null>(null);
+  /** 封面是否展示（false 时前台 / RSS 不显示；URL 留在 coverImage 里，随时可再开） */
+  const coverEnabled = ref(true);
   const excerpt = ref("");
   /** 是否置顶（布尔；后端把它翻译成 pinnedAt 时间戳） */
   const pinned = ref(false);
@@ -92,6 +94,7 @@ export const usePostEditor = () => {
       title.value = post.title ?? "";
       content.value = (post.content as object) ?? undefined;
       coverImage.value = post.coverImage ?? null;
+      coverEnabled.value = post.coverEnabled ?? true;
       excerpt.value = post.excerpt ?? "";
       // 时间戳 → 布尔：非空即置顶。转换边界只此一处，表单层只跟布尔打交道
       pinned.value = post.pinnedAt != null;
@@ -109,7 +112,7 @@ export const usePostEditor = () => {
       // 不在其中：它们由 content 派生，永远同进同出，跟着 content 判断就够了。
       // 新增会进 payload 的字段时，这个数组和下面的防抖数组都要同步补上。
       watch(
-        [slug, tags, title, content, excerpt, pinned],
+        [slug, tags, title, content, excerpt, pinned, coverEnabled],
         () => {
           isContentDirty.value = true;
           contentVersion += 1;
@@ -140,15 +143,25 @@ export const usePostEditor = () => {
         }
       });
       // coverImage 刻意不在上面的 isDirty 数组里：它的唯一变更路径是
-      // PostEditorCoverSetting 上传成功后直接调 savePost 落库（ImageUpload 只
-      // emit change(file)，没有清空入口），封面当场就存下了。再让它触发 isDirty
-      // 只会换来一次多余的全量自动保存，外加状态栏闪一下「未保存」。
+      // PostEditorCoverSetting 上传成功后直接调 savePost 落库，封面当场就存下了。
+      // 再让它触发 isDirty 只会换来一次多余的全量自动保存，外加状态栏闪一下
+      // 「未保存」。coverEnabled（是否展示）是普通 payload 字段，正常走脏标记
 
       // 正文防抖自动保存。字段与上面的 isContentDirty 数组保持一致，外加
       // contentText / contentHtml —— 它们由 content 派生但更新未必在同一 tick，
       // 列进来是为了「最后一次导出也算一次触发」，不至于漏掉收尾的那版 HTML
       watchDebounced(
-        [title, content, contentText, contentHtml, excerpt, tags, slug, pinned],
+        [
+          title,
+          content,
+          contentText,
+          contentHtml,
+          excerpt,
+          tags,
+          slug,
+          pinned,
+          coverEnabled,
+        ],
         () => {
           if (!isContentDirty.value) return;
           autoSave();
@@ -166,6 +179,7 @@ export const usePostEditor = () => {
     contentText: contentText.value || undefined,
     contentHtml: contentHtml.value || undefined,
     coverImage: coverImage.value ?? undefined,
+    coverEnabled: coverEnabled.value,
     excerpt: excerpt.value || undefined,
     pinned: pinned.value,
   });
@@ -333,6 +347,7 @@ export const usePostEditor = () => {
     contentText,
     contentHtml,
     coverImage,
+    coverEnabled,
     excerpt,
     pinned,
     isSaving,

@@ -27,6 +27,7 @@ const {
   contentText,
   contentHtml,
   coverImage,
+  coverEnabled,
   excerpt,
   pinned,
   isSaving,
@@ -96,6 +97,7 @@ watch(isMobile, (mobile) => {
         v-model:status="status"
         v-model:excerpt="excerpt"
         v-model:coverImage="coverImage"
+        v-model:cover-enabled="coverEnabled"
         v-model:pinned="pinned"
       />
     </div>
@@ -114,6 +116,7 @@ watch(isMobile, (mobile) => {
         v-model:status="status"
         v-model:excerpt="excerpt"
         v-model:cover-image="coverImage"
+        v-model:cover-enabled="coverEnabled"
         v-model:pinned="pinned"
         class="pb-4"
       />

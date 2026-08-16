@@ -665,6 +665,9 @@
           "properties": {
             "label": "Properties",
             "tooltip": "Control how this post behaves on the public site",
+            "cover": {
+              "label": "Show Cover"
+            },
             "pinned": {
               "label": "Pin Post",
               "tooltip": "Pinned posts appear at the top of the public post list"
