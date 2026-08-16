@@ -6,21 +6,20 @@ import ImageUpload from "@/components/base/upload/ImageUpload.vue";
 import { useLang } from "@/composables/lang.hook";
 import { useImageUpload } from "@/composables/upload.hook";
 import { UPLOAD_LIMITS } from "@/api/shared";
-import { useToast } from "@/composables/toast.hook";
 import { uploadPostCover } from "@/api/upload.api";
-import { savePost } from "@/api/post.api";
 
 /**
  * PostEditorCoverSetting — 文章封面图设置块
  *
- * 流程：选择文件 → uploadPostCover 上传 → 获取 URL → 更新 v-model → savePost 持久化
+ * 流程：选择文件 → uploadPostCover 上传 → 获取 URL → 更新 v-model。
+ * 持久化不在这里做：usePostEditor 里 watch(coverImage) 会标脏并立即触发
+ * 走统一互斥的自动保存（并发安全、失败可重试，见 post-editor.hook.ts）。
  *
  * 上传新封面意味着想用封面：无论「显示封面」开关之前是什么状态都置回开，
- * 且 coverEnabled: true 跟着这次立即保存一起落库 —— 只改内存模型的话，
- * 防抖自动保存还没来得及跑用户就关页，库里会留着 false、新封面却不展示
+ * coverEnabled 是普通 payload 字段，跟着后续保存一起落库。
  *
  * Props:
- * - uuid: 当前文章的 UUID（用于上传和保存接口）
+ * - uuid: 当前文章的 UUID（用于上传接口）
  *
  * v-model: 封面图 URL（string | null）
  * v-model: coverEnabled — 是否展示封面（上传成功时置回 true）
@@ -45,13 +44,6 @@ const onFileChange = (file: File) => {
     (url) => {
       coverImage.value = url;
       coverEnabled.value = true;
-      savePost(props.uuid, { coverImage: url, coverEnabled: true }).catch(
-        (e: unknown) => {
-          const msg =
-            typeof e === "string" ? e : (e as any)?.message || "Error";
-          useToast.error(t(`api.errors.${msg}`));
-        },
-      );
     },
     UPLOAD_LIMITS.postCover,
   );

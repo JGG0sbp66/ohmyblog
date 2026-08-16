@@ -142,8 +142,17 @@ export const usePostEditor = () => {
     // coverImage 刻意不在上面的 isDirty 数组里：它的唯一变更路径是
     // PostEditorCoverSetting 上传成功后的赋值，那时要的是「立即」保存而不是
     // 等防抖 —— 等两秒只会给「上传完立刻关页、封面没落库」开窗口。
-    // 但也不绕开互斥：标脏后直接调 autoSave，与手动保存共用 isSaving 排队。
+    // 但也不绕开互斥：标脏后直接调 autoSave，与手动/防抖保存共用同一把
+    // isSaving 排队 —— 此前封面走独立的 savePost 直存，与飞行中的自动保存
+    // 并发乱序，后端 last-write-wins 下旧封面请求后发先至会把新封面滚回去，
+    // 直存失败还既不重试也不亮未保存标记。统一走 autoSave 后：排队天然有序，
+    // 失败脏标记还在，防抖会再来一轮，状态栏也一直亮着
     // coverEnabled（是否展示）是普通 payload 字段，正常走脏标记
+    watch(coverImage, () => {
+      isContentDirty.value = true;
+      contentVersion += 1;
+      autoSave();
+    });
 
     // 正文防抖自动保存。字段与上面的 isContentDirty 数组保持一致，外加
     // contentText / contentHtml —— 它们由 content 派生但更新未必在同一 tick，
