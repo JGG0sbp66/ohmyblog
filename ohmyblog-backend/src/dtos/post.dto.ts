@@ -36,6 +36,14 @@ export const SavePostDTO = t.Object({
 			error: "post.cover_image_invalid",
 		}),
 	),
+	// 封面展示开关：false 时前台 / RSS 不显示封面，但 coverImage URL 保留，
+	// 编辑器里重新打开即恢复，无需重新上传
+	coverEnabled: t.Optional(
+		t.Boolean({
+			description: "是否展示封面（false 时不展示，URL 保留）",
+			error: "post.cover_enabled_invalid",
+		}),
+	),
 	tags: t.Optional(
 		t.Array(
 			t.String({

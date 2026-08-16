@@ -29,6 +29,12 @@ export const post = sqliteTable("post", {
 	// 封面图 URL
 	coverImage: text("cover_image"),
 
+	// 封面展示开关：false 时前台 / RSS 一律当作没有封面。
+	// URL 始终保留在 coverImage 里，编辑器里重新打开即恢复，无需重新上传
+	coverEnabled: integer("cover_enabled", { mode: "boolean" })
+		.notNull()
+		.default(true),
+
 	// 文章状态:
 	//   draft     - 草稿（默认）
 	//   published - 已发布
@@ -72,5 +78,14 @@ export const post = sqliteTable("post", {
 		.default(sql`(unixepoch())`)
 		.$onUpdate(() => new Date()),
 });
+
+/**
+ * 对外输出的「生效封面」：展示开关关闭时输出 NULL。
+ *
+ * coverImage 本体始终保留原始 URL（管理端编辑器靠它实现「关掉再打开」的恢复），
+ * 读者侧（列表 / 详情 / RSS）一律选这个表达式，不要直接选 post.coverImage。
+ * 管理端编辑器加载走 findById 原始两列都拿
+ */
+export const effectiveCoverImage = sql<string | null>`CASE WHEN ${post.coverEnabled} THEN ${post.coverImage} ELSE NULL END`;
 
 export type TPost = typeof post.$inferSelect;

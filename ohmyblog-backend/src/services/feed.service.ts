@@ -3,7 +3,7 @@
 import { desc, eq } from "drizzle-orm";
 import { Feed } from "feed";
 import { db } from "../../db/connection";
-import { post } from "../../db/schema";
+import { effectiveCoverImage, post } from "../../db/schema";
 import { configDao } from "../daos/config.dao";
 import type { TSiteInfoConfigUpsertDTO } from "../dtos/config.dto";
 
@@ -36,7 +36,7 @@ class FeedService {
 				slug: post.slug,
 				contentHtml: post.contentHtml,
 				excerpt: post.excerpt,
-				coverImage: post.coverImage,
+				coverImage: effectiveCoverImage,
 				publishedAt: post.publishedAt,
 				updatedAt: post.updatedAt,
 			})

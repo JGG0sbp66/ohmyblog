@@ -44,7 +44,9 @@ export type PublishedListRow = {
 	uuid: string;
 	title: string;
 	contentText: string | null;
+	// 经 effectiveCoverImage 遮蔽后的生效封面：开关关闭时为 null
 	coverImage: string | null;
+	coverEnabled: boolean;
 	status: TPostStatus;
 	tags: string[];
 	slug: string | null;

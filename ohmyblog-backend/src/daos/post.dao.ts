@@ -1,7 +1,7 @@
 // src/daos/post.dao.ts
 import { and, count, desc, eq, like, ne, or, sql, sum } from "drizzle-orm";
 import { db } from "../../db/connection";
-import { post } from "../../db/schema";
+import { effectiveCoverImage, post } from "../../db/schema";
 import type { TPostListQueryDTO } from "../dtos/post.dto";
 import {
 	ARCHIVE_KEY,
@@ -19,11 +19,14 @@ export type PostUpdate = Partial<
 
 // 列表场景下选取的字段：刻意排除 content (ProseMirror JSON)
 // 因为这个字段存储整篇文章数据，在列表接口中传输会造成不必要的性能损耗
+// coverImage 走 effectiveCoverImage：展示开关关闭时输出 NULL。管理端列表
+// 也用它 —— 后台列表看到的封面就是读者看到的封面，避免「关了却还显示」的困惑
 const listColumns = {
 	uuid: post.uuid,
 	title: post.title,
 	contentText: post.contentText,
-	coverImage: post.coverImage,
+	coverImage: effectiveCoverImage,
+	coverEnabled: post.coverEnabled,
 	status: post.status,
 	tags: post.tags,
 	slug: post.slug,
@@ -120,7 +123,7 @@ class PostDao {
 					title: post.title,
 					contentHtml: post.contentHtml,
 					wordCount: sql<number>`LENGTH(${post.contentText})`,
-					coverImage: post.coverImage,
+					coverImage: effectiveCoverImage,
 					tags: post.tags,
 					slug: post.slug,
 					excerpt: post.excerpt,
