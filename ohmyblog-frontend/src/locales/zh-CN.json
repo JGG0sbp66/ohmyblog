@@ -1209,6 +1209,7 @@
       "\"body.icon\" has invalid file type": "图标格式不支持",
       "\"body.avatar\" has invalid file type": "头像格式不支持",
       "\"body.hero\" has invalid file type": "横幅图片格式不支持",
+      "\"body.cover\" has invalid file type": "封面图片格式不支持",
       "请上传 1MB 以内的有效图片": "请上传 1MB 以内的有效图片",
       "请上传 5MB 以内的有效图片": "请上传 5MB 以内的有效图片",
       "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片",

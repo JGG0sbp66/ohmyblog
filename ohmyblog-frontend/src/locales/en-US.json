@@ -1212,6 +1212,7 @@
       "\"body.icon\" has invalid file type": "Invalid icon file type",
       "\"body.avatar\" has invalid file type": "Invalid avatar file type",
       "\"body.hero\" has invalid file type": "Invalid hero image file type",
+      "\"body.cover\" has invalid file type": "Invalid cover image file type",
       "请上传 1MB 以内的有效图片": "Please upload a valid image under 1MB.",
       "请上传 5MB 以内的有效图片": "Please upload a valid image under 5MB.",
       "请上传 2MB 以内的有效图片": "Please upload a valid image under 2MB.",
