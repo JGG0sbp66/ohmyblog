@@ -41,7 +41,8 @@ const { t } = useLang();
 //
 // 展示名与语法名分离：输入框与候选列表显示 "TypeScript"，attrs 里存的始终是
 // 语法名 "typescript"（见 composables/code-block/labels.ts）。
-// 用户键入期间输入框保留原始文本（作为搜索词），选中或失焦后规范化为展示名。
+// 用户键入期间输入框保留原始文本（作为搜索词），不碰 attrs —— 提交只发生在
+// 回车 / 点选 / 失焦三个时机（原因见 onLangInput 注释）。
 //
 // 弹层 Teleport 到 body：代码块容器有 overflow:hidden（为了 header 圆角），
 // 内部 absolute 定位的下拉会被裁掉；fixed 定位绕开父级 overflow
@@ -103,21 +104,39 @@ const onLangFocus = () => {
   nextTick(updatePopupPosition);
 };
 
-/** 失焦：把输入框内容规范化回当前语言的展示名，丢弃未成型的搜索词；
- *  没设语言时用识别结果回填，保持 header 始终有可读的语言名 */
+/** 失焦提交：敲完整的语言名（语法名 / 展示名 / 别名均可）归一化成语法名
+ *  写入 attrs；半截或拼错的丢弃、回弹当前值。校验这步不能省：残缺值一旦
+ *  落库，会随 contentHtml 存成 class="language-ty"，且编辑器每次渲染都对它
+ *  highlightAuto（对全部语法评分）。没设语言时用识别结果回填，保持
+ *  header 始终有可读的语言名 */
 const onLangBlur = () => {
-  langInput.value = formatLanguageLabel(
-    props.node.attrs.language || detected.value || "",
-  );
+  const typed = langInput.value.trim().toLowerCase();
+  const slug = allLanguages.includes(typed)
+    ? typed
+    : (allLanguages.find(
+        (lang) => formatLanguageLabel(lang).toLowerCase() === typed,
+      ) ?? null);
+  if (slug) {
+    if (slug !== props.node.attrs.language) {
+      props.updateAttributes({ language: slug });
+    }
+    langInput.value = formatLanguageLabel(slug);
+  } else {
+    langInput.value = formatLanguageLabel(
+      props.node.attrs.language || detected.value || "",
+    );
+  }
 };
 
 const onLangInput = (event: Event) => {
   langInput.value = (event.target as HTMLInputElement).value;
   langPickerOpen.value = true;
   selectedIndex.value = 0;
-  // 输入即同步到 attrs，让用户即时看到（错的也写进去，反正下次选会覆盖）。
-  // 存的是语法名，故统一小写去空格 —— 展示名的大小写只活在渲染层。
-  props.updateAttributes({ language: langInput.value.trim().toLowerCase() });
+  // 只更新搜索词，不碰 attrs：updateAttributes 会产生 docChanged 事务，
+  // Tiptap 的 lowlight 插件借此对文档里全部代码块重跑高亮；而键入中的
+  // 残缺语言名（"t"、"ty"）不在语法集内，每次都会退化成 highlightAuto
+  // 对全部已注册语法逐一评分 —— 长代码块每键一次必然卡顿。生效推迟到
+  // 回车 / 点选 / 失焦（见 onLangBlur）。
   nextTick(updatePopupPosition);
 };
 
@@ -220,7 +239,10 @@ const refreshDetected = () => {
       : detectLanguage(props.node.textContent);
     // 识别结果填进输入框：用户正在编辑时不覆盖（焦点在输入框内说明
     // 里面是他自己敲的内容，比猜测值优先）
-    if (!props.node.attrs.language && document.activeElement !== langInputRef.value) {
+    if (
+      !props.node.attrs.language &&
+      document.activeElement !== langInputRef.value
+    ) {
       langInput.value = formatLanguageLabel(detected.value ?? "");
     }
   }, 200);
