@@ -1,4 +1,7 @@
 import { Elysia } from "elysia";
+import { logger } from "./logger.plugin";
+
+const log = logger.withTag("ResponsePlugin");
 
 // ---------------------------------------------
 // 失败响应包装
@@ -37,7 +40,23 @@ const formatError = ({ code, error, set }: any) => {
 		};
 	}
 
-	set.status = error.status ?? 400;
+	// 原生异常（DB 连不上、文件读不到、代码 bug……）没有 .status —— 它们是
+	// 服务端故障，不是客户端错误。塌缩成 400 会让监控里 5xx 永远为零、排障
+	// 方向被系统性误导；而且原生 message 可能带出连接串、路径等内部细节，
+	// 不能下发，只进服务端日志。有 .status 的（BusinessError、Elysia 内建
+	// 的 404/解析错误）照旧：状态码和 message 都是可对外的人话
+	if (error.status == null) {
+		log.error({ err: error }, "未处理的异常，已按 500 对外");
+		set.status = 500;
+		return {
+			success: false,
+			data: {
+				message: "服务器内部错误",
+			},
+		};
+	}
+
+	set.status = error.status;
 	return {
 		success: false,
 		data: {

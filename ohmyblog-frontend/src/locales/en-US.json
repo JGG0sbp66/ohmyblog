@@ -1239,6 +1239,7 @@
   },
   "api": {
     "errors": {
+      "服务器内部错误": "Internal server error",
       "EMPTY_UPLOAD_REPLY": "Abnormal server upload response",
       "Error": "Unable to connect to the backend service",
       "请求参数验证失败": "Request validation failed",
