@@ -194,3 +194,46 @@ jobs:
           build-args: |
             GIT_COMMIT=${{ github.sha }}
             APP_VERSION=${{ steps.meta.outputs.version }}
+
+  # 镜像推送完成后自动部署到国内 VPS
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-docker
+
+    steps:
+      - name: Deploy to VPS over SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          IMAGE_VERSION: ${{ github.ref_name }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          envs: IMAGE_VERSION
+          # 任一命令非零退出即中止，避免带着旧镜像继续"假部署"
+          script_stop: true
+          script: |
+            cd /root/docker/container/ohmyblog
+            # ref 形如 v1.3.6，镜像 tag 是 1.3.6，去掉前缀 v
+            echo "IMAGE_TAG=${IMAGE_VERSION#v}" > .env
+
+            # 拉取失败（网络抖动 / 镜像站偶发同步延迟）等 30 秒重试
+            ok=0
+            for i in $(seq 1 10); do
+              if docker compose pull; then ok=1; break; fi
+              echo "第 $i 次拉取失败，30 秒后重试"
+              sleep 30
+            done
+            [ "$ok" = "1" ] || { echo "镜像拉取失败，放弃本次部署"; exit 1; }
+
+            docker compose up -d
+            docker image prune -f
+
+            # 等容器恢复 healthy，最多 90 秒，超时打出日志让 Actions 报错
+            for i in $(seq 1 30); do
+              [ "$(docker inspect -f '{{.State.Health.Status}}' ohmyblog)" = "healthy" ] && exit 0
+              sleep 3
+            done
+            echo "容器启动后 90 秒内未恢复 healthy"
+            docker compose logs --tail 50
+            exit 1
