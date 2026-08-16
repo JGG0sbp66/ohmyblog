@@ -42,8 +42,10 @@ export function useConfigForm<TValue extends object>(
   const isSaving = ref(false);
 
   /**
-   * 拉取配置。404（还没配置过）或请求失败都保持默认值不变，
-   * 但无论成败都置 isLoaded，让开关从 loading 占位落到确定状态
+   * 拉取配置。成功落到真实值；「配置不存在」= 从未配置过（可能跳过了
+   * setup 步骤），落回默认值——这两种情况都置 isLoaded。
+   * 其他失败（网络/5xx）维持 loading 态并 toast：表单和保存按钮都藏在
+   * isLoaded 后面，杜绝用户拿着默认值一次保存、把库里已存配置整份覆盖
    */
   const load = async () => {
     try {
@@ -54,10 +56,13 @@ export function useConfigForm<TValue extends object>(
           ? options.merge(value, structuredClone(defaults))
           : { ...formData.value, ...value };
       }
-    } catch {
-      // 404 = 还没配置过，用默认值即可
-    } finally {
       isLoaded.value = true;
+    } catch (error) {
+      if (error === "配置不存在") {
+        isLoaded.value = true;
+        return;
+      }
+      useToast.error(t("api.errors.配置加载失败"));
     }
   };
 
@@ -66,6 +71,9 @@ export function useConfigForm<TValue extends object>(
    * 调用方据此做保存后的联动（如刷新前台公开配置缓存）
    */
   const save = async () => {
+    // 加载失败时 isLoaded 不会置位、保存按钮也不会渲染，这里再兜一道：
+    // 默认值永远没有机会写库
+    if (!isLoaded.value) return false;
     isSaving.value = true;
     try {
       // 泛型 TValue 无法静态收敛到 ConfigUpsertDTO 的某个 union 成员，

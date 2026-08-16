@@ -1246,6 +1246,7 @@
       "获取站点基本信息失败": "Failed to fetch site info",
       "获取个性化配置失败": "Failed to fetch personalization info",
       "获取公告失败": "Failed to fetch announcement",
+      "配置加载失败": "Failed to load config, please refresh and retry",
       "用户名或邮箱已被注册": "Username or email is already registered",
       "未登录或会话已过期": "Not logged in or session expired",
       "演示模式下不可修改数据": "This is a read-only demo — changes are not allowed",
