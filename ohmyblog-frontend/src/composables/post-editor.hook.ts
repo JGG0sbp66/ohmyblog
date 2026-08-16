@@ -39,6 +39,8 @@ export const usePostEditor = () => {
   const tags = ref<string[]>([]);
   const status = ref<TPostStatus>("draft");
   const title = ref("");
+  /** 副标题：主标题下方的说明性文字（文章级属性，不属于正文富文本） */
+  const subtitle = ref("");
   const content = ref<object | undefined>(undefined);
   const contentText = ref("");
   const contentHtml = ref("");
@@ -92,6 +94,7 @@ export const usePostEditor = () => {
       tags.value = post.tags ?? [];
       status.value = post.status as TPostStatus;
       title.value = post.title ?? "";
+      subtitle.value = post.subtitle ?? "";
       content.value = (post.content as object) ?? undefined;
       coverImage.value = post.coverImage ?? null;
       coverEnabled.value = post.coverEnabled ?? true;
@@ -112,7 +115,7 @@ export const usePostEditor = () => {
       // 不在其中：它们由 content 派生，永远同进同出，跟着 content 判断就够了。
       // 新增会进 payload 的字段时，这个数组和下面的防抖数组都要同步补上。
       watch(
-        [slug, tags, title, content, excerpt, pinned, coverEnabled],
+        [slug, tags, title, subtitle, content, excerpt, pinned, coverEnabled],
         () => {
           isContentDirty.value = true;
           contentVersion += 1;
@@ -153,6 +156,7 @@ export const usePostEditor = () => {
       watchDebounced(
         [
           title,
+          subtitle,
           content,
           contentText,
           contentHtml,
@@ -175,6 +179,8 @@ export const usePostEditor = () => {
     slug: slug.value || undefined,
     tags: tags.value,
     title: title.value || undefined,
+    // 空串就是「清除副标题」，必须原样送达后端，不能像 title 那样 || undefined 吞掉
+    subtitle: subtitle.value,
     content: content.value,
     contentText: contentText.value || undefined,
     contentHtml: contentHtml.value || undefined,
@@ -343,6 +349,7 @@ export const usePostEditor = () => {
     tags,
     status,
     title,
+    subtitle,
     content,
     contentText,
     contentHtml,

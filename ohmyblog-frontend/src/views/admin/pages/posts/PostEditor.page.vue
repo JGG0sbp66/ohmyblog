@@ -23,6 +23,7 @@ const {
   tags,
   status,
   title,
+  subtitle,
   content,
   contentText,
   contentHtml,
@@ -73,6 +74,7 @@ watch(isMobile, (mobile) => {
       <PostEditorContent
         class="onload-animation anim-delay-150"
         v-model:title="title"
+        v-model:subtitle="subtitle"
         v-model:content="content"
         v-model:contentText="contentText"
         v-model:contentHtml="contentHtml"

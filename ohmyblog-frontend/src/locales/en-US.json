@@ -678,6 +678,9 @@
           "title": {
             "placeholder": "Post title"
           },
+          "subtitle": {
+            "placeholder": "Subtitle (optional)"
+          },
           "body": {
             "placeholder": "Start writing, or type / to choose a block..."
           },
@@ -1200,7 +1203,8 @@
       },
       "post": {
         "slug_invalid": "Slug may only contain lowercase letters, numbers, and hyphens, e.g. my-first-post",
-        "excerpt_range": "Excerpt cannot exceed 500 characters"
+        "excerpt_range": "Excerpt cannot exceed 500 characters",
+        "subtitle_range": "Subtitle cannot exceed 255 characters"
       },
       "captcha": {
         "provider_invalid": "Unsupported captcha provider",

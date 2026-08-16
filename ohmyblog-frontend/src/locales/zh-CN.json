@@ -676,6 +676,9 @@
           "title": {
             "placeholder": "文章标题"
           },
+          "subtitle": {
+            "placeholder": "副标题（可选）"
+          },
           "body": {
             "placeholder": "开始写作，或输入 / 选择内容块..."
           },
@@ -1195,7 +1198,8 @@
       },
       "post": {
         "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post",
-        "excerpt_range": "摘要不能超过 500 字"
+        "excerpt_range": "摘要不能超过 500 字",
+        "subtitle_range": "副标题不能超过 255 个字符"
       },
       "captcha": {
         "provider_invalid": "不支持的验证码服务商",
