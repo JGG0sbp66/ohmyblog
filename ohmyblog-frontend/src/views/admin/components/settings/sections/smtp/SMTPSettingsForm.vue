@@ -13,9 +13,11 @@ import { getConfig, upsertConfig } from "@/api/config.api";
 const { t } = useLang();
 const toast = useToast;
 
-// 内部维护表单数据
+// 内部维护表单数据。
+// enabled 默认关：没存过 smtp 配置时 GET /config/smtp 会 404，此时开关必须
+// 落在「关」上，与后端「无配置即不可发信」的行为一致；存过则被 loadConfig 覆盖
 const formData = ref({
-  enabled: true,
+  enabled: false,
   host: "",
   port: 587,
   username: "",
