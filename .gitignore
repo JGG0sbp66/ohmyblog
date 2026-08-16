@@ -68,3 +68,6 @@ data/
 **/*.db-journal
 **/*.db-shm
 **/*.db-wal
+
+# --- AI 工具 ---
+.zcode/
