@@ -115,31 +115,45 @@ export function useTableGeometry(
   // 选区/内容变更：延后到下一帧，等 .selectedCell 装饰应用后再读取 active
   const scheduleCompute = () => requestAnimationFrame(compute);
 
-  const onMouseMove = (e: MouseEvent) => {
-    // 指针落在表格覆盖层控件（把手 / 插入点 / 左上角手柄及其菜单）上时，
-    // 保持当前 hovered 不变 —— 否则移向表格外侧的手柄会离开命中区导致整组消失。
-    if (
-      e.target instanceof Element &&
-      e.target.closest(".th-shell, .th-corner")
-    )
-      return;
+  // mousemove 一秒可触发几十到上千次，而屏幕一秒只画 60 帧左右 —— 帧内
+  // 后续事件的命中测试与几何读取全是废算。这里只记最新事件并预约一帧，
+  // 重活全部搬进 rAF 回调：一帧至多跑一次，读几何的时机也对齐到绘制前。
+  // 约帧去重避免同帧排队堆积
+  let pendingFrame: number | null = null;
+  let lastMove: MouseEvent | null = null;
 
-    const tables = Array.from(editor.view.dom.querySelectorAll("table"));
-    const { clientX: x, clientY: y } = e;
-    const hit =
-      tables.find((t) => {
-        const r = t.getBoundingClientRect();
-        return (
-          x >= r.left - HIT_MARGIN_NEAR &&
-          x <= r.right + HIT_MARGIN_FAR &&
-          y >= r.top - HIT_MARGIN_NEAR &&
-          y <= r.bottom + HIT_MARGIN_FAR
-        );
-      }) ?? null;
-    if (hit !== hoveredTable.value) {
-      hoveredTable.value = hit;
-      compute();
-    }
+  const onMouseMove = (e: MouseEvent) => {
+    lastMove = e;
+    if (pendingFrame !== null) return;
+    pendingFrame = requestAnimationFrame(() => {
+      pendingFrame = null;
+      const latest = lastMove;
+      if (!latest) return;
+      // 指针落在表格覆盖层控件（把手 / 插入点 / 左上角手柄及其菜单）上时，
+      // 保持当前 hovered 不变 —— 否则移向表格外侧的手柄会离开命中区导致整组消失。
+      if (
+        latest.target instanceof Element &&
+        latest.target.closest(".th-shell, .th-corner")
+      )
+        return;
+
+      const tables = Array.from(editor.view.dom.querySelectorAll("table"));
+      const { clientX: x, clientY: y } = latest;
+      const hit =
+        tables.find((t) => {
+          const r = t.getBoundingClientRect();
+          return (
+            x >= r.left - HIT_MARGIN_NEAR &&
+            x <= r.right + HIT_MARGIN_FAR &&
+            y >= r.top - HIT_MARGIN_NEAR &&
+            y <= r.bottom + HIT_MARGIN_FAR
+          );
+        }) ?? null;
+      if (hit !== hoveredTable.value) {
+        hoveredTable.value = hit;
+        compute();
+      }
+    });
   };
 
   // 横向滚动只平移顶部内层轨道，无需整体重算
@@ -159,6 +173,8 @@ export function useTableGeometry(
   onBeforeUnmount(() => {
     editor.off("selectionUpdate", scheduleCompute);
     editor.off("update", scheduleCompute);
+    // 组件销毁后预约中的帧不能再跑：回调里会去读已卸载的编辑器 DOM
+    if (pendingFrame !== null) cancelAnimationFrame(pendingFrame);
     window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("scroll", onScroll, true);
     window.removeEventListener("resize", onResize);
