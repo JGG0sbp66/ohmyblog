@@ -16,6 +16,14 @@ import { emailConfigService } from "./email-config.service";
 import { emailDispatchService } from "./email-dispatch.service";
 import type { SendLoginAlertParams, SendResetPasswordParams } from "./types";
 
+/**
+ * 生成 6 位数字验证码（加密安全随机）。
+ * 导出给 auth.service 的「先落库后发信」流程用：生成方只有这一处，
+ * 范围（100000 ~ 999999）不会在两个文件里漂移成两份
+ */
+export const generateResetPasswordCode = (): string =>
+	String(randomInt(100000, 1000000));
+
 class EmailSenderService {
 	/**
 	 * 内部辅助：按需加载 React + @react-email/components 并渲染指定模板
@@ -182,8 +190,8 @@ class EmailSenderService {
 		const adminName = await emailConfigService.getAdminName();
 
 		// 2. 验证码：调用方指定则用它（重发场景，见 SendResetPasswordParams.code），
-		//    否则内部生成一个 6 位加密安全随机码
-		const code = params.code ?? String(randomInt(100000, 1000000));
+		//    否则内部生成
+		const code = params.code ?? generateResetPasswordCode();
 
 		// 3. 解析请求 IP 的位置（用于模板展示和日志 params 快照）
 		const location = geoService.formatLocation(

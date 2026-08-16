@@ -23,7 +23,10 @@ import {
 	createChallenge,
 } from "../utils/two-factor-challenge";
 import { captchaService } from "./captcha/captcha.service";
-import { emailSenderService } from "./email/email-sender.service";
+import {
+	emailSenderService,
+	generateResetPasswordCode,
+} from "./email/email-sender.service";
 
 /**
  * 登录限流：同一 IP 每分钟最多 10 次。
@@ -254,18 +257,16 @@ class AuthService {
 		);
 
 		try {
-			const { code } = await emailSenderService.sendResetPasswordEmail({
-				to: user.email,
-				expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
-				ip,
-				code: existing?.code,
-			});
-
-			if (!existing) {
+			let codeToSend = existing?.code;
+			if (!codeToSend) {
+				// 新码「先生成落库、再发信」，顺序不能反：先发后存的话，落库
+				// 失败（磁盘满 / 锁超时）时邮件已经送达，站长邮箱里躺着一个
+				// 永远无法通过校验的码，且库里无迹可查；先存后发，失败只可能
+				// 是「发不出去」—— 码安稳在库里，下一轮申请照样重发它
+				codeToSend = generateResetPasswordCode();
 				const expiresAt = new Date(
 					Date.now() + RESET_PASSWORD_CODE_TTL_MIN * 60 * 1000,
 				);
-
 				// 先作废旧码 → 再写新码，避免同时存在多个有效验证码
 				await emailVerificationDao.invalidateByUser(
 					user.uuid,
@@ -274,12 +275,26 @@ class AuthService {
 				await emailVerificationDao.create({
 					userUuid: user.uuid,
 					type: "reset_password",
-					code,
+					code: codeToSend,
 					expiresAt,
 					ip,
 				});
 			}
+
+			await emailSenderService.sendResetPasswordEmail({
+				to: user.email,
+				expiresInMinutes: RESET_PASSWORD_CODE_TTL_MIN,
+				ip,
+				code: codeToSend,
+			});
 		} catch (err) {
+			// 新码已落库但信没发出去：作废掉，别让一个谁也没收到过的码占住
+			// 「重发已有码」的逻辑。清理自身失败不能掩盖原始错误
+			if (!existing) {
+				await emailVerificationDao
+					.invalidateByUser(user.uuid, "reset_password")
+					.catch(() => {});
+			}
 			// 发信失败（最常见的是根本没配 SMTP）必须在这里吞掉。
 			// 让它冒到 route 层的话，「邮箱不存在」返回 200、「邮箱存在但没配
 			// SMTP」返回 400，两者响应不同 —— 接口就变成了一个邮箱枚举器，
