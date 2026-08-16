@@ -15,8 +15,8 @@ import {
 	RATE_LIMITED_MESSAGE,
 } from "../utils/rate-limit";
 import {
-	checkResetPasswordThrottle,
-	recordResetPasswordSend,
+	beginResetPasswordSend,
+	rollbackResetPasswordSend,
 } from "../utils/reset-password-throttle";
 import {
 	CHALLENGE_TTL_SECONDS,
@@ -231,10 +231,12 @@ class AuthService {
 			return;
 		}
 
-		// 1. 节流：冷却期内或超出小时配额时静默返回。
+		// 1. 节流：原子地「检查并占用」一次发信名额，冷却期内或超出小时配额时
+		//    静默返回。占用必须发生在发信之前（同步完成），否则并发请求会全部
+		//    通过检查、把两道限制一起冲垮。
 		//    静默是关键 —— 一旦对外报「请稍后再试」，攻击者就能凭响应差异
 		//    判断这个邮箱是否注册过，防枚举的设计就破了
-		const throttled = checkResetPasswordThrottle(user.uuid);
+		const throttled = beginResetPasswordSend(user.uuid);
 		if (throttled) {
 			this.logger.warn(
 				{ userId: user.uuid, reason: throttled },
@@ -282,6 +284,8 @@ class AuthService {
 			// 让它冒到 route 层的话，「邮箱不存在」返回 200、「邮箱存在但没配
 			// SMTP」返回 400，两者响应不同 —— 接口就变成了一个邮箱枚举器，
 			// 而没配 SMTP 恰好是新装站点的默认状态。
+			// 名额在发信前就占下了，这里必须归还，否则失败也白白消耗配额
+			rollbackResetPasswordSend(user.uuid);
 			// 站长排查看 data/logs/error.log 与 email_log 表
 			this.logger.error(
 				{ err, userId: user.uuid },
@@ -290,8 +294,7 @@ class AuthService {
 			return;
 		}
 
-		// 3. 只有真的发出去了才记账，避免发信失败也白白消耗配额
-		recordResetPasswordSend(user.uuid);
+		// 3. 记账已在 beginResetPasswordSend 里同步完成（见上方注释）
 
 		this.logger.info(
 			{ userId: user.uuid, resent: Boolean(existing) },
