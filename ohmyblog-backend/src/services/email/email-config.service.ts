@@ -45,20 +45,20 @@ class EmailConfigService {
 	 *
 	 * @returns 可发信返回 true
 	 */
-		async isEmailUsable(): Promise<boolean> {
-			try {
-				const record = await configDao.findByKey("smtp");
-				const value = record?.configValue as
-					| TSMTPConfigUpsertDTO["configValue"]
-					| undefined;
-				// 与 getSmtpConfig 的完整性判断保持一致：enabled 但必填字段为空同样视为不可用
-				return Boolean(
-					value?.enabled && value.host && value.username && value.password,
-				);
-			} catch {
-				return false;
-			}
+	async isEmailUsable(): Promise<boolean> {
+		try {
+			const record = await configDao.findByKey("smtp");
+			const value = record?.configValue as
+				| TSMTPConfigUpsertDTO["configValue"]
+				| undefined;
+			// 与 getSmtpConfig 的完整性判断保持一致：enabled 但必填字段为空同样视为不可用
+			return Boolean(
+				value?.enabled && value.host && value.username && value.password,
+			);
+		} catch {
+			return false;
 		}
+	}
 
 	/**
 	 * 读取外观配置（hue），供模板使用
