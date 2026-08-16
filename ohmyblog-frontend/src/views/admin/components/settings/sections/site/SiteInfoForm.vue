@@ -32,8 +32,10 @@ const handleSave = async () => {
       configValue: systemStore.siteInfo,
     });
     useToast.success(t("api.success.保存成功"));
-  } catch (error) {
-    // 错误处理已在 API 层由 Toast 覆盖
+  } catch (error: any) {
+    // unwrap 只 throw 不 toast，这里不接住的话保存失败就是一片安静，
+    // 用户以为存上了，关页走人改动即丢
+    useToast.error(t(`api.errors.${error}`));
   } finally {
     isSubmitting.value = false;
   }
