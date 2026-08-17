@@ -6,7 +6,15 @@
 		"useIgnoreFile": false
 	},
 	"files": {
-		"ignoreUnknown": false
+		"ignoreUnknown": false,
+		"includes": [
+			"**",
+			"!data",
+			"!db/drizzle",
+			"!frontend-dist",
+			"!public",
+			"!scripts/dist"
+		]
 	},
 	"formatter": {
 		"enabled": true,

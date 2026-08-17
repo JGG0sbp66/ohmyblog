@@ -54,8 +54,7 @@ function randomIndex(max: number): number {
 function generatePassword(): string {
 	let out = "";
 	for (let i = 0; i < GENERATED_LENGTH; i++) {
-		const character =
-			PASSWORD_ALPHABET[randomIndex(PASSWORD_ALPHABET.length)];
+		const character = PASSWORD_ALPHABET[randomIndex(PASSWORD_ALPHABET.length)];
 		if (character === undefined) {
 			throw new Error("生成随机密码时字符索引越界");
 		}

@@ -90,6 +90,8 @@ export const post = sqliteTable("post", {
  * 读者侧（列表 / 详情 / RSS）一律选这个表达式，不要直接选 post.coverImage。
  * 管理端编辑器加载走 findById 原始两列都拿
  */
-export const effectiveCoverImage = sql<string | null>`CASE WHEN ${post.coverEnabled} THEN ${post.coverImage} ELSE NULL END`;
+export const effectiveCoverImage = sql<
+	string | null
+>`CASE WHEN ${post.coverEnabled} THEN ${post.coverImage} ELSE NULL END`;
 
 export type TPost = typeof post.$inferSelect;
