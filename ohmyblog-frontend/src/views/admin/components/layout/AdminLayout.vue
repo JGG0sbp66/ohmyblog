@@ -162,14 +162,11 @@ watch(isMobile, (mobile) => {
       <main
         class="flex-1 p-3 pt-3 md:p-6 md:pt-3 flex flex-col min-w-0 min-h-0 overflow-y-auto custom-scrollbar"
       >
-        <!-- 不加 min-h-0：页面内容超过可视高度时要撑开本层、由 main 整页滚动。
-             一旦加回来，内容会改为从本层向下戳破——这种 flex 溢出不会被 main 的
-             滚动范围完整计入（会少算），页面末尾的元素就会贴死视口底边
-             （仪表盘系统信息卡片曾因此贴底，详见 Dashboard.page.vue 的注释）。
-             代价：页面根节点自己的最小内容高度也会撑开本层——根节点必须
-             自己声明 min-h-0 / overflow-hidden 把最小高度压掉，见 PostList -->
+        <!-- min-h-0 不能删：后台所有页面都钉在本层高度内、自行内部滚动。
+             删掉它会让长内容页面（如邮件页的无限滚动列表）把本层撑高、
+             滚动打落到 main 上退化成整页滚动（a81e33e3 曾因此翻车）。 -->
         <div
-          class="flex-1 flex flex-col min-w-0 onload-animation anim-delay-150"
+          class="flex-1 flex flex-col min-w-0 min-h-0 onload-animation anim-delay-150"
         >
           <router-view />
         </div>
