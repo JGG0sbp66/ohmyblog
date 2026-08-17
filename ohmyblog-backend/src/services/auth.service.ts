@@ -367,8 +367,14 @@ class AuthService {
 		}
 
 		const hashedPassword = await Bun.password.hash(newPassword);
-		await userDao.update(user.uuid, { passwordHash: hashedPassword });
-		await emailVerificationDao.markAsUsed(record.uuid);
+		const consumed = await emailVerificationDao.consumeForPasswordReset(
+			record.uuid,
+			user.uuid,
+			hashedPassword,
+		);
+		if (!consumed) {
+			throw new BusinessError("验证码无效或已过期", { status: 400 });
+		}
 
 		this.logger.info({ userId: user.uuid }, "密码重置成功");
 	}
@@ -455,6 +461,22 @@ class AuthService {
 		if (data.username) updateData.username = data.username;
 		if (data.email) updateData.email = data.email;
 		if (data.password) {
+			const currentUser = await userDao.findById(uuid);
+			if (!currentUser) {
+				throw new BusinessError("用户不存在", { status: 404 });
+			}
+
+			if (!data.currentPassword) {
+				throw new BusinessError("密码错误", { status: 401 });
+			}
+			const passwordMatches = await Bun.password.verify(
+				data.currentPassword,
+				currentUser.passwordHash,
+			);
+			if (!passwordMatches) {
+				throw new BusinessError("密码错误", { status: 401 });
+			}
+
 			updateData.passwordHash = await Bun.password.hash(data.password);
 		}
 

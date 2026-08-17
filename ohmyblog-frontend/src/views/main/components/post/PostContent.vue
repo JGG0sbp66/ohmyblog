@@ -5,6 +5,7 @@ import DOMPurify from "dompurify";
 import { enhanceCodeBlocks } from "./enhance-code-blocks";
 import { enhanceLists } from "./enhance-lists";
 import { extractHeadings, type TocHeading } from "./toc/extract-headings";
+import { useLang } from "@/composables/lang.hook";
 
 /**
  * PostContent — 前台文章渲染组件（纯 HTML 渲染，不加载 Tiptap）
@@ -34,6 +35,7 @@ const emit = defineEmits<{
 
 const rootRef = ref<HTMLElement | null>(null);
 const safeHtml = ref("");
+const { t } = useLang();
 
 watch(
   () => props.contentHtml,
@@ -42,7 +44,7 @@ watch(
     // 等 v-html 落地后再做增强：v-html 变化会整体重置内部 DOM，需重新增强
     await nextTick();
     if (rootRef.value) {
-      enhanceCodeBlocks(rootRef.value);
+      enhanceCodeBlocks(rootRef.value, t);
       enhanceLists(rootRef.value);
       emit("headings", extractHeadings(rootRef.value));
     } else {

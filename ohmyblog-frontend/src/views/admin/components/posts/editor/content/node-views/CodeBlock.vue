@@ -218,13 +218,14 @@ onMounted(() => {
 });
 
 // 语言自动识别：语言没设置时，CodeBlockLowlight 内部会 highlightAuto 兜底
-// 上色 —— 之前只有代码区域有色、header 仍显示 Text 占位，用户误以为语言
-// 已生效（发布后阅读端其实全白）。这里把识别结果同步到 header：
-// 图标换成识别语言的图标，识别出的语言名直接填进输入框当起始值 ——
-// 用户可以像手打的一样继续删改（改成 IN 重新搜）、回车确认。
+// 上色。这里把识别出的真实语法名同步到 header 输入框，避免只显示 Text；
+// 自动填入本身不写 attrs，但产品意图是把它当作可确认的建议值：用户让输入框
+// focus 后再 blur，即视为确认当前值，onLangBlur 会将该真实值持久化。
+// 用户也可以像手打的一样继续删改（改成 IN 重新搜）、回车或点选确认。
 //
-// 填充只改输入框显示值、不回写 attrs：启发式会猜错（见 detectLanguage
-// 注释），猜的语言落库就是错的持久语义；真要生效请从下拉里选中。
+// 填充阶段只改输入框显示值、不直接回写 attrs：启发式仍可能猜错（见
+// detectLanguage 注释）；在用户通过 focus → blur / 回车 / 点选确认前，不赋予
+// 持久语义。
 const detected = ref<string | null>(null);
 let detectTimer: ReturnType<typeof setTimeout> | null = null;
 

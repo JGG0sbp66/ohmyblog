@@ -91,10 +91,11 @@ jobs:
 
           echo -e "$BODY" > release_notes.md
 
-      - name: Create GitHub Release
+      - name: Create draft GitHub Release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           body_path: release_notes.md
+          draft: true
 
   # 构建多平台二进制文件并上传到 Release Assets
   build-binaries:
@@ -206,7 +207,24 @@ jobs:
             GIT_COMMIT=${{ github.sha }}
             APP_VERSION=${{ steps.meta.outputs.version }}
 
-  # 镜像推送完成后自动部署到国内 VPS
+  # 二进制和 Docker 镜像均构建成功后发布同一 tag 的草稿 Release
+  publish-release:
+    runs-on: ubuntu-latest
+    needs:
+      - build-binaries
+      - build-docker
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
+        with:
+          tag_name: ${{ github.ref_name }}
+          draft: false
+
+  # 镜像推送完成后自动部署到国内 VPS；部署失败不阻止正式 Release 发布
   deploy:
     runs-on: ubuntu-latest
     needs: build-docker

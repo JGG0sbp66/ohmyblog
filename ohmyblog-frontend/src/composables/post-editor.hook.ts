@@ -114,6 +114,9 @@ export const usePostEditor = () => {
       () => {
         isContentDirty.value = true;
         contentVersion += 1;
+        // 保存飞行期间发生的修改必须立即入队；不能只依赖后面的防抖回调，
+        // 否则手动保存先结束、页面随即关闭时，这版内容没有机会落库。
+        if (isSaving.value) autoSavePending = true;
       },
       { deep: true },
     );
@@ -218,7 +221,7 @@ export const usePostEditor = () => {
       armWatchers();
     } catch {
       loadFailed.value = true;
-      useToast.error("加载文章失败");
+      useToast.error(t("views.admin.PostEditor.loadFailed.message"));
     } finally {
       isLoading.value = false;
     }
@@ -239,6 +242,38 @@ export const usePostEditor = () => {
     pinned: pinned.value,
   });
 
+  type SaveErrorReporter = (error: unknown) => void;
+
+  /**
+   * 消费正文保存队列。调用期间由外层持有 isSaving 锁；循环而非递归，保证手动保存
+   * 或自动保存飞行时产生的 coverImage / 正文变更，在当前请求成功或失败后都被消费。
+   * 失败本身不会把同一版重新入队，只有请求期间确实出现了更新才会继续下一轮。
+   */
+  const drainContentSaveQueue = async (
+    reportError: SaveErrorReporter,
+  ): Promise<boolean> => {
+    let allSucceeded = true;
+
+    while (autoSavePending) {
+      autoSavePending = false;
+      // 先取版本号快照，再构造 payload，顺序不能反：反了的话两者之间发生的变更
+      // 会被算进这次 payload，却又让版本号显得没动过。
+      const version = contentVersion;
+      try {
+        await savePost(uuid, buildSavePayload());
+        if (contentVersion === version) isContentDirty.value = false;
+        else autoSavePending = true;
+      } catch (error: unknown) {
+        allSucceeded = false;
+        reportError(error);
+        // 不重试刚失败的同一版；但 watcher 已为飞行期间的新修改重新置 pending，
+        // 因此 while 仍会消费更新后的 payload，封面不会因前一轮失败而被卡住。
+      }
+    }
+
+    return allSucceeded;
+  };
+
   const autoSave = async () => {
     // 加载没成功就绝不发保存：失败态下表单里是空的默认值，PATCH 出去
     // 等于把原文的标签 / 副标题 / 置顶清空。UI 层已把编辑器藏了，这里是
@@ -247,44 +282,24 @@ export const usePostEditor = () => {
     // 演示模式：写操作必被后端拒绝，而防抖自动保存每 2 秒就会触发一次，
     // 不在源头拦住的话游客一打字就会持续弹错。静默跳过，不打扰阅读
     if (authStore.isDemoUser) return;
-    // 上一轮还在飞：直接丢掉这次触发的话，「改动发生在保存途中 + 之后不再输入」
-    // 就没有任何东西会再触发保存了。记个标记，等那轮落地后补一次
-    if (isSaving.value) {
-      autoSavePending = true;
-      return;
-    }
+
+    autoSavePending = true;
+    // 手动保存与自动保存共用队列；已有消费者时只置 pending，由它负责 drain。
+    if (isSaving.value) return;
+
     isSaving.value = true;
-    // 先取版本号快照，再构造 payload，顺序不能反：反了的话两者之间发生的变更
-    // 会被算进这次 payload，却又让版本号显得没动过
-    const version = contentVersion;
     try {
-      await savePost(uuid, buildSavePayload());
-      // 版本变了说明请求途中用户又改了，这些改动不在刚才的 payload 里，
-      // 不能清脏标记 —— 这正是「保存中的修改被静默丢弃」的根因
-      if (contentVersion === version) isContentDirty.value = false;
-      else autoSavePending = true;
-    } catch (error: any) {
-      useToast.error(t(`api.errors.${error}`));
-      // 失败了就不补跑：内容仍是脏的，下一次输入的防抖会再来一轮。
-      // 在这里重试只会把同一个错误连着弹好几遍
-      autoSavePending = false;
+      await drainContentSaveQueue((error) => {
+        useToast.error(t(`api.errors.${String(error)}`));
+      });
     } finally {
       isSaving.value = false;
-    }
-    if (autoSavePending) {
-      autoSavePending = false;
-      await autoSave();
     }
   };
 
   /**
-   * 保存文章
-   *
-   * 分两步「顺序」执行，中间任何一步失败都立刻停下：
-   * 1. savePost() — 保存内容字段（slug、title、tags、content、coverImage、excerpt 等）
-   * 2. updatePostStatus() — 更新文章状态（独立接口）
-   *
-   * 顺序不能颠倒：状态先于内容成功，就等于把上一版正文发布出去了。
+   * 保存文章：先完整 drain 正文队列，再更新状态。正文或状态任一步失败都不显示
+   * 成功提示；成功提示也只由本次手动操作发一次，队列内部不会递归或重复 toast。
    */
   const save = async () => {
     // 加载没成功不允许手动保存，理由同 autoSave 的第一道闸
@@ -304,43 +319,47 @@ export const usePostEditor = () => {
       return;
     }
     if (isSaving.value) return;
+
     isSaving.value = true;
-    const version = contentVersion;
     const savedStatus = status.value;
+    let contentSaved = true;
+    let statusSaved = false;
     try {
-      // 第一步：正文与元数据。失败就直接退出，状态一个字都不动 ——
-      // 并行发的话这里失败、状态却改成功了，等于把上一版正文发布出去
-      try {
-        await savePost(uuid, buildSavePayload());
-      } catch (error: any) {
+      // 手动保存也只是向同一个正文队列入队。若请求期间继续编辑，drain 会先把
+      // 最新内容全部落库，再允许状态接口执行，避免发布上一版正文。
+      autoSavePending = true;
+      contentSaved = await drainContentSaveQueue((error) => {
         useToast.error(
           t("views.admin.PostEditor.saveError.content", {
-            reason: t(`api.errors.${error}`),
+            reason: t(`api.errors.${String(error)}`),
           }),
         );
-        return;
-      }
+      });
+      if (!contentSaved) return;
 
-      // 第二步：状态。此刻内容已经落库了，所以这里失败要说清楚「哪一半成了」，
-      // 否则用户看到一句笼统的失败，只能整个重来一遍
       try {
         await updatePostStatus(uuid, savedStatus);
-      } catch (error: any) {
+        statusSaved = true;
+        if (status.value === savedStatus) isStatusDirty.value = false;
+      } catch (error: unknown) {
         useToast.error(
           t("views.admin.PostEditor.saveError.status", {
-            reason: t(`api.errors.${error}`),
+            reason: t(`api.errors.${String(error)}`),
           }),
         );
-        return;
       }
-
-      // 与 autoSave 同理：请求往返途中用户可能又改了东西，那些改动不在这次
-      // payload 里，版本号没动过才能算真正干净。两半各按各的快照判断
-      if (contentVersion === version) isContentDirty.value = false;
-      if (status.value === savedStatus) isStatusDirty.value = false;
-      useToast.success(t("api.success.保存成功"));
     } finally {
+      // 状态请求飞行期间仍可能编辑正文；无论正文/状态成功还是失败，都必须把
+      // watcher 设置的 pending 消费完。这里失败用普通保存错误，不能再声称
+      // 「状态未改动」（状态请求可能已经成功）。
+      const trailingSaved = await drainContentSaveQueue((error) => {
+        useToast.error(t(`api.errors.${String(error)}`));
+      });
       isSaving.value = false;
+
+      if (contentSaved && statusSaved && trailingSaved) {
+        useToast.success(t("api.success.保存成功"));
+      }
     }
   };
 

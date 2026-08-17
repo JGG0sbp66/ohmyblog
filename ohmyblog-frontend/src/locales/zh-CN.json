@@ -465,6 +465,8 @@
           "account": {
             "title": "账号安全",
             "description": "管理您的登录凭据，包括用户名、邮箱和密码。",
+            "currentPassword": "当前密码",
+            "currentPasswordPlaceholder": "修改密码时必填",
             "passwordPlaceholder": "不修改请留空"
           },
           "twoFactor": {

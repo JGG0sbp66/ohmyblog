@@ -25,6 +25,9 @@ import {
   syncLineNumberHeights,
   COPY_FEEDBACK_MS,
 } from "@/composables/code-block";
+import { useToast } from "@/composables/toast.hook";
+
+type Translate = (key: string) => string;
 
 // lucide-vue-next 的 <Copy :size="13" /> / <Check :size="13" /> 等价 SVG 串，
 // 保证与编辑器复制按钮的图标逐像素一致。
@@ -39,19 +42,23 @@ function extractLanguage(code: Element): string {
   return match?.[1] ?? "";
 }
 
-/** 复制按钮交互：复制正文 → 切到 Check + .copied → 复原（时长与编辑器共用常量） */
-function bindCopy(btn: HTMLButtonElement, text: string): void {
+/** 复制按钮交互：等待复制成功后切到 Check；失败时保留原图标并提示。 */
+function bindCopy(btn: HTMLButtonElement, text: string, t: Translate): void {
   let timer: ReturnType<typeof setTimeout> | null = null;
-  btn.addEventListener("click", () => {
-    void navigator.clipboard.writeText(text);
-    btn.innerHTML = CHECK_ICON;
-    btn.classList.add("copied");
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      btn.innerHTML = COPY_ICON;
-      btn.classList.remove("copied");
-      timer = null;
-    }, COPY_FEEDBACK_MS);
+  btn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.innerHTML = CHECK_ICON;
+      btn.classList.add("copied");
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        btn.innerHTML = COPY_ICON;
+        btn.classList.remove("copied");
+        timer = null;
+      }, COPY_FEEDBACK_MS);
+    } catch {
+      useToast.error(t("common.copyFailed"));
+    }
   });
 }
 
@@ -69,6 +76,7 @@ function bindWrapToggle(
   container: HTMLElement,
   code: HTMLElement,
   lineNumbers: HTMLElement,
+  t: Translate,
 ): void {
   let wrap = false;
 
@@ -76,6 +84,14 @@ function bindWrapToggle(
     container.classList.toggle("is-wrap", wrap);
     btn.classList.toggle("is-active", wrap);
     btn.setAttribute("aria-pressed", String(wrap));
+    btn.setAttribute(
+      "aria-label",
+      t(
+        wrap
+          ? "views.admin.PostEditor.content.codeBlock.wrapOff"
+          : "views.admin.PostEditor.content.codeBlock.wrapOn",
+      ),
+    );
     code.style.whiteSpace = wrap ? "pre-wrap" : "pre";
     syncLineNumberHeights(code, lineNumbers, wrap);
   };
@@ -106,7 +122,7 @@ function bindWrapToggle(
  * 就地增强单个 <pre>：语法高亮 + 包裹外壳（header 含语言图标与复制按钮、行号列）。
  * 结构与顺序严格对齐 CodeBlock.vue 的模板，配合共用的 code-block.css / syntax.css 呈现一致。
  */
-function enhanceOne(pre: HTMLPreElement): void {
+function enhanceOne(pre: HTMLPreElement, t: Translate): void {
   // 幂等：已在容器内的跳过
   if (pre.closest(".code-block-container")) return;
   const code = pre.querySelector("code");
@@ -167,15 +183,17 @@ function enhanceOne(pre: HTMLPreElement): void {
   const wrapBtn = document.createElement("button");
   wrapBtn.type = "button";
   wrapBtn.className = "code-block-header-btn code-block-wrap-btn";
-  wrapBtn.setAttribute("aria-label", "Toggle line wrap");
   wrapBtn.innerHTML = WRAP_ICON;
 
   const copyBtn = document.createElement("button");
   copyBtn.type = "button";
   copyBtn.className = "code-block-header-btn code-block-copy-btn";
-  copyBtn.setAttribute("aria-label", "Copy code");
+  copyBtn.setAttribute(
+    "aria-label",
+    t("views.admin.PostEditor.content.codeBlock.copy"),
+  );
   copyBtn.innerHTML = COPY_ICON;
-  bindCopy(copyBtn, rawText);
+  bindCopy(copyBtn, rawText, t);
 
   // 顺序与编辑器 header 一致：换行开关在复制按钮左侧
   const actions = document.createElement("div");
@@ -206,7 +224,7 @@ function enhanceOne(pre: HTMLPreElement): void {
   container.appendChild(content);
 
   // 接线要等 DOM 入档：测量依赖真实布局，脱离文档树量不到高度
-  bindWrapToggle(wrapBtn, container, code as HTMLElement, lineNumbers);
+  bindWrapToggle(wrapBtn, container, code as HTMLElement, lineNumbers, t);
 }
 
 /**
@@ -218,11 +236,12 @@ function enhanceOne(pre: HTMLPreElement): void {
  * 避免为了几十 KB 的装饰性资源推迟正文呈现。
  *
  * @param root 承载 v-html 内容的容器元素
+ * @param t 当前界面的 i18n 翻译函数
  */
-export function enhanceCodeBlocks(root: HTMLElement): void {
+export function enhanceCodeBlocks(root: HTMLElement, t: Translate): void {
   const blocks = root.querySelectorAll<HTMLPreElement>("pre");
   if (blocks.length === 0) return;
-  blocks.forEach(enhanceOne);
+  blocks.forEach((pre) => enhanceOne(pre, t));
 
   void preloadLanguageIcons().then(() => {
     root

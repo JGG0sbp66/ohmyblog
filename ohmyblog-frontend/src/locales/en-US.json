@@ -465,6 +465,8 @@
           "account": {
             "title": "Account Security",
             "description": "Manage your login credentials, including username, email, and password.",
+            "currentPassword": "Current password",
+            "currentPasswordPlaceholder": "Required when changing password",
             "passwordPlaceholder": "Leave blank to keep current"
           },
           "twoFactor": {
