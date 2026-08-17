@@ -283,10 +283,14 @@ class AuthService {
 					ip,
 				});
 			} else {
-				const remainingMs = existing.expiresAt.getTime() - Date.now();
+				const activeVerification = existing;
+				if (!activeVerification) {
+					throw new Error("有效验证码状态不一致");
+				}
+				const remainingMs = activeVerification.expiresAt.getTime() - Date.now();
 				validityMinutes = Math.max(1, Math.ceil(remainingMs / 60_000));
 				// 审计 ip 指向最近一次触发申请的来源，而不是永远停在第一次
-				await emailVerificationDao.updateIp(existing.uuid, ip);
+				await emailVerificationDao.updateIp(activeVerification.uuid, ip);
 			}
 
 			await emailSenderService.sendResetPasswordEmail({
@@ -454,12 +458,19 @@ class AuthService {
 			updateData.passwordHash = await Bun.password.hash(data.password);
 		}
 
-		// 如果没有需要更新的内容，直接返回
+		// 如果没有需要更新的内容，直接返回当前记录
 		if (Object.keys(updateData).length === 0) {
-			return await userDao.findById(uuid);
+			const currentUser = await userDao.findById(uuid);
+			if (!currentUser) {
+				throw new BusinessError("用户不存在", { status: 404 });
+			}
+			return currentUser;
 		}
 
 		const updatedUser = await userDao.update(uuid, updateData);
+		if (!updatedUser) {
+			throw new BusinessError("用户不存在", { status: 404 });
+		}
 
 		// 5. 同步更新 config 中的 username (针对单用户系统的显示名称同步)
 		if (data.username) {

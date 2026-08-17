@@ -1,0 +1,39 @@
+# ohmyblog Demo 站专用部署配置
+#
+#   docker compose -f docker-compose.demo.yml up -d
+#   IMAGE_TAG=1.3.6 docker compose -f docker-compose.demo.yml up -d
+#
+# 默认跟随 latest；自动部署会通过 .env 的 IMAGE_TAG 固定到当前发布版本。
+
+services:
+  ohmyblog:
+    image: ghcr.nju.edu.cn/jgg0sbp66/ohmyblog:${IMAGE_TAG:-latest}
+    container_name: ohmyblog
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      NODE_ENV: production
+      # 游客可进入 /admin 浏览，但写操作由后端统一拒绝。
+      DEMO_MODE: "true"
+      # 不设置则首次启动自动生成随机密钥并写入 data/.env。
+      # JWT_SECRET: ""
+
+    volumes:
+      # bind mount：相对于 Compose 文件所在目录，沿用 VPS 现有的 ./data。
+      - ./data:/app/data
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

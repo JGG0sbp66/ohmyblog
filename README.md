@@ -176,9 +176,19 @@ docker run -d -p 3001:3000 -v ohmyblog-demo-data:/app/data \
   -e DEMO_MODE=true ghcr.io/jgg0sbp66/ohmyblog:latest
 ```
 
-或用 compose 部署时，把 `docker-compose.yml` 里的 `DEMO_MODE` 改成 `"true"`。
+或直接使用仓库提供的独立 Demo Compose（使用南京大学 GHCR 镜像代理，默认拉取 `latest`）：
 
-跑独立二进制的话，改 `data/.env` 里的 `DEMO_MODE` 即可（只有字面量 `true` / `1` 会打开，其他值一律视为关闭）。
+```bash
+docker compose -f docker-compose.demo.yml up -d
+```
+
+需要固定版本时可设置镜像 tag：
+
+```bash
+IMAGE_TAG=1.3.6 docker compose -f docker-compose.demo.yml up -d
+```
+
+普通部署仍使用 `docker-compose.yml`，两份配置互不改变对方的演示模式开关。Demo Compose 使用 `./data:/app/data`，数据库、上传文件和自动生成的配置都保存在 Compose 文件所在目录的 `data/` 中，升级时会直接沿用。跑独立二进制的话，改 `data/.env` 里的 `DEMO_MODE` 即可（只有字面量 `true` / `1` 会打开，其他值一律视为关闭）。
 
 几点说明：
 
@@ -193,8 +203,9 @@ docker run -d -p 3001:3000 -v ohmyblog-demo-data:/app/data \
 ```text
 ohmyblog/
 ├── img/                 # README 预览图
-├── docker-compose.yml   # 部署编排
-├── ohmyblog-backend/    # 后端 API 服务
+├── docker-compose.yml        # 普通部署编排
+├── docker-compose.demo.yml   # 只读演示站部署编排（国内镜像代理）
+├── ohmyblog-backend/         # 后端 API 服务
 └── ohmyblog-frontend/   # 前端 Web 应用
 ```
 

@@ -37,22 +37,19 @@ bun run docker         # 多阶段镜像（build context 是仓库根）
 
 ```bash
 bun run dev            # Vite :5173，/api、/feed、/sitemap.xml、/robots.txt 代理到 :3000
-bun run type-check     # vue-tsc --build
-bun run build-only     # 跳过类型检查直接打包（CI 和 Docker 用的就是这个）
+bun run type-check     # vue-tsc --build；会同时检查 Eden 引入的后端类型链
+bun run build          # type-check + build-only 并行；CI 和 Docker 使用这个完整门禁
+bun run build-only     # 仅打包，不做类型检查；只适合单独排查 Vite 构建
 bun run format         # prettier --write .
 ```
 
 **没有任何测试。** 后端的 `test` 脚本是 `exit 1` 占位，前端没有测试脚本，仓库里也没有 `*.test.*` / `*.spec.*`。不要去找测试或假装能跑测试；验证靠 `type-check` + `lint` + 手跑。
 
-### type-check 的既有噪音
+### type-check 的跨端约定
 
-`vue-tsc` 会顺着路径别名把**后端源码**一起检查（用的是前端的 DOM/strict 配置，没有 `bun-types`），因此 `../ohmyblog-backend/**` 下有约 40 条既有报错（`Cannot find name 'Bun'`、JSX runtime、`possibly undefined` 等）——**全是噪音，不要去修**。前端 `src/` 下没有既有报错。
+`vue-tsc` 会顺着 `@server/app` 检查 Eden Treaty 的完整后端类型链，这是有意的跨端契约门禁，不是噪音。`tsconfig.app.json` 已接入后端的 `bun-types`，并为 React Email 模板使用 React JSX 环境；当前基线是 **零报错**。任何 `../ohmyblog-backend/**` 报错都要按真实类型错误处理，不要过滤路径、跳过检查或改回 `build-only`。
 
-甄别自己引入的新错误：
-
-```bash
-bun run type-check 2>&1 | grep '^src/'
-```
+因为类型链会解析后端依赖，运行前端 `type-check` / `build` 前必须先在 `ohmyblog-backend/` 执行过 `bun install`。
 
 ## 架构要点
 

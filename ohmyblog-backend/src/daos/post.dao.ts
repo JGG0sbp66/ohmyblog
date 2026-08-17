@@ -45,9 +45,10 @@ class PostDao {
 	 * 创建新文章（通常为空草稿，由 service 层填充初始数据）
 	 */
 	async create(data: NewPost) {
-		const result = await db.insert(post).values(data).returning();
+		const [created] = await db.insert(post).values(data).returning();
+		if (!created) throw new Error("文章创建失败：数据库未返回记录");
 		invalidatePostCaches();
-		return result[0];
+		return created;
 	}
 
 	// ─── 管理员 · 列表 ──────────────────────────────────────────────────────────
@@ -89,7 +90,7 @@ class PostDao {
 			db.select({ total: count() }).from(post).where(where),
 		]);
 
-		return { list, total: totalResult[0].total };
+		return { list, total: totalResult[0]?.total ?? 0 };
 	}
 
 	// ─── 管理员 · 单条 ──────────────────────────────────────────────────────────
@@ -208,7 +209,7 @@ class PostDao {
 
 			return {
 				list: list as PublishedListRow[],
-				total: totalResult[0].total,
+				total: totalResult[0]?.total ?? 0,
 			};
 		};
 
@@ -251,9 +252,20 @@ class PostDao {
 				totalViews: sum(post.viewCount),
 			})
 			.from(post);
+		const counts = result[0];
+		if (!counts) {
+			return {
+				all: 0,
+				draft: 0,
+				published: 0,
+				archived: 0,
+				deleted: 0,
+				totalViews: 0,
+			};
+		}
 		return {
-			...result[0],
-			totalViews: Number(result[0].totalViews ?? 0),
+			...counts,
+			totalViews: Number(counts.totalViews ?? 0),
 		};
 	}
 

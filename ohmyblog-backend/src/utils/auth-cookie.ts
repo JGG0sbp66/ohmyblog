@@ -31,13 +31,21 @@ export const issueAuthCookie = async ({
 	cookie: any;
 	user: JwtUserPayload;
 }): Promise<void> => {
+	if (!jwt || typeof jwt.sign !== "function") {
+		throw new Error("认证服务不可用：JWT 插件未初始化");
+	}
+	const authTokenCookie = cookie?.auth_token;
+	if (!authTokenCookie || typeof authTokenCookie.set !== "function") {
+		throw new Error("认证服务不可用：Cookie 插件未初始化");
+	}
+
 	const token = await jwt.sign({
 		uuid: user.uuid,
 		role: user.role,
 		username: user.username,
 	});
 
-	cookie.auth_token.set({
+	authTokenCookie.set({
 		value: token,
 		httpOnly: true,
 		secure: isProduction(),

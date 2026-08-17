@@ -17,9 +17,9 @@ RUN cd ohmyblog-frontend && bun install --frozen-lockfile
 COPY ohmyblog-backend/ ./ohmyblog-backend/
 COPY ohmyblog-frontend/ ./ohmyblog-frontend/
 
-# 编译前端（跳过 type-check 加速 Docker 构建）
+# 编译前端并执行跨端类型检查
 WORKDIR /monorepo/ohmyblog-frontend
-RUN bun run build-only
+RUN bun run build
 
 # --- 阶段 2: 构建后端 ---
 FROM oven/bun:1.3.14 AS builder

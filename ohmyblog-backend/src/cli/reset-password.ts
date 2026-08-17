@@ -40,17 +40,26 @@ function randomIndex(max: number): number {
 	// 只接受落在完整重复段内的字节值，其余丢弃重取
 	const limit = 256 - (256 % max);
 	const buf = new Uint8Array(1);
-	do {
+	while (true) {
 		crypto.getRandomValues(buf);
-	} while (buf[0] >= limit);
-	return buf[0] % max;
+		const value = buf[0];
+		if (value === undefined) {
+			throw new Error("无法读取系统随机数");
+		}
+		if (value < limit) return value % max;
+	}
 }
 
 /** 生成随机密码（crypto 级随机） */
 function generatePassword(): string {
 	let out = "";
 	for (let i = 0; i < GENERATED_LENGTH; i++) {
-		out += PASSWORD_ALPHABET[randomIndex(PASSWORD_ALPHABET.length)];
+		const character =
+			PASSWORD_ALPHABET[randomIndex(PASSWORD_ALPHABET.length)];
+		if (character === undefined) {
+			throw new Error("生成随机密码时字符索引越界");
+		}
+		out += character;
 	}
 	return out;
 }

@@ -51,9 +51,10 @@ export const twoFactorRoute = new Elysia({ name: "twoFactorRoute" }).group(
 			.post(
 				"/verify",
 				async ({ body, cookie, jwt, request, server }) => {
-					const challengeId = cookie[CHALLENGE_COOKIE_NAME].value as
-						| string
-						| undefined;
+					const challengeCookie = cookie[CHALLENGE_COOKIE_NAME];
+					const challengeValue = challengeCookie?.value;
+					const challengeId =
+						typeof challengeValue === "string" ? challengeValue : undefined;
 					const ip = getClientIp({ request, server });
 
 					let user: Awaited<
@@ -73,13 +74,13 @@ export const twoFactorRoute = new Elysia({ name: "twoFactorRoute" }).group(
 							(err.message === TWO_FACTOR_EXHAUSTED_MESSAGE ||
 								err.message === TWO_FACTOR_CHALLENGE_EXPIRED_MESSAGE)
 						) {
-							cookie[CHALLENGE_COOKIE_NAME].remove();
+							challengeCookie?.remove();
 						}
 						throw err;
 					}
 
 					// 验证通过：清除 challenge cookie，签发 auth_token
-					cookie[CHALLENGE_COOKIE_NAME].remove();
+					challengeCookie?.remove();
 
 					await issueAuthCookie({ jwt, cookie, user });
 

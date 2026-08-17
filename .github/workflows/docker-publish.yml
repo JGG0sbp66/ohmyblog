@@ -139,8 +139,8 @@ jobs:
         run: bun install --frozen-lockfile
         working-directory: ohmyblog-frontend
 
-      - name: Build frontend
-        run: bun run build-only
+      - name: Type-check and build frontend
+        run: bun run build
         working-directory: ohmyblog-frontend
 
       - name: Copy frontend dist to backend
@@ -212,31 +212,48 @@ jobs:
     needs: build-docker
 
     steps:
-      - name: Deploy to VPS over SSH
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      # ssh-action 不负责传文件；把仓库中的 Compose 编成单行，通过同一 SSH
+      # 环境变量传到 VPS，避免远端长期维护一份会与仓库漂移的副本。
+      - name: Prepare Demo Compose
+        id: demo-compose
+        shell: bash
+        run: |
+          echo "content=$(base64 -w 0 docker-compose.demo.yml)" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy Demo to VPS over SSH
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         env:
           IMAGE_VERSION: ${{ github.ref_name }}
+          DEMO_COMPOSE_B64: ${{ steps.demo-compose.outputs.content }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: root
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          envs: IMAGE_VERSION
+          envs: IMAGE_VERSION,DEMO_COMPOSE_B64
           script: |
             set -e
             cd /root/docker/container/ohmyblog
+
+            # 原子替换为本次 tag 对应仓库里的 Demo Compose，避免远端配置漂移。
+            printf '%s' "$DEMO_COMPOSE_B64" | base64 -d > docker-compose.demo.yml.tmp
+            mv docker-compose.demo.yml.tmp docker-compose.demo.yml
+
             # ref 形如 v1.3.6，镜像 tag 是 1.3.6，去掉前缀 v
             echo "IMAGE_TAG=${IMAGE_VERSION#v}" > .env
 
             # 拉取失败（网络抖动 / 镜像站偶发同步延迟）等 30 秒重试
             ok=0
             for i in $(seq 1 10); do
-              if docker compose pull; then ok=1; break; fi
+              if docker compose -f docker-compose.demo.yml pull; then ok=1; break; fi
               echo "第 $i 次拉取失败，30 秒后重试"
               sleep 30
             done
             [ "$ok" = "1" ] || { echo "镜像拉取失败，放弃本次部署"; exit 1; }
 
-            docker compose up -d
+            docker compose -f docker-compose.demo.yml up -d
             docker image prune -f
 
             # 等容器恢复 healthy，最多 90 秒，超时打出日志让 Actions 报错
@@ -245,5 +262,5 @@ jobs:
               sleep 3
             done
             echo "容器启动后 90 秒内未恢复 healthy"
-            docker compose logs --tail 50
+            docker compose -f docker-compose.demo.yml logs --tail 50
             exit 1
