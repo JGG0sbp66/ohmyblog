@@ -133,7 +133,7 @@ jobs:
       - name: Sync version from tag
         # 编译版运行时回退读 package.json（编译期内联），发版构建以 tag 为准覆盖，
         # 仓库里的 version 从此不需要手动维护
-        run: npm pkg set version "${GITHUB_REF_NAME#v}"
+        run: npm pkg set version="${GITHUB_REF_NAME#v}"
         working-directory: ohmyblog-backend
 
       - name: Install frontend dependencies
