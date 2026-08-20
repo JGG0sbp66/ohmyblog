@@ -1,18 +1,18 @@
-name: Bug 反馈
-description: 报告一个可复现的问题 / Report a reproducible problem
-title: "[Bug] "
+name: 🐛 bug 反馈
+description: 报告一个可重现的问题 / report a reproducible problem
+title: "[bug] "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        感谢反馈 Bug！请尽量提供可复现的步骤，这样能更快定位问题。
+        感谢反馈 bug！请尽量提供可复现的步骤，这样能更快定位问题。
 
   - type: textarea
     id: description
     attributes:
       label: 问题描述
-      description: 清晰、简洁地描述这个 Bug 是什么。
+      description: 清晰、简洁地描述这个 bug 是什么。
       placeholder: 例如：保存文章后封面图丢失……
     validations:
       required: true
@@ -40,7 +40,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: OhMyBlog 版本
+      label: ohmyblog 版本
       description: 在「管理后台 → 系统信息」或镜像 tag 中查看，例如 v1.3.7。
       placeholder: v1.3.7
     validations:

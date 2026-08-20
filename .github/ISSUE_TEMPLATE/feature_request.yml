@@ -1,6 +1,6 @@
-name: 功能建议
-description: 提出一个新功能或改进 / Suggest a new feature or improvement
-title: "[Feature] "
+name: ✨ 功能建议
+description: 提出一个新功能或改进 / suggest a new feature or improvement
+title: "[feature] "
 labels: ["enhancement"]
 body:
   - type: markdown
