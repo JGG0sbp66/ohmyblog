@@ -19,9 +19,10 @@ class FriendLinkDao {
 	 * 新增友链记录（申请或管理员直接添加）
 	 */
 	async create(data: NewFriendLink) {
-		const result = await db.insert(friendLink).values(data).returning();
+		const [created] = await db.insert(friendLink).values(data).returning();
+		if (!created) throw new Error("友链创建失败：数据库未返回记录");
 		invalidateFriendLinks();
-		return result[0];
+		return created;
 	}
 
 	/**
@@ -50,7 +51,7 @@ class FriendLinkDao {
 			db.select({ total: count() }).from(friendLink).where(where),
 		]);
 
-		return { list, total: totalResult[0].total };
+		return { list, total: totalResult[0]?.total ?? 0 };
 	}
 
 	/**
@@ -107,7 +108,7 @@ class FriendLinkDao {
 			.select({ total: count() })
 			.from(friendLink)
 			.where(eq(friendLink.status, "pending"));
-		return result[0].total;
+		return result[0]?.total ?? 0;
 	}
 }
 

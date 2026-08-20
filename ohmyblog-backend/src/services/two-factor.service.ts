@@ -271,7 +271,16 @@ class TwoFactorService {
 			throw new BusinessError("验证码错误或已失效", { status: 401 });
 		}
 
-		await twoFactorDao.markAsUsed(record.uuid);
+		// 作废必须是原子操作：并发提交同一个码时只有一个请求能改到行，
+		// 输的那个按验证失败处理 —— 一次性消费不能靠「先查再标」两步保证
+		const consumed = await twoFactorDao.markAsUsedIfActive(record.uuid);
+		if (!consumed) {
+			this.logger.warn(
+				{ userId: userUuid },
+				"登录两步验证失败：恢复码刚被并发请求使用",
+			);
+			throw new BusinessError("验证码错误或已失效", { status: 401 });
+		}
 
 		const remaining = await twoFactorDao.countActive(userUuid);
 		this.logger.info(

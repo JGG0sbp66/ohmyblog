@@ -4,6 +4,7 @@
  * 放置在灵感速记卡片下方
  */
 import { computed, onMounted, ref } from "vue";
+import { useAutoAnimate } from "@formkit/auto-animate/vue";
 import {
   CalendarClock,
   CircleCheck,
@@ -23,6 +24,9 @@ import SettingCard from "@/components/base/card/SettingCard.vue";
 import { getRunningDays } from "@/utils/date";
 
 const { t } = useLang();
+
+/** 检查结果行是直接子节点插入/移除，挂 auto-animate 让卡片高度平滑过渡 */
+const [contentRef] = useAutoAnimate();
 
 const loading = ref(true);
 const checkingUpdate = ref(false);
@@ -70,7 +74,7 @@ function openRelease() {
       <div class="h-5 w-1/2 rounded bg-bg-muted/40" />
     </div>
 
-    <div v-else class="flex flex-col gap-3 text-sm">
+    <div v-else ref="contentRef" class="flex flex-col gap-3 text-sm">
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 text-fg-muted">
           <Tag class="w-4 h-4" />

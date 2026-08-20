@@ -162,6 +162,9 @@ watch(isMobile, (mobile) => {
       <main
         class="flex-1 p-3 pt-3 md:p-6 md:pt-3 flex flex-col min-w-0 min-h-0 overflow-y-auto custom-scrollbar"
       >
+        <!-- min-h-0 不能删：后台所有页面都钉在本层高度内、自行内部滚动。
+             删掉它会让长内容页面（如邮件页的无限滚动列表）把本层撑高、
+             滚动打落到 main 上退化成整页滚动（a81e33e3 曾因此翻车）。 -->
         <div
           class="flex-1 flex flex-col min-w-0 min-h-0 onload-animation anim-delay-150"
         >

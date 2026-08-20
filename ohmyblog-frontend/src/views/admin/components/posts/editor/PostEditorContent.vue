@@ -5,6 +5,7 @@ import { useEditorHeaderCollapse } from "@/composables/editor-header.hook";
 import { useKeyboardInset } from "@/composables/keyboard-inset.hook";
 import { useEditorDock } from "@/composables/editor-dock.hook";
 import PostEditorTitle from "./content/PostEditorTitle.vue";
+import PostEditorSubtitle from "./content/PostEditorSubtitle.vue";
 import PostEditorBody from "./content/PostEditorBody.vue";
 
 /**
@@ -12,6 +13,7 @@ import PostEditorBody from "./content/PostEditorBody.vue";
  *
  * 组合 Title 和 Body 两个子组件。
  * v-model:title              → 文章标题
+ * v-model:subtitle           → 文章副标题（主标题下方的说明性文字）
  * v-model:content            → ProseMirror JSON
  * v-model:contentText        → 纯文本（搜索/预览）
  * v-model:contentHtml        → HTML（前台展示/RSS）
@@ -19,6 +21,7 @@ import PostEditorBody from "./content/PostEditorBody.vue";
  * v-model:selectedCharCount  → 当前选区字符数
  */
 const title = defineModel<string>("title", { default: "" });
+const subtitle = defineModel<string>("subtitle", { default: "" });
 const content = defineModel<object | undefined>("content");
 const contentText = defineModel<string>("contentText", { default: "" });
 const contentHtml = defineModel<string>("contentHtml", { default: "" });
@@ -79,8 +82,12 @@ const bottomGap = computed(() => dockHeight.value + inset.value);
       class="mx-auto flex max-w-3xl flex-col gap-4 px-4 py-6 sm:px-8 sm:py-10"
       :style="{ paddingBottom: `calc(2.5rem + ${bottomGap}px)` }"
     >
-      <!-- 标题 -->
-      <PostEditorTitle v-model="title" />
+      <!-- 标题 + 副标题：与前台 PostHeader 同款版式（accent 竖条贯穿开场块），
+           编辑态即可预览成稿观感；紧挨成组（gap-2），间距小于容器的 gap-4 节奏 -->
+      <div class="-ml-0.5 flex flex-col gap-2 border-l-4 border-accent pl-4">
+        <PostEditorTitle v-model="title" />
+        <PostEditorSubtitle v-model="subtitle" />
+      </div>
 
       <!-- 分隔线 -->
       <div class="border-b border-border/30" />

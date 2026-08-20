@@ -6,6 +6,7 @@ import PostMeta from "@/components/base/tag/PostMeta.vue";
 
 defineProps<{
   title: string;
+  subtitle?: string | null;
   formattedDate: string;
   tags: string[] | null;
   wordCount: number;
@@ -17,11 +18,16 @@ const { t } = useLang();
 
 <template>
   <div class="flex flex-col gap-4">
-    <h1
-      class="text-3xl md:text-4xl font-bold leading-snug text-fg border-l-4 border-accent pl-4 -ml-0.5"
-    >
-      {{ title || t("views.main.post.untitled") }}
-    </h1>
+    <!-- 标题 + 副标题是一个语义单元（文章的开场标识）：accent 竖条挂在整组上
+         贯穿到底，而不是只框住标题；无副标题时退化为只框住标题，与旧版一致 -->
+    <div class="-ml-0.5 flex flex-col gap-2 border-l-4 border-accent pl-4">
+      <h1 class="text-3xl md:text-4xl font-bold leading-snug text-fg">
+        {{ title || t("views.main.post.untitled") }}
+      </h1>
+      <p v-if="subtitle" class="text-lg leading-relaxed text-fg-muted">
+        {{ subtitle }}
+      </p>
+    </div>
 
     <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
       <PostMeta :date="formattedDate" :tags="tags ?? []" :max-tags="10" />

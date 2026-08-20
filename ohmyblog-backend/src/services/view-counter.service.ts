@@ -31,7 +31,8 @@ class ViewCounterService {
 	private logger = logger.withTag("ViewCounterService");
 	private pending = new Map<string, number>();
 	private timer: Timer | null = null;
-	private flushing = false;
+	/** 在飞的那一轮 flush 的 promise；null = 空闲。并发触发复用同一轮 */
+	private flushPromise: Promise<void> | null = null;
 	private readonly intervalMs: number;
 	private readonly thresholdCount: number;
 
@@ -57,7 +58,7 @@ class ViewCounterService {
 	}
 
 	/**
-	 * 停止定时器并立即把剩余计数 flush 到数据库
+	 * 停止定时器并尽力把剩余计数 flush 到数据库
 	 * 在 SIGTERM/SIGINT 等优雅关闭流程中调用
 	 */
 	async stop() {
@@ -65,8 +66,20 @@ class ViewCounterService {
 			clearInterval(this.timer);
 			this.timer = null;
 		}
+		// 连等两轮：第一轮接住「正在飞的那一次」（flush 内部复用在飞的
+		// promise，不会空转丢弃），第二轮把上一轮飞行途中新累积的部分
+		// 也送走。退出路径上丢的就是这最后一两个周期的计数
 		await this.flush();
-		this.logger.info("viewCounter 已停止并完成最终 flush");
+		await this.flush();
+		if (this.pending.size > 0) {
+			// 走到这里说明数据库持续不可用。计数已无处可去，把量级记进
+			// 日志再放弃 —— 进程马上要退出了，回滚到内存也救不回来
+			this.logger.warn(
+				{ pendingSlugs: this.pending.size, pendingHits: this.totalPending() },
+				"退出时 viewCount 仍有未落库的计数，本次放弃",
+			);
+		}
+		this.logger.info("viewCounter 已停止");
 	}
 
 	/**
@@ -89,29 +102,62 @@ class ViewCounterService {
 	}
 
 	/**
-	 * 把内存累积的 delta 批量 UPDATE 到数据库
-	 * 使用 flushing 锁防止并发 flush 重复写入
+	 * 把内存累积的 delta 批量 UPDATE 到数据库。
+	 *
+	 * 已有一轮在飞时直接复用它的 promise —— 新累积留在 pending 里等下
+	 * 一个周期，stop() 也因此能「等住」在飞的一轮而不是空转返回。
+	 *
+	 * 部分失败只回队**未落库**的条目（从失败那条起到末尾）：已成功写进
+	 * 数据库的绝不能再回队 —— 旧实现整批回滚，下一轮把已落库的部分再
+	 * 加一遍，阅读量凭空翻倍，恰好在「数据库时好时坏」的场景里越滚越多
 	 */
-	private async flush() {
-		if (this.flushing || this.pending.size === 0) return;
-		this.flushing = true;
+	private flush(): Promise<void> {
+		if (this.flushPromise) return this.flushPromise;
+		if (this.pending.size === 0) return Promise.resolve();
 
+		const run = this.runFlush();
+		this.flushPromise = run;
+		// 复位只关心「这一轮结束了」，成败都不影响锁的释放；
+		// 直接 await flush() 的调用方仍会拿到原始的拒绝
+		void run.then(
+			() => {
+				this.flushPromise = null;
+			},
+			() => {
+				this.flushPromise = null;
+			},
+		);
+		return run;
+	}
+
+	private async runFlush(): Promise<void> {
 		// 把当前累积一次性"摘下来"，新累积进 fresh map，避免长锁
-		const snapshot = this.pending;
+		const entries = [...this.pending.entries()];
 		this.pending = new Map();
 
-		try {
-			for (const [slug, delta] of snapshot) {
+		let failedAt = -1;
+		for (let i = 0; i < entries.length; i++) {
+			const entry = entries[i];
+			if (!entry) continue;
+			const [slug, delta] = entry;
+			try {
 				await postDao.addViewCount(slug, delta);
+			} catch (err) {
+				// 单条失败即停：批量写一半失败基本是数据库层面的持续故障
+				//（锁死 / 磁盘满），继续重试只会把同一个错误刷 N 遍
+				failedAt = i;
+				this.logger.error({ err, slug }, "viewCount flush 写入失败");
+				break;
 			}
-		} catch (err) {
-			// 失败时把 snapshot 退回到 pending，下次重试
-			for (const [slug, delta] of snapshot) {
+		}
+
+		if (failedAt >= 0) {
+			for (let i = failedAt; i < entries.length; i++) {
+				const entry = entries[i];
+				if (!entry) continue;
+				const [slug, delta] = entry;
 				this.pending.set(slug, (this.pending.get(slug) ?? 0) + delta);
 			}
-			this.logger.error({ err }, "viewCount flush 失败，已回滚到 pending");
-		} finally {
-			this.flushing = false;
 		}
 	}
 }

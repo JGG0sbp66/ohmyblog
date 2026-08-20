@@ -1,1 +1,7 @@
+# 统一 LF 行尾：Windows 的 git 系统配置 core.autocrlf=true 会在 checkout 时
+# 把 LF 转成 CRLF，导致工作区行尾与 biome / prettier 的 lineEnding=lf 期望
+# 不一致，biome check 对 CRLF 文件整文件报格式差异。eol=lf 让所有协作者
+# 无论本机 autocrlf 怎么设，checkout 出来都是 LF；二进制文件由 text=auto
+# 自动识别，不受影响
+* text=auto eol=lf
 *.sh text eol=lf

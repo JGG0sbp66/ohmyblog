@@ -54,6 +54,11 @@ export const UpdateAccountDTO = t.Object({
 			error: "auth.email_invalid",
 		}),
 	),
+	currentPassword: t.Optional(
+		t.String({
+			description: "当前密码（修改密码时必填）",
+		}),
+	),
 	password: t.Optional(
 		t.String({
 			minLength: 6,

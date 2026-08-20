@@ -26,10 +26,12 @@ const isMobile = useIsMobile();
     <!-- 
       右侧：配置表单区域 
       内置 Viewport 扩展方案：通过负 Margin 和 Padding 扩展裁剪区域，保护卡片阴影。
+      出血量必须与 main 的 padding 联动（移动端 p-3 / 桌面 md:p-6）：
+      写死 24px 会在移动端超出 main 的 12px padding，把 main 撑出水平滚动条。
     -->
     <div class="flex-1 lg:flex-none lg:w-120 flex flex-col min-h-0 relative">
       <div
-        class="absolute inset-0 overflow-y-auto overflow-x-hidden -mx-6 px-6 -mb-6 pb-6 scroll-smooth"
+        class="absolute inset-0 overflow-y-auto overflow-x-hidden -mx-3 px-3 -mb-3 pb-3 md:-mx-6 md:px-6 md:-mb-6 md:pb-6 scroll-smooth"
       >
         <div class="flex flex-col gap-8">
           <slot />

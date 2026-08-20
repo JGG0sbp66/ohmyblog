@@ -14,6 +14,7 @@ const tags = defineModel<string[]>("tags", { default: () => [] });
 const status = defineModel<TPostStatus>("status", { default: "draft" });
 const excerpt = defineModel<string>("excerpt", { default: "" });
 const coverImage = defineModel<string | null>("coverImage", { default: null });
+const coverEnabled = defineModel<boolean>("coverEnabled", { default: true });
 const pinned = defineModel<boolean>("pinned", { default: false });
 </script>
 
@@ -38,6 +39,7 @@ const pinned = defineModel<boolean>("pinned", { default: false });
         v-model:status="status"
         v-model:excerpt="excerpt"
         v-model:cover-image="coverImage"
+        v-model:cover-enabled="coverEnabled"
         v-model:pinned="pinned"
       />
     </div>

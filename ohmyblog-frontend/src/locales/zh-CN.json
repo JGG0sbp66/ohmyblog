@@ -101,7 +101,6 @@
       "search": {
         "HeaderSearch": {
           "placeholder": "搜索文章...",
-          "searching": "搜索中...",
           "noResults": "未找到相关文章",
           "untitled": "无标题"
         }
@@ -271,11 +270,7 @@
           },
           "actions": {
             "edit": "编辑",
-            "publish": "发布",
-            "toDraft": "转为草稿",
-            "archive": "归档",
             "trash": "移入回收站",
-            "restore": "恢复为草稿",
             "permanentDelete": "永久删除"
           },
           "untitled": "新文章",
@@ -292,14 +287,12 @@
             "trashModal": {
               "title": "批量移入回收站",
               "question": "您确定要将以下文章移入回收站吗？",
-              "listHeader": "即将移入回收站",
               "warning": "移入回收站的文章可在「回收站」中找回并恢复",
               "confirm": "全部移入回收站"
             },
             "deleteModal": {
               "title": "批量永久删除",
               "question": "您确定要永久删除以下文章吗？",
-              "listHeader": "即将永久删除",
               "warning": "此操作不可撤销，文章将被彻底删除，无法恢复",
               "confirm": "全部永久删除"
             }
@@ -472,13 +465,13 @@
           "account": {
             "title": "账号安全",
             "description": "管理您的登录凭据，包括用户名、邮箱和密码。",
+            "currentPassword": "当前密码",
+            "currentPasswordPlaceholder": "修改密码时必填",
             "passwordPlaceholder": "不修改请留空"
           },
           "twoFactor": {
             "title": "两步验证",
             "description": "开启后，登录时除密码外还需要输入验证器 App 上的动态验证码。",
-            "enabledAt": "已于 {date} 启用",
-            "enable": { "action": "启用" },
             "setup": {
               "step1": {
                 "title": "扫描二维码",
@@ -501,12 +494,7 @@
               }
             },
             "codes": {
-              "remaining": "剩余 {remaining} / {total} 个恢复码",
-              "copy": "复制全部",
-              "download": "下载为文件",
-              "copied": "恢复码已复制到剪贴板",
-              "copyFailed": "复制失败，请手动选中恢复码复制",
-              "confirmSaved": "我已妥善保存这些恢复码"
+              "download": "下载为文件"
             },
             "regenerate": {
               "action": "重新生成恢复码",
@@ -516,13 +504,11 @@
               "doneHint": "新的恢复码已生成，旧的已全部失效。请立即保存。"
             },
             "disable": {
-              "action": "关闭",
               "title": "关闭两步验证",
               "question": "关闭后，登录只需要密码，账号安全性会明显下降。",
               "warning": "现有的恢复码会被一并清空，此操作不可撤销",
               "password": "当前密码",
               "passwordPlaceholder": "请输入密码以确认身份",
-              "required": "请输入当前密码",
               "confirm": "确认关闭"
             }
           },
@@ -545,10 +531,6 @@
           }
         },
         "smtp": {
-          "section": {
-            "title": "SMTP服务",
-            "description": "配置 SMTP 服务器以启用邮件发送功能，用于发送系统通知等。"
-          },
           "preview": {
             "testEmailTitle": "这是一封来自 ohmyblog 的测试邮件",
             "greeting": "你好，{name}！",
@@ -623,6 +605,10 @@
         "validation": {
           "slugRequired": "发布前请先填写标题或永久链接"
         },
+        "loadFailed": {
+          "message": "文章加载失败。为防止空表单覆盖原文，编辑器已停用",
+          "retry": "重试加载"
+        },
         "saveError": {
           "content": "正文保存失败，文章状态未改动：{reason}",
           "status": "正文已保存，但状态更新失败，请重试：{reason}"
@@ -663,6 +649,9 @@
           "properties": {
             "label": "文章属性",
             "tooltip": "控制文章在前台的展示行为",
+            "cover": {
+              "label": "显示封面"
+            },
             "pinned": {
               "label": "置顶文章",
               "tooltip": "置顶后将在前台文章列表中排在最前"
@@ -672,6 +661,9 @@
         "content": {
           "title": {
             "placeholder": "文章标题"
+          },
+          "subtitle": {
+            "placeholder": "副标题（可选）"
           },
           "body": {
             "placeholder": "开始写作，或输入 / 选择内容块..."
@@ -831,23 +823,12 @@
       "backToHome": "返回首页",
       "forgotPassword": "忘记密码？",
       "twoFactor": {
-        "title": "两步验证",
-        "description": "请输入验证器 App 上显示的动态验证码。",
-        "recoveryDescription": "请输入任意一个尚未使用过的恢复码。",
         "code": {
           "label": "两步验证",
           "placeholder": "验证码或恢复码",
           "hint": "输入验证器 App 上的 6 位数字，或恢复码"
         },
-        "recoveryCode": {
-          "label": "恢复码",
-          "placeholder": "例如 ABCDE-FGHJK",
-          "hint": "启用两步验证时保存的恢复码，每个只能使用一次"
-        },
-        "submit": "验证并登录",
-        "useRecoveryCode": "用恢复码登录",
-        "useTotp": "改用验证码",
-        "back": "返回上一步"
+        "submit": "验证并登录"
       }
     },
     "forgotPassword": {
@@ -932,9 +913,7 @@
       "reject": {
         "title": "拒绝友链申请",
         "reasonLabel": "拒绝原因",
-        "reasonPlaceholder": "告知申请人拒绝原因...",
-        "confirm": "确认拒绝",
-        "cancel": "取消"
+        "reasonPlaceholder": "告知申请人拒绝原因..."
       },
       "delete": {
         "title": "删除友链",
@@ -948,13 +927,11 @@
       }
     },
     "emails": {
-      "title": "邮件管理",
       "filters": {
         "all": "全部",
         "unread": "未读",
         "type": "邮件类型",
         "allTypes": "全部类型",
-        "clear": "清除类型筛选",
         "close": "关闭类型筛选",
         "typeHint": "选择要显示的邮件类型"
       },
@@ -992,7 +969,6 @@
     "setup": {
       "steps": {
         "step1": {
-          "welcome": "欢迎开始你的博客之旅。",
           "title": "外观设置",
           "description": "自定义你的博客外观和感觉。",
           "settings": {
@@ -1100,7 +1076,7 @@
             },
             "port": {
               "label": "端口",
-              "placeholder": "例如：587"
+              "placeholder": "例如：465"
             },
             "username": {
               "label": "SMTP 用户名",
@@ -1125,12 +1101,6 @@
               "placeholder": "例如：ohmyblog Bot",
               "hint": "不填写时邮件中只显示邮箱地址，填写后显示为「名称 <邮箱>」格式"
             }
-          },
-          "preview": {
-            "title": "邮件预览",
-            "subject": "这是一封测试邮件",
-            "body": "如果你能看到这封邮件，说明你的 SMTP 服务已经配置成功了！",
-            "footer": "这是由 {name} 自动发送的系统邮件，请勿直接回复。"
           }
         }
       }
@@ -1141,8 +1111,6 @@
       "count": "共 {count} 条",
       "empty": "暂无数据，请点击上方按钮添加"
     },
-    "refresh": "刷新列表",
-    "clear_all": "清空日志",
     "no_data": "暂无消息",
     "no_more_data": "已经到底啦",
     "validation": {
@@ -1192,7 +1160,8 @@
       },
       "post": {
         "slug_invalid": "Slug 只能包含小写字母、数字和连字符，如 my-first-post",
-        "excerpt_range": "摘要不能超过 500 字"
+        "excerpt_range": "摘要不能超过 500 字",
+        "subtitle_range": "副标题不能超过 255 个字符"
       },
       "captcha": {
         "provider_invalid": "不支持的验证码服务商",
@@ -1210,7 +1179,6 @@
     "finish": "完成",
     "save": "保存设置",
     "delete": "删除",
-    "loading": "加载中...",
     "copied": "已复制到剪贴板",
     "copyFailed": "复制失败，请手动复制"
   },
@@ -1227,6 +1195,8 @@
   },
   "api": {
     "errors": {
+      "服务器内部错误": "服务器内部错误",
+      "friend_link.url_invalid": "链接必须以 http:// 或 https:// 开头",
       "EMPTY_UPLOAD_REPLY": "服务器上传响应异常",
       "Error": "无法连接到后端服务",
       "请求参数验证失败": "请求参数验证失败",
@@ -1234,12 +1204,14 @@
       "获取站点基本信息失败": "获取站点基本信息失败",
       "获取个性化配置失败": "获取个性化配置失败",
       "获取公告失败": "获取公告失败",
+      "配置加载失败": "配置加载失败，请刷新页面重试",
       "用户名或邮箱已被注册": "用户名或邮箱已被注册",
       "未登录或会话已过期": "未登录或会话已过期",
       "演示模式下不可修改数据": "演示模式下不可修改数据",
       "\"body.icon\" has invalid file type": "图标格式不支持",
       "\"body.avatar\" has invalid file type": "头像格式不支持",
       "\"body.hero\" has invalid file type": "横幅图片格式不支持",
+      "\"body.cover\" has invalid file type": "封面图片格式不支持",
       "请上传 1MB 以内的有效图片": "请上传 1MB 以内的有效图片",
       "请上传 5MB 以内的有效图片": "请上传 5MB 以内的有效图片",
       "请上传 2MB 以内的有效图片": "请上传 2MB 以内的有效图片",
@@ -1247,7 +1219,6 @@
       "请上传 10MB 以内的有效图片": "请上传 10MB 以内的有效图片",
       "\"body.image\" has invalid file type": "文章图片格式不支持，请上传图片文件",
       "文章行内图处理失败，请重试": "图片处理失败，请重试",
-      "图片处理失败，请重试": "图片处理失败，请重试",
       "网站图标处理失败，请重试": "网站图标处理失败，请重试",
       "首页横幅处理失败，请重试": "首页横幅处理失败，请重试",
       "管理员头像处理失败，请重试": "管理员头像处理失败，请重试",
@@ -1274,8 +1245,6 @@
       "两步验证尚未启用": "两步验证尚未启用",
       "验证码错误，请检查验证器时间是否准确": "验证码错误，请检查验证器时间是否准确",
       "验证码错误或已失效": "验证码错误或已失效",
-      "验证会话已过期，请重新登录": "验证会话已过期，请重新登录",
-      "验证失败次数过多，请重新登录": "验证失败次数过多，请重新登录",
       "密码错误": "密码错误",
       "演示模式不支持该操作": "演示模式不支持该操作",
       "人机验证未通过，请重试": "人机验证未通过，请重试"

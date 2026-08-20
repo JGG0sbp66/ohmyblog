@@ -35,8 +35,8 @@ export const createRoleGuard =
 	({ user, cookie: { auth_token } }: any) => {
 		// 如果 derive 没找到 user，说明 Token 无效或缺失
 		if (!user) {
-			// 清理可能存在的无效 Cookie
-			auth_token.remove();
+			// 清理可能存在的无效 Cookie；代理缺失时安全 no-op
+			auth_token?.remove();
 			throw new BusinessError("未登录或会话已过期", { status: 401 });
 		}
 
@@ -49,16 +49,15 @@ export const createRoleGuard =
 export const authPlugin = new Elysia({ name: "authPlugin" })
 	.use(jwt(jwtConfig))
 	.derive({ as: "global" }, async ({ jwt, cookie: { auth_token } }) => {
-		const token = auth_token.value;
+		const token = auth_token?.value;
 
 		// 没有 / 无效 Token 时，正常部署返回空 user 交给后面的 Guard 拦截；
 		// 演示模式生效时改为注入虚拟管理员，让游客能只读浏览后台
 		// （写操作由 demoPlugin 统一拒绝）
-		if (!token) return { user: await resolveAnonymousUser() };
-
 		if (!token || typeof token !== "string") {
 			return { user: await resolveAnonymousUser() };
 		}
+		if (!jwt) return { user: await resolveAnonymousUser() };
 
 		// 验证 JWT
 		const payload = await jwt.verify(token);

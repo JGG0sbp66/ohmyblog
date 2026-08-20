@@ -59,7 +59,11 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 					);
 
 					if (result.requiresTwoFactor) {
-						cookie[CHALLENGE_COOKIE_NAME].set({
+						const challengeCookie = cookie[CHALLENGE_COOKIE_NAME];
+						if (!challengeCookie) {
+							throw new Error("认证服务不可用：Cookie 插件未初始化");
+						}
+						challengeCookie.set({
 							value: result.challenge.challengeId,
 							httpOnly: true,
 							secure: isProduction(),
@@ -199,7 +203,7 @@ export const authRoute = new Elysia({ name: "authRoute" }).group(
 			.post(
 				"/logout",
 				({ cookie }) => {
-					cookie.auth_token.remove();
+					cookie.auth_token?.remove();
 					return { message: "登出成功" };
 				},
 				{

@@ -16,12 +16,13 @@ class UserDao {
 	 * @returns 新创建的用户记录
 	 */
 	async createUser(userData: NewUser) {
-		const result = await db.insert(user).values(userData).returning();
+		const [created] = await db.insert(user).values(userData).returning();
+		if (!created) throw new Error("用户创建失败：数据库未返回记录");
 		// 第一个 admin 注册成功后立即把缓存置 true，避免下一次查库
 		if (userData.role === "admin") {
 			hasAdminCache = true;
 		}
-		return result[0];
+		return created;
 	}
 
 	/**

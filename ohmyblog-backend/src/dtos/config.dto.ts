@@ -15,11 +15,6 @@ const ConfigMetaDTO = {
 			error: "config.description_range",
 		}),
 	),
-	isPublic: t.Optional(
-		t.Boolean({
-			description: "是否公开给前端",
-		}),
-	),
 };
 
 // Step1：appearance 配置 DTO
@@ -218,36 +213,52 @@ export const PersonalInfoConfigUpsertDTO = t.Object({
 });
 
 // Step5：smtp 配置 DTO
+//
+// host/username/password 刻意允许空串（同 captcha 密钥的处理，见下方注释）：
+// 关掉开关时前端会跳过表单校验，这几个字段很可能是空串，设非空约束会让
+// 「空着保存关闭状态」直接 422 —— 整个 ConfigUpsertDTO Union 一个分支都
+// 匹配不上，报出谁也看不懂的 "Expected union value"。
+// 启用时的完整性由读接口兜底：enabled 但必填字段为空一律当作不可用，
+// 见 email-config.service.ts
 export const SMTPConfigUpsertDTO = t.Object({
 	configKey: t.Literal("smtp"),
 	configValue: t.Object({
 		enabled: t.Boolean({
 			description: "是否启用 SMTP",
 		}),
-		host: t.String({
-			minLength: 1,
-			maxLength: 255,
-			description: "SMTP 服务器地址",
-			error: "smtp.host_range",
-		}),
+		host: t.Union([
+			t.Literal(""),
+			t.String({
+				minLength: 1,
+				maxLength: 255,
+				description: "SMTP 服务器地址",
+				error: "smtp.host_range",
+			}),
+		]),
 		port: t.Number({
 			minimum: 1,
 			maximum: 65535,
 			description: "SMTP 端口",
 			error: "smtp.port_range",
 		}),
-		username: t.String({
-			minLength: 1,
-			maxLength: 255,
-			description: "SMTP 用户名",
-			error: "smtp.username_range",
-		}),
-		password: t.String({
-			minLength: 1,
-			maxLength: 255,
-			description: "SMTP 密码",
-			error: "smtp.password_range",
-		}),
+		username: t.Union([
+			t.Literal(""),
+			t.String({
+				minLength: 1,
+				maxLength: 255,
+				description: "SMTP 用户名",
+				error: "smtp.username_range",
+			}),
+		]),
+		password: t.Union([
+			t.Literal(""),
+			t.String({
+				minLength: 1,
+				maxLength: 255,
+				description: "SMTP 密码",
+				error: "smtp.password_range",
+			}),
+		]),
 		senderEmail: t.Optional(
 			t.Union([
 				t.Literal(""),
@@ -295,9 +306,10 @@ export const AnnouncementConfigUpsertDTO = t.Object({
 
 // captcha 配置 DTO（人机验证，非 setup 向导步骤）
 //
-// 与 smtp 同属敏感配置：isPublic 存 false，只有管理员读得到，secretKey 会
-// 照常回显给管理端（与 smtp 密码一致）。前台登录页等处是未登录状态，读不到
-// 这条配置，改走 GET /api/captcha —— 那个接口只吐渲染验证框需要的字段。
+// 与 smtp 同属敏感配置：不在 publicConfigKeys 白名单里，未登录访客读不到，
+// secretKey 会照常回显给管理端（与 smtp 密码一致）。前台登录页等处是未登录
+// 状态，读不到这条配置，改走 GET /api/captcha —— 那个接口只吐渲染验证框
+// 需要的字段。
 
 /**
  * 单个服务商的一对密钥。

@@ -26,7 +26,12 @@ class EmailDispatchService {
 		return nodemailer.createTransport({
 			host: smtpConfig.host,
 			port: smtpConfig.port,
-			secure: smtpConfig.port !== 25,
+			// 端口语义：465 = 隐式 TLS（一连上就握手），587 = STARTTLS（先明文
+			// 打招呼再升级），25 = 明文中继。secure 只在隐式 TLS 下为 true ——
+			// 此前写成 port !== 25，587 也被当隐式 TLS，对着说明文的端口发
+			// TLS 握手必然失败；requireTLS 只在 secure:false 时有意义，那时
+			// 它才是 587 的正确开关
+			secure: smtpConfig.port === 465,
 			auth: { user: smtpConfig.username, pass: smtpConfig.password },
 			requireTLS: smtpConfig.port === 587,
 			connectionTimeout: 10000,
@@ -50,7 +55,14 @@ class EmailDispatchService {
 	}: DispatchOptions): Promise<{ message: string; count?: number }> {
 		const transporter = await this.createTransporter(smtpConfig);
 		const fromAddress = smtpConfig.senderEmail || smtpConfig.username;
-		const fromName = smtpConfig.senderName || siteTitle;
+		// display-name 消毒：from 头是字符串拼接（"名字" <地址>），名字里带
+		// 引号会提前闭合、把余下文本拆成额外的地址段 —— 与 SQL 注入同构，
+		// 把未消毒数据拼进有语法结构的字符串。真正的换行注入（CRLF 伪造
+		// 头）nodemailer 会拦，这里管的是引号/尖括号逃逸
+		const fromName = (smtpConfig.senderName || siteTitle).replace(
+			/["\\<>]/g,
+			"",
+		);
 		try {
 			await transporter.sendMail({
 				from: `"${fromName}" <${fromAddress}>`,

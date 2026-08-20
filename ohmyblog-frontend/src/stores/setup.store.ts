@@ -97,7 +97,7 @@ export const useSetupStore = defineStore("setup", () => {
   const smtpForm = ref<TSMTPConfigUpsertDTO["configValue"]>({
     enabled: true,
     host: "",
-    port: 587,
+    port: 465,
     username: "",
     password: "",
     senderEmail: "",

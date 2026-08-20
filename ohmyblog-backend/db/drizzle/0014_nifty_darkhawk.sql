@@ -1,0 +1,1 @@
+ALTER TABLE `post` ADD `cover_enabled` integer DEFAULT true NOT NULL;

@@ -18,9 +18,10 @@ const systemStore = useSystemStore();
 const isSubmitting = ref(false);
 const formRefs = ref<any[]>([]);
 
-// 账号表单数据（只保留邮箱和密码）
+// 账号表单数据（修改密码时还需验证当前密码）
 const form = reactive({
   email: "",
+  currentPassword: "",
   password: "",
   confirmPassword: "",
 });
@@ -69,6 +70,7 @@ const handleSave = async () => {
     await updateAccount({
       username: systemStore.personalInfo.username,
       email: form.email,
+      currentPassword: form.password ? form.currentPassword : undefined,
       password: form.password || undefined,
     });
 
@@ -76,6 +78,7 @@ const handleSave = async () => {
     await authStore.fetchMe();
 
     // 重置密码框
+    form.currentPassword = "";
     form.password = "";
     form.confirmPassword = "";
 
@@ -117,11 +120,26 @@ const handleSave = async () => {
         required
       />
 
+      <!-- 当前密码：仅修改密码时必填 -->
+      <TipInput
+        :ref="setFormRef"
+        v-model="form.currentPassword"
+        type="password"
+        autocomplete="current-password"
+        :label="t('views.admin.Settings.admin.account.currentPassword')"
+        :placeholder="
+          t('views.admin.Settings.admin.account.currentPasswordPlaceholder')
+        "
+        :schema="schema.currentPassword"
+        :required="Boolean(form.password)"
+      />
+
       <!-- 新密码 -->
       <TipInput
         :ref="setFormRef"
         v-model="form.password"
         type="password"
+        autocomplete="new-password"
         :label="t('views.setup.steps.step3.password.label')"
         :placeholder="
           t('views.admin.Settings.admin.account.passwordPlaceholder')
@@ -133,6 +151,7 @@ const handleSave = async () => {
       <TipInput
         v-model="form.confirmPassword"
         type="password"
+        autocomplete="new-password"
         :label="t('views.setup.steps.step3.confirm.label')"
         :placeholder="t('views.setup.steps.step3.confirm.placeholder')"
       />

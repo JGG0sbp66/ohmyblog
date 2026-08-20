@@ -12,6 +12,10 @@ export const post = sqliteTable("post", {
 	// 文章标题
 	title: text("title").notNull().default(""),
 
+	// 副标题：主标题下方的说明性文字（Stripe 文档式「大标题 + 副题」版式）。
+	// 文章级属性而非正文内容：一篇文章至多一条，前台渲染在标题下、不进目录
+	subtitle: text("subtitle"),
+
 	// 【管理端专用】编辑器源数据：ProseMirror JSON 格式
 	// 保存了所有富文本细节（如图片宽高、块级自定义属性），是后台编辑器的唯一数据来源，
 	// 也是前台文章渲染的输入（只读 Tiptap 实例直接 setContent(json)）
@@ -28,6 +32,12 @@ export const post = sqliteTable("post", {
 
 	// 封面图 URL
 	coverImage: text("cover_image"),
+
+	// 封面展示开关：false 时前台 / RSS 一律当作没有封面。
+	// URL 始终保留在 coverImage 里，编辑器里重新打开即恢复，无需重新上传
+	coverEnabled: integer("cover_enabled", { mode: "boolean" })
+		.notNull()
+		.default(true),
 
 	// 文章状态:
 	//   draft     - 草稿（默认）
@@ -72,5 +82,16 @@ export const post = sqliteTable("post", {
 		.default(sql`(unixepoch())`)
 		.$onUpdate(() => new Date()),
 });
+
+/**
+ * 对外输出的「生效封面」：展示开关关闭时输出 NULL。
+ *
+ * coverImage 本体始终保留原始 URL（管理端编辑器靠它实现「关掉再打开」的恢复），
+ * 读者侧（列表 / 详情 / RSS）一律选这个表达式，不要直接选 post.coverImage。
+ * 管理端编辑器加载走 findById 原始两列都拿
+ */
+export const effectiveCoverImage = sql<
+	string | null
+>`CASE WHEN ${post.coverEnabled} THEN ${post.coverImage} ELSE NULL END`;
 
 export type TPost = typeof post.$inferSelect;

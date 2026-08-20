@@ -7,8 +7,8 @@
 //   2. invalidateByUser(userUuid, type)   // 确实要发新码时，先作废所有旧码
 //   3. create({...})                      // 写入新码
 //   4. (用户提交后) findActiveByCode(code, type) // 校验并取出
-//   5a. markAsUsed(uuid)                  // 成功后立即标记已用，防止重放
-//   5b. incrementAttempts(uuid)           // 失败则累加，到上限后同样 markAsUsed
+//   5a. consumeForPasswordReset(...)       // 成功时事务内原子消费并更新密码
+//   5b. incrementAttempts(uuid)            // 失败则累加，到上限后 markAsUsed
 //
 // 步骤 2 不可省略：否则同一用户可能同时存在多条「未使用 + 未过期」的记录，
 // 攻击者只要拿到任意一条就能完成重置。
@@ -18,7 +18,7 @@
 import { and, eq, gt, isNull, sql } from "drizzle-orm";
 import { db } from "../../db/connection";
 import type { TEmailVerificationType } from "../../db/constants/email-verification.constants";
-import { emailVerification } from "../../db/schema";
+import { emailVerification, user } from "../../db/schema";
 
 export type NewEmailVerification = typeof emailVerification.$inferInsert;
 
@@ -116,6 +116,66 @@ class EmailVerificationDao {
 			.where(eq(emailVerification.uuid, uuid))
 			.returning();
 		return result[0]?.attempts ?? 0;
+	}
+
+	/**
+	 * 重发已有验证码时刷新审计 ip —— 记录应指向「最近一次触发申请」的来源，
+	 * 而不是永远停在第一次
+	 * @param uuid 验证码记录 UUID
+	 * @param ip 最新触发申请的来源 IP
+	 */
+	async updateIp(uuid: string, ip: string) {
+		await db
+			.update(emailVerification)
+			.set({ ip })
+			.where(eq(emailVerification.uuid, uuid));
+	}
+
+	/**
+	 * 原子消费密码重置验证码并更新用户密码。
+	 *
+	 * 验证码消费使用包含记录 UUID、用户、类型、未使用和未过期条件的
+	 * UPDATE ... RETURNING，确保并发请求只有一个能消费成功。密码更新与消费
+	 * 位于同一事务；用户更新失败会抛错并回滚验证码消费。
+	 *
+	 * @returns true 表示消费并更新成功；false 表示验证码已无效或被并发消费
+	 */
+	async consumeForPasswordReset(
+		uuid: string,
+		userUuid: string,
+		passwordHash: string,
+	): Promise<boolean> {
+		return db.transaction((tx) => {
+			const now = new Date();
+			const consumed = tx
+				.update(emailVerification)
+				.set({ usedAt: now })
+				.where(
+					and(
+						eq(emailVerification.uuid, uuid),
+						eq(emailVerification.userUuid, userUuid),
+						eq(emailVerification.type, "reset_password"),
+						isNull(emailVerification.usedAt),
+						gt(emailVerification.expiresAt, now),
+					),
+				)
+				.returning({ uuid: emailVerification.uuid })
+				.all();
+
+			if (consumed.length === 0) return false;
+
+			const updated = tx
+				.update(user)
+				.set({ passwordHash })
+				.where(eq(user.uuid, userUuid))
+				.returning({ uuid: user.uuid })
+				.all();
+			if (updated.length === 0) {
+				throw new Error("密码重置失败：用户不存在");
+			}
+
+			return true;
+		});
 	}
 
 	/**

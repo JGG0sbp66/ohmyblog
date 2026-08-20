@@ -39,10 +39,14 @@ export const usePostEditor = () => {
   const tags = ref<string[]>([]);
   const status = ref<TPostStatus>("draft");
   const title = ref("");
+  /** 副标题：主标题下方的说明性文字（文章级属性，不属于正文富文本） */
+  const subtitle = ref("");
   const content = ref<object | undefined>(undefined);
   const contentText = ref("");
   const contentHtml = ref("");
   const coverImage = ref<string | null>(null);
+  /** 封面是否展示（false 时前台 / RSS 不显示；URL 留在 coverImage 里，随时可再开） */
+  const coverEnabled = ref(true);
   const excerpt = ref("");
   /** 是否置顶（布尔；后端把它翻译成 pinnedAt 时间戳） */
   const pinned = ref(false);
@@ -50,6 +54,16 @@ export const usePostEditor = () => {
   // --- UI 状态 ---
   const isSaving = ref(false);
   const isLoading = ref(false);
+  /**
+   * 加载是否成功完成（演示草稿视同成功）。在此之前编辑器整体不渲染：
+   * 正文区不挂载、设置面板不出现。否则「加载还没完成 / 加载失败」的窗口里
+   * 用户仍可打字，2 秒防抖自动保存就会带着 tags: []、subtitle: "" 这类
+   * 空字段 PATCH 出去 —— 网络恢复后保存成功，原文的标签 / 副标题 / 置顶
+   * 被静默清空，正文也可能被窗口期的盲打内容替换掉
+   */
+  const isLoaded = ref(false);
+  /** 加载失败（网络错误或 uuid 不存在）：渲染错误面板和重试入口，不渲染编辑器 */
+  const loadFailed = ref(false);
   /**
    * 「脏」被拆成两半，因为它们由两个互不相干的接口负责落库：
    * - 正文与元数据 → savePost，防抖自动保存会管
@@ -73,88 +87,143 @@ export const usePostEditor = () => {
   /** 有一次自动保存因为「上一轮还在飞」被跳过了，等这轮落地后要补上 */
   let autoSavePending = false;
 
-  /** 加载已有文章数据并填充表单 */
+  // 这篇文章是否公开过。决定标题还能不能联动 slug，见下方 watch(title)
+  let hasBeenPublished = false;
+  // 上次自动生成的 slug，标题联动逻辑用（见 armWatchers 里的 watch(title)）
+  let lastAutoSlug = "";
+
+  /**
+   * 装配副作用 watcher（脏标记、状态标记、标题联动、防抖自动保存）。
+   *
+   * 只在**加载成功后**调一次：装配早了，加载赋值会触发脏标记；装配在
+   * loadPost 的 finally 里又没法支持重试 —— 重跑一次就重复装配一份，
+   * 脏标记翻倍、自动保存触发两遍。用 armed 标记保证幂等，重试多少次
+   * 都只有第一份
+   */
+  let watchersArmed = false;
+  const armWatchers = () => {
+    if (watchersArmed) return;
+    watchersArmed = true;
+    lastAutoSlug = slug.value;
+
+    // 这里只列 buildSavePayload 真正会发出去的字段。contentText / contentHtml
+    // 不在其中：它们由 content 派生，永远同进同出，跟着 content 判断就够了。
+    // 新增会进 payload 的字段时，这个数组和下面的防抖数组都要同步补上。
+    watch(
+      [slug, tags, title, subtitle, content, excerpt, pinned, coverEnabled],
+      () => {
+        isContentDirty.value = true;
+        contentVersion += 1;
+        // 保存飞行期间发生的修改必须立即入队；不能只依赖后面的防抖回调，
+        // 否则手动保存先结束、页面随即关闭时，这版内容没有机会落库。
+        if (isSaving.value) autoSavePending = true;
+      },
+      { deep: true },
+    );
+    // status 单独看：它不进 payload，得靠手动保存调 updatePostStatus 落库。
+    // 也刻意不进下面的防抖数组——自动保存把「草稿改已发布」直接发出去，
+    // 等于绕过 save() 里的 slug 校验偷偷发文，发布必须是用户明确点下的动作
+    watch(status, () => {
+      isStatusDirty.value = true;
+    });
+    // 标题变化时自动同步 slug：
+    // - 从未公开过 → 继续联动（草稿的地址没人见过，随便改）
+    // - 已公开过（publishedAt 非空）→ 锁定，标题再改也不动 slug
+    // - 联动途中 slug 被手动改动（不再等于上次自动生成值）→ 停止联动
+    //
+    // 只锁公开过的，是因为换 slug 等于换前台 URL，代价很实在：RSS 条目的 GUID
+    // 就是 slug 拼出来的 URL（feed.service.ts），改一次订阅者就被重复推送一次；
+    // 老链接没有任何 301 兜底，sitemap 交给搜索引擎的地址也会一并失效。
+    // 草稿没有这些顾虑，不该被连坐。
+    watch(title, (newTitle) => {
+      if (hasBeenPublished) return;
+      if (slug.value === "" || slug.value === lastAutoSlug) {
+        lastAutoSlug = limax(newTitle);
+        slug.value = lastAutoSlug;
+      }
+    });
+    // coverImage 刻意不在上面的 isDirty 数组里：它的唯一变更路径是
+    // PostEditorCoverSetting 上传成功后的赋值，那时要的是「立即」保存而不是
+    // 等防抖 —— 等两秒只会给「上传完立刻关页、封面没落库」开窗口。
+    // 但也不绕开互斥：标脏后直接调 autoSave，与手动/防抖保存共用同一把
+    // isSaving 排队 —— 此前封面走独立的 savePost 直存，与飞行中的自动保存
+    // 并发乱序，后端 last-write-wins 下旧封面请求后发先至会把新封面滚回去，
+    // 直存失败还既不重试也不亮未保存标记。统一走 autoSave 后：排队天然有序，
+    // 失败脏标记还在，防抖会再来一轮，状态栏也一直亮着
+    // coverEnabled（是否展示）是普通 payload 字段，正常走脏标记
+    watch(coverImage, () => {
+      isContentDirty.value = true;
+      contentVersion += 1;
+      autoSave();
+    });
+
+    // 正文防抖自动保存。字段与上面的 isContentDirty 数组保持一致，外加
+    // contentText / contentHtml —— 它们由 content 派生但更新未必在同一 tick，
+    // 列进来是为了「最后一次导出也算一次触发」，不至于漏掉收尾的那版 HTML
+    watchDebounced(
+      [
+        title,
+        subtitle,
+        content,
+        contentText,
+        contentHtml,
+        excerpt,
+        tags,
+        slug,
+        pinned,
+        coverEnabled,
+      ],
+      () => {
+        if (!isContentDirty.value) return;
+        autoSave();
+      },
+      { debounce: 2000, maxWait: 8000, deep: true },
+    );
+  };
+
+  /** 加载已有文章数据并填充表单；失败置 loadFailed，可重复调用（重试） */
   const loadPost = async () => {
     isLoading.value = true;
-    // 这篇文章是否公开过。决定标题还能不能联动 slug，见下方 watch(title)
-    let hasBeenPublished = false;
+    loadFailed.value = false;
     try {
-      // 演示模式的虚拟草稿：后端没有这条记录，跳过加载直接给空白编辑器。
-      // 这里 return 不影响 finally 里的 watcher 装配
-      if (uuid === DEMO_DRAFT_UUID) return;
+      // 演示模式的虚拟草稿：后端没有这条记录，跳过加载直接给空白编辑器
+      if (uuid === DEMO_DRAFT_UUID) {
+        isLoaded.value = true;
+        armWatchers();
+        return;
+      }
 
       const result = await getPostById(uuid);
       const post = result?.post;
-      if (!post) return;
+      // uuid 查无此文和请求失败同样对待：编辑器不给开。开着的话，
+      // 自动保存会朝一个不存在的 uuid 连续 PATCH，弹一串错还是小事，
+      // 空表单配上已武装的 watcher 才是数据破坏的入口
+      if (!post) {
+        loadFailed.value = true;
+        return;
+      }
       slug.value = post.slug ?? "";
       tags.value = post.tags ?? [];
       status.value = post.status as TPostStatus;
       title.value = post.title ?? "";
+      subtitle.value = post.subtitle ?? "";
       content.value = (post.content as object) ?? undefined;
       coverImage.value = post.coverImage ?? null;
+      coverEnabled.value = post.coverEnabled ?? true;
       excerpt.value = post.excerpt ?? "";
       // 时间戳 → 布尔：非空即置顶。转换边界只此一处，表单层只跟布尔打交道
       pinned.value = post.pinnedAt != null;
       // 「首次发布才记录 publishedAt，重新发布不覆盖」（post.service.ts updateStatus），
       // 所以发布后又转回草稿的文章这里仍为 true —— 它的 URL 早已被索引过
       hasBeenPublished = post.publishedAt != null;
+
+      isLoaded.value = true;
+      armWatchers();
     } catch {
-      useToast.error("加载文章失败");
+      loadFailed.value = true;
+      useToast.error(t("views.admin.PostEditor.loadFailed.message"));
     } finally {
       isLoading.value = false;
-      // 加载完成后才开始监听变化，防止初始赋值触发脏标记
-      // deep: true — 捕获 tags 数组的 push/splice 就地变更（浅监听感知不到引用未变的数组修改）
-      //
-      // 这里只列 buildSavePayload 真正会发出去的字段。contentText / contentHtml
-      // 不在其中：它们由 content 派生，永远同进同出，跟着 content 判断就够了。
-      // 新增会进 payload 的字段时，这个数组和下面的防抖数组都要同步补上。
-      watch(
-        [slug, tags, title, content, excerpt, pinned],
-        () => {
-          isContentDirty.value = true;
-          contentVersion += 1;
-        },
-        { deep: true },
-      );
-      // status 单独看：它不进 payload，得靠手动保存调 updatePostStatus 落库。
-      // 也刻意不进下面的防抖数组——自动保存把「草稿改已发布」直接发出去，
-      // 等于绕过 save() 里的 slug 校验偷偷发文，发布必须是用户明确点下的动作
-      watch(status, () => {
-        isStatusDirty.value = true;
-      });
-      // 标题变化时自动同步 slug：
-      // - 从未公开过 → 继续联动（草稿的地址没人见过，随便改）
-      // - 已公开过（publishedAt 非空）→ 锁定，标题再改也不动 slug
-      // - 联动途中 slug 被手动改动（不再等于上次自动生成值）→ 停止联动
-      //
-      // 只锁公开过的，是因为换 slug 等于换前台 URL，代价很实在：RSS 条目的 GUID
-      // 就是 slug 拼出来的 URL（feed.service.ts），改一次订阅者就被重复推送一次；
-      // 老链接没有任何 301 兜底，sitemap 交给搜索引擎的地址也会一并失效。
-      // 草稿没有这些顾虑，不该被连坐。
-      let lastAutoSlug = slug.value; // 记录上次自动生成的 slug
-      watch(title, (newTitle) => {
-        if (hasBeenPublished) return;
-        if (slug.value === "" || slug.value === lastAutoSlug) {
-          lastAutoSlug = limax(newTitle);
-          slug.value = lastAutoSlug;
-        }
-      });
-      // coverImage 刻意不在上面的 isDirty 数组里：它的唯一变更路径是
-      // PostEditorCoverSetting 上传成功后直接调 savePost 落库（ImageUpload 只
-      // emit change(file)，没有清空入口），封面当场就存下了。再让它触发 isDirty
-      // 只会换来一次多余的全量自动保存，外加状态栏闪一下「未保存」。
-
-      // 正文防抖自动保存。字段与上面的 isContentDirty 数组保持一致，外加
-      // contentText / contentHtml —— 它们由 content 派生但更新未必在同一 tick，
-      // 列进来是为了「最后一次导出也算一次触发」，不至于漏掉收尾的那版 HTML
-      watchDebounced(
-        [title, content, contentText, contentHtml, excerpt, tags, slug, pinned],
-        () => {
-          if (!isContentDirty.value) return;
-          autoSave();
-        },
-        { debounce: 2000, maxWait: 8000, deep: true },
-      );
     }
   };
 
@@ -162,58 +231,79 @@ export const usePostEditor = () => {
     slug: slug.value || undefined,
     tags: tags.value,
     title: title.value || undefined,
+    // 空串就是「清除副标题」，必须原样送达后端，不能像 title 那样 || undefined 吞掉
+    subtitle: subtitle.value,
     content: content.value,
     contentText: contentText.value || undefined,
     contentHtml: contentHtml.value || undefined,
     coverImage: coverImage.value ?? undefined,
+    coverEnabled: coverEnabled.value,
     excerpt: excerpt.value || undefined,
     pinned: pinned.value,
   });
 
+  type SaveErrorReporter = (error: unknown) => void;
+
+  /**
+   * 消费正文保存队列。调用期间由外层持有 isSaving 锁；循环而非递归，保证手动保存
+   * 或自动保存飞行时产生的 coverImage / 正文变更，在当前请求成功或失败后都被消费。
+   * 失败本身不会把同一版重新入队，只有请求期间确实出现了更新才会继续下一轮。
+   */
+  const drainContentSaveQueue = async (
+    reportError: SaveErrorReporter,
+  ): Promise<boolean> => {
+    let allSucceeded = true;
+
+    while (autoSavePending) {
+      autoSavePending = false;
+      // 先取版本号快照，再构造 payload，顺序不能反：反了的话两者之间发生的变更
+      // 会被算进这次 payload，却又让版本号显得没动过。
+      const version = contentVersion;
+      try {
+        await savePost(uuid, buildSavePayload());
+        if (contentVersion === version) isContentDirty.value = false;
+        else autoSavePending = true;
+      } catch (error: unknown) {
+        allSucceeded = false;
+        reportError(error);
+        // 不重试刚失败的同一版；但 watcher 已为飞行期间的新修改重新置 pending，
+        // 因此 while 仍会消费更新后的 payload，封面不会因前一轮失败而被卡住。
+      }
+    }
+
+    return allSucceeded;
+  };
+
   const autoSave = async () => {
+    // 加载没成功就绝不发保存：失败态下表单里是空的默认值，PATCH 出去
+    // 等于把原文的标签 / 副标题 / 置顶清空。UI 层已把编辑器藏了，这里是
+    // 给「watcher 意外触发」兜底的第二道闸
+    if (!isLoaded.value) return;
     // 演示模式：写操作必被后端拒绝，而防抖自动保存每 2 秒就会触发一次，
     // 不在源头拦住的话游客一打字就会持续弹错。静默跳过，不打扰阅读
     if (authStore.isDemoUser) return;
-    // 上一轮还在飞：直接丢掉这次触发的话，「改动发生在保存途中 + 之后不再输入」
-    // 就没有任何东西会再触发保存了。记个标记，等那轮落地后补一次
-    if (isSaving.value) {
-      autoSavePending = true;
-      return;
-    }
+
+    autoSavePending = true;
+    // 手动保存与自动保存共用队列；已有消费者时只置 pending，由它负责 drain。
+    if (isSaving.value) return;
+
     isSaving.value = true;
-    // 先取版本号快照，再构造 payload，顺序不能反：反了的话两者之间发生的变更
-    // 会被算进这次 payload，却又让版本号显得没动过
-    const version = contentVersion;
     try {
-      await savePost(uuid, buildSavePayload());
-      // 版本变了说明请求途中用户又改了，这些改动不在刚才的 payload 里，
-      // 不能清脏标记 —— 这正是「保存中的修改被静默丢弃」的根因
-      if (contentVersion === version) isContentDirty.value = false;
-      else autoSavePending = true;
-    } catch (error: any) {
-      useToast.error(t(`api.errors.${error}`));
-      // 失败了就不补跑：内容仍是脏的，下一次输入的防抖会再来一轮。
-      // 在这里重试只会把同一个错误连着弹好几遍
-      autoSavePending = false;
+      await drainContentSaveQueue((error) => {
+        useToast.error(t(`api.errors.${String(error)}`));
+      });
     } finally {
       isSaving.value = false;
-    }
-    if (autoSavePending) {
-      autoSavePending = false;
-      await autoSave();
     }
   };
 
   /**
-   * 保存文章
-   *
-   * 分两步「顺序」执行，中间任何一步失败都立刻停下：
-   * 1. savePost() — 保存内容字段（slug、title、tags、content、coverImage、excerpt 等）
-   * 2. updatePostStatus() — 更新文章状态（独立接口）
-   *
-   * 顺序不能颠倒：状态先于内容成功，就等于把上一版正文发布出去了。
+   * 保存文章：先完整 drain 正文队列，再更新状态。正文或状态任一步失败都不显示
+   * 成功提示；成功提示也只由本次手动操作发一次，队列内部不会递归或重复 toast。
    */
   const save = async () => {
+    // 加载没成功不允许手动保存，理由同 autoSave 的第一道闸
+    if (!isLoaded.value) return;
     // 演示模式：这是用户主动点的按钮，给一次明确反馈再返回。
     // 用 error 等级与其他写操作被后端 403 拦下时的提示保持一致
     if (authStore.isDemoUser) {
@@ -229,43 +319,47 @@ export const usePostEditor = () => {
       return;
     }
     if (isSaving.value) return;
+
     isSaving.value = true;
-    const version = contentVersion;
     const savedStatus = status.value;
+    let contentSaved = true;
+    let statusSaved = false;
     try {
-      // 第一步：正文与元数据。失败就直接退出，状态一个字都不动 ——
-      // 并行发的话这里失败、状态却改成功了，等于把上一版正文发布出去
-      try {
-        await savePost(uuid, buildSavePayload());
-      } catch (error: any) {
+      // 手动保存也只是向同一个正文队列入队。若请求期间继续编辑，drain 会先把
+      // 最新内容全部落库，再允许状态接口执行，避免发布上一版正文。
+      autoSavePending = true;
+      contentSaved = await drainContentSaveQueue((error) => {
         useToast.error(
           t("views.admin.PostEditor.saveError.content", {
-            reason: t(`api.errors.${error}`),
+            reason: t(`api.errors.${String(error)}`),
           }),
         );
-        return;
-      }
+      });
+      if (!contentSaved) return;
 
-      // 第二步：状态。此刻内容已经落库了，所以这里失败要说清楚「哪一半成了」，
-      // 否则用户看到一句笼统的失败，只能整个重来一遍
       try {
         await updatePostStatus(uuid, savedStatus);
-      } catch (error: any) {
+        statusSaved = true;
+        if (status.value === savedStatus) isStatusDirty.value = false;
+      } catch (error: unknown) {
         useToast.error(
           t("views.admin.PostEditor.saveError.status", {
-            reason: t(`api.errors.${error}`),
+            reason: t(`api.errors.${String(error)}`),
           }),
         );
-        return;
       }
-
-      // 与 autoSave 同理：请求往返途中用户可能又改了东西，那些改动不在这次
-      // payload 里，版本号没动过才能算真正干净。两半各按各的快照判断
-      if (contentVersion === version) isContentDirty.value = false;
-      if (status.value === savedStatus) isStatusDirty.value = false;
-      useToast.success(t("api.success.保存成功"));
     } finally {
+      // 状态请求飞行期间仍可能编辑正文；无论正文/状态成功还是失败，都必须把
+      // watcher 设置的 pending 消费完。这里失败用普通保存错误，不能再声称
+      // 「状态未改动」（状态请求可能已经成功）。
+      const trailingSaved = await drainContentSaveQueue((error) => {
+        useToast.error(t(`api.errors.${String(error)}`));
+      });
       isSaving.value = false;
+
+      if (contentSaved && statusSaved && trailingSaved) {
+        useToast.success(t("api.success.保存成功"));
+      }
     }
   };
 
@@ -329,14 +423,20 @@ export const usePostEditor = () => {
     tags,
     status,
     title,
+    subtitle,
     content,
     contentText,
     contentHtml,
     coverImage,
+    coverEnabled,
     excerpt,
     pinned,
     isSaving,
     isLoading,
+    isLoaded,
+    loadFailed,
+    /** 加载失败后的重试入口（就是 loadPost，可安全重复调用） */
+    retryLoad: loadPost,
     isDirty,
     save,
   };

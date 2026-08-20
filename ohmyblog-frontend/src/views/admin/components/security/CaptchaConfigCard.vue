@@ -35,7 +35,12 @@ export interface CaptchaConfigForm {
   recaptchaMinScore: number;
 }
 
-defineProps<{
+/**
+ * 表单对象由父级（CaptchaSettingsForm 的 useConfigForm）持有，
+ * 本卡片只就地编辑嵌套字段、从不整对象替换，所以是 prop 而非 v-model
+ */
+const props = defineProps<{
+  form: CaptchaConfigForm;
   isLoaded: boolean;
   isSaving: boolean;
 }>();
@@ -44,16 +49,22 @@ const emit = defineEmits<{
   save: [];
 }>();
 
-const form = defineModel<CaptchaConfigForm>("form", { required: true });
-
 const { t } = useLang();
 const [formRef] = useAutoAnimate();
+/**
+ * 密钥区要单独挂一层：分数线输入是在这个 div 内部增删的，
+ * auto-animate 只观察直接子节点，外层 formRef 看不到它，
+ * 切到 reCAPTCHA 时分数框会瞬间冒出来（和 CaptchaWidget 同理）
+ */
+const [credentialsRef] = useAutoAnimate();
 
 /** 当前选中那家的密钥 */
-const current = computed(() => form.value.credentials[form.value.provider]);
+const current = computed(() => props.form.credentials[props.form.provider]);
 
 /** reCAPTCHA v3 才有分数线 */
-const isScoreProvider = computed(() => form.value.provider === "recaptcha");
+const isScoreProvider = computed(
+  () => props.form.provider === "recaptcha",
+);
 
 /**
  * 服务商对应的官方品牌图标（SVG 数据取自 Iconify 的 logos 集，见各组件内注释）。
@@ -126,7 +137,7 @@ const schema = CaptchaConfigUpsertDTO.properties.configValue.properties;
         </div>
 
         <!-- 当前服务商的两把密钥 -->
-        <div class="flex flex-col gap-4">
+        <div ref="credentialsRef" class="flex flex-col gap-4">
           <TipInput
             v-model="current.siteKey"
             :label="t('views.admin.Security.siteKey.label')"

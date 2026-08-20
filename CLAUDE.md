@@ -37,22 +37,19 @@ bun run docker         # 多阶段镜像（build context 是仓库根）
 
 ```bash
 bun run dev            # Vite :5173，/api、/feed、/sitemap.xml、/robots.txt 代理到 :3000
-bun run type-check     # vue-tsc --build
-bun run build-only     # 跳过类型检查直接打包（CI 和 Docker 用的就是这个）
+bun run type-check     # vue-tsc --build；会同时检查 Eden 引入的后端类型链
+bun run build          # type-check + build-only 并行；CI 和 Docker 使用这个完整门禁
+bun run build-only     # 仅打包，不做类型检查；只适合单独排查 Vite 构建
 bun run format         # prettier --write .
 ```
 
 **没有任何测试。** 后端的 `test` 脚本是 `exit 1` 占位，前端没有测试脚本，仓库里也没有 `*.test.*` / `*.spec.*`。不要去找测试或假装能跑测试；验证靠 `type-check` + `lint` + 手跑。
 
-### type-check 的既有噪音
+### type-check 的跨端约定
 
-`vue-tsc` 会顺着路径别名把**后端源码**一起检查（用的是前端的 DOM/strict 配置，没有 `bun-types`），因此 `../ohmyblog-backend/**` 下有约 40 条既有报错（`Cannot find name 'Bun'`、JSX runtime、`possibly undefined` 等）——**全是噪音，不要去修**。前端 `src/` 下没有既有报错。
+`vue-tsc` 会顺着 `@server/app` 检查 Eden Treaty 的完整后端类型链，这是有意的跨端契约门禁，不是噪音。`tsconfig.app.json` 已接入后端的 `bun-types`，并为 React Email 模板使用 React JSX 环境；当前基线是 **零报错**。任何 `../ohmyblog-backend/**` 报错都要按真实类型错误处理，不要过滤路径、跳过检查或改回 `build-only`。
 
-甄别自己引入的新错误：
-
-```bash
-bun run type-check 2>&1 | grep '^src/'
-```
+因为类型链会解析后端依赖，运行前端 `type-check` / `build` 前必须先在 `ohmyblog-backend/` 执行过 `bun install`。
 
 ## 架构要点
 
@@ -205,7 +202,7 @@ bun tools/cdp.mjs targets --port=9333
 
 模拟器要用**局域网 IP**（不是 127.0.0.1）。`adb devices` 没有在线设备通常就是模拟器没开机，跳过移动端验证即可。
 
-管理后台的页面需要登录，干净 profile 进不去 `/admin`。验证后台组件的办法是临时加一个 Vite 入口（`ohmyblog-frontend/xxx.html` + 一个只 `createApp` 挂目标组件的临时 `.ts`），绕开路由守卫，**测完删掉**。
+管理后台的页面需要登录，干净 profile 进不去 `/admin`。验证后台组件的办法是**开演示模式**：`ohmyblog-backend/data/.env` 里把 `DEMO_MODE` 改成 `true` 重启后端（命令行环境变量优先级更高，也可启动时直接带 `DEMO_MODE=true`），未登录游客会拿到虚拟管理员身份（`__demo__`，只读——所有写操作被后端拒绝），`/admin` 无需登录直接逛，**测完改回 false**。要验证写操作路径时这套不够用，再临时加一个 Vite 入口（`ohmyblog-frontend/xxx.html` + 一个只 `createApp` 挂目标组件的临时 `.ts`）绕开路由守卫，**测完删掉**。
 
 `.kiro/hooks/session-brief.ps1` 是 agentSpawn 钩子（挂在 `.kiro/agents/ohmyblog.json`）：会话启动时跑一次上面这些探测，并把 CLAUDE.md 注入上下文一次（放钩子而不是 steering/resources，是因为后者每轮对话都会重新塞一遍）。`.kiro/` 不入库，这套属于本机配置。钩子脚本**必须是纯 ASCII**：Windows PowerShell 5.1 读无 BOM 的 `.ps1` 会按 GBK 解码，中文源码被搞坏后会静默截断脚本（症状是后面几行输出凭空消失）。
 

@@ -24,13 +24,27 @@ export const FriendLinkQueryDTO = t.Object({
 
 export type TFriendLinkQueryDTO = Static<typeof FriendLinkQueryDTO>;
 
+/**
+ * 友链相关 URL 字段的公共定义。
+ *
+ * format: "uri" 只保证「是个语法合法的 URI」，javascript:alert(1) 这种带
+ * scheme 的载荷同样过检 —— 所以必须再加 http/https 协议白名单。此前靠
+ * react-dom 渲染时消毒 + 审批门禁「恰好兜住」，入库收紧后连存量带毒数据
+ * 的源头也堵上。公开申请与管理员更新两个 DTO 共用这一定义，规则不会漂移
+ */
+const friendLinkUrl = (description: string) =>
+	t.String({
+		format: "uri",
+		pattern: "^https?://",
+		description,
+		error: "friend_link.url_invalid",
+	});
+
 /** 公开申请表单 */
 export const ApplyFriendLinkDTO = t.Object({
 	name: t.String({ minLength: 1, maxLength: 64, description: "站点名称" }),
-	url: t.String({ format: "uri", description: "站点 URL" }),
-	avatarUrl: t.Optional(
-		t.String({ format: "uri", description: "站点图标 URL" }),
-	),
+	url: friendLinkUrl("站点 URL"),
+	avatarUrl: t.Optional(friendLinkUrl("站点图标 URL")),
 	description: t.Optional(
 		t.String({ maxLength: 200, description: "站点简介" }),
 	),
@@ -51,8 +65,8 @@ export type TApplyFriendLinkDTO = Static<typeof ApplyFriendLinkDTO>;
 /** 管理员更新友链 */
 export const UpdateFriendLinkDTO = t.Object({
 	name: t.Optional(t.String({ minLength: 1, maxLength: 64 })),
-	url: t.Optional(t.String({ format: "uri" })),
-	avatarUrl: t.Optional(t.Nullable(t.String({ format: "uri" }))),
+	url: t.Optional(friendLinkUrl("站点 URL")),
+	avatarUrl: t.Optional(t.Nullable(friendLinkUrl("站点图标 URL"))),
 	description: t.Optional(t.Nullable(t.String({ maxLength: 200 }))),
 	tags: t.Optional(
 		t.Nullable(t.Array(t.String({ maxLength: 20 }), { maxItems: 3 })),

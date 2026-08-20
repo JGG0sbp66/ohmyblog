@@ -1,7 +1,7 @@
 // src/daos/post.dao.ts
 import { and, count, desc, eq, like, ne, or, sql, sum } from "drizzle-orm";
 import { db } from "../../db/connection";
-import { post } from "../../db/schema";
+import { effectiveCoverImage, post } from "../../db/schema";
 import type { TPostListQueryDTO } from "../dtos/post.dto";
 import {
 	ARCHIVE_KEY,
@@ -19,11 +19,15 @@ export type PostUpdate = Partial<
 
 // 列表场景下选取的字段：刻意排除 content (ProseMirror JSON)
 // 因为这个字段存储整篇文章数据，在列表接口中传输会造成不必要的性能损耗
+// coverImage 走 effectiveCoverImage：展示开关关闭时输出 NULL。管理端列表
+// 也用它 —— 后台列表看到的封面就是读者看到的封面，避免「关了却还显示」的困惑
 const listColumns = {
 	uuid: post.uuid,
 	title: post.title,
+	subtitle: post.subtitle,
 	contentText: post.contentText,
-	coverImage: post.coverImage,
+	coverImage: effectiveCoverImage,
+	coverEnabled: post.coverEnabled,
 	status: post.status,
 	tags: post.tags,
 	slug: post.slug,
@@ -41,9 +45,10 @@ class PostDao {
 	 * 创建新文章（通常为空草稿，由 service 层填充初始数据）
 	 */
 	async create(data: NewPost) {
-		const result = await db.insert(post).values(data).returning();
+		const [created] = await db.insert(post).values(data).returning();
+		if (!created) throw new Error("文章创建失败：数据库未返回记录");
 		invalidatePostCaches();
-		return result[0];
+		return created;
 	}
 
 	// ─── 管理员 · 列表 ──────────────────────────────────────────────────────────
@@ -85,7 +90,7 @@ class PostDao {
 			db.select({ total: count() }).from(post).where(where),
 		]);
 
-		return { list, total: totalResult[0].total };
+		return { list, total: totalResult[0]?.total ?? 0 };
 	}
 
 	// ─── 管理员 · 单条 ──────────────────────────────────────────────────────────
@@ -118,9 +123,10 @@ class PostDao {
 				.select({
 					uuid: post.uuid,
 					title: post.title,
+					subtitle: post.subtitle,
 					contentHtml: post.contentHtml,
 					wordCount: sql<number>`LENGTH(${post.contentText})`,
-					coverImage: post.coverImage,
+					coverImage: effectiveCoverImage,
 					tags: post.tags,
 					slug: post.slug,
 					excerpt: post.excerpt,
@@ -203,7 +209,7 @@ class PostDao {
 
 			return {
 				list: list as PublishedListRow[],
-				total: totalResult[0].total,
+				total: totalResult[0]?.total ?? 0,
 			};
 		};
 
@@ -246,9 +252,20 @@ class PostDao {
 				totalViews: sum(post.viewCount),
 			})
 			.from(post);
+		const counts = result[0];
+		if (!counts) {
+			return {
+				all: 0,
+				draft: 0,
+				published: 0,
+				archived: 0,
+				deleted: 0,
+				totalViews: 0,
+			};
+		}
 		return {
-			...result[0],
-			totalViews: Number(result[0].totalViews ?? 0),
+			...counts,
+			totalViews: Number(counts.totalViews ?? 0),
 		};
 	}
 

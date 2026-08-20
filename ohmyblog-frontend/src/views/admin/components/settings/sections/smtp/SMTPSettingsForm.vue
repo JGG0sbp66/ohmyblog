@@ -7,17 +7,19 @@ import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
 import ModuleItem from "@/components/common/item/ModuleItem.vue";
 import SMTPForm from "@/components/common/smtp/SMTPForm.vue";
 import { useLang } from "@/composables/lang.hook";
-import { useToast } from "@/composables/toast.hook";
-import { getConfig, upsertConfig } from "@/api/config.api";
+import { useConfigForm } from "@/composables/config-form.hook";
+import type { TSMTPConfigUpsertDTO } from "@server/dtos/config.dto";
 
 const { t } = useLang();
-const toast = useToast;
 
-// 内部维护表单数据
-const formData = ref({
-  enabled: true,
+// 读写机制（404 = 未配置 = 保持默认值）由 useConfigForm 收敛，
+// 这里只声明语义：默认值是什么、属于敏感配置不公开
+const { formData, isLoaded, isSaving, load, save } = useConfigForm<
+  TSMTPConfigUpsertDTO["configValue"]
+>("smtp", {
+  enabled: false,
   host: "",
-  port: 587,
+  port: 465,
   username: "",
   password: "",
   senderEmail: "",
@@ -26,60 +28,18 @@ const formData = ref({
 
 const isAdvancedExpanded = ref(false);
 const formRef = ref<InstanceType<typeof SMTPForm> | null>(null);
-const isSaving = ref(false);
-// 配置拉取完成前不渲染开关：toggle 先按默认值渲染再翻转到真实状态，
-// 会播放一段不属于任何用户操作的假动画
-const isLoaded = ref(false);
 const [parentRef] = useAutoAnimate();
-
-/**
- * 加载 SMTP 配置
- */
-const loadConfig = async () => {
-  try {
-    const res = await getConfig("smtp");
-    if (res?.config?.configValue) {
-      // 合并数据，保持默认值
-      formData.value = {
-        ...formData.value,
-        ...(res.config.configValue as any),
-      };
-    }
-  } catch (error) {
-    // 404 可能是还没配置过，忽略
-    console.warn(
-      "Failed to load SMTP config, it might not be initialized yet.",
-    );
-  } finally {
-    isLoaded.value = true;
-  }
-};
 
 /**
  * 保存配置
  */
 const handleSave = async () => {
-  // 仅在开启状态下进行表单校验
+  // 仅在开启状态下进行表单校验；请求与 toast 由 useConfigForm 负责
   if (formData.value.enabled && !formRef.value?.validate?.()) return;
-
-  try {
-    isSaving.value = true;
-    await upsertConfig({
-      configKey: "smtp",
-      configValue: formData.value,
-      isPublic: false, // 敏感信息，不公开
-    });
-    toast.success(t("api.success.保存成功"));
-  } catch (error: any) {
-    useToast.error(t(`api.errors.${error}`));
-  } finally {
-    isSaving.value = false;
-  }
+  await save();
 };
 
-onMounted(() => {
-  loadConfig();
-});
+onMounted(load);
 
 defineExpose({
   formData,

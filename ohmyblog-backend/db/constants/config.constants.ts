@@ -44,3 +44,22 @@ export const configDescriptions: Record<TConfigKey, string> = {
 	announcement: "公告配置（前台侧边栏公告卡片）",
 	captcha: "人机验证配置（服务商、密钥、启用场景）",
 };
+
+/**
+ * 允许未登录公开读的配置键（白名单）。
+ *
+ * 「一个键装的东西能不能给访客看」是开发期就定死的访问控制规则，不是
+ * 运行期数据 —— 它属于代码，不属于数据库（config 表为此不再有 is_public
+ * 列，请求体也不再接受 isPublic）。这份清单恰好就是前台 system.store
+ * 启动时要读的那几个键。
+ *
+ * 刻意用白名单而不是私有黑名单：新增配置键时忘了加进任何清单，白名单下
+ * 它默认私有（fail-closed，安全方向出错），黑名单下它默认公开 —— 把
+ * 「忘记」的后果留在安全的一侧。
+ */
+export const publicConfigKeys: readonly TConfigKey[] = [
+	"appearance",
+	"site_info",
+	"personal_info",
+	"announcement",
+];

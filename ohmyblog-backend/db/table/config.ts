@@ -17,9 +17,6 @@ export const config = sqliteTable("config", {
 	// 配置项描述
 	description: text("description"),
 
-	// 是否公开 (true-前端读, false-仅后端)
-	isPublic: integer("is_public", { mode: "boolean" }).default(true),
-
 	// 创建时间
 	createdAt: integer("created_at", { mode: "timestamp" })
 		.notNull()

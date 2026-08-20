@@ -15,6 +15,11 @@
 //   - 验证码本身的失败次数上限（换新码会把 attempts 清零，不限制发信频率的话
 //     攻击者可以靠反复申请拿到无限的重试机会）
 //
+// 占用是「检查 + 记账」一步完成的原子操作：发信要花数秒，如果先检查、等发完
+// 再记账，并发 N 个请求会在任何一个记账之前全部通过检查，两道限制同时失效
+// （邮箱轰炸 + 烧 SMTP 配额），并发交错还会留下两条同时有效的验证码、稀释单码
+// 的失败次数上限。所以先占用、发信失败再回滚（begin/rollback 一对）。
+//
 // 与 utils/cache.ts、utils/two-factor-challenge.ts 一样是进程内状态：
 // 多实例部署要换成 Redis。进程重启会清空计数，代价是攻击者能多发几封邮件，
 // 可以接受。
@@ -43,15 +48,17 @@ const hourlyCount = new TTLCache<string, { count: number }>({
 export type ResetPasswordThrottleReason = "cooldown" | "quota";
 
 /**
- * 检查是否允许为该账号发送重置邮件。
+ * 原子地「检查并占用」一次发信名额。
  *
- * 只做检查不记账，允许发送时由调用方在**发信成功后**调用
- * recordResetPasswordSend()，避免发信失败也白白消耗配额。
+ * 允许发送时同步完成记账（开始冷却、累加小时配额），调用方随后再去发信；
+ * 发信失败必须调 rollbackResetPasswordSend() 归还名额，否则失败也消耗配额。
+ * 检查与记账在同一个同步调用里完成，JavaScript 单线程保证并发请求不可能
+ * 都赶在记账之前通过检查。
  *
  * @param userUuid 目标账号
  * @returns 允许则返回 null，否则返回被拒原因
  */
-export const checkResetPasswordThrottle = (
+export const beginResetPasswordSend = (
 	userUuid: string,
 ): ResetPasswordThrottleReason | null => {
 	if (cooldown.get(userUuid)) return "cooldown";
@@ -59,18 +66,9 @@ export const checkResetPasswordThrottle = (
 	const window = hourlyCount.get(userUuid);
 	if (window && window.count >= RESET_PASSWORD_HOURLY_QUOTA) return "quota";
 
-	return null;
-};
-
-/**
- * 记一次成功发送：开始冷却，并累加小时计数。
- *
- * @param userUuid 目标账号
- */
-export const recordResetPasswordSend = (userUuid: string): void => {
+	// 到这里才真正占用：两道限制都过了，同步写进两份计数
 	cooldown.set(userUuid, true);
 
-	const window = hourlyCount.get(userUuid);
 	if (window) {
 		// TTLCache 的 value 是引用，直接改计数即可。
 		// 刻意不走 set() —— set 会顺带刷新 TTL，让这一小时的窗口随着每次请求
@@ -78,5 +76,24 @@ export const recordResetPasswordSend = (userUuid: string): void => {
 		window.count += 1;
 	} else {
 		hourlyCount.set(userUuid, { count: 1 });
+	}
+
+	return null;
+};
+
+/**
+ * 发信失败时归还 beginResetPasswordSend() 占用的名额。
+ *
+ * 没发出去的邮件不该消耗配额 —— SMTP 没配好时站长自己反复重试也不该被
+ * 冷却期拦住。冷却与配额都尝试还原；对应的 TTL 已过期时 TTLCache.get 返回
+ * undefined，跳过即可（说明窗口本来就已自然结束，无需还原）。
+ */
+export const rollbackResetPasswordSend = (userUuid: string): void => {
+	cooldown.delete(userUuid);
+
+	const window = hourlyCount.get(userUuid);
+	if (window) {
+		window.count -= 1;
+		if (window.count <= 0) hourlyCount.delete(userUuid);
 	}
 };

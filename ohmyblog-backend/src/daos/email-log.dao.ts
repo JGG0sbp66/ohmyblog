@@ -13,8 +13,9 @@ class EmailLogDao {
 	 * @returns 插入后的记录
 	 */
 	async create(data: NewEmailLog) {
-		const result = await db.insert(emailLog).values(data).returning();
-		return result[0];
+		const [created] = await db.insert(emailLog).values(data).returning();
+		if (!created) throw new Error("邮件日志写入失败：数据库未返回记录");
+		return created;
 	}
 
 	/**
@@ -44,7 +45,7 @@ class EmailLogDao {
 			db.select({ total: count() }).from(emailLog).where(where),
 		]);
 
-		return { list, total: totalResult[0].total };
+		return { list, total: totalResult[0]?.total ?? 0 };
 	}
 
 	/**
@@ -90,7 +91,7 @@ class EmailLogDao {
 			.select({ total: count() })
 			.from(emailLog)
 			.where(eq(emailLog.isRead, false));
-		return result[0].total;
+		return result[0]?.total ?? 0;
 	}
 }
 

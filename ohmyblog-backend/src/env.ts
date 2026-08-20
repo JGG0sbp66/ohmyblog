@@ -17,7 +17,12 @@ import { logger } from "./plugins/logger.plugin";
 // =================================================================
 const configSchema = {
 	NODE_ENV: z.enum(["development", "production"]).default("development"),
-	PORT: z.coerce.number().default(3000),
+	PORT: z.preprocess(
+		// PORT= 留空（CI 模板、docker-compose 常见）若不归一为 undefined，
+		// 会被 coerce 成 0 通过校验，listen(0) 静默监听随机端口
+		(v) => (v === "" ? undefined : v),
+		z.coerce.number().int().min(1).max(65535).default(3000),
+	),
 	JWT_SECRET: z.string(),
 	JWT_EXP: z.string().default("7d"),
 	// 与 NODE_ENV 正交的开关：演示站同样是 production 部署，只是额外禁写
@@ -157,7 +162,12 @@ if (!parsed.success) {
 	}));
 	// 使用 Logger 记录严重错误
 	logger.fatal({ err: errorDetails }, "❌ 配置校验失败，服务无法启动");
-	setTimeout(() => process.exit(1), 100);
+	// 必须同步抛错而非延迟 exit：走到这里时 config 就是 undefined，
+	// 延迟期间下游模块（如 db/connection 顶层的 isProduction()）会先崩
+	// TypeError，把排障方向从 .env 带偏到代码 bug
+	throw new Error(
+		`配置校验失败: ${errorDetails.map((d) => `${d.field} - ${d.message}`).join("; ")}`,
+	);
 }
 
-export const config = parsed.data as z.infer<typeof envSchema>;
+export const config = parsed.data;

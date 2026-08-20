@@ -99,6 +99,27 @@
       "when": 1786598189190,
       "tag": "0013_absurd_scrambler",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1786854923150,
+      "tag": "0014_nifty_darkhawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1786856442847,
+      "tag": "0015_misty_marvel_zombies",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1786868709283,
+      "tag": "0016_free_photon",
+      "breakpoints": true
     }
   ]
 }

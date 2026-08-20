@@ -8,7 +8,7 @@
 // 标准使用顺序：
 //   1. replaceAll(userUuid, hashes)        // 启用 / 重新生成：整批替换
 //   2. findActiveByHash(userUuid, hash)    // 用户提交恢复码时校验
-//   3. markAsUsed(uuid)                    // 命中后立即作废，一次性消费
+//   3. markAsUsedIfActive(uuid)            // 命中后立即作废，一次性消费
 //   4. deleteByUser(userUuid)              // 关闭两步验证时清空
 import { and, eq, isNull } from "drizzle-orm";
 import { db } from "../../db/connection";
@@ -83,11 +83,30 @@ class TwoFactorDao {
 	 * 将指定恢复码标记为已使用
 	 * @param uuid 恢复码记录 UUID
 	 */
-	async markAsUsed(uuid: string) {
-		await db
+	/**
+	 * 原子地作废一条恢复码：UPDATE 只在 usedAt 仍为空时生效。
+	 *
+	 * 「查后标记」拆成 findActiveByHash + markAsUsed 两步的话，并发提交
+	 * 同一个码的两个请求会双双通过查询、先后标记 —— 一次性消费被击穿。
+	 * 把判定并进 UPDATE 的 WHERE 里，数据库保证只有一个请求能改到行。
+	 * 当前 bun:sqlite 驱动是同步的、实际不可能交错，这里是为换驱动 /
+	 * 多实例部署预埋的正确性。
+	 *
+	 * @returns 是否真的作废了。false = 并发下已被别的请求用掉，调用方
+	 *          应按「验证码无效」处理
+	 */
+	async markAsUsedIfActive(uuid: string): Promise<boolean> {
+		const result = await db
 			.update(twoFactorRecoveryCode)
 			.set({ usedAt: new Date() })
-			.where(eq(twoFactorRecoveryCode.uuid, uuid));
+			.where(
+				and(
+					eq(twoFactorRecoveryCode.uuid, uuid),
+					isNull(twoFactorRecoveryCode.usedAt),
+				),
+			)
+			.returning({ uuid: twoFactorRecoveryCode.uuid });
+		return result.length > 0;
 	}
 
 	/**

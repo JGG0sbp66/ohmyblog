@@ -3,9 +3,10 @@
 import { desc, eq } from "drizzle-orm";
 import { Feed } from "feed";
 import { db } from "../../db/connection";
-import { post } from "../../db/schema";
+import { effectiveCoverImage, post } from "../../db/schema";
 import { configDao } from "../daos/config.dao";
 import type { TSiteInfoConfigUpsertDTO } from "../dtos/config.dto";
+import { logger } from "../plugins/logger.plugin";
 
 /** Feed 输出的文章数量上限 */
 const FEED_LIMIT = 20;
@@ -36,7 +37,7 @@ class FeedService {
 				slug: post.slug,
 				contentHtml: post.contentHtml,
 				excerpt: post.excerpt,
-				coverImage: post.coverImage,
+				coverImage: effectiveCoverImage,
 				publishedAt: post.publishedAt,
 				updatedAt: post.updatedAt,
 			})
@@ -73,7 +74,7 @@ class FeedService {
 			const postUrl = `${siteUrl}/posts/${item.slug}`;
 			// 将 HTML 中的相对路径图片转为绝对 URL
 			const content = item.contentHtml
-				? this.resolveRelativeUrls(item.contentHtml, siteUrl)
+				? await this.resolveRelativeUrls(item.contentHtml, siteUrl)
 				: undefined;
 
 			feed.addItem({
@@ -95,16 +96,38 @@ class FeedService {
 
 	/**
 	 * 将 HTML 中 src/href/poster 的相对路径转为绝对 URL
-	 * 匹配 src="/..."、href="/..."、poster="/..." 格式
+	 *
+	 * 用 Bun 内置的 HTMLRewriter 就地改写真实元素的属性，不走正则：
+	 * 正则会把代码块里转义后的示例代码（&lt;img src="/..."&gt;）误改写，
+	 * 也漏掉单引号/无引号属性；HTMLRewriter 只碰元素属性、不动文本内容，
+	 * 对引号形态天然免疫。协议相对地址（//cdn.example.com）本身是完整
+	 * URL，不加前缀。
 	 *
 	 * poster 是视频封面图，同样落在 /api/uploads 下，RSS 阅读器脱离站点上下文，
 	 * 不绝对化就是一张裂图。
 	 */
-	private resolveRelativeUrls(html: string, siteUrl: string): string {
-		return html.replace(
-			/(src|href|poster)="(\/[^"]*?)"/g,
-			(_, attr, path) => `${attr}="${siteUrl}${path}"`,
-		);
+	private async resolveRelativeUrls(
+		html: string,
+		siteUrl: string,
+	): Promise<string> {
+		const rewriter = new HTMLRewriter();
+		for (const attr of ["src", "href", "poster"] as const) {
+			rewriter.on(`[${attr}]`, {
+				element(el) {
+					const value = el.getAttribute(attr);
+					if (value?.startsWith("/") && !value.startsWith("//")) {
+						el.setAttribute(attr, `${siteUrl}${value}`);
+					}
+				},
+			});
+		}
+		try {
+			return await rewriter.transform(new Response(html)).text();
+		} catch (err) {
+			// 最坏情况是 RSS 里相对路径未绝对化（裂图），不应拖垮整个 feed
+			logger.warn({ err }, "RSS 相对路径改写失败，按原文输出");
+			return html;
+		}
 	}
 
 	/** 单个 URL：相对路径加上 siteUrl 前缀 */
