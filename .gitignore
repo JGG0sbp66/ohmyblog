@@ -22,6 +22,8 @@ lerna-debug.log*
 dist/
 dist-ssr/
 build/
+# build:win 等单文件编译的前端产物输入目录（从 ohmyblog-frontend/dist 复制而来）
+ohmyblog-backend/frontend-dist/
 /out/
 /.next/
 *.tsbuildinfo
