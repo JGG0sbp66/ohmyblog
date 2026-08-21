@@ -3,15 +3,22 @@
 # 钉死 Bun 版本以保证 Bun.Image 等内置 API 行为稳定（1.4 起运行时由 Rust 实现）
 FROM oven/bun:1.4.0 AS frontend-builder
 
+# 国内网络访问 npmjs.org 极慢且大 tarball 易传输中断（Fail extracting tarball），
+# 切到 npmmirror 镜像；bun.lock 的 resolved 为空串时 tarball URL 由该配置拼接，
+# integrity 哈希仍照原校验，不影响 --frozen-lockfile 的可重现性（CI 可用 --build-arg 覆盖）
+ARG BUN_REGISTRY=https://registry.npmmirror.com
+ENV BUN_CONFIG_REGISTRY=$BUN_REGISTRY
+
 WORKDIR /monorepo
 
 # 安装后端依赖（vite.config.ts 的 alias 需要 backend node_modules 中的 elysia、typebox 等）
+# --mount 持久化 bun 全局缓存，避免每次构建全量重新下载依赖
 COPY ohmyblog-backend/package.json ohmyblog-backend/bun.lock ./ohmyblog-backend/
-RUN cd ohmyblog-backend && bun install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.bun cd ohmyblog-backend && bun install --frozen-lockfile
 
 # 安装前端依赖
 COPY ohmyblog-frontend/package.json ohmyblog-frontend/bun.lock ./ohmyblog-frontend/
-RUN cd ohmyblog-frontend && bun install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.bun cd ohmyblog-frontend && bun install --frozen-lockfile
 
 # 复制源代码（alias 路径解析需要两侧目录同时存在）
 COPY ohmyblog-backend/ ./ohmyblog-backend/
@@ -24,11 +31,14 @@ RUN bun run build
 # --- 阶段 2: 构建后端 ---
 FROM oven/bun:1.4.0 AS builder
 
+ARG BUN_REGISTRY=https://registry.npmmirror.com
+ENV BUN_CONFIG_REGISTRY=$BUN_REGISTRY
+
 WORKDIR /app
 
 # 复制依赖定义并安装
 COPY ohmyblog-backend/package.json ohmyblog-backend/bun.lock ./
-RUN bun install --frozen-lockfile
+RUN --mount=type=cache,target=/root/.bun bun install --frozen-lockfile
 
 # 复制后端源代码及构建脚本
 COPY ohmyblog-backend/ .

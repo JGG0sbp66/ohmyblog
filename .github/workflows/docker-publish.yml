@@ -206,6 +206,7 @@ jobs:
           build-args: |
             GIT_COMMIT=${{ github.sha }}
             APP_VERSION=${{ steps.meta.outputs.version }}
+            BUN_REGISTRY=https://registry.npmjs.org
 
   # 二进制和 Docker 镜像均构建成功后发布同一 tag 的草稿 Release
   publish-release:
