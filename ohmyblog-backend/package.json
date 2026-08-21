@@ -32,7 +32,7 @@
 		"drizzle-orm": "^0.45.2",
 		"elysia": "^1.4.28",
 		"feed": "^6.0.0",
-		"nodemailer": "^8.0.7",
+		"nodemailer": "^8.0.11",
 		"otpauth": "^9.5.1",
 		"react": "^19.2.5",
 		"react-dom": "^19.2.5",
@@ -47,7 +47,7 @@
 		"@types/nodemailer": "^7.0.11",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
-		"bun-types": "^1.3.14",
+		"bun-types": "^1.4.0",
 		"drizzle-kit": "^0.31.10",
 		"react-email": "^6.0.8"
 	},
