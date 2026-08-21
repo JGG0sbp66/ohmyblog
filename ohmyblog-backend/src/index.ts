@@ -1,8 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { staticPlugin } from "@elysiajs/static";
 import { Elysia } from "elysia";
-import { PUBLIC_DIR } from "./constants";
+import { PUBLIC_DIR, UPLOADS_DIR } from "./constants";
 import { config } from "./env";
 import { demoPlugin } from "./plugins/demo.plugin.js";
 import { logPlugin } from "./plugins/logger.plugin.js";
@@ -18,7 +17,6 @@ import { postRoute } from "./routes/post.route.js";
 import { sitemapRoute } from "./routes/sitemap.route.js";
 import { twoFactorRoute } from "./routes/two-factor.route.js";
 import { uploadRoute } from "./routes/upload.route.js";
-import { uploadsStaticRoute } from "./routes/uploads-static.route.js";
 import { viewerRoute } from "./routes/viewer.route.js";
 import { viewCounterService } from "./services/view-counter.service.js";
 import { isDemo, isProduction } from "./utils/runtime";
@@ -48,7 +46,23 @@ if (commandIndex !== -1) {
 	}
 }
 
-const app = new Elysia()
+// === Bun 原生静态目录路由（v1.4+）===
+// 替代 @elysiajs/static 与自写读盘路由：运行时直接读磁盘流式响应，
+// 无 Response 缓存、无启动快照，文件覆盖变大/启动后新增都能正确响应
+// （staticPlugin 的 fileCache 曾因此返回截断内容，见 d1d566c9），
+// 并原生处理 percent 解码、路径穿越防护与 ETag/304/Range。
+const bunStaticRoutes = {
+	// 上传资源目录由 env.ts 在启动时保证存在，可直接注册
+	"/api/uploads/*": { dir: UPLOADS_DIR },
+	// 前端构建产物仅生产镜像/二进制里存在（由 build 阶段注入），
+	// 目录缺失时不能注册（Bun.serve 会报 ENOENT）
+	...(existsSync(join(PUBLIC_DIR, "assets"))
+		? { "/assets/*": { dir: join(PUBLIC_DIR, "assets") } }
+		: {}),
+};
+
+// 静态资源交给 Bun 原生目录路由（serve.routes）托管，见上方 bunStaticRoutes
+const app = new Elysia({ serve: { routes: bunStaticRoutes } })
 	// SPA fallback：注册在 responsePlugin 之前，优先处理前端路由的 NOT_FOUND
 	// 非 /api 路径找不到路由时返回 index.html，让 Vue Router 接管
 	// /api 路径仍走 formatError 返回 JSON 错误
@@ -71,9 +85,6 @@ const app = new Elysia()
 	.use(sitemapRoute)
 	.group("/api", (app) =>
 		app
-			// 上传资源静态服务：自写路由实时读磁盘，勿改回 staticPlugin
-			// （其缓存会在文件覆盖变大后返回截断内容，详见 uploads-static.route.ts）
-			.use(uploadsStaticRoute)
 			.use(healthRoute)
 			.use(authRoute)
 			.use(captchaRoute)
@@ -87,12 +98,10 @@ const app = new Elysia()
 	);
 
 // 挂载前端静态资源（public/ 目录由 Docker build 阶段注入）
-// GET / 显式处理，SPA 其余路由由上方 onError 兜底
+// assets/ 由上方 bunStaticRoutes 的原生目录路由托管，此处只保留
+// GET / 的显式处理，SPA 其余路由由 onError 兜底
 if (existsSync(PUBLIC_DIR)) {
-	const serveIndex = () => Bun.file(join(PUBLIC_DIR, "index.html"));
-	app
-		.get("/", serveIndex)
-		.use(staticPlugin({ assets: PUBLIC_DIR, prefix: "/" }));
+	app.get("/", () => Bun.file(join(PUBLIC_DIR, "index.html")));
 }
 
 // OpenAPI 文档：仅开发环境启用
