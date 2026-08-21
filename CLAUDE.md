@@ -164,7 +164,7 @@ bun run format         # prettier --write .
 
 `scripts/build.ts <win|linux|linux-musl|mac>` 用 `Bun.build({ compile })` 产出单文件可执行程序，并复制 `db/drizzle` 和 `frontend-dist`（→ `public/`）。**前端产物必须先构建并放到 `ohmyblog-backend/frontend-dist/`**，否则只会打印警告然后产出一个没有前端的二进制。
 
-图像处理用 Bun 1.3.14+ 内置的 `Bun.Image`（无 native 依赖，这是能编译成单文件、跑在 Alpine 上的前提）。Dockerfile 和 CI 都把 Bun 版本钉死在 `1.3.14`，升级前先确认这一点。
+图像处理用 Bun 1.3.14+ 内置的 `Bun.Image`（无 native 依赖，这是能编译成单文件、跑在 Alpine 上的前提）。Dockerfile 和 CI 都把 Bun 版本钉死在 `1.4.0`（1.4 起运行时由 Rust 实现，升级大版本前先确认这一点）。
 
 推 `v*` tag 触发 `.github/workflows/docker-publish.yml`：生成 Release notes（按 commit 前缀 feat/fix/ci/chore 分组）、构建四平台二进制、推 ghcr 镜像。
 

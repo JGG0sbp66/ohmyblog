@@ -1,7 +1,7 @@
 # --- 阶段 1: 构建前端 ---
 # Build context 为 monorepo 根目录（即 ohmyblog-refactor/）
-# 钉死 Bun 版本以保证 Bun.Image (1.3.14+) 等内置 API 行为稳定
-FROM oven/bun:1.3.14 AS frontend-builder
+# 钉死 Bun 版本以保证 Bun.Image 等内置 API 行为稳定（1.4 起运行时由 Rust 实现）
+FROM oven/bun:1.4.0 AS frontend-builder
 
 WORKDIR /monorepo
 
@@ -22,7 +22,7 @@ WORKDIR /monorepo/ohmyblog-frontend
 RUN bun run build
 
 # --- 阶段 2: 构建后端 ---
-FROM oven/bun:1.3.14 AS builder
+FROM oven/bun:1.4.0 AS builder
 
 WORKDIR /app
 
