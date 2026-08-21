@@ -1,164 +1,21 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
-import { Elysia } from "elysia";
-import { PUBLIC_DIR, UPLOADS_DIR } from "./constants";
+// src/index.ts
+// 进程入口：只做调度——子命令 → 装配应用 → 监听 → 生命周期与横幅。
+// 应用装配细节见 bootstrap/app.ts，后台任务与优雅关闭见 bootstrap/lifecycle.ts。
+
+import { createApp } from "./bootstrap/app";
+import { runCliCommand } from "./bootstrap/cli/run";
+import { printStartupBanner, startLifecycle } from "./bootstrap/lifecycle";
 import { config } from "./env";
-import { demoPlugin } from "./plugins/demo.plugin.js";
-import { logPlugin } from "./plugins/logger.plugin.js";
-import { responsePlugin } from "./plugins/response.plugin.js";
-import { authRoute } from "./routes/auth.route.js";
-import { captchaRoute } from "./routes/captcha.route.js";
-import { configRoute } from "./routes/config.route.js";
-import { emailRoute } from "./routes/email.route.js";
-import { feedRoute } from "./routes/feed.route.js";
-import { friendLinkRoute } from "./routes/friend-link.route.js";
-import { healthRoute } from "./routes/health.route.js";
-import { postRoute } from "./routes/post.route.js";
-import { sitemapRoute } from "./routes/sitemap.route.js";
-import { twoFactorRoute } from "./routes/two-factor.route.js";
-import { uploadRoute } from "./routes/upload.route.js";
-import { viewerRoute } from "./routes/viewer.route.js";
-import { viewCounterService } from "./services/view-counter.service.js";
-import { isDemo, isProduction } from "./utils/runtime";
 
-// === 命令行子命令 ===
-// 必须在建服务器之前处理，处理完直接退出，不监听端口。
-//
-// 做成主程序的子命令而不是 scripts/ 下的独立脚本，是因为 build.ts 的
-// entrypoints 只有本文件，scripts/ 不会被编译进单文件产物；而二进制和
-// Docker 部署里既没有源码也没有 bun，偏偏那才是最需要带外重置的场景。
-const CLI_COMMANDS = new Set(["reset-password"]);
-const commandIndex = process.argv.findIndex((arg) => CLI_COMMANDS.has(arg));
+// 命令行子命令必须在建服务器之前处理，处理完直接退出，不监听端口
+await runCliCommand();
 
-if (commandIndex !== -1) {
-	const command = process.argv[commandIndex];
-	const commandArgs = process.argv.slice(commandIndex + 1);
+const app = await createApp();
 
-	try {
-		if (command === "reset-password") {
-			const { runResetPassword } = await import("./cli/reset-password");
-			await runResetPassword(commandArgs);
-		}
-		process.exit(0);
-	} catch (err) {
-		console.error("✗ 命令执行失败：", err);
-		process.exit(1);
-	}
-}
-
-// === Bun 原生静态目录路由（v1.4+）===
-// 替代 @elysiajs/static 与自写读盘路由：运行时直接读磁盘流式响应，
-// 无 Response 缓存、无启动快照，文件覆盖变大/启动后新增都能正确响应
-// （staticPlugin 的 fileCache 曾因此返回截断内容，见 d1d566c9），
-// 并原生处理 percent 解码、路径穿越防护与 ETag/304/Range。
-const bunStaticRoutes = {
-	// 上传资源目录由 env.ts 在启动时保证存在，可直接注册
-	"/api/uploads/*": { dir: UPLOADS_DIR },
-	// 前端构建产物仅生产镜像/二进制里存在（由 build 阶段注入），
-	// 目录缺失时不能注册（Bun.serve 会报 ENOENT）
-	...(existsSync(join(PUBLIC_DIR, "assets"))
-		? { "/assets/*": { dir: join(PUBLIC_DIR, "assets") } }
-		: {}),
-};
-
-// 静态资源交给 Bun 原生目录路由（serve.routes）托管，见上方 bunStaticRoutes
-const app = new Elysia({ serve: { routes: bunStaticRoutes } })
-	// SPA fallback：注册在 responsePlugin 之前，优先处理前端路由的 NOT_FOUND
-	// 非 /api 路径找不到路由时返回 index.html，让 Vue Router 接管
-	// /api 路径仍走 formatError 返回 JSON 错误
-	.onError({ as: "global" }, ({ code, request }) => {
-		if (
-			code === "NOT_FOUND" &&
-			existsSync(PUBLIC_DIR) &&
-			!new URL(request.url).pathname.startsWith("/api")
-		) {
-			return Bun.file(join(PUBLIC_DIR, "index.html"));
-		}
-	})
-	// 挂载插件
-	.use(logPlugin)
-	.use(responsePlugin)
-	// 演示模式写入闸门：必须在业务路由之前，且早于任何写 handler
-	.use(demoPlugin)
-	// 挂载路由
-	.use(feedRoute)
-	.use(sitemapRoute)
-	.group("/api", (app) =>
-		app
-			.use(healthRoute)
-			.use(authRoute)
-			.use(captchaRoute)
-			.use(configRoute)
-			.use(emailRoute)
-			.use(friendLinkRoute)
-			.use(postRoute)
-			.use(twoFactorRoute)
-			.use(uploadRoute)
-			.use(viewerRoute),
-	);
-
-// 挂载前端静态资源（public/ 目录由 Docker build 阶段注入）
-// assets/ 由上方 bunStaticRoutes 的原生目录路由托管，此处只保留
-// GET / 的显式处理，SPA 其余路由由 onError 兜底
-if (existsSync(PUBLIC_DIR)) {
-	app.get("/", () => Bun.file(join(PUBLIC_DIR, "index.html")));
-}
-
-// OpenAPI 文档：仅开发环境启用
-// 生产用 lazy import 避免把 @elysiajs/openapi 整个模块 evaluate 进常驻 JS 堆
-if (!isProduction()) {
-	const { openapi } = await import("@elysiajs/openapi");
-	app.use(
-		openapi({
-			enabled: true,
-			documentation: {
-				info: {
-					title: "ohmyblog API",
-					version: "1.0.0",
-				},
-			},
-		}),
-	);
-}
-
-// 启动服务
 app.listen(config.PORT);
 
-// 启动后台 viewCount 累积器（每 5s 把内存累积的访问量批量写回数据库）
-viewCounterService.start();
+startLifecycle();
+printStartupBanner(app);
 
-// 容器停止 / 本地 Ctrl+C 时，把剩余的 viewCount 落盘后再退出
-const shutdown = async (signal: string) => {
-	console.log(`\n收到 ${signal}，正在退出...`);
-	try {
-		await viewCounterService.stop();
-	} catch (err) {
-		console.error("viewCounterService.stop 失败：", err);
-	}
-	process.exit(0);
-};
-process.on("SIGTERM", () => void shutdown("SIGTERM"));
-process.on("SIGINT", () => void shutdown("SIGINT"));
-
-export type App = typeof app;
-
-if (!app.server) {
-	throw new Error("Server failed to start");
-}
-
-const { port } = app.server;
-const protocol = "http";
-const baseUrl = `${protocol}://localhost:${port}`;
-
-console.log(`\n🚀 Server started in \x1b[33m${config.NODE_ENV}\x1b[0m mode`);
-console.log(`➜  Local:   \x1b[36m${baseUrl}\x1b[0m`);
-if (!isProduction()) {
-	console.log(`➜  Docs:    \x1b[36m${baseUrl}/openapi\x1b[0m`);
-}
-if (isDemo()) {
-	console.log(
-		`\n⚠️  \x1b[33m演示模式已启用\x1b[0m：游客可只读浏览后台，写操作一律拒绝`,
-	);
-	console.log(`   （系统尚未初始化时该限制不生效，setup 向导照常可用）`);
-}
-console.log(`\nReady to accept requests...\n`);
+// 供 Eden（前端 treaty）使用，见 app.d.ts；不要在此添加运行时代码
+export type { App } from "./bootstrap/app";
