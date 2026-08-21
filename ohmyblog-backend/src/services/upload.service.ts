@@ -73,7 +73,7 @@ class UploadService {
 	 * @returns 处理后的访问路径
 	 */
 	async uploadSocialIcon(file: File, key: string, mode: "light" | "dark") {
-		// 中文 key 已通过 staticPlugin 的 decodeURI: true 兼容（见 src/index.ts）
+		// 中文 key 生成的文件名由 Bun 原生目录路由自动 percent 解码（见 src/index.ts）
 		const filename = `${key}-${mode}.png`;
 		return this.uploadAsset(
 			file,

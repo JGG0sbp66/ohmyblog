@@ -2,6 +2,8 @@
 ohmyblog-backend/node_modules
 ohmyblog-backend/scripts/dist
 ohmyblog-backend/data
+
+ohmyblog-backend/frontend-dist
 ohmyblog-backend/.kiro
 ohmyblog-backend/.vscode
 ohmyblog-backend/README.md

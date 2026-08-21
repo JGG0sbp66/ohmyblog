@@ -1,4 +1,4 @@
-// src/cli/reset-password.ts
+// src/bootstrap/cli/reset-password.ts
 //
 // 带外的密码重置通道，直接改数据库，不经过任何 HTTP 接口。
 //
@@ -26,8 +26,8 @@
 // 站长」锁在这个自救工具要救的门外面。想设自己惯用的密码，登录后到后台
 // 设置页改 —— 那里走浏览器的完整输入栈，没有字节边界问题。
 
-import { twoFactorDao } from "../daos/two-factor.dao";
-import { userDao } from "../daos/user.dao";
+import { twoFactorDao } from "../../daos/two-factor.dao";
+import { userDao } from "../../daos/user.dao";
 
 /** 生成字母表：剔除 0/1/l/I/O/o 等形近字符，万一需要手抄不至于抄错 */
 const PASSWORD_ALPHABET =
