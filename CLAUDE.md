@@ -208,6 +208,7 @@ bun tools/cdp.mjs targets --port=9333
 
 ## 约定
 
+- **终端命令一律用 Git Bash，不要用 PowerShell**（本机已验证，2026-08）：裸 `bash` 会命中坏掉的 WSL，要显式调用 `& "C:\Users\admin\scoop\apps\git\current\bin\bash.exe"`。含引号、中文或多行的复杂命令（尤其 git commit）**先写进临时 .sh 脚本文件再执行**，用完删掉——命令串直传会经过 PowerShell → bash 双层引号转义，必碎。简单命令可直接 `-c` 执行，内层只用单引号
 - **注释、日志、面向用户的文案一律中文**；标识符用英文
 - Commit message 走 Conventional Commits（`feat(post):` / `fix(editor):`），CI 的 changelog 分组依赖 `feat`/`fix`/`ci`/`chore` 前缀
 - **提交要原子化**：一个提交只做一件事，各自能独立构建、独立回滚。一个功能通常拆成 `chore(deps)` 引依赖 → `feat` 主体 → `feat` 增量 → `fix` 修补（参见折叠块、前台 HTML 渲染那两组提交）。尤其别把 bug 修复埋进 `feat` 的正文——changelog 按前缀分组，那样它就从 fix 列表里消失了

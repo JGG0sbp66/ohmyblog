@@ -4,6 +4,7 @@ import { computed, nextTick, watch } from "vue";
 import { getConfig } from "@/api/config.api";
 import type { TThemeMode } from "@/api/shared";
 import { THEME_MODES } from "@/api/shared";
+import type { TAppearanceConfigUpsertDTO } from "@server/dtos/config.dto";
 
 /**
  * 主题配置常量存储键名
@@ -164,6 +165,14 @@ function applyHue(val: number, animate: boolean) {
  * 2. <html> 标签上的 .dark 类名切换
  * 3. 当设置为 'auto' 时，自动监听系统的 prefers-color-scheme
  */
+/*
+  必须在 useColorMode 初始化之前捕获：它内部的 useStorage 没关 writeDefaults，
+  首次访问会立刻把默认值 "auto" 落盘（对照 hueStore / localeStorage 的
+  writeDefaults: false），之后再查 localStorage 就无法区分
+  「用户选过 / 上次服务器同步写入的值」和「初始默认值」了。
+*/
+const hasLocalTheme = localStorage.getItem(STORAGE_KEYS.THEME) !== null;
+
 const colorMode = useColorMode<TThemeMode>({
   storageKey: STORAGE_KEYS.THEME,
   initialValue: "auto",
@@ -305,15 +314,19 @@ export function useTheme() {
   /**
    * 初始化主题配置：尝试从服务器拉取管理员预设的外观设置
    *
-   * 策略：
-   * 1. 优先尊重用户在本地存储的选择。
-   * 2. 如果用户从未手动设置过 (localStorage 键为空)，则请求后台接口。
-   * 3. 获取成功后，同步更新本地状态。
+   * 策略（theme / hue 两个字段各自独立判断，language 不在此列 ——
+   * 语言始终跟随浏览器环境，用户手动选择后记在本地）：
+   * 1. 优先尊重用户在本地存储的选择（对应键已存在则跳过该字段）。
+   * 2. 本地为空时请求后台接口，把服务器预设写进本地状态 ——
+   *    useColorMode/useStorage 会随之持久化到 localStorage，此后刷新
+   *    就从本地读取，不再发请求；管理员之后再改预设，也不会覆盖
+   *    已落盘的访客本地值。
+   * 3. 获取失败仅打印错误，不影响应用正常运行（维持本地默认值）。
    */
   const initThemeConfig = async () => {
-    // 检查本地是否存在用户自定义设置
     const hasLocalHue = localStorage.getItem(STORAGE_KEYS.HUE) !== null;
-    if (hasLocalHue) {
+    // colorMode 只能用模块加载时捕获的 hasLocalTheme，原因见其定义处注释
+    if (hasLocalTheme && hasLocalHue) {
       return;
     }
 
@@ -322,10 +335,17 @@ export function useTheme() {
       // 后端返回的配置通常解构自 res.config.configValue
       // 此处通过类型断言解决 {} 类型上不存在属性的问题
       const configValue = res?.config?.configValue as
-        | { hue?: number }
+        | Partial<TAppearanceConfigUpsertDTO["configValue"]>
         | undefined;
+
+      // 主题模式：初始化同步直接落位，不走 View Transition
+      const remoteTheme = configValue?.theme;
+      if (!hasLocalTheme && remoteTheme && THEME_MODES.includes(remoteTheme)) {
+        colorMode.value = remoteTheme;
+      }
+
       const remoteHue = configValue?.hue;
-      if (typeof remoteHue === "number") {
+      if (!hasLocalHue && typeof remoteHue === "number") {
         // 首屏用跟手路径直接落位：拉到配置就扫一遍色，看着像加载出错
         previewHue(remoteHue);
       }
