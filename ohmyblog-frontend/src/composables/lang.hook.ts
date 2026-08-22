@@ -50,6 +50,13 @@ const messages = Object.fromEntries(
 
 const localeStorage = useStorage<TLanguage>("locale", getBestLocale());
 
+/*
+  每次加载都把 <html lang> 对齐到当前语言：setLocale 只在用户切换时执行，
+  纯读 localStorage 的刷新不会经过它，
+  index.html 里的 lang="" 会一直漏到 SEO / 读屏器那里。
+*/
+document.documentElement.setAttribute("lang", localeStorage.value);
+
 // 创建 i18n 实例
 const i18n = createI18n({
   // 为了更好的 TS 支持和 Vue3 特性，通常建议设为 false
