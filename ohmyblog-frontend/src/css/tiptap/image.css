@@ -34,6 +34,13 @@
   pointer-events: none;
 }
 
+/* 钉回 block：共享的 .tiptap img 为了前台响应 text-align 改成了 inline-block，
+   它的选择器特异性（0,1,1）高于上面的 .image-block-img（0,1,0），
+   会渗透进 NodeView 内部产生基线间隙，这里用更高特异性压住 */
+.tiptap img.image-block-img {
+  display: block;
+}
+
 /* 右侧拖拽 handle：默认隐藏，hover / 选中时显示 */
 .image-resize-handle {
   position: absolute;
