@@ -19,7 +19,8 @@
 		"build:linux": "bun run scripts/build.ts linux",
 		"build:linux-musl": "bun run scripts/build.ts linux-musl",
 		"build:mac": "bun run scripts/build.ts mac",
-		"docker": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) --build-arg APP_VERSION=$(node -p \"require('./package.json').version\") -t ohmyblog -f scripts/Dockerfile .."
+		"docker": "docker build --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) -t ohmyblog -f scripts/Dockerfile ..",
+		"release": "bun ../tools/release.mjs"
 	},
 	"dependencies": {
 		"@elysiajs/jwt": "^1.4.2",

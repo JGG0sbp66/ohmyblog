@@ -53,13 +53,9 @@ RUN bun run scripts/build.ts linux-musl
 # --- 阶段 3: 运行阶段（Alpine 最小化） ---
 FROM alpine:3.23
 
-# 从构建阶段继承 GIT_COMMIT 和 APP_VERSION（CI 打 tag 时注入；未注入时运行时回退到 package.json 版本）
 ARG GIT_COMMIT=unknown
-ARG APP_VERSION=unknown
 ENV GIT_COMMIT=$GIT_COMMIT
-ENV APP_VERSION=$APP_VERSION
 LABEL git-commit=$GIT_COMMIT
-LABEL app-version=$APP_VERSION
 
 # 设置运行时环境变量
 ENV NODE_ENV=production
