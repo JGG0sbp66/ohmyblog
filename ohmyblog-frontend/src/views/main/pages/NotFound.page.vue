@@ -98,8 +98,11 @@ onUnmounted(() => {
 
 <template>
   <!-- flex-1：吃满 MainLayout 让出的剩余高度，卡片在其中垂直居中。
-       不用 min-h-[Nvh]，那是叠加在 header/footer 之上的，会把整页顶出滚动条 -->
-  <div class="flex flex-1 items-center justify-center px-4 onload-animation">
+       不用 min-h-[Nvh]，那是叠加在 header/footer 之上的，会把整页顶出滚动条。
+       窄屏侧边距由 MainLayout 的 main.px-4 统一持有，本页不再叠一层 px-4
+       （否则手机上左右各 28px，卡片被压窄）；桌面 main 为 md:px-0，
+       卡片自身 max-w-xl 远窄于容器，居中留白不受影响。 -->
+  <div class="flex flex-1 items-center justify-center onload-animation">
     <BaseCard padding="none" class="max-w-xl relative overflow-hidden">
       <!-- ====== 上半区：档案信息 + 标题 + 印章 ====== -->
       <div class="p-8 pb-6">
