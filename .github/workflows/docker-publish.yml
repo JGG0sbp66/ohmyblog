@@ -245,6 +245,9 @@ jobs:
           username: root
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           envs: IMAGE_VERSION,DEMO_COMPOSE_B64
+          # TODO: ssh-action 默认 command_timeout 仅 30s，而下方 script 光镜像拉取重试
+          # （最多 10 次 ×30s）就可能耗时数分钟，健康检查还要再等最多 90s，deploy 极易
+          # 超时；后续应显式延长 command_timeout（如 10m）以覆盖整个部署过程。
           script: |
             set -e
             cd /root/docker/container/ohmyblog
