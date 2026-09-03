@@ -7,8 +7,7 @@ import { useLang } from "@/composables/lang.hook";
 import { useTyping } from "@/composables/typing.hook";
 import BaseCard from "@/components/base/card/BaseCard.vue";
 import BaseTag from "@/components/base/tag/BaseTag.vue";
-import ButtonPrimary from "@/components/base/button/ButtonPrimary.vue";
-import ButtonSecondary from "@/components/base/button/ButtonSecondary.vue";
+import StepButton from "@/components/common/button/StepButton.vue";
 import Stamp from "@/components/common/item/Stamp.vue";
 
 const router = useRouter();
@@ -144,20 +143,19 @@ onUnmounted(() => {
           />
         </p>
 
-        <!-- 导航按钮 -->
-        <div class="flex items-center gap-3 mt-8">
-          <ButtonPrimary
-            :text="t('views.main.notFound.backHome')"
-            @click="router.push({ name: 'home' })"
-          />
-          <ButtonSecondary
-            :text="t('views.main.notFound.backPrev')"
-            class="py-2"
-            @click="router.back()"
-          >
+        <!-- 导航按钮：复用 setup 向导的按钮对布局（左次要 / 右主要，等宽撑满）。
+             StepButton 自带 pt-4，这里补 mt-4 凑回原先 mt-8 的间距。 -->
+        <StepButton
+          class="mt-4"
+          :next-text="t('views.main.notFound.backHome')"
+          :prev-text="t('views.main.notFound.backPrev')"
+          @next="router.push({ name: 'home' })"
+          @prev="router.back()"
+        >
+          <template #prev-icon>
             <ArrowLeft class="w-4 h-4" />
-          </ButtonSecondary>
-        </div>
+          </template>
+        </StepButton>
       </div>
     </BaseCard>
   </div>
