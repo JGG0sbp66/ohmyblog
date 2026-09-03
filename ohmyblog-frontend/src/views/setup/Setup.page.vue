@@ -48,7 +48,7 @@ const [rightSideRef] = useAutoAnimate();
     class="min-h-screen flex flex-col bg-bg overflow-x-hidden overflow-y-clip"
   >
     <!-- main 撑满除 Footer 外的所有高度 -->
-    <main class="flex-1 flex flex-col p-8 gap-10">
+    <main class="flex-1 flex flex-col px-4 py-8 sm:px-8 gap-10">
       <!-- 进度条区域：添加简单淡入动画 -->
       <div class="w-full max-w-5xl mx-auto onload-animation">
         <BaseProgress

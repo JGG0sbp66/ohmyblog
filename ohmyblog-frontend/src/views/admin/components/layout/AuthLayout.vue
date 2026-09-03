@@ -22,7 +22,7 @@ defineProps<{
   <div
     class="min-h-screen flex flex-col bg-bg overflow-x-hidden overflow-y-clip"
   >
-    <main class="flex-1 flex flex-col p-8 gap-10">
+    <main class="flex-1 flex flex-col px-4 py-8 sm:px-8 gap-10">
       <div class="flex-1 flex items-center justify-center">
         <div class="w-full max-w-5xl flex items-center justify-center gap-12">
           <!-- 左：品牌展示 -->
