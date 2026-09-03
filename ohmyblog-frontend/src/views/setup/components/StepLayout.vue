@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import SettingCard from "@/components/base/card/SettingCard.vue";
 import StepButton from "@/components/common/button/StepButton.vue";
+import { useSetupStore } from "@/stores/setup.store";
 
 /**
  * 步骤布局组件属性接口
@@ -25,6 +26,9 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 defineEmits(["next"]); // 定义"下一步"点击事件
+
+// StepButton 已不再直接读 store，向导的"上一步"在此绑回 stepStore
+const stepStore = useSetupStore();
 </script>
 
 <template>
@@ -50,6 +54,7 @@ defineEmits(["next"]); // 定义"下一步"点击事件
         :nextText="nextText"
         :prevText="prevText"
         @next="$emit('next')"
+        @prev="stepStore.prev()"
       />
     </template>
   </SettingCard>
