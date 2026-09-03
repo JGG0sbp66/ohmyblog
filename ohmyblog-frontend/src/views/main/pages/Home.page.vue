@@ -50,6 +50,9 @@ onMounted(fetchList);
 <template>
   <div class="flex flex-col gap-4">
     <!-- 空状态 -->
+    <!-- TODO: 空内容时这张 BaseCard 没有像下方列表那样加 -mx-4 md:mx-0，
+         移动端四周留白过大；应参照 Friends.page 在根容器统一贴边处理，
+         让空状态卡片也四周贴边（移动端破出 main 的 px-4）。 -->
     <BaseCard
       class="onload-animation"
       v-if="!loading && posts.length === 0"
