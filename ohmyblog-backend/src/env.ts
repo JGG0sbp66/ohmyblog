@@ -10,7 +10,7 @@ import {
 	SYSTEM_UPLOADS_DIR,
 	UPLOADS_DIR,
 } from "./constants";
-import { logger } from "./plugins/logger.plugin";
+import { logger } from "./utils/logger";
 
 // =================================================================
 // 1. 配置定义中心（同时用于生成 .env 和类型推断）

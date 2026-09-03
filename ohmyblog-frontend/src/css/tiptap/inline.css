@@ -51,10 +51,15 @@
   -webkit-box-decoration-break: clone;
 }
 
-/* 图片：更大圆角 */
+/* 图片：更大圆角。
+   display: inline-block 与编辑态 NodeView（.image-block-wrapper）对齐：图片节点在
+   schema 里是 inline，对齐靠 TextAlign 给父段落挂的 text-align 移动行内盒；
+   block 图片不响应 text-align，发布后居中 / 右对齐会失效（只有编辑界面有效）。
+   右沿 0.25rem 留白同样照抄 NodeView，图片与相邻行内文字的间距两端一致。 */
 .tiptap img {
   max-width: 100%;
   border-radius: 0.75rem;
-  display: block;
-  margin: 0.75rem 0;
+  display: inline-block;
+  vertical-align: bottom;
+  margin: 0.75rem 0.25rem 0.75rem 0;
 }

@@ -101,6 +101,22 @@
   transform: rotate(90deg);
 }
 
+/* 空标题防坍缩：不写标题时 summary 里是空段落 / 空节点，行高归零——
+   前台三角箭头是 ::before 绝对定位不占布局，整行直接消失，既看不见也没法点击；
+   给一个和正文行高一致的最小高度，保住可点击的标题行。 */
+.tiptap [data-type="details"] summary:empty,
+.tiptap details summary:empty {
+  min-height: 1.75em;
+}
+/* 编辑态占位提示：NodeView 里 summary 内是段落，空时不会命中 :empty，
+   单独用空段落选择器补灰色占位字（与编辑器空文档 placeholder 同色） */
+.tiptap [data-type="details"] summary p:empty::before {
+  content: "标题";
+  color: var(--theme-fg-soft);
+  font-weight: 400;
+  pointer-events: none;
+}
+
 /* ---- 内容区 ---- */
 .tiptap [data-type="detailsContent"] {
   margin-top: 0.25rem;
