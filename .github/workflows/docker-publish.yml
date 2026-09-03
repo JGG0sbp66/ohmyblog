@@ -130,12 +130,6 @@ jobs:
         run: bun install --frozen-lockfile
         working-directory: ohmyblog-backend
 
-      - name: Sync version from tag
-        # 编译版运行时回退读 package.json（编译期内联），发版构建以 tag 为准覆盖，
-        # 仓库里的 version 从此不需要手动维护
-        run: npm pkg set version="${GITHUB_REF_NAME#v}"
-        working-directory: ohmyblog-backend
-
       - name: Install frontend dependencies
         run: bun install --frozen-lockfile
         working-directory: ohmyblog-frontend
@@ -205,7 +199,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             GIT_COMMIT=${{ github.sha }}
-            APP_VERSION=${{ steps.meta.outputs.version }}
             BUN_REGISTRY=https://registry.npmjs.org
 
   # 二进制和 Docker 镜像均构建成功后发布同一 tag 的草稿 Release
@@ -252,6 +245,9 @@ jobs:
           username: root
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           envs: IMAGE_VERSION,DEMO_COMPOSE_B64
+          # TODO: ssh-action 默认 command_timeout 仅 30s，而下方 script 光镜像拉取重试
+          # （最多 10 次 ×30s）就可能耗时数分钟，健康检查还要再等最多 90s，deploy 极易
+          # 超时；后续应显式延长 command_timeout（如 10m）以覆盖整个部署过程。
           script: |
             set -e
             cd /root/docker/container/ohmyblog

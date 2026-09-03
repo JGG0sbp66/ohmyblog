@@ -57,6 +57,8 @@ const handleNext = () => {
       />
 
       <!-- 移动端/窄屏下的预览：当 lg 以下且启用了个性化时显现 -->
+      <!-- TODO: 第四步手机端的优化效果还不好，PersonalizationPreview 在窄屏下的
+           布局/间距/头像与横幅上传体验待改进，后续需专门做移动端适配调优。 -->
       <div v-if="setupStore.isPersonalized" class="block lg:hidden mt-2">
         <PersonalizationPreview />
       </div>
