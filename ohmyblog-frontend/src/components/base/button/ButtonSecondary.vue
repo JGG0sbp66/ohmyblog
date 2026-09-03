@@ -42,6 +42,7 @@ const hasSuffix = computed(() => {
 // 静态基础样式
 const baseClass = `
   flex items-center justify-center
+  whitespace-nowrap
   w-fit min-h-full px-2 py-1.5
   leading-tight
   rounded-lg

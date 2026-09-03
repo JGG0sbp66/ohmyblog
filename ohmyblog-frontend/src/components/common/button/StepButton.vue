@@ -22,7 +22,9 @@ const props = withDefaults(defineProps<Props>(), {
   showPrev: true,
   nextDisabled: false,
   loading: false,
-  gapClass: "gap-48",
+  // 分档响应式间距：gap-48 是固定 rem 值（12rem），窄屏下 html 基准缩到 14px
+  // 仍有 168px，会吃光手机视口的可用宽度，把两个按钮压成方块。
+  gapClass: "gap-4 sm:gap-12 xl:gap-48",
 });
 
 const stepStore = useSetupStore();
