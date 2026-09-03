@@ -3,12 +3,15 @@ import { join } from "node:path";
 import { consola } from "consola";
 import Elysia from "elysia";
 import { LOGS_DIR } from "../constants";
+import { logger } from "../utils/logger";
 import { isProduction } from "../utils/runtime";
 
 /**
- * 全局日志实例，使用 consola 默认配置
+ * 全局日志实例来自无依赖的 utils/logger（切断 env.ts ↔ 本模块的循环依赖，
+ * 详见 utils/logger.ts 注释）。此处再导出，保持既有 `from "../plugins/logger.plugin"`
+ * 的引用不变。
  */
-export const logger = consola;
+export { logger };
 
 /**
  * 文件日志 Reporter
