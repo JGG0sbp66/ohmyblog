@@ -36,8 +36,13 @@ const progressWidth = computed(() => {
 
     <!-- 进度条底色 -->
     <div class="w-full h-2 bg-bg-muted rounded-full overflow-hidden">
-      <!-- 实际进度填充 -->
-      <div class="h-full bg-accent" :style="{ width: progressWidth }"></div>
+      <!-- 实际进度填充：步骤切换时宽度平滑补间。节奏取 250ms / ease-in-out，
+           与 auto-animate 的默认值一致——同屏的表单区切换动画用的就是它，
+           两边时长错开的话会看出进度条和内容不同步 -->
+      <div
+        class="h-full bg-accent transition-[width] duration-250 ease-in-out motion-reduce:transition-none"
+        :style="{ width: progressWidth }"
+      ></div>
     </div>
   </div>
 </template>
