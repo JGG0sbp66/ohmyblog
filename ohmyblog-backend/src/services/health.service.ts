@@ -8,7 +8,7 @@ const COMMIT_HASH_LENGTH = 7;
 
 export class HealthService {
 	private commitHash: string = "unknown";
-	// 默认取 package.json 版本（编译时内联进产物），本地开发/本地 Docker 构建无需额外注入
+	// 版本真源是 package.json（编译时内联进产物），发版时由 tools/release.mjs 写入
 	private appVersion: string = pkg.version;
 	private logger = logger.withTag("HealthService");
 
@@ -18,17 +18,9 @@ export class HealthService {
 	}
 
 	/**
-	 * 初始化版本信息：版本号优先用 CI 注入的 APP_VERSION（打 tag 发版），否则回退到 package.json；
 	 * commit hash 优先从环境变量读取，失败则尝试 Git 命令
 	 */
 	private async initVersionInfo() {
-		// CI 构建时通过 --build-arg 注入；过滤掉 Dockerfile ARG 默认值 "unknown"，
-		// 避免未注入时覆盖 package.json 的正确版本
-		const envVersion = process.env.APP_VERSION;
-		if (envVersion && envVersion !== "unknown") {
-			this.appVersion = envVersion;
-		}
-
 		// commit hash 各来源给的位数不一致（CI 注入的 github.sha 是完整 40 位，
 		// 本地 git 是短哈希），因此各来源只负责给出原始值，在这里单点截断，
 		// 对外始终是同一种形态；解析失败时保留默认值 "unknown"

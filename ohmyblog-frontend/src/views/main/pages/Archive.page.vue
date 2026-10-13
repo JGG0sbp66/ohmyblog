@@ -56,6 +56,9 @@ onMounted(async () => {
 <template>
   <div class="onload-animation">
     <!-- 空状态 -->
+    <!-- TODO: 空内容时这张 BaseCard 缺少下方时间轴容器的 -mx-4 md:mx-0，
+         移动端四周留白过大；应参照 Friends.page 做贴边处理，
+         让空状态卡片四周贴边（移动端破出 main 的 px-4）。 -->
     <BaseCard v-if="!loading && groups.length === 0" padding="default">
       <EmptyState :text="t('views.main.archive.empty')" />
     </BaseCard>
